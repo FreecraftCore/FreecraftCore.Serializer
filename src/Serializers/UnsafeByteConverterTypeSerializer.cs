@@ -85,7 +85,7 @@ namespace FreecraftCore.Payload.Serializer
 			byte[] ttypeBytes = null;
 			
 			//Get the memory address of the value
-			IntPtr intPtr = GetPointer(ref value); //using ref to prevent improper address value
+			IntPtr intPtr = memoryAddressGrabber(ref value); //using ref to prevent improper address value
 				
 			ttypeBytes = new byte[this.ByteArrayRepresentationSize]; //ByteArrayRepresentationSize sized byte array representing the TType
 				
