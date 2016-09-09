@@ -47,13 +47,13 @@ namespace FreecraftCore.Payload.Serializer
 			DynamicMethod dynamicMethod = new DynamicMethod($"GrabAddressFor{typeof(TType).Name}", typeof(IntPtr), new Type[] { typeof(TType).MakeByRefType() });
 			
 			string parameterName = "ttypeValue";
-			dm.DefineParameter(1, ParameterAttributes.None, parameterName);
+			dynamicMethod.DefineParameter(1, ParameterAttributes.None, parameterName);
 			
 			//Generate the generator
 			ILGenerator generator = dynamicMethod.GetILGenerator();
 			LocalBuilder localBuilderOfIntPtr = generator.DeclareLocal(typeof(IntPtr)); //declare a local IntPtr
 			
-			generator.Emit(OpCodes.Ldloca_S, p); //pushes the IntPtr on the stack
+			generator.Emit(OpCodes.Ldloca_S, localBuilderOfIntPtr); //pushes the IntPtr on the stack
 			generator.Emit(OpCodes.Ldarga_S, (byte)0); //push the 0th object on to the stack. This is the TType ref parameter.
 			
 			generator.Emit(OpCodes.Conv_U); //Convert to unsigned native int, pushing native int on stack. It does this conversion on the top of the stack. In this case TType
