@@ -7,7 +7,7 @@ namespace FreecraftCore.Payload.Serializer
 	/// <summary>
 	/// <see cref="ITypeSerializerStrategy"/> for Type <see cref="string"/>.
 	/// </summary>
-	public class stringSerializerStrategy : ITypeSerializerStrategy<string>
+	public class StringSerializerStrategy : ITypeSerializerStrategy<string>
 	{
 		/// <summary>
         /// Perform the steps necessary to serialize the string.
@@ -59,7 +59,7 @@ namespace FreecraftCore.Payload.Serializer
 				return System.Text.Encoding.ASCII.GetString(stringBytes.ToArray()); //shouldn't need to reallocate array.
 		}
 
-		public stringSerializerStrategy()
+		public StringSerializerStrategy()
 		{
 			//this serializer needs no subserializers or services.
 		}

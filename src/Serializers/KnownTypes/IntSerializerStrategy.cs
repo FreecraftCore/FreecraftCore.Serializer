@@ -7,7 +7,7 @@ namespace FreecraftCore.Payload.Serializer
 	/// <summary>
 	/// <see cref="ITypeSerializerStrategy"/> for Type <see cref="int"/>.
 	/// </summary>
-	public class intSerializerStrategy : ITypeSerializerStrategy<int>
+	public class IntSerializerStrategy : ITypeSerializerStrategy<int>
 	{
 		/// <summary>
         /// Perform the steps necessary to serialize the int.
@@ -52,7 +52,7 @@ namespace FreecraftCore.Payload.Serializer
 			BitConverter.ToInt32(source.ReadBytes(4));
 		}
 
-		public intSerializerStrategy()
+		public IntSerializerStrategy()
 		{
 			//this serializer needs no subserializers or services.
 		}
