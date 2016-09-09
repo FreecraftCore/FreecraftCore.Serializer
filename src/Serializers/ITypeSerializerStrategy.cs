@@ -20,6 +20,6 @@ namespace FreeCore.Payload.Serializer
         /// </summary>
         /// <param name="source">The reader providing the input data.</param>
         /// <returns>The updated / replacement value.</returns>
-        TType Read(ProtoReader source);
+        TType Read(IWireMemberReaderStrategy source);
 	}
 }
