@@ -1,20 +1,17 @@
-﻿/*
- * Created by SharpDevelop.
- * User: ablakely
- * Date: 9/8/2016
- * Time: 7:25 PM
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
+﻿using System;
 
-namespace FreeCore.Payload.Serializer.KnownTypes
+namespace FreeCore.Payload.Serializer
 {
 	/// <summary>
 	/// Description of ITypeSerializer.
 	/// </summary>
-	public interface ITypeSerializer
+	public interface ITypeSerializer<TType>
 	{
-		
+		/// <summary>
+		/// Serializes the <typeparamref="TType">The Type this serializer can serialize.</typeparamref>
+		/// </summary>
+		/// <param name="toSerialize">The value/instance to serialize.</param>
+		/// <returns>Array of bytes representation of the serialized value/instance.</returns>
+		byte[] Serialize(TType toSerialize);
 	}
 }
