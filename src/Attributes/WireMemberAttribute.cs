@@ -5,6 +5,7 @@
 /// Marking a member with this attribute will prepare it for the wire. (Refer to the concept of Protobuf-net or
 /// Blizzard's JAM for information on the concept).
 /// </summary>
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)] //members can be fields or props
 public class WireMemberAttribute : Attribute
 {
 	/// <summary>
