@@ -71,10 +71,10 @@ namespace FreecraftCore.Payload.Serializer
 		}
 		
 		/// <summary>
-        /// Perform the steps necessary to serialize the int.
-        /// </summary>
-        /// <param name="value">The int to be serialized.</param>
-        /// <param name="dest">The writer entity that is accumulating the output data.</param>
+		/// Perform the steps necessary to serialize the int.
+		/// </summary>
+		/// <param name="value">The int to be serialized.</param>
+		/// <param name="dest">The writer entity that is accumulating the output data.</param>
 		public unsafe void Write(TType value, IWireMemberWriterStrategy dest)
 		{
 			//Review the source for Trinitycore's writing for their ByteBuffer (payload/packet) Type.
@@ -96,10 +96,10 @@ namespace FreecraftCore.Payload.Serializer
 		}
 		
 		/// <summary>
-        /// Perform the steps necessary to deserialize a int.
-        /// </summary>
-        /// <param name="source">The reader providing the input data.</param>
-        /// <returns>A int value from the reader.</returns>
+		/// Perform the steps necessary to deserialize a int.
+		/// </summary>
+		/// <param name="source">The reader providing the input data.</param>
+		/// <returns>A int value from the reader.</returns>
 		public TType Read(IWireMemberReaderStrategy source)
 		{
 			//Review the source for Trinitycore's int reading for their ByteBuffer (payload/packet) Type.
