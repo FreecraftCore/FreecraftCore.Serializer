@@ -10,14 +10,7 @@ namespace FreecraftCore.Payload.Serializer
 	/// </summary>
 	public abstract class UnsafeByteConverterTypeSerializer<TType> : ITypeSerializerStrategy<TType>
 		where TType : struct
-	{
-		private delegate IntPtr MemoryAddressHack(ref TType t);
-		
-		/// <summary>
-		/// Represents the required size 
-		/// </summary>
-		protected virtual int ByteArrayRepresentationSize { get; } = sizeof(TType); //platform/language differences may make this not work but it's overidable.
-		
+	{	
 		/// <summary>
 		/// Internally managed per-generic Func delegate that converts the bytes to TType.
 		/// </summary>
@@ -30,11 +23,16 @@ namespace FreecraftCore.Payload.Serializer
 		/// </summary>
 		private static Action<TType, IWireMemberWriterStrategy> writerAction { get; }
 		
+		private int byteArrayRepresentationSize { get; } = sizeof(TType);
+		
 		static UnsafeByteConverterTypeSerializer()
 		{
 			string bitconvertMethodName = $"To{typeof(TType).Name)}"; 
 			byteConversionReadingDelegate = Delegate.CreateDelegate(typeof(Func<TType, byte[], int>),
 				typeof(BitConverter).GetMethod(bitconvertMethodName, BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(byte[]), typeof(int) }), true) as Func<byte[], int, TType>;
+			
+			if(byteConversionReadingDelegate == null)
+				throw new InvalidOperationException($"Failed to find {nameof(typeof(BitConverter).Name} method for Type: {typeof(TType).Name}.");
 			
 			writerAction = CreateDelegate();
 		}
@@ -92,17 +90,9 @@ namespace FreecraftCore.Payload.Serializer
 			//They cast the Types to uint8* which is basically a byte array. They serialize it that way
 			//We're going to do something similar with unsafe C# code
 			
-			byte[] ttypeBytes = null;
-			
-			//Get the memory address of the value
-			IntPtr intPtr = memoryAddressGrabber(ref value); //using ref to prevent improper address value
-				
-			ttypeBytes = new byte[this.ByteArrayRepresentationSize]; //ByteArrayRepresentationSize sized byte array representing the TType
-				
-			Marshal.Copy(intPtr, ttypeBytes, 0, this.ByteArrayRepresentationSize);
-			
-			//Write the bytes to the destination
-			dest.Write(ttypeBytes);
+			//writes the value with the writer
+			//It's a magic IL method that grabs the address of value and does 
+			writerAction(value, dest):
 		}
 		
 		/// <summary>
@@ -116,11 +106,7 @@ namespace FreecraftCore.Payload.Serializer
 			//(ctr+f >> for int): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_source.html
 			//We use the sizeof to get the right size for the cast
 			
-			return byteConversionReadingDelegate((ByteArrayRepresentationSize > 1) ? (source.ReadBytes(ByteArrayRepresentationSize) : source.ReadByte()), ByteArrayRepresentationSize);
-			
-			//Read 4 bytes for the int and just use converter
-			//It's pretty fast: http://stackoverflow.com/questions/4326125/faster-way-to-convert-byte-array-to-int
-			BitConverter.ToInt32(source.ReadBytes(4));
+			return byteConversionReadingDelegate((byteArrayRepresentationSize > 1) ? (source.ReadBytes(byteArrayRepresentationSize) : source.ReadByte()), byteArrayRepresentationSize);
 		}
 
 		public UnsafeByteConverterTypeSerializer()
