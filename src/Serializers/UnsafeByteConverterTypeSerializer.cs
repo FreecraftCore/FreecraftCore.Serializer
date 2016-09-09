@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Reflection;
 
@@ -10,6 +11,8 @@ namespace FreecraftCore.Payload.Serializer
 	public abstract class UnsafeByteConverterTypeSerializer<TType> : ITypeSerializerStrategy<TType>
 		where TType : struct
 	{
+		private delegate IntPtr MemoryAddressHack(ref TType t);
+		
 		/// <summary>
 		/// Represents the required size 
 		/// </summary>
@@ -20,11 +23,51 @@ namespace FreecraftCore.Payload.Serializer
 		/// </summary>
 		private static Func<byte[], int, TType> byteConversionReadingDelegate { get; }
 		
+		//This magic delegate let's us avoid having an abstract method just for grabbing the address
+		//of the TType instance.
+		/// <summary>
+		/// Internally managed delegate that produces memory address for any TType.
+		/// </summary>
+		private static MemoryAddressHack memoryAddressGrabber { get; }
+		
 		static UnsafeByteConverterTypeSerializer()
 		{
 			string bitconvertMethodName = $"To{typeof(TType).Name)}"; 
 			byteConversionReadingDelegate = Delegate.CreateDelegate(typeof(Func<TType, byte[], int>),
 				typeof(BitConverter).GetMethod(bitconvertMethodName, BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(byte[]), typeof(int) }), true) as Func<byte[], int, TType>;
+			
+			memoryAddressGrabber = CreateMemoryAddressGrabber();
+		}
+		
+		private static MemoryAddressHack CreateMemoryAddressGrabber()
+		{
+			//Indicates how to make a Type a Ref Type https://limbioliong.wordpress.com/2011/07/22/passing-a-reference-parameter-to-type-memberinvoke/
+			//This shows some stuff about emitting IL for & and IntPtr stuff: http://stackoverflow.com/questions/28728003/il-emit-struct-serializer
+			
+			DynamicMethod dynamicMethod = new DynamicMethod($"GrabAddressFor{typeof(TType).Name}", typeof(IntPtr), new Type[] { typeof(TType).MakeByRefType() });
+			
+			string parameterName = "ttypeValue";
+			dm.DefineParameter(1, ParameterAttributes.None, parameterName);
+			
+			//Generate the generator
+			ILGenerator generator = dynamicMethod.GetILGenerator();
+			LocalBuilder localBuilderOfIntPtr = generator.DeclareLocal(typeof(IntPtr)); //declare a local IntPtr
+			
+			generator.Emit(OpCodes.Ldloca_S, p); //pushes the IntPtr on the stack
+			generator.Emit(OpCodes.Ldarga_S, (byte)0); //push the 0th object on to the stack. This is the TType ref parameter.
+			
+			generator.Emit(OpCodes.Conv_U); //Convert to unsigned native int, pushing native int on stack. It does this conversion on the top of the stack. In this case TType
+			
+			ConstructorInfo intPtrCtor = typeof(IntPtr).GetConstructor(new[] {typeof(void*)}); //create a ctor info for the IntPtr type
+			
+			//See here for explaination: https://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.call%28v=vs.110%29.aspx
+			//Basically, takes the values on the stack and calls the method with them
+			generator.Emit(OpCodes.Call, intPtrCtor);
+			
+			//Return the value on the stack (the IntPtr that was just constructed)
+			generator.Emit(OpCodes.Ret);
+			
+			return (MemoryAddressHack)dynamicMethod.CreateDelegate(typeof(MemoryAddressHack));
 		}
 		
 		/// <summary>
@@ -51,9 +94,6 @@ namespace FreecraftCore.Payload.Serializer
 			//Write the bytes to the destination
 			dest.Write(ttypeBytes);
 		}
-		
-		//Sadly we have to do this. C# won't let us do it... Maybe we can generate the IL to get around it?
-		protected abstract unsafe IntPtr GetPointer(ref TType value);
 		
 		/// <summary>
         /// Perform the steps necessary to deserialize a int.
