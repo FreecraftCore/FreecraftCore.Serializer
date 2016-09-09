@@ -13,5 +13,13 @@ namespace FreeCore.Payload.Serializer
 		/// <param name="toSerialize">The value/instance to serialize.</param>
 		/// <returns>Array of bytes representation of the serialized value/instance.</returns>
 		byte[] Serialize(TType toSerialize);
+		
+		/// <summary>
+		/// Deserializes the byte array to a <typeparamref="TType">The Type this serializer can deserialize.</typeparamref>
+		/// instance/value.
+		/// </summary>
+		/// <param name="toDeserialize">The value/instance to deserialize.</param>
+		/// <returns>An instance/value of the Type.</returns>
+		TType Deserialize(byte[] toDeserialize);
 	}
 }
