@@ -28,7 +28,7 @@ namespace FreecraftCore.Payload.Serializer
 		/// <summary>
 		/// Internally managed delegate that produces memory address for any TType.
 		/// </summary>
-		private static MemoryAddressHack memoryAddressGrabber { get; }
+		private static Action<TType, IWireMemberWriterStrategy> writerAction { get; }
 		
 		static UnsafeByteConverterTypeSerializer()
 		{
@@ -36,53 +36,48 @@ namespace FreecraftCore.Payload.Serializer
 			byteConversionReadingDelegate = Delegate.CreateDelegate(typeof(Func<TType, byte[], int>),
 				typeof(BitConverter).GetMethod(bitconvertMethodName, BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(byte[]), typeof(int) }), true) as Func<byte[], int, TType>;
 			
-			memoryAddressGrabber = CreateMemoryAddressGrabber();
+			writerAction = CreateDelegate();
 		}
-		
-		/*
-IL_0000:  nop         
-IL_0001:  ldarg.1     
-IL_0002:  stloc.0     // iPtr
-IL_0003:  nop         
-IL_0004:  ldloc.0     // iPtr
-IL_0005:  conv.i      
-IL_0006:  newobj      System.IntPtr..ctor
-IL_000B:  stloc.1     // CS$1$0000
-IL_000C:  leave.s     IL_000E
-IL_000E:  nop         
-IL_000F:  ldloc.1     // CS$1$0000
-IL_0010:  ret          
-		*/
-		
-		private static MemoryAddressHack CreateMemoryAddressGrabber()
+	
+		public static Action<TType, IWireMemberWriterStrategy> CreateDelegate()
 		{
-			//Indicates how to make a Type a Ref Type https://limbioliong.wordpress.com/2011/07/22/passing-a-reference-parameter-to-type-memberinvoke/
-			//This shows some stuff about emitting IL for & and IntPtr stuff: http://stackoverflow.com/questions/28728003/il-emit-struct-serializer
+			//This code adapted from: http://stackoverflow.com/questions/28728003/il-emit-struct-serializer
+			var dm = new DynamicMethod("Write" + typeof (T).Name,
+			typeof (void),
+			new[] {typeof (T), typeof(IWireMemberWriterStrategy)},
+			Assembly.GetExecutingAssembly().ManifestModule);
+			const string parameterName = "value";
+			dm.DefineParameter(1, ParameterAttributes.None, parameterName);
+			var generator = dm.GetILGenerator();
+			var intPtrLocal = generator.DeclareLocal(typeof (IntPtr)); //create the IntPtr to store the ref
+			generator.DeclareLocal(typeof (byte[])); //create the byte[] result
+			generator.DeclareLocal(typeof (byte[])); //create the lhs byte array
+			generator.Emit(OpCodes.Ldloca_S, intPtrLocal); //load the IntPtr
+			generator.Emit(OpCodes.Ldarga_S, (byte)0); //Load the first arg T
+			generator.Emit(OpCodes.Conv_U); //get address from arg
 			
-			DynamicMethod dynamicMethod = new DynamicMethod($"GrabAddressFor{typeof(TType).Name}", typeof(IntPtr), new Type[] { typeof(TType).MakeByRefType() });
+			var intPtrCtor = typeof (IntPtr).GetConstructor(new[] {typeof(void*)});
 			
-			string parameterName = "ttypeValue";
-			dynamicMethod.DefineParameter(1, ParameterAttributes.None, parameterName);
+			generator.Emit(OpCodes.Call, intPtrCtor); //call the ctor for IntrPtr with the &t
 			
-			//Generate the generator
-			ILGenerator generator = dynamicMethod.GetILGenerator();
-			LocalBuilder localBuilderOfIntPtr = generator.DeclareLocal(typeof(IntPtr)); //declare a local IntPtr
+			generator.Emit(OpCodes.Ldc_I4_S, (short)Marshal.SizeOf(typeof(TType))); //get the size of T (should work most cases)
+			generator.Emit(OpCodes.Newarr, typeof (byte));
+			generator.Emit(OpCodes.Stloc_1);
+			generator.Emit(OpCodes.Ldloc_0);
+			generator.Emit(OpCodes.Ldloc_1);
+			generator.Emit(OpCodes.Ldc_I4_0);
+			generator.Emit(OpCodes.Ldloc_1);
+			generator.Emit(OpCodes.Ldlen);
+			generator.Emit(OpCodes.Conv_I4);
 			
-			generator.Emit(OpCodes.Ldloca_S, localBuilderOfIntPtr); //pushes the IntPtr on the stack
-			generator.Emit(OpCodes.Ldarga_S, (byte)0); //push the 0th object on to the stack. This is the TType ref parameter.
-			
-			generator.Emit(OpCodes.Conv_U); //Convert to unsigned native int, pushing native int on stack. It does this conversion on the top of the stack. In this case TType
-			
-			ConstructorInfo intPtrCtor = typeof(IntPtr).GetConstructor(new[] {typeof(void*)}); //create a ctor info for the IntPtr type
-			
-			//See here for explaination: https://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.call%28v=vs.110%29.aspx
-			//Basically, takes the values on the stack and calls the method with them
-			generator.Emit(OpCodes.Call, intPtrCtor);
-			
-			//Return the value on the stack (the IntPtr that was just constructed)
+			var marshalCopy = typeof (Marshal).GetMethod("Copy", new[] {typeof (IntPtr), typeof (byte[]), typeof (int), typeof (int)});
+			generator.EmitCall(OpCodes.Call, marshalCopy, null);
+			generator.Emit(OpCodes.Ldarg_1); //load writer
+			generator.Emit(OpCodes.Ldloc_1);
+			generator.EmitCall(OpCodes.Callvirt, typeof(IWireMemberWriterStrategy).GetMethod("Write"), null); //calls the write method
 			generator.Emit(OpCodes.Ret);
 			
-			return (MemoryAddressHack)dynamicMethod.CreateDelegate(typeof(MemoryAddressHack));
+			return (Action<TType, IWireMemberWriterStrategy>)dm.CreateDelegate(typeof(Action<TType, IWireMemberWriterStrategy>));
 		}
 		
 		/// <summary>
