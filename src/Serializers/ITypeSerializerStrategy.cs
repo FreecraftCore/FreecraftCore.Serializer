@@ -3,9 +3,9 @@
 namespace FreeCore.Payload.Serializer
 {
 	/// <summary>
-	/// Description of ITypeSerializer.
+	/// Contract for type that providing serialization strategy for the provided TType.
 	/// </summary>
-	public interface ITypeSerializer<TType>
+	public interface ITypeSerializerStrategy<TType>
 	{
 		/// <summary>
 		/// Serializes the <typeparamref="TType">The Type this serializer can serialize.</typeparamref>
