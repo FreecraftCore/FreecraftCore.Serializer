@@ -1,5 +1,10 @@
 ﻿using System;
 
+/// <summary>
+/// Meta-data attribute that can be used to mark wire serializable members on <see cref="Type"/>s
+/// Marking a member with this attribute will prepare it for the wire. (Refer to the concept of Protobuf-net or
+/// Blizzard's JAM for information on the concept).
+/// </summary>
 public class WireMemberAttribute : Attribute
 {
 	/// <summary>
