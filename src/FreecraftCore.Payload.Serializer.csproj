@@ -46,10 +46,12 @@
   <ItemGroup>
     <Compile Include="Attributes\WireMemberAttribute.cs" />
     <Compile Include="Attributes\WireMessage.cs" />
+    <Compile Include="KnownTypes\ITypeSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Attributes" />
+    <Folder Include="KnownTypes" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
