@@ -48,11 +48,14 @@
     <Compile Include="Attributes\WireMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializers\ITypeSerializerStrategy.cs" />
+    <Compile Include="Stream\IWireMemberReader.cs" />
+    <Compile Include="Stream\IWireMemberWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Attributes" />
-    <Folder Include="KnownTypes" />
+    <Folder Include="Stream" />
     <Folder Include="Serializers" />
+    <Folder Include="Serializers\KnownTypes" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
