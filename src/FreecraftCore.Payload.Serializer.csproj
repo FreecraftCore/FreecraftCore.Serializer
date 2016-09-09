@@ -62,6 +62,7 @@
     <Compile Include="Serializers\KnownTypes\ByteSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\IntSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\StringSerializerStrategy.cs" />
+    <Compile Include="Serializers\UnsafeByteConverterTypeSerializer.cs" />
     <Compile Include="Stream\IWireMemberReaderStrategy.cs" />
     <Compile Include="Stream\IWireMemberWriterStrategy.cs" />
   </ItemGroup>

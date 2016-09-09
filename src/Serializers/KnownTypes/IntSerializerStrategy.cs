@@ -20,17 +20,14 @@ namespace FreecraftCore.Payload.Serializer
 			//(ctr+f << for int): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_source.html
 			//They cast the int to uint8* which is basically a byte array. They serialize it that way
 			//We're going to do something similar with unsafe C# code
-		
-			byte[] intBytes = null;
 			
 			//Get the memory address of the value
 			//We're going to do
-			fixed(int* intPtr = &value) //we fix the int so GC doesn't move it
-			{
-				intBytes = new byte[4]; //4 byte array representing the ints
+			int* intPtr = &value; //we don't need fixed
+				
+			byte[] intBytes = new byte[4]; //4 byte array representing the ints
 					
-				Marshal.Copy((IntPtr)intPtr, intBytes, 0, 4);
-			}
+			Marshal.Copy((IntPtr)intPtr, intBytes, 0, 4);
 			
 			//Write the bytes to the destination
 			dest.Write(intBytes);
@@ -49,7 +46,7 @@ namespace FreecraftCore.Payload.Serializer
 			
 			//Read 4 bytes for the int and just use converter
 			//It's pretty fast: http://stackoverflow.com/questions/4326125/faster-way-to-convert-byte-array-to-int
-			BitConverter.ToInt32(source.ReadBytes(4));
+			return BitConverter.ToInt32(source.ReadBytes(4), 0);
 		}
 
 		public IntSerializerStrategy()

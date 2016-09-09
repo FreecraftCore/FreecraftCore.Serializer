@@ -23,8 +23,8 @@ namespace FreecraftCore.Payload.Serializer
 		/// <param name="memberOrder"></param>
 		public WireMemberAttribute(int memberOrder)
 		{
-			if(memberOrder < 0)
-				throw new ArgumentException($"Provider argument {nameof(memberOrder)} must be greater than or equal to 0.", nameof(memberOrder));
+			/*if(memberOrder < 0)
+				throw new ArgumentException($"Provider argument {nameof(memberOrder)} must be greater than or equal to 0.", nameof(memberOrder));*/
 			
 			MemberOrder = memberOrder;
 		}
