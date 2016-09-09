@@ -39,6 +39,21 @@ namespace FreecraftCore.Payload.Serializer
 			memoryAddressGrabber = CreateMemoryAddressGrabber();
 		}
 		
+		/*
+ 		IL_0000:  nop
+		IL_0001:  ldarg.1     
+		IL_0002:  stloc.0     // iPtr
+		IL_0003:  nop         
+		IL_0004:  ldloc.0     // iPtr
+		IL_0005:  conv.i      
+		IL_0006:  call        System.IntPtr.op_Explicit
+		IL_000B:  stloc.1     // CS$1$0000
+		IL_000C:  leave.s     IL_000E
+		IL_000E:  nop         
+		IL_000F:  ldloc.1     // CS$1$0000
+		IL_0010:  ret         
+		*/
+		
 		private static MemoryAddressHack CreateMemoryAddressGrabber()
 		{
 			//Indicates how to make a Type a Ref Type https://limbioliong.wordpress.com/2011/07/22/passing-a-reference-parameter-to-type-memberinvoke/
