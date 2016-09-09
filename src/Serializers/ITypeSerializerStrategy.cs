@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FreeCore.Payload.Serializer
+namespace FreecraftCore.Payload.Serializer
 {
 	//This concept is based on JAM (Blizzard's messaging system/protocol and Protobuf-net's serializer strategies https://github.com/mgravell/protobuf-net/tree/master/protobuf-net/Serializers
 	/// <summary>

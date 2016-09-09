@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FreeCore.Payload.Serializer
+namespace FreecraftCore.Payload.Serializer
 {
 	/// <summary>
 	/// Description of IWireMemberReader.

@@ -50,6 +50,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializers\ITypeSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\ByteSerializerStrategy.cs" />
+    <Compile Include="Serializers\KnownTypes\StringSerializerStrategy.cs" />
     <Compile Include="Stream\IWireMemberReaderStrategy.cs" />
     <Compile Include="Stream\IWireMemberWriterStrategy.cs" />
   </ItemGroup>

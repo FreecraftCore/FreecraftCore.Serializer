@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FreeCore.Payload.Serializer
+namespace FreecraftCore.Payload.Serializer
 {
 	/// <summary>
 	/// Meta-data attribute that can be used to mark wire serializable members on <see cref="Type"/>s

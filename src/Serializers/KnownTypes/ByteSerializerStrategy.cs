@@ -31,7 +31,7 @@ namespace FreecraftCore.Payload.Serializer
 
 		public ByteSerializerStrategy()
 		{
-			//this serializer needs to subserializers or services.
+			//this serializer needs no subserializers or services.
 		}
 	}
 }
