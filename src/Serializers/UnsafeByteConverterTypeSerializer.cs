@@ -8,7 +8,7 @@ namespace FreecraftCore.Payload.Serializer
 	/// <summary>
 	/// Contract for types that require unsafe byte[] reading and writing.
 	/// </summary>
-	public abstract class UnsafeByteConverterTypeSerializer<TType> : ITypeSerializerStrategy<TType>
+	public class UnsafeByteConverterTypeSerializer<TType> : ITypeSerializerStrategy<TType>
 		where TType : struct
 	{	
 		/// <summary>
