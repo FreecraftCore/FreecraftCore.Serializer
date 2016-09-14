@@ -11,9 +11,10 @@ namespace MarshalPerfTest
 			Stopwatch strucToPointerWatch = new Stopwatch();
 			Stopwatch strucToPointerWatchGeneric = new Stopwatch();
 			Stopwatch marshalCopy = new Stopwatch();
+			Stopwatch bitConverterWatch = new Stopwatch();
 			
-			long intTestVar = 5;
-			byte[] testByteArray = new byte[sizeof(long)];
+			int intTestVar = 5;
+			byte[] testByteArray = new byte[sizeof(int)];
 			
 			int testIterations = 100000000;
 			
@@ -29,9 +30,26 @@ namespace MarshalPerfTest
 			
 			strucToPointerWatch.Stop();
 			
-			Console.WriteLine("StructureToPtr Non-Generic time: " + strucToPointerWatch.ElapsedMilliseconds);
+			Console.WriteLine("StructureToPtr Non-Generic write time: " + strucToPointerWatch.ElapsedMilliseconds);
 			
 			//explict collect after test
+			GC.Collect();
+			
+			strucToPointerWatch.Reset();
+			strucToPointerWatch.Start();
+			
+			for(int i = 0; i < testIterations; i++)
+			{		
+				fixed(byte* bytePtr = &testByteArray[0])
+				{
+					int val = (int)Marshal.PtrToStructure(new IntPtr(bytePtr), typeof(int));
+				}
+			}
+			
+			strucToPointerWatch.Stop();
+			
+			Console.WriteLine("StructureToPtr Non-Generic read time: " + strucToPointerWatch.ElapsedMilliseconds);
+			
 			GC.Collect();
 			
 			strucToPointerWatchGeneric.Start();
@@ -40,7 +58,7 @@ namespace MarshalPerfTest
 			{		
 				fixed(byte* bytePtr = &testByteArray[0])
 				{
-					Marshal.StructureToPtr<long>(i, new IntPtr(bytePtr), false);
+					Marshal.StructureToPtr<int>(i, new IntPtr(bytePtr), false);
 				}
 			}
 			
@@ -54,12 +72,40 @@ namespace MarshalPerfTest
 			
 			for(int i = 0; i < testIterations; i++)
 			{			
-				Marshal.Copy(new IntPtr(&intTestVar), testByteArray, 0, sizeof(long));
+				Marshal.Copy(new IntPtr(&intTestVar), testByteArray, 0, sizeof(int));
 			}
 			
 			marshalCopy.Stop();
 			
 			Console.WriteLine("Marshal Copy time: " + marshalCopy.ElapsedMilliseconds);
+			
+			GC.Collect();
+			
+			bitConverterWatch.Start();
+			
+			for(int i = 0; i < testIterations; i++)
+			{			
+				byte[] bytes = BitConverter.GetBytes(intTestVar);
+				
+				if(bytes[0] == 0)
+					continue;
+			}
+			
+			bitConverterWatch.Stop();
+			
+			Console.WriteLine("Bitconverter write test: " + bitConverterWatch.ElapsedMilliseconds);
+			
+			bitConverterWatch.Reset();
+			bitConverterWatch.Start();
+			
+			for(int i = 0; i < testIterations; i++)
+			{			
+				int val = BitConverter.ToInt32(testByteArray, 0);
+			}
+			
+			bitConverterWatch.Stop();
+			
+			Console.WriteLine("Bitconverter read test: " + bitConverterWatch.ElapsedMilliseconds);
 			
 			
 			Console.ReadKey();

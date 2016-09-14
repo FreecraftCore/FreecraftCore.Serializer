@@ -5,6 +5,7 @@ using System.Reflection;
 
 namespace FreecraftCore.Payload.Serializer
 {
+	//TODO: Switch to Bitconverter
 	/// <summary>
 	/// Contract for types that require unsafe byte[] reading and writing.
 	/// </summary>
