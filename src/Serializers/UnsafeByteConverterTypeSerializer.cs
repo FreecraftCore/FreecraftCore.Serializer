@@ -58,7 +58,8 @@ namespace FreecraftCore.Payload.Serializer
 			
 			generator.Emit(OpCodes.Call, intPtrCtor); //call the ctor for IntrPtr with the &t
 			
-			generator.Emit(OpCodes.Ldc_I4_S, (short)Marshal.SizeOf(typeof(TType))); //get the size of T (should work most cases)
+			//WARNING: Do not use Marshal.SizeOf. It will double the cost.
+			generator.Emit(OpCodes.Ldc_I4_S, (short)sizeof(TType)); //get the size of T (should work most cases)
 			generator.Emit(OpCodes.Newarr, typeof (byte));
 			generator.Emit(OpCodes.Stloc_1);
 			generator.Emit(OpCodes.Ldloc_0);

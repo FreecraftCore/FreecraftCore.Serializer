@@ -4,6 +4,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # SharpDevelop 5.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Payload.Serializer", "src\FreecraftCore.Payload.Serializer.csproj", "{6EA9356F-142A-4D62-A1F9-9E701EA26320}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarshalPerfTest", "tests\PerfTests\MarshalPerfTest\MarshalPerfTest.csproj", "{8C0F46F2-0136-4510-ACC9-D7A583ABDDD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,5 +16,9 @@ Global
 		{6EA9356F-142A-4D62-A1F9-9E701EA26320}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EA9356F-142A-4D62-A1F9-9E701EA26320}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EA9356F-142A-4D62-A1F9-9E701EA26320}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C0F46F2-0136-4510-ACC9-D7A583ABDDD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C0F46F2-0136-4510-ACC9-D7A583ABDDD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C0F46F2-0136-4510-ACC9-D7A583ABDDD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C0F46F2-0136-4510-ACC9-D7A583ABDDD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
