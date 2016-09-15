@@ -12,6 +12,7 @@ namespace MarshalPerfTest
 			Stopwatch strucToPointerWatchGeneric = new Stopwatch();
 			Stopwatch marshalCopy = new Stopwatch();
 			Stopwatch bitConverterWatch = new Stopwatch();
+			Stopwatch pointerMagicWatch = new Stopwatch();
 			
 			int intTestVar = 5;
 			byte[] testByteArray = new byte[sizeof(int)];
@@ -38,13 +39,13 @@ namespace MarshalPerfTest
 			strucToPointerWatch.Reset();
 			strucToPointerWatch.Start();
 			
-			for(int i = 0; i < testIterations; i++)
+			/*for(int i = 0; i < testIterations; i++)
 			{		
 				fixed(byte* bytePtr = &testByteArray[0])
 				{
 					int val = (int)Marshal.PtrToStructure(new IntPtr(bytePtr), typeof(int));
 				}
-			}
+			}*/
 			
 			strucToPointerWatch.Stop();
 			
@@ -107,6 +108,38 @@ namespace MarshalPerfTest
 			
 			Console.WriteLine("Bitconverter read test: " + bitConverterWatch.ElapsedMilliseconds);
 			
+			GC.Collect();
+			
+			pointerMagicWatch.Start();
+			
+			for(int i = 0; i < testIterations; i++)
+			{		
+				fixed(byte* bytePtr = &testByteArray[0])
+				{
+					*((int*)bytePtr) = intTestVar;
+				}
+			}
+			
+			pointerMagicWatch.Stop();
+			
+			Console.WriteLine("Pointer magic write: " + pointerMagicWatch.ElapsedMilliseconds);
+			
+			GC.Collect();
+			
+			pointerMagicWatch.Reset();
+			pointerMagicWatch.Start();
+			
+			for(int i = 0; i < testIterations; i++)
+			{			
+				fixed(byte* bytePtr = &testByteArray[0])
+				{
+					int value = *((int*)bytePtr);
+				}
+			}
+			
+			pointerMagicWatch.Stop();
+			
+			Console.WriteLine("Pointer magic read: " + pointerMagicWatch.ElapsedMilliseconds);
 			
 			Console.ReadKey();
 		}
