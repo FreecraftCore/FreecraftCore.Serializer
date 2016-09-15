@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FreecraftCore.Payload.Serializer.Serializers.KnownTypes
+namespace FreecraftCore.Payload.Serializer
 {
 	/// <summary>
 	/// Description of IntTypeSerializerStrategy.
