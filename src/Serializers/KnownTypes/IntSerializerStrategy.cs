@@ -5,7 +5,7 @@ namespace FreecraftCore.Payload.Serializer.Serializers.KnownTypes
 	/// <summary>
 	/// Description of IntTypeSerializerStrategy.
 	/// </summary>
-	public class IntTypeSerializerStrategy : SharedBufferTypeSerializer<int>
+	public class IntSerializerStrategy : SharedBufferTypeSerializer<int>
 	{
 		/// <summary>
         /// Perform the steps necessary to serialize the int.

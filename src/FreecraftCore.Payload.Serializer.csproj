@@ -60,7 +60,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializers\ITypeSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\ByteSerializerStrategy.cs" />
-    <Compile Include="Serializers\KnownTypes\IntTypeSerializerStrategy.cs" />
+    <Compile Include="Serializers\KnownTypes\IntSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\StringSerializerStrategy.cs" />
     <Compile Include="Serializers\SharedBufferTypeSerializer.cs" />
     <Compile Include="Stream\IWireMemberReaderStrategy.cs" />
