@@ -10,10 +10,10 @@ namespace FreecraftCore.Payload.Serializer
 	public class StringSerializerStrategy : ITypeSerializerStrategy<string>
 	{
 		/// <summary>
-        /// Perform the steps necessary to serialize the string.
-        /// </summary>
-        /// <param name="value">The string to be serialized.</param>
-        /// <param name="dest">The writer entity that is accumulating the output data.</param>
+		/// Perform the steps necessary to serialize the string.
+		/// </summary>
+		/// <param name="value">The string to be serialized.</param>
+		/// <param name="dest">The writer entity that is accumulating the output data.</param>
 		public void Write(string value, IWireMemberWriterStrategy dest)
 		{
 			//Review the source for Trinitycore's string reading for their ByteBuffer (payload/packet) Type.
@@ -31,10 +31,10 @@ namespace FreecraftCore.Payload.Serializer
 		}
 		
 		/// <summary>
-        /// Perform the steps necessary to deserialize a string.
-        /// </summary>
-        /// <param name="source">The reader providing the input data.</param>
-        /// <returns>A string value from the reader.</returns>
+		/// Perform the steps necessary to deserialize a string.
+		/// </summary>
+		/// <param name="source">The reader providing the input data.</param>
+		/// <returns>A string value from the reader.</returns>
 		public string Read(IWireMemberReaderStrategy source)
 		{
 			//Review the source for Trinitycore's string reading for their ByteBuffer (payload/packet) Type.

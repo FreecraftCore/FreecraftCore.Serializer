@@ -1,7 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-# SharpDevelop 5.1
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Payload.Serializer", "src\FreecraftCore.Payload.Serializer.csproj", "{6EA9356F-142A-4D62-A1F9-9E701EA26320}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarshalPerfTest", "tests\PerfTests\MarshalPerfTest\MarshalPerfTest.csproj", "{8C0F46F2-0136-4510-ACC9-D7A583ABDDD2}"

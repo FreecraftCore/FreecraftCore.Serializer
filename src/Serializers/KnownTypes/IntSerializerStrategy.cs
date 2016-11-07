@@ -8,10 +8,10 @@ namespace FreecraftCore.Payload.Serializer
 	public class IntSerializerStrategy : SharedBufferTypeSerializer<int>
 	{
 		/// <summary>
-        /// Perform the steps necessary to serialize the int.
-        /// </summary>
-        /// <param name="value">The int to be serialized.</param>
-        /// <param name="dest">The writer entity that is accumulating the output data.</param>
+		/// Perform the steps necessary to serialize the int.
+		/// </summary>
+		/// <param name="value">The int to be serialized.</param>
+		/// <param name="dest">The writer entity that is accumulating the output data.</param>
 		public unsafe override void Write(int value, IWireMemberWriterStrategy dest)
 		{
 			//Must lock to prevent issues with shared buffer.
@@ -28,10 +28,10 @@ namespace FreecraftCore.Payload.Serializer
 		}
 		
 		/// <summary>
-        /// Perform the steps necessary to deserialize a int.
-        /// </summary>
-        /// <param name="source">The reader providing the input data.</param>
-        /// <returns>A int value from the reader.</returns>
+		/// Perform the steps necessary to deserialize a int.
+		/// </summary>
+		/// <param name="source">The reader providing the input data.</param>
+		/// <returns>A int value from the reader.</returns>
 		public unsafe override int Read(IWireMemberReaderStrategy source)
 		{
 			//Read 4 bytes (int size)

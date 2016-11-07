@@ -59,7 +59,7 @@ namespace MarshalPerfTest
 			{		
 				fixed(byte* bytePtr = &testByteArray[0])
 				{
-					Marshal.StructureToPtr<int>(i, new IntPtr(bytePtr), false);
+					//Marshal.StructureToPtr<(i, new IntPtr(bytePtr), false);
 				}
 			}
 			

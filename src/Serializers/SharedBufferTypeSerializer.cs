@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace FreecraftCore.Payload.Serializer
 {
@@ -14,11 +15,17 @@ namespace FreecraftCore.Payload.Serializer
 		/// Syncronization object.
 		/// </summary>
 		protected object syncObj { get; } = new object();
-		
+
 		/// <summary>
 		/// Sharable byte buffer for 0 allocation serialization.
 		/// </summary>
-		protected byte[] sharedByteBuffer = new byte[sizeof(TType)];
+		protected byte[] sharedByteBuffer;
+
+		public SharedBufferTypeSerializer()
+		{
+			//Cant use sizeof
+			sharedByteBuffer = new byte[Marshal.SizeOf(typeof(TType))];
+		}
 		
 		public abstract void Write(TType value, IWireMemberWriterStrategy dest);
 	
