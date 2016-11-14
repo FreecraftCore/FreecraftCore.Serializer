@@ -68,7 +68,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializers\ITypeSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\ByteSerializerStrategy.cs" />
-    <Compile Include="Serializers\KnownTypes\IntSerializerStrategy - Copy.cs" />
+    <Compile Include="Serializers\KnownTypes\Int16SerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\IntSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\StringSerializerStrategy.cs" />
     <Compile Include="Serializers\SharedBufferTypeSerializer.cs" />
