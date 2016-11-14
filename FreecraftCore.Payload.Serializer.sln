@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Payload.Serializer", "src\FreecraftCore.Payload.Serializer.csproj", "{6EA9356F-142A-4D62-A1F9-9E701EA26320}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarshalPerfTest", "tests\PerfTests\MarshalPerfTest\MarshalPerfTest.csproj", "{8C0F46F2-0136-4510-ACC9-D7A583ABDDD2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2E903AB5-E882-49A7-A612-FCCB9F11D540}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Payload.Serializer.Tests", "FreecraftCore.Payload.Serializer.Tests\FreecraftCore.Payload.Serializer.Tests.csproj", "{71124C25-DB7D-453A-999F-0C10145B075D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,5 +25,16 @@ Global
 		{8C0F46F2-0136-4510-ACC9-D7A583ABDDD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C0F46F2-0136-4510-ACC9-D7A583ABDDD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C0F46F2-0136-4510-ACC9-D7A583ABDDD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71124C25-DB7D-453A-999F-0C10145B075D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71124C25-DB7D-453A-999F-0C10145B075D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71124C25-DB7D-453A-999F-0C10145B075D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71124C25-DB7D-453A-999F-0C10145B075D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8C0F46F2-0136-4510-ACC9-D7A583ABDDD2} = {2E903AB5-E882-49A7-A612-FCCB9F11D540}
+		{71124C25-DB7D-453A-999F-0C10145B075D} = {2E903AB5-E882-49A7-A612-FCCB9F11D540}
 	EndGlobalSection
 EndGlobal

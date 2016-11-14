@@ -41,6 +41,7 @@ namespace FreecraftCore.Payload.Serializer
 			//(ctr+f >> for std::string): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_source.html
 			//They use 0 byte to terminate the string in the stream
 			
+			//TODO: We can likely do some fancy pointer stuff to make this much cheaper.
 			//Read a byte from the stream; Stop when we find a 0
 			List<byte> stringBytes = new List<byte>();
 			
