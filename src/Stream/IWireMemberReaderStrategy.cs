@@ -8,10 +8,10 @@ namespace FreecraftCore.Payload.Serializer
 	/// </summary>
 	public interface IWireMemberReaderStrategy : IDisposable
 	{
-		/// <summary>
-		/// The <see cref="Stream"/> object the <see cref="IWireMemberWriterStrategy"/> is writing to.
+		/*/// <summary>
+		/// The <see cref="Stream"/> object the <see cref="IWireMemberReaderStrategy"/> is reading from.
 		/// </summary>
-		Stream ReaderStream { get; }
+		Stream ReaderStream { get; }*/
 		
 		/// <summary>
 		/// Reads a byte from the stream.
