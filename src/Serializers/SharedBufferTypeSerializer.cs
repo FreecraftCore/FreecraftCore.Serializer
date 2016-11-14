@@ -17,6 +17,11 @@ namespace FreecraftCore.Payload.Serializer
 		protected object syncObj { get; } = new object();
 
 		/// <summary>
+		/// Indicates the <see cref="TType"/> of the serializer.
+		/// </summary>
+		public Type SerializerType { get; } = typeof(TType);
+
+		/// <summary>
 		/// Sharable byte buffer for 0 allocation serialization.
 		/// </summary>
 		protected byte[] sharedByteBuffer;

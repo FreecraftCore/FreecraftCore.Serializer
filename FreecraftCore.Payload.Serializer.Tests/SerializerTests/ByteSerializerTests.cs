@@ -57,5 +57,25 @@ namespace FreecraftCore.Payload.Serializer.Tests
 			//assert
 			Assert.AreEqual(data, b);
 		}
+
+		/*[Test]
+		[TestCase(0,1,2,3)]
+		[TestCase(255,0,255,0)]
+		[TestCase(1,1,1,1)]
+		public void Test_Byte_Serializer_Writes_And_Reads_Same_ByteArray(params byte[] data)
+		{
+			//arrange
+			ByteSerializerStrategy strategy = new ByteSerializerStrategy();
+			TestStorageWriterMock writer = new TestStorageWriterMock();
+			TestStorageReaderMock reader = new TestStorageReaderMock(writer.WriterStream);
+
+			//act
+			strategy.Write(data, writer);
+			writer.WriterStream.Position = 0;
+			byte b = reader.ReadByte();
+
+			//assert
+			Assert.AreEqual(data, b);
+		}*/
 	}
 }

@@ -9,6 +9,11 @@ namespace FreecraftCore.Payload.Serializer
 	public interface ITypeSerializerStrategy<TType>
 	{
 		/// <summary>
+		/// Indicates the <see cref="TType"/> of the serializer.
+		/// </summary>
+		Type SerializerType { get; }
+
+		/// <summary>
 		/// Perform the steps necessary to serialize this data.
 		/// </summary>
 		/// <param name="value">The value to be serialized.</param>

@@ -8,6 +8,11 @@ namespace FreecraftCore.Payload.Serializer
 	public class ByteSerializerStrategy : ITypeSerializerStrategy<byte>
 	{
 		/// <summary>
+		/// Indicates the <see cref="TType"/> of the serializer.
+		/// </summary>
+		public Type SerializerType { get; } = typeof(byte);
+
+		/// <summary>
 		/// Perform the steps necessary to serialize the byte.
 		/// </summary>
 		/// <param name="value">The byte to be serialized.</param>

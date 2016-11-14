@@ -10,6 +10,11 @@ namespace FreecraftCore.Payload.Serializer
 	public class StringSerializerStrategy : ITypeSerializerStrategy<string>
 	{
 		/// <summary>
+		/// Indicates the <see cref="TType"/> of the serializer.
+		/// </summary>
+		public Type SerializerType { get; } = typeof(string);
+
+		/// <summary>
 		/// Perform the steps necessary to serialize the string.
 		/// </summary>
 		/// <param name="value">The string to be serialized.</param>
