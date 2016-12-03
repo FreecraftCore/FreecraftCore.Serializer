@@ -8,27 +8,27 @@ using System.Threading.Tasks;
 namespace FreecraftCore.Payload.Serializer.Tests
 {
 	[TestFixture]
-	public class IntSerializerTests
+	public class UInt16SerializerTests
 	{
 		[Test]
-		[TestCase(uint.MaxValue)]
-		[TestCase(uint.MinValue)]
-		[TestCase((uint)28532)]
-		public void Test_Int_Serializer_Doesnt_Throw_On_Serialize(uint data)
+		[TestCase(UInt16.MaxValue)]
+		[TestCase(UInt16.MinValue)]
+		[TestCase((ushort)28532)]
+		public void Test_Int16_Serializer_Doesnt_Throw_On_Serialize(UInt16 data)
 		{
-			UInt32SerializerStrategy strategy = new UInt32SerializerStrategy();
+			UInt16SerializerStrategy strategy = new UInt16SerializerStrategy();
 
 			Assert.DoesNotThrow(() => strategy.Write(data, new TestStorageWriterMock()));
 		}
 
 		[Test]
-		[TestCase(uint.MaxValue)]
-		[TestCase(uint.MinValue)]
-		[TestCase((uint)27532)]
-		public void Test_Int_Serializer_Writes_Ints_Into_WriterStream(uint data)
+		[TestCase(UInt16.MaxValue)]
+		[TestCase(UInt16.MinValue)]
+		[TestCase((ushort)27532)]
+		public void Test_Int16_Serializer_Writes_Int16s_Int16o_WriterStream(UInt16 data)
 		{
 			//arrange
-			UInt32SerializerStrategy strategy = new UInt32SerializerStrategy();
+			UInt16SerializerStrategy strategy = new UInt16SerializerStrategy();
 			TestStorageWriterMock writer = new TestStorageWriterMock();
 
 			//act
@@ -39,23 +39,23 @@ namespace FreecraftCore.Payload.Serializer.Tests
 		}
 
 		[Test]
-		[TestCase(uint.MaxValue)]
-		[TestCase(uint.MinValue)]
-		[TestCase((uint)253642)]
-		public void Test_Byte_Serializer_Writes_And_Reads_Same_Byte(uint data)
+		[TestCase(UInt16.MaxValue)]
+		[TestCase(UInt16.MinValue)]
+		[TestCase((ushort)500)]
+		public void Test_Byte_Serializer_Writes_And_Reads_Same_Byte(UInt16 data)
 		{
 			//arrange
-			UInt32SerializerStrategy strategy = new UInt32SerializerStrategy();
+			UInt16SerializerStrategy strategy = new UInt16SerializerStrategy();
 			TestStorageWriterMock writer = new TestStorageWriterMock();
 			TestStorageReaderMock reader = new TestStorageReaderMock(writer.WriterStream);
 
 			//act
 			strategy.Write(data, writer);
 			writer.WriterStream.Position = 0;
-			uint intvalue = strategy.Read(reader);
+			UInt16 Int16value = strategy.Read(reader);
 
 			//assert
-			Assert.AreEqual(data, intvalue);
+			Assert.AreEqual(data, Int16value);
 		}
 
 		/*[Test]

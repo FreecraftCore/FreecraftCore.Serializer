@@ -6,6 +6,7 @@ namespace FreecraftCore.Payload.Serializer
 	/// <summary>
 	/// UInt32 serializer.
 	/// </summary>
+	[KnownTypeSerializer]
 	public class UInt32SerializerStrategy : SharedBufferTypeSerializer<uint>
 	{
 		/// <summary>

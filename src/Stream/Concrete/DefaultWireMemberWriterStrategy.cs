@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FreecraftCore.Payload.Serializer.Tests
+namespace FreecraftCore.Payload.Serializer
 {
-	public class TestStorageWriterMock : IWireMemberWriterStrategy
+	public class DefaultWireMemberWriterStrategy : IWireMemberWriterStrategy
 	{
 		public bool isDisposed { get; private set; } = false;
 
-		public Stream WriterStream { get; } = new MemoryStream();
+		private MemoryStream WriterStream { get; } = new MemoryStream();
 
 		public void Dispose()
 		{
@@ -21,7 +21,7 @@ namespace FreecraftCore.Payload.Serializer.Tests
 
 		public byte[] GetBytes()
 		{
-			throw new NotImplementedException();
+			return WriterStream.ToArray();
 		}
 
 		public void Write(byte data)

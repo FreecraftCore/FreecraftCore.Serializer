@@ -24,5 +24,7 @@ namespace FreecraftCore.Payload.Serializer
 		/// </summary>
 		/// <param name="data"></param>
 		void Write(byte data);
+
+		byte[] GetBytes();
 	}
 }

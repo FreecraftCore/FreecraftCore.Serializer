@@ -5,6 +5,7 @@ namespace FreecraftCore.Payload.Serializer
 	/// <summary>
 	/// <see cref="ITypeSerializerStrategy"/> for Type <see cref="byte"/>.
 	/// </summary>
+	[KnownTypeSerializer]
 	public class ByteSerializerStrategy : ITypeSerializerStrategy<byte>
 	{
 		/// <summary>

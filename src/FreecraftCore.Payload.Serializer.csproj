@@ -50,6 +50,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Fasterflect, Version=2.1.3.0, Culture=neutral, PublicKeyToken=38d18473284c1ca7, processorArchitecture=MSIL">
+      <HintPath>..\packages\fasterflect.2.1.3\lib\net40\Fasterflect.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -63,19 +67,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\KnownTypeSerializerAttribute.cs" />
     <Compile Include="Attributes\PackedAttribute.cs" />
     <Compile Include="Attributes\WireMemberAttribute.cs" />
     <Compile Include="Attributes\WireMessage.cs" />
+    <Compile Include="ISerializationContractRegister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ISerializerService.cs" />
+    <Compile Include="SerializerService.cs" />
+    <Compile Include="Serializers\ComplexTypeSerializerStrategy.cs" />
     <Compile Include="Serializers\ITypeSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\ByteSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\UInt16SerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\UInt32SerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\StringSerializerStrategy.cs" />
     <Compile Include="Serializers\SharedBufferTypeSerializer.cs" />
+    <Compile Include="Stream\Concrete\DefaultWireMemberReaderStrategy.cs" />
+    <Compile Include="Stream\Concrete\DefaultWireMemberWriterStrategy.cs" />
     <Compile Include="Stream\IWireMemberReaderStrategy.cs" />
     <Compile Include="Stream\IWireMemberWriterStrategy.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

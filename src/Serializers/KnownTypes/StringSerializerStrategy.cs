@@ -7,6 +7,7 @@ namespace FreecraftCore.Payload.Serializer
 	/// <summary>
 	/// <see cref="ITypeSerializerStrategy"/> for Type <see cref="string"/>.
 	/// </summary>
+	[KnownTypeSerializer]
 	public class StringSerializerStrategy : ITypeSerializerStrategy<string>
 	{
 		/// <summary>

@@ -6,6 +6,7 @@ namespace FreecraftCore.Payload.Serializer
 	/// <summary>
 	/// Description of Int16TypeSerializerStrategy.
 	/// </summary>
+	[KnownTypeSerializer]
 	public class UInt16SerializerStrategy : SharedBufferTypeSerializer<UInt16>
 	{
 		/// <summary>

@@ -2,17 +2,20 @@
 
 namespace FreecraftCore.Payload.Serializer
 {
-	//This concept is based on JAM (Blizzard's messaging system/protocol and Protobuf-net's serializer strategies https://github.com/mgravell/protobuf-net/tree/master/protobuf-net/Serializers
-	/// <summary>
-	/// Contract for type that providing serialization strategy for the provided TType.
-	/// </summary>
-	public interface ITypeSerializerStrategy<TType>
+	public interface ITypeSerializerStrategy
 	{
 		/// <summary>
 		/// Indicates the <see cref="TType"/> of the serializer.
 		/// </summary>
 		Type SerializerType { get; }
+	}
 
+	//This concept is based on JAM (Blizzard's messaging system/protocol and Protobuf-net's serializer strategies https://github.com/mgravell/protobuf-net/tree/master/protobuf-net/Serializers
+	/// <summary>
+	/// Contract for type that providing serialization strategy for the provided TType.
+	/// </summary>
+	public interface ITypeSerializerStrategy<TType> : ITypeSerializerStrategy
+	{
 		/// <summary>
 		/// Perform the steps necessary to serialize this data.
 		/// </summary>
