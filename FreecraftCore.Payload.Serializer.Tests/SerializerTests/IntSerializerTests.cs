@@ -11,24 +11,24 @@ namespace FreecraftCore.Payload.Serializer.Tests
 	public class IntSerializerTests
 	{
 		[Test]
-		[TestCase(int.MaxValue)]
-		[TestCase(int.MinValue)]
-		[TestCase(28532)]
-		public void Test_Int_Serializer_Doesnt_Throw_On_Serialize(int data)
+		[TestCase(uint.MaxValue)]
+		[TestCase(uint.MinValue)]
+		[TestCase((uint)28532)]
+		public void Test_Int_Serializer_Doesnt_Throw_On_Serialize(uint data)
 		{
-			IntSerializerStrategy strategy = new IntSerializerStrategy();
+			UInt32SerializerStrategy strategy = new UInt32SerializerStrategy();
 
 			Assert.DoesNotThrow(() => strategy.Write(data, new TestStorageWriterMock()));
 		}
 
 		[Test]
-		[TestCase(int.MaxValue)]
-		[TestCase(int.MinValue)]
-		[TestCase(27532)]
-		public void Test_Int_Serializer_Writes_Ints_Into_WriterStream(int data)
+		[TestCase(uint.MaxValue)]
+		[TestCase(uint.MinValue)]
+		[TestCase((uint)27532)]
+		public void Test_Int_Serializer_Writes_Ints_Into_WriterStream(uint data)
 		{
 			//arrange
-			IntSerializerStrategy strategy = new IntSerializerStrategy();
+			UInt32SerializerStrategy strategy = new UInt32SerializerStrategy();
 			TestStorageWriterMock writer = new TestStorageWriterMock();
 
 			//act
@@ -39,20 +39,20 @@ namespace FreecraftCore.Payload.Serializer.Tests
 		}
 
 		[Test]
-		[TestCase(int.MaxValue)]
-		[TestCase(int.MinValue)]
-		[TestCase(253642)]
-		public void Test_Byte_Serializer_Writes_And_Reads_Same_Byte(int data)
+		[TestCase(uint.MaxValue)]
+		[TestCase(uint.MinValue)]
+		[TestCase((uint)253642)]
+		public void Test_Byte_Serializer_Writes_And_Reads_Same_Byte(uint data)
 		{
 			//arrange
-			IntSerializerStrategy strategy = new IntSerializerStrategy();
+			UInt32SerializerStrategy strategy = new UInt32SerializerStrategy();
 			TestStorageWriterMock writer = new TestStorageWriterMock();
 			TestStorageReaderMock reader = new TestStorageReaderMock(writer.WriterStream);
 
 			//act
 			strategy.Write(data, writer);
 			writer.WriterStream.Position = 0;
-			int intvalue = strategy.Read(reader);
+			uint intvalue = strategy.Read(reader);
 
 			//assert
 			Assert.AreEqual(data, intvalue);
