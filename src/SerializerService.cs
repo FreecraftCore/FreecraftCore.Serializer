@@ -58,6 +58,10 @@ namespace FreecraftCore.Payload.Serializer
 
 		public bool isTypeRegistered(Type type)
 		{
+			//if not built we don't know any type
+			if (serializerMap == null)
+				return false;
+
 			return serializerMap.ContainsKey(type);
 		}
 
@@ -65,7 +69,7 @@ namespace FreecraftCore.Payload.Serializer
 		{
 			//To register a type we must traverse the object graph and work our way up
 			//This will cause hangs if there is a circular reference
-			foreach (Type t in typeToRegister.MembersWith<WireMemberAttribute>(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyVisibility))
+			foreach (Type t in typeToRegister.MembersWith<WireMemberAttribute>(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyVisibility).Select(mi => mi.Type()))
 			{
 				bool isContainedTypeKnown = false;
 
