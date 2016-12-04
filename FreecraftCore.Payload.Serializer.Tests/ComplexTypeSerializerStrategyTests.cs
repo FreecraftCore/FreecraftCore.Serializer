@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,13 +11,23 @@ namespace FreecraftCore.Payload.Serializer.Tests
 	[TestFixture]
 	public static class ComplexTypeSerializerStrategyTests
 	{
-		public static IEnumerable<ITypeSerializerStrategy> serializers = new List<ITypeSerializerStrategy>() { new ByteSerializerStrategy(), new UInt32SerializerStrategy(), new UInt16SerializerStrategy() };
+		public static Dictionary<Type, ITypeSerializerStrategy> serializers = new Dictionary<Type, ITypeSerializerStrategy>()
+		{
+			{typeof(byte), new ByteSerializerStrategy() },
+			{typeof(int), new UInt32SerializerStrategy() },
+			{typeof(ushort), new UInt16SerializerStrategy() }
+		};
+
+		public static ISerializerDecoratorService CreateDecoratorService()
+		{
+			return new DefaultSerializerDecoratorService(new DefaultComplexTypeRegistry(new Dictionary<Type, ITypeSerializerStrategy>()), new SerializerFactory(new ReadOnlyDictionary<Type, ITypeSerializerStrategy>(serializers)));
+		}
 
 		[Test]
 		public static void Test_Ctor_Doesnt_Throw()
 		{
 			//arrange
-			ISerializerFactory factory = new SerializerFactory(serializers, new DefaultSerializerDecoratorService());
+			ISerializerFactory factory = new SerializerFactory(new ReadOnlyDictionary<Type, ITypeSerializerStrategy>(serializers));
 
 			//assert
 			Assert.DoesNotThrow(() => new ComplexTypeSerializerStrategy<TestTypeClass>(factory));
@@ -26,7 +37,7 @@ namespace FreecraftCore.Payload.Serializer.Tests
 		public static void Test_Complex_Type_Has_Correct_Type_Prop()
 		{
 			//arrange
-			ISerializerFactory factory = new SerializerFactory(serializers, new DefaultSerializerDecoratorService());
+			ISerializerFactory factory = new SerializerFactory(new ReadOnlyDictionary<Type, ITypeSerializerStrategy>(serializers));
 			ComplexTypeSerializerStrategy<TestTypeClass> serializer = new ComplexTypeSerializerStrategy<TestTypeClass>(factory);
 
 			//act
@@ -40,55 +51,23 @@ namespace FreecraftCore.Payload.Serializer.Tests
 		public static void Test_Complex_Type_Writes_Non_Null_Bytes()
 		{
 			//arrange
-			byte[] result = GetBytes(5042, 230);
-
-			//assert
-			Assert.NotNull(result);
-			Assert.IsNotEmpty(result);
-		}
-
-		private static byte[] GetBytes(uint a, byte b)
-		{
-			//arrange
-			ISerializerFactory factory = new SerializerFactory(serializers, new DefaultSerializerDecoratorService());
-			ComplexTypeSerializerStrategy<TestTypeClass> serializer = new ComplexTypeSerializerStrategy<TestTypeClass>(factory);
+			SerializerService service = new SerializerService();
+			service.RegisterType<TestTypeClass>();
+			service.Compile();
 
 			//act
-			using (var writer = new DefaultWireMemberWriterStrategy())
-			{
-				serializer.Write(new TestTypeClass(a, b), writer);
-
-				return writer.GetBytes();
-			}
-		}
-
-		[Test]
-		public static void Test_Complex_Type_Reads_Bytes_It_Serializes()
-		{
-			//arrange
-			ISerializerFactory factory = new SerializerFactory(serializers, new DefaultSerializerDecoratorService());
-			ComplexTypeSerializerStrategy<TestTypeClass> serializer = new ComplexTypeSerializerStrategy<TestTypeClass>(factory);
-			byte[] bytes = GetBytes(5024, 203);
-			TestTypeClass result = null;
-
-			//act
-			using (var reader = new DefaultWireMemberReaderStrategy(bytes))
-			{
-				result = serializer.Read(reader);
-			}
+			TestTypeClass instance = service.Deserialize<TestTypeClass>(service.Serialize(new TestTypeClass(500, 230)));
 
 			//assert
-			Assert.NotNull(result);
-			Assert.AreEqual(result.a, 5024);
-			Assert.AreEqual(result.b, 203);
-			Assert.AreEqual(result.c, 203 + 5024);
+			Assert.NotNull(instance);
+			Assert.AreEqual(instance.a, 500);
+			Assert.AreEqual(instance.b, 230);
 		}
 
 		[Test]
 		public static void Test_Complex_Type_Serialization_With_Array()
 		{
 			//arrange
-			ISerializerFactory factory = new SerializerFactory(serializers, new DefaultSerializerDecoratorService());
 			SerializerService service = new SerializerService();
 			service.RegisterType<TestArrayClass>();
 			service.Compile();
@@ -107,7 +86,6 @@ namespace FreecraftCore.Payload.Serializer.Tests
 		public static void Test_Complex_Type_Serialization_With_Array_Of_Known_Size()
 		{
 			//arrange
-			ISerializerFactory factory = new SerializerFactory(serializers, new DefaultSerializerDecoratorService());
 			SerializerService service = new SerializerService();
 			service.RegisterType<TestArrayClassKnownSize>();
 			service.Compile();
@@ -126,7 +104,6 @@ namespace FreecraftCore.Payload.Serializer.Tests
 		public static void Test_Complex_Type_Serialization_With_Array_Of_Complex_Types_Of_Known_Size()
 		{
 			//arrange
-			ISerializerFactory factory = new SerializerFactory(serializers, new DefaultSerializerDecoratorService());
 			SerializerService service = new SerializerService();
 			service.RegisterType<TestArrayOfComplexTypes>();
 			service.Compile();
@@ -147,7 +124,6 @@ namespace FreecraftCore.Payload.Serializer.Tests
 		public static void Test_Complex_Type_Serialization_With_Array_Of_Enum()
 		{
 			//arrange
-			ISerializerFactory factory = new SerializerFactory(serializers, new DefaultSerializerDecoratorService());
 			SerializerService service = new SerializerService();
 			service.RegisterType<TestArrayClassEnum>();
 			service.Compile();

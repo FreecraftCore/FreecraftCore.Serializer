@@ -10,15 +10,15 @@ namespace FreecraftCore.Payload.Serializer
 	{
 		public IEnumerable<Attribute> MemberAttributes { get; }
 
-		public IEnumerable<ITypeSerializerStrategy> KnownSerializers { get; }
+		public IReadOnlyDictionary<Type, ITypeSerializerStrategy> KnownSerializers { get; }
 
-		public SerializerDecorationContext(IEnumerable<Attribute> attributes, IEnumerable<ITypeSerializerStrategy> known)
+		public SerializerDecorationContext(IEnumerable<Attribute> attributes, IReadOnlyDictionary<Type, ITypeSerializerStrategy> known)
 		{
 			if (attributes == null)
 				throw new ArgumentNullException(nameof(attributes), $"Provided collection of meta-data attributes '{nameof(attributes)}' is null.");
 
 			if (known == null)
-				throw new ArgumentNullException(nameof(known), $"Provided collection of known {nameof(ITypeSerializerStrategy)} is null.");
+				throw new ArgumentNullException(nameof(known), $"Provided {nameof(IReadOnlyDictionary<Type, ITypeSerializerStrategy>)} is null.");
 
 			MemberAttributes = attributes;
 			KnownSerializers = known;

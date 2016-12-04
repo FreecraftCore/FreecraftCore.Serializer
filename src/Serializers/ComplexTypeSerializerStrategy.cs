@@ -44,15 +44,7 @@ namespace FreecraftCore.Payload.Serializer
 			if (serializerFactory == null)
 				throw new ArgumentNullException(nameof(serializerFactory), $"Provided service {nameof(ISerializerFactory)} was null.");
 
-			/*orderedMemberInfos = typeof(TComplexType).MembersWith<WireMemberAttribute>(System.Reflection.MemberTypes.Field | System.Reflection.MemberTypes.Property, Flags.InstanceAnyVisibility)
-				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder).ToArray()
-				.Select(x =>
-				{
-					ITypeSerializerStrategy strategy = knownTypeSerializers.First(s => x.Type().IsEnum ? s.SerializerType == x.Type().GetEnumUnderlyingType() : s.SerializerType == x.Type());
-					return new MemberAndSerializerPair(x, !x.Type().IsEnum ? strategy : typeof(EnumSerializerDecorator<,>).MakeGenericType(x.Type(), strategy.SerializerType).CreateInstance(strategy) as ITypeSerializerStrategy);
-				});*/
-
-			orderedMemberInfos = typeof(TComplexType).MembersWith<WireMemberAttribute>(System.Reflection.MemberTypes.Field | System.Reflection.MemberTypes.Property, Flags.InstanceAnyVisibility)
+			orderedMemberInfos = typeof(TComplexType).MembersWith<WireMemberAttribute>(System.Reflection.MemberTypes.Field | System.Reflection.MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
 				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder).ToArray()
 				.Select(x => new MemberAndSerializerPair(x, serializerFactory.Create(x.Type())));
 
@@ -80,10 +72,21 @@ namespace FreecraftCore.Payload.Serializer
 		{
 			foreach(MemberAndSerializerPair serializerInfo in orderedMemberInfos)
 			{
-				if (serializerInfo.MemberInformation.MemberType == MemberTypes.Property)
-					serializerInfo.TypeSerializer.CallMethod(nameof(Write), value.GetPropertyValue(serializerInfo.MemberInformation.Name), dest);
-				else //it's a field
-					serializerInfo.TypeSerializer.CallMethod(nameof(Write), value.GetFieldValue(serializerInfo.MemberInformation.Name), dest);
+				//TODO: Check how TC handles optionals or nulls.
+				//Do we write nothing? Do we write 0?
+				object memberValue = value.TryGetValue(serializerInfo.MemberInformation.Name);
+
+				if (value == null || memberValue == null)
+					continue;
+
+				try
+				{
+					serializerInfo.TypeSerializer.CallMethod(nameof(Write), memberValue, dest);
+				}
+				catch (NullReferenceException e)
+				{
+					throw new InvalidOperationException($"Serializer failed to find serializer for member name: {serializerInfo.MemberInformation.Name} and type: {serializerInfo.MemberInformation.Type()}.", e);
+				}
 			}
 		}
 	}

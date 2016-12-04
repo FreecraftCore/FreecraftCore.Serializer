@@ -22,8 +22,9 @@ namespace FreecraftCore.Payload.Serializer
 			if (bytes == null)
 				throw new ArgumentNullException(nameof(bytes), $"Provided argument {nameof(bytes)} must not be null.");
 
-			if (bytes.Length == 0)
-				throw new ArgumentException($"Provided argument {nameof(bytes)} must not be null.", nameof(bytes));
+			//Empty classes can produce empty byte buffers
+			/*if (bytes.Length == 0)
+				throw new ArgumentException($"Provided argument {nameof(bytes)} must not be null.", nameof(bytes));*/
 
 			ReaderStream = new MemoryStream(bytes);
 		}

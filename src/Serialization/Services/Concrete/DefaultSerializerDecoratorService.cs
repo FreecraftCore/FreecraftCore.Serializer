@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,9 +17,27 @@ namespace FreecraftCore.Payload.Serializer
 			Array = 1,
 			List = 2, //not handled yet
 			IEnumerable = 3, //not handled yet
-			Enum = 4
+			Enum = 4,
+			Subtypeable = 5
 		}
 
+		/// <summary>
+		/// Service that can register type contracts for serialization.
+		/// </summary>
+		private ISerializationContractRegister contractRegistry { get; }
+
+		private ISerializerFactory serializerFactoryService { get; }
+
+		public DefaultSerializerDecoratorService(ISerializationContractRegister registry, ISerializerFactory serializerFactory)
+		{
+			if (registry == null)
+				throw new ArgumentNullException(nameof(registry), $"Provided {nameof(ISerializationContractRegister)} was null.");
+
+			contractRegistry = registry;
+			serializerFactoryService = serializerFactory;
+		}
+
+		//TODO: Remove for enum check
 		public bool RequiresDecorating(Type t)
 		{
 			//TODO: Make the rules cleaner
@@ -31,8 +50,13 @@ namespace FreecraftCore.Payload.Serializer
 			if (typeof(IEnumerable).IsAssignableFrom(t)) //handles non-array collection detection
 				return true;
 
+			if (t.GetCustomAttributes<WireMessageBaseTypeAttribute>(false).Count() != 0)
+				return true;
+
 			return false;
 		}
+
+
 
 		public ITypeSerializerStrategy TryProduceDecoratedSerializer(Type typeBeingSerialized, SerializerDecorationContext context)
 		{
@@ -45,7 +69,7 @@ namespace FreecraftCore.Payload.Serializer
 				case DecorationRequired.Enum:
 					//create an Enum decorator and provide the base type serializer to the decorator
 					return typeof(EnumSerializerDecorator<,>).MakeGenericType(typeBeingSerialized, typeBeingSerialized.GetEnumUnderlyingType())
-						.CreateInstance(context.KnownSerializers.First(x => x.SerializerType == typeBeingSerialized.GetEnumUnderlyingType()) as ITypeSerializerStrategy) as ITypeSerializerStrategy; 
+						.CreateInstance(context.KnownSerializers.FirstOrDefault(x => x.Value.SerializerType == typeBeingSerialized.GetEnumUnderlyingType()).Value as ITypeSerializerStrategy) as ITypeSerializerStrategy; 
 				case DecorationRequired.Array:
 					Type elementType = typeBeingSerialized.GetElementType();
 					ITypeSerializerStrategy serializer = null;
@@ -57,7 +81,7 @@ namespace FreecraftCore.Payload.Serializer
 						serializer = this.TryProduceDecoratedSerializer(elementType, new SerializerDecorationContext(Enumerable.Empty<Attribute>(), context.KnownSerializers));
 					}
 					else
-						serializer = context.KnownSerializers.First(x => x.SerializerType == elementType);
+						serializer = context.KnownSerializers.First(x => x.Value.SerializerType == elementType).Value;
 
 					//TODO: Cleanup
 					//In Trinitycore some arrays aren't serialized with their length. They are fixed length. We must provide that functionality with the decorator.
@@ -75,6 +99,23 @@ namespace FreecraftCore.Payload.Serializer
 							.CreateInstance(serializer, 0) as ITypeSerializerStrategy;
 					}
 
+				case DecorationRequired.Subtypeable:
+					//First all children must be registered. Their object graphs may contain members that are complex
+					IEnumerable<WireMessageBaseTypeAttribute> subtypeAttributes = typeBeingSerialized.GetCustomAttributes<WireMessageBaseTypeAttribute>(false);
+
+					foreach (Type childType in subtypeAttributes.Select(x => x.ChildType))
+					{
+						//Call generic registry
+						contractRegistry.CallMethod(new Type[] { childType }, "RegisterType"); //todo: replace reflection
+					}
+
+					//At this point all children are registered. A SubComplexTypeDecorator would be able to gather and map the serializers
+					ITypeSerializerStrategy generatedSerializer = typeof(SubComplexTypeSerializerDecorator<>).MakeGenericType(typeBeingSerialized).CreateInstance(serializerFactoryService) as ITypeSerializerStrategy;
+
+					if (generatedSerializer == null)
+						throw new InvalidOperationException($"Failed to generate decorated serializer for Type: {typeBeingSerialized}.");
+
+					return generatedSerializer;
 				default:
 					throw new NotImplementedException($"Advanced serialization for type unavailable.");
 			}
@@ -93,6 +134,10 @@ namespace FreecraftCore.Payload.Serializer
 			if (t.IsArray)
 				return DecorationRequired.Array;
 
+			//If the type has been marked with basetype metadata then it has children types that could be deserialized to
+			if (t.GetCustomAttributes<WireMessageBaseTypeAttribute>(false).Count() != 0)
+				return DecorationRequired.Subtypeable;
+
 			throw new NotImplementedException($"The serializer doesn't yet implement {typeof(List<>)} serialization or {typeof(IEnumerable<>)} serialization.");
 		}
 
@@ -110,6 +155,10 @@ namespace FreecraftCore.Payload.Serializer
 							return new List<Type>() { t.GetElementType() };
 						else
 							return Enumerable.Empty<Type>();
+					case DecorationRequired.Enum:
+						return Enumerable.Empty<Type>(); //need register nothing when enum
+					case DecorationRequired.Subtypeable:
+						return Enumerable.Empty<Type>(); //we need to register object graph for subtype but that should be handled during registering the object. Not here
 					default:
 						throw new NotImplementedException("Only array registeration is enabled.");
 				}
