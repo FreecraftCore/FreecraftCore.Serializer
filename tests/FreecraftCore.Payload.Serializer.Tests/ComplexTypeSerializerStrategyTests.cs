@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FreecraftCore.Serializer;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
