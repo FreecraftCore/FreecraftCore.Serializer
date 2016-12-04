@@ -19,10 +19,20 @@ namespace FreecraftCore.Payload.Serializer
 		bool RequiresDecorating(Type t);
 
 		/// <summary>
+		/// Parses the provided <see cref="Type"/> and if it's a decoratable type it provides the proper Type that
+		/// would require registering.
+		/// </summary>
+		/// <param name="t"></param>
+		/// <returns></returns>
+		IEnumerable<Type> GrabTypesThatRequiresRegister(Type t);
+
+
+		/// <summary>
 		/// Attempts to produce a decorated serializer for the provided <see cref="Type"/>.
 		/// </summary>
 		/// <param name="typeBeingSerialized">Type that is being serialized.</param>
+		/// <param name="context">The context.</param>
 		/// <returns>A decorated serializer or null if none could be created.</returns>
-		ITypeSerializerStrategy TryProduceDecoratedSerializer(Type typeBeingSerialized);
+		ITypeSerializerStrategy TryProduceDecoratedSerializer(Type typeBeingSerialized, SerializerDecorationContext context);
 	}
 }

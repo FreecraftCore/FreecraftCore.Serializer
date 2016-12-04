@@ -20,6 +20,10 @@ namespace FreecraftCore.Payload.Serializer
 		/// </summary>
 		private IReadOnlyDictionary<Type, ITypeSerializerStrategy> serializerMap { get; set; }
 
+		private ISerializerFactory serializationFactoryService { get; }
+
+		private ISerializerDecoratorService decorationService { get; }
+
 		// roslyn automatically implemented properties, in particular for get-only properties: <{Name}>k__BackingField;
 		//var backingFieldName = $"<{property.Name}>k__BackingField";
 
@@ -34,6 +38,11 @@ namespace FreecraftCore.Payload.Serializer
 				.Where(t => t.GetCustomAttribute<KnownTypeSerializerAttribute>() != null)
 				.Select(t => Activator.CreateInstance(t) as ITypeSerializerStrategy)
 				.ToList();
+
+
+			decorationService = new DefaultSerializerDecoratorService();
+			//init the factory service with a ref to known serializers (will grow)
+			serializationFactoryService = new SerializerFactory(knownTypeSerializers, decorationService);
 		}
 
 		public TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>(byte[] data)
@@ -82,14 +91,31 @@ namespace FreecraftCore.Payload.Serializer
 						break;
 				}
 
+				//TODO: Cleanup
 				if (!isContainedTypeKnown)
 				{
-					//TODO: Error handling
-					//if the type isn't known then recursively register it
-					bool result = (bool)this.CallMethod(new Type[] { t }, nameof(RegisterType));
+					//If the type is special then we need to conver it to the collection of types we need to know about
+					if (decorationService.RequiresDecorating(t))
+					{
+						foreach(Type innerType in decorationService.GrabTypesThatRequiresRegister(t))
+						{
+							//TODO: Error handling
+							//if the type isn't known then recursively register it
+							bool result = (bool)this.CallMethod(new Type[] { innerType }, nameof(RegisterType));
 
-					if (!result)
-						throw new InvalidOperationException($"Failed to register contained type {t.FullName} contained within Type: {typeToRegister}");
+							if (!result)
+								throw new InvalidOperationException($"Failed to register contained type {innerType.FullName} contained within Type: {typeToRegister}");
+						}
+					}
+					else
+					{
+						//TODO: Error handling
+						//if the type isn't known then recursively register it
+						bool result = (bool)this.CallMethod(new Type[] { t }, nameof(RegisterType));
+
+						if (!result)
+							throw new InvalidOperationException($"Failed to register contained type {t.FullName} contained within Type: {typeToRegister}");
+					}
 				}
 			}
 
@@ -105,7 +131,7 @@ namespace FreecraftCore.Payload.Serializer
 			if (EnsureTypesInGraphAreKnown(typeof(TTypeToRegister)))
 			{
 				//add the complex type serializer
-				ComplexTypeSerializerStrategy<TTypeToRegister> serializer = new ComplexTypeSerializerStrategy<TTypeToRegister>(knownTypeSerializers);
+				ComplexTypeSerializerStrategy<TTypeToRegister> serializer = new ComplexTypeSerializerStrategy<TTypeToRegister>(serializationFactoryService);
 
 				//Add it to the list of known serializers
 				knownTypeSerializers.Add(serializer);

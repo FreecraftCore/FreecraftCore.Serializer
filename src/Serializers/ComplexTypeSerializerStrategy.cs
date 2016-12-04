@@ -8,9 +8,14 @@ using System.Reflection;
 
 namespace FreecraftCore.Payload.Serializer
 {
+	/// <summary>
+	/// Represents a complex type definition that combines multiple knowntypes or other complex types.
+	/// </summary>
+	/// <typeparam name="TComplexType"></typeparam>
 	public class ComplexTypeSerializerStrategy<TComplexType> : ITypeSerializerStrategy<TComplexType>
 		where TComplexType : new() //in .Net 4.0 > this is ok to do. Won't cause poor preformance
 	{
+		//TODO: Move/Refactor this
 		public class MemberAndSerializerPair
 		{
 			public MemberInfo MemberInformation { get; }
@@ -34,15 +39,22 @@ namespace FreecraftCore.Payload.Serializer
 		/// </summary>
 		IEnumerable<MemberAndSerializerPair> orderedMemberInfos { get; }
 
-		public ComplexTypeSerializerStrategy(IEnumerable<ITypeSerializerStrategy> knownTypeSerializers)
+		public ComplexTypeSerializerStrategy(ISerializerFactory serializerFactory)
 		{
-			orderedMemberInfos = typeof(TComplexType).MembersWith<WireMemberAttribute>(System.Reflection.MemberTypes.Field | System.Reflection.MemberTypes.Property, Flags.InstanceAnyVisibility)
+			if (serializerFactory == null)
+				throw new ArgumentNullException(nameof(serializerFactory), $"Provided service {nameof(ISerializerFactory)} was null.");
+
+			/*orderedMemberInfos = typeof(TComplexType).MembersWith<WireMemberAttribute>(System.Reflection.MemberTypes.Field | System.Reflection.MemberTypes.Property, Flags.InstanceAnyVisibility)
 				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder).ToArray()
 				.Select(x =>
 				{
 					ITypeSerializerStrategy strategy = knownTypeSerializers.First(s => x.Type().IsEnum ? s.SerializerType == x.Type().GetEnumUnderlyingType() : s.SerializerType == x.Type());
 					return new MemberAndSerializerPair(x, !x.Type().IsEnum ? strategy : typeof(EnumSerializerDecorator<,>).MakeGenericType(x.Type(), strategy.SerializerType).CreateInstance(strategy) as ITypeSerializerStrategy);
-				});
+				});*/
+
+			orderedMemberInfos = typeof(TComplexType).MembersWith<WireMemberAttribute>(System.Reflection.MemberTypes.Field | System.Reflection.MemberTypes.Property, Flags.InstanceAnyVisibility)
+				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder).ToArray()
+				.Select(x => new MemberAndSerializerPair(x, serializerFactory.Create(x.Type())));
 
 			//TODO: pre-warm fasterflect for this type
 		}
