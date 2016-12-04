@@ -90,6 +90,7 @@
     <Compile Include="Serializers\ITypeSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\ByteSerializerStrategy.cs" />
     <Compile Include="Serializers\Decorators\EnumSerializerDecorator.cs" />
+    <Compile Include="Serializers\KnownTypes\FloatSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\Int16SerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\UInt16SerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\Int32SerializerStrategy.cs" />
