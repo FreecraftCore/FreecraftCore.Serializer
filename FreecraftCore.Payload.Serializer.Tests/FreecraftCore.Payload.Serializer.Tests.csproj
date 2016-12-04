@@ -58,6 +58,7 @@
     <Compile Include="SerializerServiceTests.cs" />
     <Compile Include="SerializerTests\FloatSerializerTests.cs" />
     <Compile Include="SerializerTests\UInt16SerializerTests.cs" />
+    <Compile Include="SerializerTests\UInt64SerializerTests.cs" />
     <Compile Include="SerializerTests\UIntSerializerTests.cs" />
     <Compile Include="SerializerTests\ByteSerializerTests.cs" />
     <Compile Include="SerializerTests\TestStorageReaderMock.cs" />

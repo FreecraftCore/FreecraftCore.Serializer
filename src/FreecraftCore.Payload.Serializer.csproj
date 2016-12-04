@@ -91,6 +91,7 @@
     <Compile Include="Serializers\KnownTypes\BoolSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\ByteSerializerStrategy.cs" />
     <Compile Include="Serializers\Decorators\EnumSerializerDecorator.cs" />
+    <Compile Include="Serializers\KnownTypes\DoubleSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\FloatSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\UInt64SerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\Int64SerializerStrategy.cs" />
