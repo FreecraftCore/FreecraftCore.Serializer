@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\KnownTypeSerializerAttribute.cs" />
+    <Compile Include="Attributes\KnownSizeAttribute.cs" />
     <Compile Include="Attributes\PackedAttribute.cs" />
     <Compile Include="Attributes\WireMemberAttribute.cs" />
     <Compile Include="Attributes\WireMessage.cs" />
@@ -78,7 +79,10 @@
     <Compile Include="Serializers\ComplexTypeSerializerStrategy.cs" />
     <Compile Include="Serializers\ITypeSerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\ByteSerializerStrategy.cs" />
+    <Compile Include="Serializers\KnownTypes\EnumSerializerDecorator.cs" />
+    <Compile Include="Serializers\KnownTypes\Int16SerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\UInt16SerializerStrategy.cs" />
+    <Compile Include="Serializers\KnownTypes\Int32SerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\UInt32SerializerStrategy.cs" />
     <Compile Include="Serializers\KnownTypes\StringSerializerStrategy.cs" />
     <Compile Include="Serializers\SharedBufferTypeSerializer.cs" />

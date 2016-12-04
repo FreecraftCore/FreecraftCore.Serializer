@@ -78,6 +78,12 @@ namespace FreecraftCore.Payload.Serializer.Tests
 			Assert.AreEqual(result.c, 203 + 5024);
 		}
 
+		public enum TestEnum : byte
+		{
+			None = 0,
+			Test = 1
+		}
+
 		[WireMessage]
 		public class TestTypeClass
 		{
@@ -89,6 +95,9 @@ namespace FreecraftCore.Payload.Serializer.Tests
 
 			[WireMember(3)]
 			public UInt16 c { get; private set; }
+
+			[WireMember(4)]
+			public TestEnum enumTest;
 
 			public TestTypeClass(uint aVal, byte bVal)
 			{

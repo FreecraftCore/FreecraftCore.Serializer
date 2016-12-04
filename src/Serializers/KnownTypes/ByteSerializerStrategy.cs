@@ -23,7 +23,7 @@ namespace FreecraftCore.Payload.Serializer
 			//Similar to read, this is simple; just write a byte
 			dest.Write(value);
 		}
-		
+
 		/// <summary>
 		/// Perform the steps necessary to deserialize a byte.
 		/// </summary>

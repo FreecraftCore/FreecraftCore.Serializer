@@ -4,10 +4,10 @@ namespace FreecraftCore.Payload.Serializer
 {
 	//This is the same as C++/Trinitycore's int32
 	/// <summary>
-	/// UInt32 serializer.
+	/// Int32 serializer.
 	/// </summary>
 	[KnownTypeSerializer]
-	public class UInt32SerializerStrategy : SharedBufferTypeSerializer<uint>
+	public class Int32SerializerStrategy : SharedBufferTypeSerializer<uint>
 	{
 		/// <summary>
 		/// Perform the steps necessary to serialize the int.

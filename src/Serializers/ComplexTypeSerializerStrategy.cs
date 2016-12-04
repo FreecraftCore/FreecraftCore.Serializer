@@ -38,7 +38,11 @@ namespace FreecraftCore.Payload.Serializer
 		{
 			orderedMemberInfos = typeof(TComplexType).MembersWith<WireMemberAttribute>(System.Reflection.MemberTypes.Field | System.Reflection.MemberTypes.Property, Flags.InstanceAnyVisibility)
 				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder).ToArray()
-				.Select(x => new MemberAndSerializerPair(x, knownTypeSerializers.First(s => s.SerializerType == x.Type()))); //assume a serializer is known for all types in the object graph
+				.Select(x =>
+				{
+					ITypeSerializerStrategy strategy = knownTypeSerializers.First(s => x.Type().IsEnum ? s.SerializerType == x.Type().GetEnumUnderlyingType() : s.SerializerType == x.Type());
+					return new MemberAndSerializerPair(x, !x.Type().IsEnum ? strategy : typeof(EnumSerializerDecorator<,>).MakeGenericType(x.Type(), strategy.SerializerType).CreateInstance(strategy) as ITypeSerializerStrategy);
+				});
 
 			//TODO: pre-warm fasterflect for this type
 		}
