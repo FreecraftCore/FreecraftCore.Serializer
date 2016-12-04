@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarshalPerfTest", "tests\Pe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2E903AB5-E882-49A7-A612-FCCB9F11D540}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Payload.Serializer.Tests", "FreecraftCore.Payload.Serializer.Tests\FreecraftCore.Payload.Serializer.Tests.csproj", "{71124C25-DB7D-453A-999F-0C10145B075D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Payload.Serializer.Tests", "tests\FreecraftCore.Payload.Serializer.Tests\FreecraftCore.Payload.Serializer.Tests.csproj", "{71124C25-DB7D-453A-999F-0C10145B075D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

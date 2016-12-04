@@ -69,7 +69,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\FreecraftCore.Payload.Serializer.csproj">
+    <ProjectReference Include="..\..\src\FreecraftCore.Payload.Serializer.csproj">
       <Project>{6ea9356f-142a-4d62-a1f9-9e701ea26320}</Project>
       <Name>FreecraftCore.Payload.Serializer</Name>
     </ProjectReference>
