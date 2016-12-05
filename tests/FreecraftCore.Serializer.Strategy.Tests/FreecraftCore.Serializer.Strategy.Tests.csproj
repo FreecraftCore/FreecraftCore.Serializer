@@ -7,9 +7,9 @@
     <ProjectGuid>{71124C25-DB7D-453A-999F-0C10145B075D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FreecraftCore.Payload.Serializer.Tests</RootNamespace>
-    <AssemblyName>FreecraftCore.Payload.Serializer.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <RootNamespace>FreecraftCore.Serializer.Strategy.Tests</RootNamespace>
+    <AssemblyName>FreecraftCore.Serializer.Strategy.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>

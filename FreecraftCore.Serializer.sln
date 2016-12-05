@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Serializer.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Serializer.Metadata.Internal", "src\FreecraftCore.Serializer.Metadata.Internal\FreecraftCore.Serializer.Metadata.Internal.csproj", "{9EE23ED7-0B53-4643-8412-14A873FCC10F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Serializer.Strategy.Tests", "tests\FreecraftCore.Payload.Serializer.Tests\FreecraftCore.Serializer.Strategy.Tests.csproj", "{71124C25-DB7D-453A-999F-0C10145B075D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Serializer.Strategy.Tests", "tests\FreecraftCore.Serializer.Strategy.Tests\FreecraftCore.Serializer.Strategy.Tests.csproj", "{71124C25-DB7D-453A-999F-0C10145B075D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
