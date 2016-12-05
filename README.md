@@ -38,6 +38,9 @@ class ChildType : BaseType { [WireMember(1] int b; }
 
 //This serializer doesn't support multiple level serialization (it could but the WoW protocol doesn't lend itself to the idea)
 //So marking members in a base type for serialization and then members in a childtype will yield unknown behavior
+
+//On top of this sub-wire messages are NOT supported. You can subtype seriaizable types that are in fields or props but
+//subtyping wiremessage types yields unknown behavior. The serializer won't know how to read it.
 ```
 
 ## Builds
