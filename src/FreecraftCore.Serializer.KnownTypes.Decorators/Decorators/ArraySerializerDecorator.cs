@@ -19,7 +19,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		public Type SerializerType { get { return typeof(TObjectType); } }
 
 		//TODO: Make it so that reuse of serializer for this basetype is possible. Context requirement needs to be handled better.
-		public virtual SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
+		public virtual SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
 		private ITypeSerializerStrategy<TObjectType> decoratedSerializer { get; }
 

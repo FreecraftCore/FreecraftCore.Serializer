@@ -49,13 +49,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if(context.HasMemberAttribute<KnownSizeAttribute>())
 			{
 				//If we know about the size then we should create a knownsize array decorator
-				return typeof(FixedSizeArraySerializerDecorator<>).MakeGenericType(context.TargetType)
-					.CreateInstance(serializerProviderService, context.GetMemberAttribute<KnownSizeAttribute>().KnownSize) as ITypeSerializerStrategy;
+				return typeof(FixedSizeArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType())
+					.CreateInstance(serializerProviderService, (byte)context.GetMemberAttribute<KnownSizeAttribute>().KnownSize) as ITypeSerializerStrategy;
 			}
 			else
 			{
 				//If we know about the size then we should create a knownsize array decorator
-				return typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType)
+				return typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType())
 					.CreateInstance(serializerProviderService) as ITypeSerializerStrategy;
 			}
 		}

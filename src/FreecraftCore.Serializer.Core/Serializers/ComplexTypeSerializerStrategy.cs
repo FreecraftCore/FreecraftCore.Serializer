@@ -65,7 +65,7 @@ namespace FreecraftCore.Serializer
 
 			orderedMemberInfos = typeof(TComplexType).MembersWith<WireMemberAttribute>(System.Reflection.MemberTypes.Field | System.Reflection.MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
 				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder)
-				.Select(x => new MemberAndSerializerPair(x, serializerProvider.Get(x.Type())))
+				.Select(x => new MemberAndSerializerPair(x, serializerProvider.Get(x.Attribute<WireMemberAttribute>().MemberOrder, x.Type())))
 				.ToArray(); //for cache
 
 			//TODO: pre-warm fasterflect for this type
