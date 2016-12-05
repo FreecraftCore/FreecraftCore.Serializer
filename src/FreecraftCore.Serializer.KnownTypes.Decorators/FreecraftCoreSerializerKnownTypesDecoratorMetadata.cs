@@ -7,11 +7,17 @@ using System.Threading.Tasks;
 
 namespace FreecraftCore.Serializer.API
 {
+#if MONO
+	public static class FreecraftCoreSerializerKnownTypesDecoratorMetadata
+#else
 	internal static class FreecraftCoreSerializerKnownTypesDecoratorMetadata
+#endif
 	{
-		/// <summary>
-		/// Provides the assembly for the decorator library.
-		/// </summary>
+#if MONO
+		public static Assembly Assembly { get; } = typeof(FreecraftCoreSerializerKnownTypesDecoratorMetadata).Assembly;
+#else
 		internal static Assembly Assembly { get; } = typeof(FreecraftCoreSerializerKnownTypesDecoratorMetadata).Assembly;
+#endif
+
 	}
 }
