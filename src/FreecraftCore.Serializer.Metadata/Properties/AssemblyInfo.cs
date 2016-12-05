@@ -15,6 +15,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 [assembly: InternalsVisibleTo("FreecraftCore.Serializer.KnownTypes.Primitives", AllInternalsVisible = true)]
 [assembly: InternalsVisibleTo("FreecraftCore.Payload.Serializer", AllInternalsVisible = true)]
+[assembly: InternalsVisibleTo("FreecraftCore.Serializer.Tests", AllInternalsVisible = true)]
+[assembly: InternalsVisibleTo("FreecraftCore.Serializer.Strategy.Tests", AllInternalsVisible = true)]
+
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
