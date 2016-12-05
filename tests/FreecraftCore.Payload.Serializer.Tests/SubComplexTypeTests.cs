@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FreecraftCore.Payload.Serializer
 {
-	[TestFixture]
+	/*[TestFixture]
 	public class SubComplexTypeTests 
 	{
 		[Test]
@@ -53,5 +53,5 @@ namespace FreecraftCore.Payload.Serializer
 
 			}
 		}
-	}
+	}*/
 }

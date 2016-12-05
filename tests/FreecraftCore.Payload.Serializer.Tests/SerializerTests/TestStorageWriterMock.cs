@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FreecraftCore.Payload.Serializer.Tests
+namespace FreecraftCore.Serializer.Tests
 {
 	public class TestStorageWriterMock : IWireMemberWriterStrategy
 	{

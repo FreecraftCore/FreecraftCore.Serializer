@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FreecraftCore.Serializer.KnownTypes;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FreecraftCore.Payload.Serializer.Tests
+namespace FreecraftCore.Serializer.Tests
 {
 	[TestFixture]
 	public class FloatSerializerTests
