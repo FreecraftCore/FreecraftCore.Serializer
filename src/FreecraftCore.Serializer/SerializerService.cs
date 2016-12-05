@@ -70,7 +70,13 @@ namespace FreecraftCore.Serializer
 		public TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>(byte[] data) 
 			where TTypeToDeserializeTo : new()
 		{
-			throw new NotImplementedException();
+			if (!serializerProvider.HasSerializerFor<TTypeToDeserializeTo>())
+				throw new InvalidOperationException($"Serializer cannot deserialize to Type: {typeof(TTypeToDeserializeTo).FullName} because it's not registered.");
+
+			if (!isCompiled)
+				throw new InvalidOperationException($"You cannot deserialize before compiling the serializer.");
+
+			return serializerProvider.Get<TTypeToDeserializeTo>().Read(new DefaultWireMemberReaderStrategy(data));
 		}
 
 		/// <summary>
@@ -104,7 +110,18 @@ namespace FreecraftCore.Serializer
 		public byte[] Serialize<TTypeToSerialize>(TTypeToSerialize data) 
 			where TTypeToSerialize : new()
 		{
-			throw new NotImplementedException();
+			if (!serializerProvider.HasSerializerFor<TTypeToSerialize>())
+				throw new InvalidOperationException($"Serializer cannot serialize Type: {typeof(TTypeToSerialize).FullName} because it's not registered.");
+
+			if (!isCompiled)
+				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
+
+			using (DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy())
+			{
+				serializerProvider.Get<TTypeToSerialize>().Write(data, new DefaultWireMemberWriterStrategy());
+
+				return writer.GetBytes();
+			}
 		}
 
 		//Called as the fallback factory.
