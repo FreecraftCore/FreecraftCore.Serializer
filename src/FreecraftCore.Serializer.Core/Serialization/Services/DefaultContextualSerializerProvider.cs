@@ -27,6 +27,7 @@ namespace FreecraftCore.Serializer
 				throw new ArgumentNullException(nameof(contextualSerializers), $"Provided argument {nameof(contextualSerializers)} was null.");
 
 			contextualSerializerCollection = contextualSerializers;
+			generalSerializerProviderService = generalSerializerProvider;
 		}
 
 		/// <summary>

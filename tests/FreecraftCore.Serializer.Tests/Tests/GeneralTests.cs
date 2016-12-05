@@ -88,6 +88,17 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.True(service.isTypeRegistered(typeof(TestClassMarked)));
 		}
 
+		[Test]
+		public static void Test_Serializer_Can_Register_WireType_With_Nested_Complex_Type_Empty()
+		{
+			//arrange
+			SerializerService service = new SerializerService();
+
+			//act
+			Assert.DoesNotThrow(() => service.RegisterType<TestClassMarkedWithComplexMember>());
+			Assert.True(service.isTypeRegistered<TestClassMarkedWithComplexMember>());
+		}
+
 		public class TestClassUnmarked
 		{
 			public TestClassUnmarked()
@@ -101,6 +112,18 @@ namespace FreecraftCore.Serializer.Tests
 		public class TestClassMarked
 		{
 			public TestClassMarked()
+			{
+
+			}
+		}
+
+		[WireMessage]
+		public class TestClassMarkedWithComplexMember
+		{
+			[WireMember(1)]
+			public TestClassUnmarked unmarkedClass;
+
+			public TestClassMarkedWithComplexMember()
 			{
 
 			}

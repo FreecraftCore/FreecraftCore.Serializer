@@ -50,8 +50,12 @@ namespace FreecraftCore.Serializer
 				.Where(t => t.HasAttribute<DecoratorHandlerAttribute>())
 				.Select(t => t.CreateInstance(serializerProvider) as DectoratorHandler), serializerProvider);
 
+			//Subscribe to unknown type broadcasts
+			complexTypeFactoryService.OnFoundUnknownAssociatedType += ctx => ((ISerializerStrategyFactory)this).Create(ctx);
+			decoratorFactoryService.OnFoundUnknownAssociatedType += ctx => ((ISerializerStrategyFactory)this).Create(ctx);
+
 			//TODO: Cleanup. Error handling
-			foreach(Type t in FreecraftCoreSerializerKnownTypesPrimitivesMetadata.Assembly.GetTypes().Where(t => t.HasAttribute<KnownTypeSerializerAttribute>()))
+			foreach (Type t in FreecraftCoreSerializerKnownTypesPrimitivesMetadata.Assembly.GetTypes().Where(t => t.HasAttribute<KnownTypeSerializerAttribute>()))
 			{
 				ITypeSerializerStrategy strategy = t.CreateInstance() as ITypeSerializerStrategy;
 				knownMappedSerializers.Add(strategy.SerializerType, strategy);
