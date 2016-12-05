@@ -56,6 +56,10 @@
       <Project>{B35A46CF-3219-4242-A292-6B0EF828065E}</Project>
       <Name>FreecraftCore.Serializer.API</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj">
+      <Project>{6CE55491-B1E3-4C11-BFFB-203E41563CB5}</Project>
+      <Name>FreecraftCore.Serializer.Metadata</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj">
       <Project>{88be65a4-df8b-419c-b126-fea737ef9676}</Project>
       <Name>FreecraftCore.Serializer</Name>

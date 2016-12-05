@@ -85,6 +85,7 @@ namespace FreecraftCore.Serializer.Tests
 
 			//act
 			Assert.DoesNotThrow(() => service.RegisterType<TestClassMarked>());
+			Assert.True(service.isTypeRegistered(typeof(TestClassMarked)));
 		}
 
 		public class TestClassUnmarked

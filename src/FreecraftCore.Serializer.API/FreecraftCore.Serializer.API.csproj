@@ -45,6 +45,7 @@
     <Compile Include="Decorators\ISerializerDecoraterHandler.cs" />
     <Compile Include="Extensions\ISerializableTypeContextExtensions.cs" />
     <Compile Include="Extensions\IGeneralSerializerProviderExtensions.cs" />
+    <Compile Include="Extensions\ISerializationContractRegisterExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\ISerializableTypeContext.cs" />
     <Compile Include="Serializers\ITypeSerializerStrategy.cs" />
