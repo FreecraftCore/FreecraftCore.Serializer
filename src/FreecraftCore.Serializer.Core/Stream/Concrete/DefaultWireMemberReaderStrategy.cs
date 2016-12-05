@@ -48,7 +48,7 @@ namespace FreecraftCore.Serializer
 
 		public byte[] ReadBytes(int count)
 		{
-			byte[] bytes = new byte[ReaderStream.Length];
+			byte[] bytes = new byte[count];
 
 			ReaderStream.Read(bytes, 0, count);
 
