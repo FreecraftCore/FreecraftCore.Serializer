@@ -118,7 +118,7 @@ namespace FreecraftCore.Serializer
 
 			using (DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy())
 			{
-				serializerProvider.Get<TTypeToSerialize>().Write(data, new DefaultWireMemberWriterStrategy());
+				serializerProvider.Get<TTypeToSerialize>().Write(data, writer);
 
 				return writer.GetBytes();
 			}

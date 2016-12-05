@@ -56,21 +56,34 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.True(serializer.isTypeRegistered<VeryComplexType>());
 		}
 
-		/*[Test]
+		[Test]
 		public static void Test_Can_Serializer_Then_Deserialize_Most_Complex_Test_Possible()
 		{
 			//arrange
 			SerializerService serializer = new SerializerService();
+			TestEnum[] arrayOne = new TestEnum[] { TestEnum.One, TestEnum.One };
+			TestEnum[] arrayTwo = new TestEnum[3] { TestEnum.One, TestEnum.One, TestEnum.Two };
+			BasicWireMessage wireMessageNested = new BasicWireMessage(8);
 
 			//act
 			serializer.RegisterType<VeryComplexType>();
 			serializer.Compile();
 
-			VeryComplexType message = serializer.Deserialize<VeryComplexType>(serializer.Serialize(new VeryComplexType(5)));
+			byte[] bytes = serializer.Serialize(new VeryComplexType(6, wireMessageNested, arrayOne, arrayTwo));
+			Assert.NotNull(bytes);
+			Assert.NotZero(bytes.Length);
+			VeryComplexType message = serializer.Deserialize<VeryComplexType>(bytes);
 
 			//assert
 			Assert.NotNull(message);
-		}*/
+
+			//check fields
+			for (int i = 0; i < arrayOne.Length; i++)
+				Assert.AreEqual(arrayOne[i], message.testEnums[i], $"Failed for index {i}.");
+
+			for (int i = 0; i < arrayTwo.Length; i++)
+				Assert.AreEqual(arrayTwo[i], message.testEnumsAnother[i], $"Failed for index {i}.");
+		}
 
 		[WireMessage]
 		public class EmptyWireMessage

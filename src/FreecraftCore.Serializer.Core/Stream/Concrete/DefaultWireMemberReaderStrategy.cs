@@ -43,7 +43,12 @@ namespace FreecraftCore.Serializer
 		public byte ReadByte()
 		{
 			//would be -1 if it's invalid
-			return (byte)ReaderStream.ReadByte();
+			int b = ReaderStream.ReadByte();
+
+			if (b == -1)
+				throw new InvalidOperationException("Failed to read a desired byte from the stream.");
+
+			return (byte)b;
 		}
 
 		public byte[] ReadBytes(int count)

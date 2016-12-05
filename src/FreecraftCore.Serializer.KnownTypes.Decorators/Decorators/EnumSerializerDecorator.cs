@@ -12,7 +12,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// <typeparam name="TEnumType">The type of the Enum.</typeparam>
 	/// <typeparam name="TBaseType">The basetype of the Enum.</typeparam>
 	public class EnumSerializerDecorator<TEnumType, TBaseType> : ITypeSerializerStrategy<TEnumType>
-		where TEnumType : struct, IConvertible
+		where TEnumType : struct
 	{
 		public Type SerializerType { get { return typeof(TEnumType); } }
 
@@ -46,7 +46,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <returns>The updated / replacement value.</returns>
 		public TEnumType Read(IWireMemberReaderStrategy source)
 		{
-			return (TEnumType)Enum.ToObject(typeof(TEnumType), serializerStrategy.Read(source));
+			return (TEnumType)Enum.ToObject(typeof(TEnumType), (TBaseType)serializerStrategy.Read(source));
 		}
 
 		/// <summary>
