@@ -1,0 +1,1 @@
+xbuild ./FreecraftCore.Serializer.sln /p:DebugSymbols=False
