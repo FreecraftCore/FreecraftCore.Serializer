@@ -18,7 +18,7 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// The serializer provider service.
 		/// </summary>
-		ISerializerProvider serializerProvider { get; }
+		IGeneralSerializerProvider serializerProvider { get; }
 
 		/// <summary>
 		/// Dictionary of known <see cref="Type"/>s and their corresponding <see cref="ITypeSerializerStrategy"/>s.
@@ -28,21 +28,21 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Service responsible for handling complex types.
 		/// </summary>
-		IComplexTypeRegistry complexTypeRegisteryService { get; }
+		IComplexSerializerFactory complexTypeRegisteryService { get; }
 
 		/// <summary>
 		/// Service responsible for handling decoratable semi-complex types.
 		/// </summary>
-		ISerializerDecoratorService decoratorRegistryService { get; }
+		IDecoratedSerializerFactory decoratorRegistryService { get; }
 
 		public SerializerService()
 		{
 			//We don't inject anything because we want end-users of the serializer to be able to easily instantiate an instance
 			//of this service
 			knownMappedSerializers = new Dictionary<Type, ITypeSerializerStrategy>();
-			serializerProvider = new DefaultSerializerProvider(new ReadOnlyDictionary<Type, ITypeSerializerStrategy>(knownMappedSerializers));
+			serializerProvider = new DefaultGeneralSerializerProvider(new ReadOnlyDictionary<Type, ITypeSerializerStrategy>(knownMappedSerializers));
 
-			complexTypeRegisteryService = new DefaultComplexTypeRegistry(serializerProvider);
+			complexTypeRegisteryService = new DefaultComplexSerializerFactory(serializerProvider);
 			//TODO: Register all primitives
 			//TODO: Gather all decorator handlers
 		}
@@ -76,11 +76,14 @@ namespace FreecraftCore.Serializer
 				throw new InvalidOperationException($"Do not register any type that isn't marked with {nameof(WireMessageAttribute)}.");
 
 			//At this point this is a class marked with [WireMessage] so we should assume and treat it as a complex type
-			ITypeSerializerStrategy serializer = complexTypeRegisteryService.RegisterType<TTypeToRegister>();
+			ITypeSerializerStrategy<TTypeToRegister> serializer = complexTypeRegisteryService.RegisterType<TTypeToRegister>();
 
 			//Only register contextless serializers (call complex types should be contextless)
 			if (serializer.ContextRequirement == SerializationContextRequirement.Contextless)
 				knownMappedSerializers.Add(typeof(TTypeToRegister), serializer);
+
+			//Return the serializer
+			return serializer;
 		}
 
 		public byte[] Serialize<TTypeToSerialize>(TTypeToSerialize data) 

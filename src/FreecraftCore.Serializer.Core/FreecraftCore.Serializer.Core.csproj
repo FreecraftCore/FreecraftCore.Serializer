@@ -45,11 +45,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serialization\Services\Concrete\DefaultComplexTypeRegistry.cs" />
-    <Compile Include="Serialization\Services\Concrete\DefaultSerializeProvider.cs" />
-    <Compile Include="Serialization\Services\Concrete\DefaultSerializerDecoratorService.cs" />
-    <Compile Include="Serialization\Services\Concrete\SerializerService.cs" />
-    <Compile Include="Serialization\Services\SerializerDecorationContext.cs" />
+    <Compile Include="Serialization\Services\DefaultContextualSerializerProvider.cs" />
+    <Compile Include="Serialization\TypeBasedSerializationContext.cs" />
+    <Compile Include="Serialization\Services\DefaultComplexSerializerFactory.cs" />
+    <Compile Include="Serialization\Services\DefaultGeneralSerializerProvider.cs" />
+    <Compile Include="Serialization\Services\PrimitiveSerializerDecoratorService.cs" />
+    <Compile Include="Serialization\MemberInfoBasedSerializationContext.cs" />
     <Compile Include="Serializers\ComplexTypeSerializerStrategy.cs" />
     <Compile Include="Stream\Concrete\DefaultWireMemberReaderStrategy.cs" />
     <Compile Include="Stream\Concrete\DefaultWireMemberWriterStrategy.cs" />

@@ -16,12 +16,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <summary>
 		/// Serializer factory service.
 		/// </summary>
-		private ISerializerProvider serializerProviderService { get; }
+		private IGeneralSerializerProvider serializerProviderService { get; }
 
-		public EnumSerializerDecoratorHandler(ISerializerProvider serializerProvider)
+		public EnumSerializerDecoratorHandler(IGeneralSerializerProvider serializerProvider)
 		{
 			if (serializerProvider == null)
-				throw new ArgumentNullException(nameof(serializerProvider), $"Provided service {nameof(ISerializerProvider)} was null.");
+				throw new ArgumentNullException(nameof(serializerProvider), $"Provided service {nameof(IGeneralSerializerProvider)} was null.");
 
 			serializerProviderService = serializerProvider;
 		}

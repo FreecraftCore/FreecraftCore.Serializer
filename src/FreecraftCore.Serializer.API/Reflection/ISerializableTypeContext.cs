@@ -18,10 +18,16 @@ namespace FreecraftCore.Serializer
 		SerializationContextRequirement ContextRequirement { get; }
 
 		/// <summary>
-		/// The <see cref="FreecraftCore"/> attribute metadata associated with the type.
+		/// The <see cref="FreecraftCore"/> attribute metadata associated with the member (if any).
 		/// (If the context isn't unique then the Metadata is for the <see cref="Type"/> and not from a <see cref="MemberInfo"/>)
 		/// </summary>
-		IEnumerable<Attribute> Metadata { get; }
+		IEnumerable<Attribute> MemberMetadata { get; }
+
+		/// <summary>
+		/// The <see cref="FreecraftCore"/> attribute metadata associated with the <see cref="Type"/>
+		/// (Not all types have interesting metadata)
+		/// </summary>
+		IEnumerable<Attribute> TypeMetadata { get; }
 
 		/// <summary>
 		/// Represents the type.

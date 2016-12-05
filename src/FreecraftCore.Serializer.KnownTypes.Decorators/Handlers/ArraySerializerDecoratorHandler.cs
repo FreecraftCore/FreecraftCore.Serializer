@@ -16,12 +16,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <summary>
 		/// Serializer factory service.
 		/// </summary>
-		private ISerializerProvider serializerProviderService { get; }
+		private IGeneralSerializerProvider serializerProviderService { get; }
 
-		public ArraySerializerDecoratorHandler(ISerializerProvider serializerProvider)
+		public ArraySerializerDecoratorHandler(IGeneralSerializerProvider serializerProvider)
 		{
 			if (serializerProvider == null)
-				throw new ArgumentNullException(nameof(serializerProvider), $"Provided service {nameof(ISerializerProvider)} was null.");
+				throw new ArgumentNullException(nameof(serializerProvider), $"Provided service {nameof(IGeneralSerializerProvider)} was null.");
 
 			serializerProviderService = serializerProvider;
 		}
@@ -44,11 +44,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//error handling in base
 
 			//TODO: Handle contextless requests. The future may require a single array serializer for all unknown sizes.
-			if(context.HasAttribute<KnownSizeAttribute>())
+			if(context.HasMemberAttribute<KnownSizeAttribute>())
 			{
 				//If we know about the size then we should create a knownsize array decorator
 				return typeof(FixedSizeArraySerializerDecorator<>).MakeGenericType(context.TargetType)
-					.CreateInstance(serializerProviderService, context.GetAttribute<KnownSizeAttribute>().KnownSize) as ITypeSerializerStrategy;
+					.CreateInstance(serializerProviderService, context.GetMemberAttribute<KnownSizeAttribute>().KnownSize) as ITypeSerializerStrategy;
 			}
 			else
 			{

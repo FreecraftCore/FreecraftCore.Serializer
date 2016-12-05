@@ -10,7 +10,7 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Service that provides <see cref="ITypeSerializerStrategy"/>s.
 	/// </summary>
-	public interface ISerializerProvider
+	public interface IGeneralSerializerProvider
 	{
 		/// <summary>
 		/// Provides a <see cref="ITypeSerializerStrategy"/> for the <see cref="Type"/>.
@@ -20,7 +20,7 @@ namespace FreecraftCore.Serializer
 		ITypeSerializerStrategy Get(Type type);
 
 		/// <summary>
-		/// Indicates if the <see cref="ISerializerProvider"/> has a <see cref="ITypeSerializerStrategy"/> for
+		/// Indicates if the <see cref="IGeneralSerializerProvider"/> has a <see cref="ITypeSerializerStrategy"/> for
 		/// the provided <see cref="Type"/>.
 		/// </summary>
 		/// <param name="type">Type to lookup a <see cref="ITypeSerializerStrategy"/> for.</param>

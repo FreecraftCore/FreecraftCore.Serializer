@@ -19,7 +19,7 @@ namespace FreecraftCore.Payload.Serializer.Tests
 			{typeof(ushort), new UInt16SerializerStrategy() }
 		};
 
-		public static ISerializerDecoratorService CreateDecoratorService()
+		public static IDecoratedSerializerFactory CreateDecoratorService()
 		{
 			return new DefaultSerializerDecoratorService(new DefaultComplexTypeRegistry(new Dictionary<Type, ITypeSerializerStrategy>()), new SerializerFactory(new ReadOnlyDictionary<Type, ITypeSerializerStrategy>(serializers)));
 		}

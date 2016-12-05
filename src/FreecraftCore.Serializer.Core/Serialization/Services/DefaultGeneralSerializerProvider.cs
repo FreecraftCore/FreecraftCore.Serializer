@@ -8,16 +8,16 @@ using Fasterflect;
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
-	/// Factory service that produces serializers.
+	/// Provider service that provides contextless serializers.
 	/// </summary>
-	public class DefaultSerializerProvider : ISerializerProvider
+	public class DefaultGeneralSerializerProvider : IGeneralSerializerProvider
 	{
 		/// <summary>
 		/// Known serializers that the factory can produce.
 		/// </summary>
 		IReadOnlyDictionary<Type, ITypeSerializerStrategy> knownSerializableTypeSerializers { get; }
 
-		public DefaultSerializerProvider(IReadOnlyDictionary<Type, ITypeSerializerStrategy> knownTypes)
+		public DefaultGeneralSerializerProvider(IReadOnlyDictionary<Type, ITypeSerializerStrategy> knownTypes)
 		{
 			if (knownTypes == null)
 				throw new ArgumentNullException(nameof(knownTypes), $"Provided collection of known types {nameof(knownTypes)} must be non-null.");
@@ -36,7 +36,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <summary>
-		/// Indicates if the <see cref="ISerializerProvider"/> has a <see cref="ITypeSerializerStrategy"/> for
+		/// Indicates if the <see cref="IGeneralSerializerProvider"/> has a <see cref="ITypeSerializerStrategy"/> for
 		/// the provided <see cref="Type"/>.
 		/// </summary>
 		/// <param name="type">Type to lookup a <see cref="ITypeSerializerStrategy"/> for.</param>

@@ -50,6 +50,28 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FreecraftCore.Serializer.API\FreecraftCore.Serializer.API.csproj">
+      <Project>{b35a46cf-3219-4242-a292-6b0ef828065e}</Project>
+      <Name>FreecraftCore.Serializer.API</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FreecraftCore.Serializer.Core\FreecraftCore.Serializer.Core.csproj">
+      <Project>{8109c080-dfac-412c-9411-a73d287a4e40}</Project>
+      <Name>FreecraftCore.Serializer.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FreecraftCore.Serializer.KnownTypes.Decorators\FreecraftCore.Serializer.KnownTypes.Decorators.csproj">
+      <Project>{13315d16-64e6-4656-a9fc-a2198b9e3940}</Project>
+      <Name>FreecraftCore.Serializer.KnownTypes.Decorators</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FreecraftCore.Serializer.KnownTypes.Primitives\FreecraftCore.Serializer.KnownTypes.Primitives.csproj">
+      <Project>{d09f66ad-53b5-4774-97f2-3dcf52eb4d43}</Project>
+      <Name>FreecraftCore.Serializer.KnownTypes.Primitives</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj">
+      <Project>{6ce55491-b1e3-4c11-bffb-203e41563cb5}</Project>
+      <Name>FreecraftCore.Serializer.Metadata</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -12,10 +12,10 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Service that builds decorators around serializers for semi-complex types.
 	/// </summary>
-	public class DefaultSerializerDecoratorService : ISerializerDecoratorService
+	public class PrimitiveSerializerDecoratorService : IDecoratedSerializerFactory
 	{
 		/// <summary>
-		/// Decorator handlers.
+		/// Decorator handlers for primitives.
 		/// </summary>
 		private IEnumerable<DectoratorHandler> decoratorHandlers { get; }
 
@@ -24,8 +24,16 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		public event FoundUnknownAssociatedType OnFoundUnknownAssociatedType;
 
-		public DefaultSerializerDecoratorService(IEnumerable<DectoratorHandler> handlers)
+		/// <summary>
+		/// General serializer provider service.
+		/// </summary>
+		IGeneralSerializerProvider generalSerializerProviderService { get; }
+
+		public PrimitiveSerializerDecoratorService(IEnumerable<DectoratorHandler> handlers, IGeneralSerializerProvider generalSerializerProvider)
 		{
+			if (generalSerializerProvider == null)
+				throw new ArgumentNullException(nameof(generalSerializerProvider), $"Provided {nameof(IGeneralSerializerProvider)} service was null.");
+
 			if (handlers == null)
 				throw new ArgumentNullException(nameof(handlers), $"Provided {nameof(DectoratorHandler)}s were null. Must be a non-null collection.");
 
@@ -53,19 +61,21 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="context">The context.</param>
 		/// <returns>A decorated serializer or null if none could be created.</returns>
-		public ITypeSerializerStrategy GenerateDecoratedSerializer(ISerializableTypeContext context)
+		public ITypeSerializerStrategy Create(ISerializableTypeContext context)
 		{
 			ISerializerStrategyFactory factory = null;
 
-			foreach(DectoratorHandler handler in decoratorHandlers)
+			foreach (DectoratorHandler handler in decoratorHandlers)
 			{
-				if(handler.CanHandle(context))
+				if (handler.CanHandle(context))
 				{
 					//If it can handle then we should register the associated types
-					foreach(Type t in handler.GetAssociatedRegisterableTypes(context))
+					foreach (Type t in handler.GetAssociatedRegisterableTypes(context))
 					{
-						//Broadcast that we found an associated type
-						OnFoundUnknownAssociatedType?.Invoke(t);
+						//Broadcast that we found an associated type if it's not known
+						//Because we only know the Type there will be no context and we need a TypeContext
+						if(!generalSerializerProviderService.HasSerializerFor(t))
+							OnFoundUnknownAssociatedType?.Invoke(new TypeBasedSerializationContext(t));
 					}
 				}
 			}

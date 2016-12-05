@@ -20,7 +20,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		//TODO: Right now context doesn't do much. Make it so we can share serializers.
 		public override SerializationContextRequirement ContextRequirement { get { return SerializationContextRequirement.RequiresContext; } }
 
-		public FixedSizeArraySerializerDecorator(ISerializerProvider serializerProvider, byte arraySize) 
+		public FixedSizeArraySerializerDecorator(IGeneralSerializerProvider serializerProvider, byte arraySize) 
 			: base(serializerProvider)
 		{
 			ArraySize = arraySize;

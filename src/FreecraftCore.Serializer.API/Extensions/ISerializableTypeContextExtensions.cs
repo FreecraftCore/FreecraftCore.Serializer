@@ -14,10 +14,10 @@ namespace FreecraftCore.Serializer
 		/// <typeparam name="TAttributeType">The <see cref="Attribute"/> to look for.</typeparam>
 		/// <param name="context">Context.</param>
 		/// <returns>True if the context has the <typeparamref name="TAttributeType"/>.</returns>
-		public static bool HasAttribute<TAttributeType>(this ISerializableTypeContext context)
+		public static bool HasMemberAttribute<TAttributeType>(this ISerializableTypeContext context)
 			where TAttributeType : Attribute
 		{
-			return context.Metadata.Where(x => x.GetType() == typeof(TAttributeType)).Count() != 0;
+			return context.MemberMetadata.Where(x => x.GetType() == typeof(TAttributeType)).Count() != 0;
 		}
 
 		/// <summary>
@@ -26,10 +26,28 @@ namespace FreecraftCore.Serializer
 		/// <typeparam name="TAttributeType">The <see cref="Attribute"/> to look for.</typeparam>
 		/// <param name="context">Context.</param>
 		/// <returns>True if the context has the <typeparamref name="TAttributeType"/>.</returns>
-		public static TAttributeType GetAttribute<TAttributeType>(this ISerializableTypeContext context)
+		public static TAttributeType GetMemberAttribute<TAttributeType>(this ISerializableTypeContext context)
 			where TAttributeType : Attribute
 		{
-			return context.Metadata.FirstOrDefault(x => x.GetType() == typeof(TAttributeType)) as TAttributeType;
+			return context.MemberMetadata.FirstOrDefault(x => x.GetType() == typeof(TAttributeType)) as TAttributeType;
+		}
+
+		public static bool HasContextualMemberMetadata(this ISerializableTypeContext context)
+		{
+			//If there is no context requirement then there is probably no context metadata or shouldn't be
+			if (context.ContextRequirement != SerializationContextRequirement.RequiresContext)
+				return false;
+
+			return context.MemberMetadata.Count() != 0;
+		}
+
+		public static bool HasContextualTypeMetadata(this ISerializableTypeContext context)
+		{
+			//If there is no context requirement then there is probably no context metadata or shouldn't be
+			if (context.ContextRequirement != SerializationContextRequirement.RequiresContext)
+				return false;
+
+			return context.TypeMetadata.Count() != 0;
 		}
 	}
 }

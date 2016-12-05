@@ -8,6 +8,22 @@ using System.Reflection;
 
 namespace FreecraftCore.Serializer
 {
+
+	public static class ComplexTypeSerializerStrategy
+	{
+		/// <summary>
+		/// Creates a generic <see cref="ComplexTypeSerializerStrategy{TComplexType}"/> without access to compiletime type.
+		/// </summary>
+		/// <param name="complexType">Complex type for the strategy to serialize.</param>
+		/// <param name="serializerProvider">Serialization provider.</param>
+		/// <returns>A new instance of <see cref="ComplexTypeSerializerStrategy{TComplexType}"/>.</returns>
+		public static ITypeSerializerStrategy Create(Type complexType, IContexualSerializerProvider serializerProvider)
+		{
+			return typeof(ComplexTypeSerializerStrategy<>).MakeGenericType(complexType)
+				.CreateInstance(serializerProvider) as ITypeSerializerStrategy;
+		}
+	}
+
 	/// <summary>
 	/// Represents a complex type definition that combines multiple knowntypes or other complex types.
 	/// </summary>
@@ -42,10 +58,10 @@ namespace FreecraftCore.Serializer
 		//Complex types should NEVER require context. It should be designed to avoid context requireing complex types.
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		public ComplexTypeSerializerStrategy(ISerializerProvider serializerProvider)
+		public ComplexTypeSerializerStrategy(IContexualSerializerProvider serializerProvider)
 		{
 			if (serializerProvider == null)
-				throw new ArgumentNullException(nameof(serializerProvider), $"Provided service {nameof(ISerializerProvider)} was null.");
+				throw new ArgumentNullException(nameof(serializerProvider), $"Provided service {nameof(IContexualSerializerProvider)} was null.");
 
 			orderedMemberInfos = typeof(TComplexType).MembersWith<WireMemberAttribute>(System.Reflection.MemberTypes.Field | System.Reflection.MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
 				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder)

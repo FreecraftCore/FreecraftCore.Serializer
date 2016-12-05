@@ -23,10 +23,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		private ITypeSerializerStrategy<TObjectType> decoratedSerializer { get; }
 
-		public ArraySerializerDecorator(ISerializerProvider serializerProvider)
+		public ArraySerializerDecorator(IGeneralSerializerProvider serializerProvider)
 		{
 			if (serializerProvider == null)
-				throw new ArgumentNullException(nameof(serializerProvider), $"Provided {nameof(ISerializerProvider)} to needed to decorate was null.");
+				throw new ArgumentNullException(nameof(serializerProvider), $"Provided {nameof(IGeneralSerializerProvider)} to needed to decorate was null.");
 
 			decoratedSerializer = serializerProvider.Get<TObjectType>();
 		}

@@ -24,7 +24,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		//Enums don't require context (Though closer look at TC/WoW payloads may indicate packing in the future)
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		public EnumSerializerDecorator(ISerializerProvider serializerProvider)
+		public EnumSerializerDecorator(IGeneralSerializerProvider serializerProvider)
 		{
 			if (!typeof(TEnumType).IsEnum)
 				throw new InvalidOperationException($"Cannot create an enum decorator for type {typeof(TEnumType).FullName} because it is not an enum.");
@@ -33,7 +33,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 				throw new InvalidOperationException($"Defining an Enum decorator requires {nameof(TEnumType)}'s base enum type to match {nameof(TBaseType)}.");
 
 			if (serializerProvider == null)
-				throw new ArgumentNullException(nameof(serializerProvider), $"Provided service {nameof(ISerializerProvider)} was null.");
+				throw new ArgumentNullException(nameof(serializerProvider), $"Provided service {nameof(IGeneralSerializerProvider)} was null.");
 
 			serializerStrategy = serializerProvider.Get<TBaseType>();
 		}
