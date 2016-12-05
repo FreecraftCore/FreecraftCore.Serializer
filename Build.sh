@@ -1,1 +1,1 @@
-xbuild ./FreecraftCore.Serializer.sln /p:DebugSymbols=False
+xbuild ./FreecraftCore.Serializer.sln /p:DebugSymbols=False /d:MONO
