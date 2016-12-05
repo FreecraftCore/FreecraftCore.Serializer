@@ -25,6 +25,6 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		IEnumerable<Type> GetAssociatedRegisterableTypes(ISerializableTypeContext context);
+		IEnumerable<ISerializableTypeContext> GetAssociatedSerializationContexts(ISerializableTypeContext context);
 	}
 }

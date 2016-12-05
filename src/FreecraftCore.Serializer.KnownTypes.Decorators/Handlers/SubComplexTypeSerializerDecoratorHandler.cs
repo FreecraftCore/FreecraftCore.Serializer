@@ -1,4 +1,5 @@
 ﻿using Fasterflect;
+using FreecraftCore.Serializer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,17 +10,16 @@ using System.Threading.Tasks;
 namespace FreecraftCore.Serializer.KnownTypes
 {
 	/// <summary>
-	/// Decorator handler and factory for <see cref="Enum"/> serializers.
+	/// Decorator handler and factory for complex types that have children.
 	/// </summary>
 	[DecoratorHandler]
-	public class EnumSerializerDecoratorHandler : DecoratorHandler
+	public class SubComplexTypeSerializerDecoratorHandler : DecoratorHandler
 	{
-		public EnumSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory contextualKeyLookupFactory)
+		public SubComplexTypeSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory contextualKeyLookupFactory)
 			: base(serializerProvider, contextualKeyLookupFactory)
 		{
 
 		}
-
 		/// <summary>
 		/// Indicates if the <see cref="ISerializerDecoraterHandler"/> is able to handle the specified <see cref="ISerializableTypeContext"/>.
 		/// </summary>
@@ -30,22 +30,30 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (context == null)
 				throw new ArgumentNullException(nameof(context), $"Provided argument {nameof(context)} was null.");
 
-			return context.TargetType.IsEnum;
+			//Check if the type has wirebase type attributes.
+			//If it does then the type is complex and can have subtypes coming across the wire
+			return context.TargetType.GetCustomAttributes<WireMessageBaseTypeAttribute>(false).Count() != 0;
 		}
 
 		protected override ITypeSerializerStrategy TryCreateSerializer(ISerializableTypeContext context)
 		{
 			//error handling in base
-			return typeof(EnumSerializerDecorator<,>).MakeGenericType(context.TargetType, context.TargetType.GetEnumUnderlyingType())
-						.CreateInstance(serializerProviderService) as ITypeSerializerStrategy;
+
+			return typeof(SubComplexTypeSerializerDecorator<>).MakeGenericType(context.TargetType)
+				.CreateInstance(serializerProviderService) as ITypeSerializerStrategy;
 		}
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)
 		{
 			//error handling and checking is done in base
 
-			//An enum only requires its base underlying type to be registered therefore no context is required
-			return new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetEnumUnderlyingType()) };
+			//Grab the children from the metadata; return type contexts so the types can be handled (no context is required because the children are their own registerable type
+			return GetAssociatedChildren(context.TargetType).Select(t => new TypeBasedSerializationContext(t));
+		}
+
+		private IEnumerable<Type> GetAssociatedChildren(Type type)
+		{
+			return type.Attributes<WireMessageBaseTypeAttribute>().Select(x => x.ChildType);
 		}
 	}
 }

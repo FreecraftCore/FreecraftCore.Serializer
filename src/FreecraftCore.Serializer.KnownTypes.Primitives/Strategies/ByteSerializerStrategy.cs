@@ -38,6 +38,16 @@ namespace FreecraftCore.Serializer.KnownTypes
 			return source.ReadByte();
 		}
 
+		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
+		{
+			Write((byte)value, dest);
+		}
+
+		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
+		{
+			return Read(source);
+		}
+
 		public ByteSerializerStrategy()
 		{
 			//this serializer needs no subserializers or services.

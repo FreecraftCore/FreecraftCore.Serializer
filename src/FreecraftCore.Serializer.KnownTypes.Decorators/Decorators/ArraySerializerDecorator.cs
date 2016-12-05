@@ -43,6 +43,16 @@ namespace FreecraftCore.Serializer.KnownTypes
 			return objectArray;
 		}
 
+		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
+		{
+			Write((TObjectType[])value, dest);
+		}
+
+		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
+		{
+			return Read(source);
+		}
+
 		protected virtual byte GetCollectionSize(IWireMemberReaderStrategy source)
 		{
 			//As far as I known TC/WoW writes collection sizes as a uint8 (byte) so that is what we'll do

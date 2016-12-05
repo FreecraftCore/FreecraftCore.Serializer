@@ -9,7 +9,7 @@ using System.Reflection;
 namespace FreecraftCore.Serializer
 {
 
-	public static class ComplexTypeSerializerStrategy
+	public static class ComplexTypeSerializerDecorator
 	{
 		/// <summary>
 		/// Creates a generic <see cref="ComplexTypeSerializerStrategy{TComplexType}"/> without access to compiletime type.
@@ -17,10 +17,10 @@ namespace FreecraftCore.Serializer
 		/// <param name="complexType">Complex type for the strategy to serialize.</param>
 		/// <param name="serializerProvider">Serialization provider.</param>
 		/// <returns>A new instance of <see cref="ComplexTypeSerializerStrategy{TComplexType}"/>.</returns>
-		public static ITypeSerializerStrategy Create(Type complexType, IContexualSerializerProvider serializerProvider)
+		public static ITypeSerializerStrategy Create(Type complexType, IEnumerable<MemberAndSerializerPair> serializationDirections)
 		{
-			return typeof(ComplexTypeSerializerStrategy<>).MakeGenericType(complexType)
-				.CreateInstance(serializerProvider) as ITypeSerializerStrategy;
+			return typeof(ComplexTypeSerializerDecorator<>).MakeGenericType(complexType)
+				.CreateInstance(serializationDirections) as ITypeSerializerStrategy;
 		}
 	}
 
@@ -28,23 +28,9 @@ namespace FreecraftCore.Serializer
 	/// Represents a complex type definition that combines multiple knowntypes or other complex types.
 	/// </summary>
 	/// <typeparam name="TComplexType"></typeparam>
-	public class ComplexTypeSerializerStrategy<TComplexType> : ITypeSerializerStrategy<TComplexType>
+	public class ComplexTypeSerializerDecorator<TComplexType> : ITypeSerializerStrategy<TComplexType>
 		where TComplexType : new() //in .Net 4.0 > this is ok to do. Won't cause poor preformance
 	{
-		//TODO: Move/Refactor this
-		public class MemberAndSerializerPair
-		{
-			public MemberInfo MemberInformation { get; }
-
-			public ITypeSerializerStrategy TypeSerializer { get; }
-
-			public MemberAndSerializerPair(MemberInfo memberInfo, ITypeSerializerStrategy serializer)
-			{
-				MemberInformation = memberInfo;
-				TypeSerializer = serializer;
-			}
-		}
-
 		/// <summary>
 		/// Indicates the <see cref="TType"/> of the serializer.
 		/// </summary>
@@ -58,17 +44,13 @@ namespace FreecraftCore.Serializer
 		//Complex types should NEVER require context. It should be designed to avoid context requireing complex types.
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		public ComplexTypeSerializerStrategy(IContexualSerializerProvider serializerProvider)
+		public ComplexTypeSerializerDecorator(IEnumerable<MemberAndSerializerPair> serializationDirections) //todo: create a better way to provide serialization instructions
 		{
-			if (serializerProvider == null)
-				throw new ArgumentNullException(nameof(serializerProvider), $"Provided service {nameof(IContexualSerializerProvider)} was null.");
+			//These can be empty. If there are no members on a type there won't be anything to serialize.
+			if (serializationDirections == null)
+				throw new ArgumentNullException(nameof(serializationDirections), $"Provided argument {nameof(serializationDirections)} is null.");
 
-			orderedMemberInfos = typeof(TComplexType).MembersWith<WireMemberAttribute>(System.Reflection.MemberTypes.Field | System.Reflection.MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
-				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder)
-				.Select(x => new MemberAndSerializerPair(x, serializerProvider.Get(x.Attribute<WireMemberAttribute>().MemberOrder, x.Type())))
-				.ToArray(); //for cache
-
-			//TODO: pre-warm fasterflect for this type
+			orderedMemberInfos = serializationDirections;
 		}
 
 		//TODO: Error handling
@@ -78,13 +60,20 @@ namespace FreecraftCore.Serializer
 
 			foreach (MemberAndSerializerPair serializerInfo in orderedMemberInfos)
 			{
-				if (serializerInfo.MemberInformation.MemberType == MemberTypes.Property)
-					instance.SetPropertyValue(serializerInfo.MemberInformation.Name, serializerInfo.TypeSerializer.CallMethod(nameof(Read), source));
-				else //it's a field
-					instance.SetFieldValue(serializerInfo.MemberInformation.Name, serializerInfo.TypeSerializer.CallMethod(nameof(Read), source));
+				instance.TrySetValue(serializerInfo.MemberInformation.Name, serializerInfo.TypeSerializer.Read(source));
 			}
 
 			return instance;
+		}
+
+		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
+		{
+			Write((TComplexType)value, dest);
+		}
+
+		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
+		{
+			return Read(source);
 		}
 
 		//TODO: Error handling
@@ -101,7 +90,7 @@ namespace FreecraftCore.Serializer
 
 				try
 				{
-					serializerInfo.TypeSerializer.CallMethod(nameof(Write), memberValue, dest);
+					serializerInfo.TypeSerializer.Write(memberValue, dest);
 				}
 				catch (NullReferenceException e)
 				{

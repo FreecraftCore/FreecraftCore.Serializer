@@ -34,6 +34,10 @@
       <HintPath>..\..\packages\fasterflect.2.1.3\lib\net40\Fasterflect.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Experimental.Collections, Version=1.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Experimental.Collections.1.0.3-alpha\lib\portable-net45+win8+wp8\Microsoft.Experimental.Collections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,13 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serialization\Services\DefaultContextualSerializerProvider.cs" />
-    <Compile Include="Serialization\TypeBasedSerializationContext.cs" />
-    <Compile Include="Serialization\Services\DefaultComplexSerializerFactory.cs" />
-    <Compile Include="Serialization\Services\DefaultGeneralSerializerProvider.cs" />
-    <Compile Include="Serialization\Services\PrimitiveSerializerDecoratorService.cs" />
-    <Compile Include="Serialization\MemberInfoBasedSerializationContext.cs" />
-    <Compile Include="Serializers\ComplexTypeSerializerStrategy.cs" />
+    <Compile Include="Serialization\Services\ContextLookupKeyFactoryService.cs" />
+    <Compile Include="Serialization\Services\SerializerStrategyProvider.cs" />
+    <Compile Include="Serialization\Services\DefaultSerializerDecoratorService.cs" />
     <Compile Include="Stream\Concrete\DefaultWireMemberReaderStrategy.cs" />
     <Compile Include="Stream\Concrete\DefaultWireMemberWriterStrategy.cs" />
   </ItemGroup>
@@ -67,6 +67,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Serializers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

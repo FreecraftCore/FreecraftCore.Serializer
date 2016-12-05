@@ -12,12 +12,12 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Service that builds decorators around serializers for semi-complex and complex types.
 	/// </summary>
-	public class DefaultSerializerDecoratorService : IDecoratedSerializerFactory
+	public class DefaultSerializerStrategyFactory : ISerializerStrategyFactory
 	{
 		/// <summary>
 		/// Decorator handlers for primitives.
 		/// </summary>
-		private IEnumerable<DectoratorHandler> decoratorHandlers { get; }
+		private IEnumerable<DecoratorHandler> decoratorHandlers { get; }
 
 		/// <summary>
 		/// General serializer provider service.
@@ -29,32 +29,16 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		public event FoundUnknownAssociatedType OnFoundUnknownAssociatedType;
 
-		public DefaultSerializerDecoratorService(IEnumerable<DectoratorHandler> handlers, IGeneralSerializerProvider generalSerializerProvider)
+		public DefaultSerializerStrategyFactory(IEnumerable<DecoratorHandler> handlers, IGeneralSerializerProvider generalSerializerProvider)
 		{
 			if (generalSerializerProvider == null)
 				throw new ArgumentNullException(nameof(generalSerializerProvider), $"Provided {nameof(IGeneralSerializerProvider)} service was null.");
 
 			if (handlers == null)
-				throw new ArgumentNullException(nameof(handlers), $"Provided {nameof(DectoratorHandler)}s were null. Must be a non-null collection.");
+				throw new ArgumentNullException(nameof(handlers), $"Provided {nameof(DecoratorHandler)}s were null. Must be a non-null collection.");
 
 			decoratorHandlers = handlers;
 			generalSerializerProviderService = generalSerializerProvider;
-		}
-
-		/// <summary>
-		/// Indicates if the provided <see cref="ISerializableTypeContext"/> <paramref name="context"/> requires decoration.
-		/// </summary>
-		/// <param name="context">The <see cref="ISerializableTypeContext"/> context used to verify for potential serializer decoration.</param>
-		/// <returns>True if the <see cref="ISerializableTypeContext"/> requires decoration with the service.</returns>
-		public bool RequiresDecorating(ISerializableTypeContext context)
-		{
-			//Check all the handlers to see if this type requires a decorated serializer
-			foreach (ISerializerDecoraterHandler handler in decoratorHandlers)
-				if (handler.CanHandle(context))
-					return true;
-
-			//This is fine; means the type is probably primitive or just plain complex
-			return false;
 		}
 
 		/// <summary>
@@ -66,21 +50,21 @@ namespace FreecraftCore.Serializer
 		{
 			ISerializerStrategyFactory factory = null;
 
-			foreach (DectoratorHandler handler in decoratorHandlers)
+			foreach (DecoratorHandler handler in decoratorHandlers)
 			{
 				if (handler.CanHandle(context))
 				{
 					//If it can handle then we should register the associated types
-					foreach (Type t in handler.GetAssociatedRegisterableTypes(context))
+					foreach (ISerializableTypeContext subContext in handler.GetAssociatedSerializationContexts(context))
 					{
 						//Broadcast that we found an associated type if it's not known
 						//Because we only know the Type there will be no context and we need a TypeContext
-						if(!generalSerializerProviderService.HasSerializerFor(t))
-							OnFoundUnknownAssociatedType?.Invoke(new TypeBasedSerializationContext(t));
+						OnFoundUnknownAssociatedType?.Invoke(subContext);
 					}
 
 					//TODO: If we ever have mutliple decoration then this factory set will break things
 					factory = handler;
+					break;
 				}
 			}
 

@@ -18,48 +18,32 @@ namespace FreecraftCore.Serializer
 		public bool isCompiled { get; private set; }
 
 		/// <summary>
-		/// The serializer provider service.
-		/// </summary>
-		IGeneralSerializerProvider serializerProvider { get; }
-
-		/// <summary>
 		/// Dictionary of known <see cref="Type"/>s and their corresponding <see cref="ITypeSerializerStrategy"/>s.
 		/// </summary>
-		IDictionary<Type, ITypeSerializerStrategy> knownMappedSerializers { get; }
-
-		/// <summary>
-		/// Service responsible for handling complex types.
-		/// </summary>
-		IComplexSerializerFactory complexTypeFactoryService { get; }
+		private SerializerStrategyProvider serializerStorageService { get; }
 
 		/// <summary>
 		/// Service responsible for handling decoratable semi-complex types.
 		/// </summary>
-		IDecoratedSerializerFactory decoratorFactoryService { get; }
+		DefaultSerializerStrategyFactory serializerStrategyFactoryService { get; }
 
 		public SerializerService()
 		{
 			//We don't inject anything because we want end-users of the serializer to be able to easily instantiate an instance
 			//of this service
-			knownMappedSerializers = new Dictionary<Type, ITypeSerializerStrategy>();
-			serializerProvider = new DefaultGeneralSerializerProvider(new ReadOnlyDictionary<Type, ITypeSerializerStrategy>(knownMappedSerializers));
+			serializerStorageService = new SerializerStrategyProvider();
 
-			//TODO: Cleanup creation
-			complexTypeFactoryService = new DefaultComplexSerializerFactory(serializerProvider, this);
-			decoratorFactoryService = new DefaultSerializerDecoratorService(FreecraftCoreSerializerKnownTypesDecoratorMetadata.Assembly.GetTypes()
-				.Where(t => t.HasAttribute<DecoratorHandlerAttribute>())
-				.Select(t => t.CreateInstance(serializerProvider) as DectoratorHandler), serializerProvider);
+			//Create the decoration service
+			serializerStrategyFactoryService = new DefaultSerializerStrategyFactory(SerializerDecoratorHandlerFactory.Create(serializerStorageService, new ContextLookupKeyFactoryService()), serializerStorageService);
 
 			//Subscribe to unknown type broadcasts
-			complexTypeFactoryService.OnFoundUnknownAssociatedType += ctx => ((ISerializerStrategyFactory)this).Create(ctx);
-			decoratorFactoryService.OnFoundUnknownAssociatedType += ctx => ((ISerializerStrategyFactory)this).Create(ctx);
+			serializerStrategyFactoryService.OnFoundUnknownAssociatedType += ctx => ((ISerializerStrategyFactory)this).Create(ctx);
 
-			//TODO: Cleanup. Error handling
-			foreach (Type t in FreecraftCoreSerializerKnownTypesPrimitivesMetadata.Assembly.GetTypes().Where(t => t.HasAttribute<KnownTypeSerializerAttribute>()))
-			{
-				ITypeSerializerStrategy strategy = t.CreateInstance() as ITypeSerializerStrategy;
-				knownMappedSerializers.Add(strategy.SerializerType, strategy);
-			}
+			FreecraftCoreSerializerKnownTypesPrimitivesMetadata.Assembly.GetTypes()
+				.Where(t => t.HasAttribute<KnownTypeSerializerAttribute>())
+				.Select(t => t.CreateInstance() as ITypeSerializerStrategy)
+				.ToList()
+				.ForEach(s => serializerStorageService.RegisterType(s.SerializerType, s));
 		}
 
 		public void Compile()
@@ -70,13 +54,16 @@ namespace FreecraftCore.Serializer
 		public TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>(byte[] data) 
 			where TTypeToDeserializeTo : new()
 		{
-			if (!serializerProvider.HasSerializerFor<TTypeToDeserializeTo>())
+			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
+#if DEBUG || DEBUGBUILD
+			if (!serializerStorageService.HasSerializerFor<TTypeToDeserializeTo>())
 				throw new InvalidOperationException($"Serializer cannot deserialize to Type: {typeof(TTypeToDeserializeTo).FullName} because it's not registered.");
+#endif
 
 			if (!isCompiled)
 				throw new InvalidOperationException($"You cannot deserialize before compiling the serializer.");
 
-			return serializerProvider.Get<TTypeToDeserializeTo>().Read(new DefaultWireMemberReaderStrategy(data));
+			return serializerStorageService.Get<TTypeToDeserializeTo>().Read(new DefaultWireMemberReaderStrategy(data));
 		}
 
 		/// <summary>
@@ -86,7 +73,7 @@ namespace FreecraftCore.Serializer
 		/// <returns>True if a serializer is registered for the provided <see cref="Type"/>.</returns>
 		public bool isTypeRegistered(Type type)
 		{
-			return serializerProvider.HasSerializerFor(type);
+			return serializerStorageService.HasSerializerFor(type);
 		}
 
 		public ITypeSerializerStrategy<TTypeToRegister> RegisterType<TTypeToRegister>() 
@@ -97,11 +84,10 @@ namespace FreecraftCore.Serializer
 				throw new InvalidOperationException($"Do not register any type that isn't marked with {nameof(WireMessageAttribute)}. Only register WireMessages too; contained types will be registered automatically.");
 
 			//At this point this is a class marked with [WireMessage] so we should assume and treat it as a complex type
-			ITypeSerializerStrategy<TTypeToRegister> serializer = complexTypeFactoryService.Create(new TypeBasedSerializationContext(typeof(TTypeToRegister))) as ITypeSerializerStrategy<TTypeToRegister>;
+			ITypeSerializerStrategy<TTypeToRegister> serializer = serializerStrategyFactoryService.Create(new TypeBasedSerializationContext(typeof(TTypeToRegister))) as ITypeSerializerStrategy<TTypeToRegister>;
 
-			//Only register contextless serializers (all complex types should be contextless)
-			if (serializer.ContextRequirement == SerializationContextRequirement.Contextless)
-				knownMappedSerializers.Add(typeof(TTypeToRegister), serializer);
+			//All types calling RegisterType are contextless complex types. Register the result as a contextless type serializer
+			serializerStorageService.RegisterType(typeof(TTypeToRegister), serializer);
 
 			//Return the serializer; callers shouldn't need it though
 			return serializer;
@@ -110,15 +96,18 @@ namespace FreecraftCore.Serializer
 		public byte[] Serialize<TTypeToSerialize>(TTypeToSerialize data) 
 			where TTypeToSerialize : new()
 		{
-			if (!serializerProvider.HasSerializerFor<TTypeToSerialize>())
+			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
+#if DEBUG || DEBUGBUILD
+			if (!serializerStorageService.HasSerializerFor<TTypeToSerialize>())
 				throw new InvalidOperationException($"Serializer cannot serialize Type: {typeof(TTypeToSerialize).FullName} because it's not registered.");
+#endif
 
 			if (!isCompiled)
 				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
 
 			using (DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy())
 			{
-				serializerProvider.Get<TTypeToSerialize>().Write(data, writer);
+				serializerStorageService.Get<TTypeToSerialize>().Write(data, writer);
 
 				return writer.GetBytes();
 			}
@@ -131,18 +120,7 @@ namespace FreecraftCore.Serializer
 			//inside of a type that it doesn't know about or requires handling outside of its scope it'll broadcast that
 			//and we will implement more complex handling here
 
-			ITypeSerializerStrategy strategy = null;
-
-			//First check if the type can be decorated
-			if(decoratorFactoryService.RequiresDecorating(context))
-			{
-				strategy = decoratorFactoryService.Create(context);
-			}
-			else
-			{
-				//Then we've encountered a complex type
-				strategy = complexTypeFactoryService.Create(context);
-			}
+			ITypeSerializerStrategy strategy = serializerStrategyFactoryService.Create(context);
 
 			//The serializer could be null; we should verify it
 			if (strategy == null)
@@ -150,7 +128,18 @@ namespace FreecraftCore.Serializer
 
 			//If the serializer is contextless we can register it with the general provider
 			if (strategy.ContextRequirement == SerializationContextRequirement.Contextless)
-				knownMappedSerializers.Add(context.TargetType, strategy);
+				serializerStorageService.RegisterType(context.TargetType, strategy);
+			else
+			{
+				//TODO: Clean this up
+				if (context.HasContextualKey())
+				{
+					//Register the serializer with the context key that was built into the serialization context.
+					serializerStorageService.RegisterType(context.BuiltContextKey.Value.ContextFlags, context.BuiltContextKey.Value.ContextSpecificKey, context.TargetType, strategy);
+				}
+				else
+					throw new InvalidOperationException($"Serializer was created but Type: {context.TargetType} came with no contextual key in the end for a contextful serialization context.");
+			}
 
 			return strategy;
 		}

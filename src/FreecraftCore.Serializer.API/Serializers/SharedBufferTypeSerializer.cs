@@ -37,5 +37,15 @@ namespace FreecraftCore.Serializer
 		public abstract void Write(TType value, IWireMemberWriterStrategy dest);
 	
 		public abstract TType Read(IWireMemberReaderStrategy source);
+
+		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
+		{
+			Write((TType)value, dest);
+		}
+
+		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
+		{
+			return Read(source);
+		}
 	}
 }

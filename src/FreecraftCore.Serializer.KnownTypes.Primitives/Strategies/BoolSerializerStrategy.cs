@@ -34,5 +34,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			dest.Write((byte)(value ? 1 : 0));
 		}
+
+		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
+		{
+			Write((bool)value, dest);
+		}
+
+		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
+		{
+			return Read(source);
+		}
 	}
 }

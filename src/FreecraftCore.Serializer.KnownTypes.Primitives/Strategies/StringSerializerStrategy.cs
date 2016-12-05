@@ -69,6 +69,16 @@ namespace FreecraftCore.Serializer.KnownTypes
 				return System.Text.Encoding.ASCII.GetString(stringBytes.ToArray()); //shouldn't need to reallocate array.
 		}
 
+		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
+		{
+			Write((string)value, dest);
+		}
+
+		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
+		{
+			return Read(source);
+		}
+
 		public StringSerializerStrategy()
 		{
 			//this serializer needs no subserializers or services.

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace FreecraftCore.Serializer
 {
+	//TODO: Refactor out of API project
 	public class TypeBasedSerializationContext : ISerializableTypeContext
 	{
 		/// <summary>
@@ -31,6 +32,12 @@ namespace FreecraftCore.Serializer
 		/// Represents the type.
 		/// </summary>
 		public Type TargetType { get; }
+
+		/// <summary>
+		/// The conextual lookup key that should be associated with the serialization context.
+		/// If null there is no context.
+		/// </summary>
+		public ContextualSerializerLookupKey? BuiltContextKey { get; set; }
 
 		public TypeBasedSerializationContext(Type type)
 		{

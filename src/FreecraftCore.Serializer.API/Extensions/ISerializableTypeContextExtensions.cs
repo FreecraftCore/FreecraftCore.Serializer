@@ -49,5 +49,15 @@ namespace FreecraftCore.Serializer
 
 			return context.TypeMetadata.Count() != 0;
 		}
+
+		/// <summary>
+		/// Indicates if the <see cref="ISerializableTypeContext"/> has a valid contextual lookup key.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		public static bool HasContextualKey(this ISerializableTypeContext context)
+		{
+			return context.BuiltContextKey.HasValue;
+		}
 	}
 }

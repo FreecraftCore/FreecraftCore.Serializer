@@ -64,5 +64,16 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			serializerStrategy.Write((TBaseType)boxedBaseEnumValue, dest);
 		}
+
+		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
+		{
+			Write((TEnumType)value, dest);
+		}
+
+		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
+		{
+			return Read(source);
+		}
+
 	}
 }

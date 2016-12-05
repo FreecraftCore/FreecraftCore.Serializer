@@ -33,5 +33,11 @@ namespace FreecraftCore.Serializer
 		/// Represents the type.
 		/// </summary>
 		Type TargetType { get; }
+
+		/// <summary>
+		/// The conextual lookup key that should be associated with the serialization context.
+		/// If null there is no context.
+		/// </summary>
+		ContextualSerializerLookupKey? BuiltContextKey { get; set; }
 	}
 }

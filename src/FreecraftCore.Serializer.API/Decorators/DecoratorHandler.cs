@@ -7,8 +7,30 @@ using System.Threading.Tasks;
 
 namespace FreecraftCore.Serializer
 {
-	public abstract class DectoratorHandler : ISerializerDecoraterHandler, ISerializerStrategyFactory
+	public abstract class DecoratorHandler : ISerializerDecoraterHandler, ISerializerStrategyFactory
 	{
+		/// <summary>
+		/// Serializer provider service.
+		/// </summary>
+		protected IContextualSerializerProvider serializerProviderService { get; }
+
+		/// <summary>
+		/// Conextual key factory.
+		/// </summary>
+		protected IContextualSerializerLookupKeyFactory contextualKeyLookupFactoryService { get; }
+
+		public DecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory keyFactory)
+		{
+			if (serializerProvider == null)
+				throw new ArgumentNullException(nameof(serializerProvider), $"Provided argument {nameof(serializerProvider)} is null.");
+
+			if(keyFactory == null)
+				throw new ArgumentNullException(nameof(keyFactory), $"Provided argument {nameof(keyFactory)} is null.");
+
+			serializerProviderService = serializerProvider;
+			contextualKeyLookupFactoryService = keyFactory;
+		}
+
 		/// <summary>
 		/// Indicates if the <see cref="ISerializerDecoraterHandler"/> is able to handle the specified <see cref="ISerializableTypeContext"/>.
 		/// </summary>
@@ -21,6 +43,12 @@ namespace FreecraftCore.Serializer
 			if (!CanHandle(context))
 				throw new InvalidOperationException($"Cannot handle Type: {context.TargetType.Name} with a {this.GetType().FullName}.");
 
+			//Build the key first
+			context.BuiltContextKey = this.contextualKeyLookupFactoryService.Create(context);
+
+			if (!context.BuiltContextKey.HasValue)
+				throw new InvalidOperationException($"Failed to build a {nameof(ContextualSerializerLookupKey)} for the Type: {context.TargetType} with Context: {context.ToString()}.");
+
 			ITypeSerializerStrategy serializer = TryCreateSerializer(context);
 
 			if (serializer == null)
@@ -30,17 +58,17 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <summary>
-		/// Gets a collection of <see cref="Type"/> objects that represent all of the required types that must be
-		/// registered for this decorator to work. These should be registered before attempting to use the decorator.
+		/// Gets a collection of <see cref="ISerializableTypeContext"/>s that represent the total collection
+		/// of sub-contexts needed to be handled for the given provided <paramref name="context"/>.
 		/// </summary>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		public IEnumerable<Type> GetAssociatedRegisterableTypes(ISerializableTypeContext context)
+		public IEnumerable<ISerializableTypeContext> GetAssociatedSerializationContexts(ISerializableTypeContext context)
 		{
 			if (!CanHandle(context))
 				throw new InvalidOperationException($"Cannot handle Type: {context.TargetType.Name} with a {this.GetType().FullName}.");
 
-			IEnumerable<Type> types = TryGetAssociatedTypes(context);
+			IEnumerable<ISerializableTypeContext> types = TryGetAssociatedSerializableContexts(context);
 
 			if (types == null)
 				throw new InvalidOperationException($"Decorator handler {GetType().FullName} produced a null collection of associated types. The collection must never be null.");
@@ -48,7 +76,8 @@ namespace FreecraftCore.Serializer
 			return types;
 		}
 
-		protected abstract IEnumerable<Type> TryGetAssociatedTypes(ISerializableTypeContext context);
+		//TODO: Doc
+		protected abstract IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context);
 
 		/// <summary>
 		/// Creates a <see cref="ITypeSerializerStrategy"/> for the provided <paramref name="forType"/>.

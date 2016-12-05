@@ -45,13 +45,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Decorators\ArraySerializerDecorator.cs" />
+    <Compile Include="Decorators\ComplexTypeSerializerDecorator.cs" />
     <Compile Include="Decorators\EnumSerializerDecorator.cs" />
     <Compile Include="Decorators\FixedSizeArraySerializerDecorator.cs" />
-    <Compile Include="Decorators\SerializerStrategyDecorator.cs" />
     <Compile Include="Decorators\SubComplexTypeSerializerDecorator.cs" />
-    <Compile Include="FreecraftCoreSerializerKnownTypesDecoratorMetadata.cs" />
+    <Compile Include="SerializerDecoratorHandlerFactory.cs" />
+    <Compile Include="Handlers\ComplexTypeSerializerDecoratorHandler.cs" />
     <Compile Include="Handlers\EnumSerializerDecoratorHandler.cs" />
     <Compile Include="Handlers\ArraySerializerDecoratorHandler.cs" />
+    <Compile Include="Handlers\SubComplexTypeSerializerDecoratorHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

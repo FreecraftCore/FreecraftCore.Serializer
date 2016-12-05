@@ -13,19 +13,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// Decorator handler and factory for <see cref="Array"/> serializers.
 	/// </summary>
 	[DecoratorHandler]
-	public class ArraySerializerDecoratorHandler : DectoratorHandler
+	public class ArraySerializerDecoratorHandler : DecoratorHandler
 	{
-		/// <summary>
-		/// Serializer factory service.
-		/// </summary>
-		private IGeneralSerializerProvider serializerProviderService { get; }
-
-		public ArraySerializerDecoratorHandler(IGeneralSerializerProvider serializerProvider)
+		public ArraySerializerDecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory contextualKeyLookupFactory)
+			: base(serializerProvider, contextualKeyLookupFactory)
 		{
-			if (serializerProvider == null)
-				throw new ArgumentNullException(nameof(serializerProvider), $"Provided service {nameof(IGeneralSerializerProvider)} was null.");
 
-			serializerProviderService = serializerProvider;
 		}
 
 		/// <summary>
@@ -43,14 +36,14 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		protected override ITypeSerializerStrategy TryCreateSerializer(ISerializableTypeContext context)
 		{
-			//error handling in base
-
 			//TODO: Handle contextless requests. The future may require a single array serializer for all unknown sizes.
-			if(context.HasMemberAttribute<KnownSizeAttribute>())
+			if (context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.FixedSize))
 			{
+				int knownSize = context.BuiltContextKey.Value.ContextSpecificKey.Key;
+
 				//If we know about the size then we should create a knownsize array decorator
 				return typeof(FixedSizeArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType())
-					.CreateInstance(serializerProviderService, (byte)context.GetMemberAttribute<KnownSizeAttribute>().KnownSize) as ITypeSerializerStrategy;
+					.CreateInstance(serializerProviderService, (byte)knownSize) as ITypeSerializerStrategy;
 			}
 			else
 			{
@@ -60,12 +53,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 			}
 		}
 
-		protected override IEnumerable<Type> TryGetAssociatedTypes(ISerializableTypeContext context)
+		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)
 		{
 			//error handling and checking is done in base
 
-			//An enum only requires its base underlying type to be registered
-			return new Type[] { context.TargetType.GetElementType() };
+			//array inner-type never have context
+			return new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetElementType()) }; 
 		}
 	}
 }
