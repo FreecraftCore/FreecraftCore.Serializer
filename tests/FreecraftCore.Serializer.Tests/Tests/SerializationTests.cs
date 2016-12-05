@@ -61,8 +61,8 @@ namespace FreecraftCore.Serializer.Tests
 		{
 			//arrange
 			SerializerService serializer = new SerializerService();
-			TestEnum[] arrayOne = new TestEnum[] { TestEnum.One, TestEnum.One };
-			TestEnum[] arrayTwo = new TestEnum[3] { TestEnum.One, TestEnum.One, TestEnum.Two };
+			TestEnum[] arrayOne = new TestEnum[] { TestEnum.Zero, TestEnum.One };
+			TestEnum[] arrayTwo = new TestEnum[3] { TestEnum.Two, TestEnum.One, TestEnum.Zero };
 			BasicWireMessage wireMessageNested = new BasicWireMessage(8);
 
 			//act
