@@ -5,15 +5,14 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("FreecraftCore.Serializer.KnownTypes.Decorators")]
+[assembly: AssemblyTitle("FreecraftCore.Serializer.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("FreecraftCore.Serializer.KnownTypes.Decorators")]
+[assembly: AssemblyProduct("FreecraftCore.Serializer.Tests")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: InternalsVisibleTo("FreecraftCore.Serializer", AllInternalsVisible = true)]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -21,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("13315d16-64e6-4656-a9fc-a2198b9e3940")]
+[assembly: Guid("2535b68d-30c8-4317-83a0-604869ef7583")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
-	/// Metadata marker for marking serializers that serialize inherently known types.
+	/// Metadata marker for marking decorator handlers.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-	internal class KnownTypeSerializerAttribute : Attribute
+	public class DecoratorHandlerAttribute : Attribute
 	{
 
 	}

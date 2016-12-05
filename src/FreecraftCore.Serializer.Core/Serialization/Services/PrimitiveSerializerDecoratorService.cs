@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
-	/// Service that builds decorators around serializers for semi-complex types.
+	/// Service that builds decorators around serializers for semi-complex and complex types.
 	/// </summary>
-	public class PrimitiveSerializerDecoratorService : IDecoratedSerializerFactory
+	public class DefaultSerializerDecoratorService : IDecoratedSerializerFactory
 	{
 		/// <summary>
 		/// Decorator handlers for primitives.
@@ -20,16 +20,16 @@ namespace FreecraftCore.Serializer
 		private IEnumerable<DectoratorHandler> decoratorHandlers { get; }
 
 		/// <summary>
+		/// General serializer provider service.
+		/// </summary>
+		private IGeneralSerializerProvider generalSerializerProviderService { get; }
+
+		/// <summary>
 		/// Event that can be subscribed to for alerts on found associated types.
 		/// </summary>
 		public event FoundUnknownAssociatedType OnFoundUnknownAssociatedType;
 
-		/// <summary>
-		/// General serializer provider service.
-		/// </summary>
-		IGeneralSerializerProvider generalSerializerProviderService { get; }
-
-		public PrimitiveSerializerDecoratorService(IEnumerable<DectoratorHandler> handlers, IGeneralSerializerProvider generalSerializerProvider)
+		public DefaultSerializerDecoratorService(IEnumerable<DectoratorHandler> handlers, IGeneralSerializerProvider generalSerializerProvider)
 		{
 			if (generalSerializerProvider == null)
 				throw new ArgumentNullException(nameof(generalSerializerProvider), $"Provided {nameof(IGeneralSerializerProvider)} service was null.");
@@ -38,6 +38,7 @@ namespace FreecraftCore.Serializer
 				throw new ArgumentNullException(nameof(handlers), $"Provided {nameof(DectoratorHandler)}s were null. Must be a non-null collection.");
 
 			decoratorHandlers = handlers;
+			generalSerializerProviderService = generalSerializerProvider;
 		}
 
 		/// <summary>
@@ -52,7 +53,7 @@ namespace FreecraftCore.Serializer
 				if (handler.CanHandle(context))
 					return true;
 
-			//This is fine; means the type is probably primitive or just complex
+			//This is fine; means the type is probably primitive or just plain complex
 			return false;
 		}
 

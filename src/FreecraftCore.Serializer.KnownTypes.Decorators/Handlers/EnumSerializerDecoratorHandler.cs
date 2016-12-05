@@ -11,6 +11,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// <summary>
 	/// Decorator handler and factory for <see cref="Enum"/> serializers.
 	/// </summary>
+	[DecoratorHandler]
 	public class EnumSerializerDecoratorHandler : DectoratorHandler
 	{
 		/// <summary>

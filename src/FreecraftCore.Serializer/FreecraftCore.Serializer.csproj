@@ -67,6 +67,10 @@
       <Project>{d09f66ad-53b5-4774-97f2-3dcf52eb4d43}</Project>
       <Name>FreecraftCore.Serializer.KnownTypes.Primitives</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FreecraftCore.Serializer.Metadata.Internal\FreecraftCore.Serializer.Metadata.Internal.csproj">
+      <Project>{9ee23ed7-0b53-4643-8412-14a873fcc10f}</Project>
+      <Name>FreecraftCore.Serializer.Metadata.Internal</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj">
       <Project>{6ce55491-b1e3-4c11-bffb-203e41563cb5}</Project>
       <Name>FreecraftCore.Serializer.Metadata</Name>

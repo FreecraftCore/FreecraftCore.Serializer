@@ -49,6 +49,7 @@
     <Compile Include="Decorators\FixedSizeArraySerializerDecorator.cs" />
     <Compile Include="Decorators\SerializerStrategyDecorator.cs" />
     <Compile Include="Decorators\SubComplexTypeSerializerDecorator.cs" />
+    <Compile Include="FreecraftCoreSerializerKnownTypesDecoratorMetadata.cs" />
     <Compile Include="Handlers\EnumSerializerDecoratorHandler.cs" />
     <Compile Include="Handlers\ArraySerializerDecoratorHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,6 +62,10 @@
     <ProjectReference Include="..\FreecraftCore.Serializer.KnownTypes.Primitives\FreecraftCore.Serializer.KnownTypes.Primitives.csproj">
       <Project>{d09f66ad-53b5-4774-97f2-3dcf52eb4d43}</Project>
       <Name>FreecraftCore.Serializer.KnownTypes.Primitives</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FreecraftCore.Serializer.Metadata.Internal\FreecraftCore.Serializer.Metadata.Internal.csproj">
+      <Project>{9EE23ED7-0B53-4643-8412-14A873FCC10F}</Project>
+      <Name>FreecraftCore.Serializer.Metadata.Internal</Name>
     </ProjectReference>
     <ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj">
       <Project>{6ce55491-b1e3-4c11-bffb-203e41563cb5}</Project>

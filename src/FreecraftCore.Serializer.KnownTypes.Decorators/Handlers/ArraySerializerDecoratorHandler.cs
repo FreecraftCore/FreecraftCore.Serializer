@@ -1,4 +1,5 @@
 ﻿using Fasterflect;
+using FreecraftCore.Serializer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// <summary>
 	/// Decorator handler and factory for <see cref="Array"/> serializers.
 	/// </summary>
+	[DecoratorHandler]
 	public class ArraySerializerDecoratorHandler : DectoratorHandler
 	{
 		/// <summary>

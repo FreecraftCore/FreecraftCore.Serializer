@@ -5,10 +5,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Fasterflect;
+using FreecraftCore.Serializer.API;
 
 namespace FreecraftCore.Serializer
 {
-	public class SerializerService : ISerializerService
+	public class SerializerService : ISerializerService, ISerializerStrategyFactory
 	{
 		/// <summary>
 		/// Indicates if the serializer is compiled.
@@ -28,12 +30,12 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Service responsible for handling complex types.
 		/// </summary>
-		IComplexSerializerFactory complexTypeRegisteryService { get; }
+		IComplexSerializerFactory complexTypeFactoryService { get; }
 
 		/// <summary>
 		/// Service responsible for handling decoratable semi-complex types.
 		/// </summary>
-		IDecoratedSerializerFactory decoratorRegistryService { get; }
+		IDecoratedSerializerFactory decoratorFactoryService { get; }
 
 		public SerializerService()
 		{
@@ -42,9 +44,18 @@ namespace FreecraftCore.Serializer
 			knownMappedSerializers = new Dictionary<Type, ITypeSerializerStrategy>();
 			serializerProvider = new DefaultGeneralSerializerProvider(new ReadOnlyDictionary<Type, ITypeSerializerStrategy>(knownMappedSerializers));
 
-			complexTypeRegisteryService = new DefaultComplexSerializerFactory(serializerProvider);
-			//TODO: Register all primitives
-			//TODO: Gather all decorator handlers
+			//TODO: Cleanup creation
+			complexTypeFactoryService = new DefaultComplexSerializerFactory(serializerProvider, this);
+			decoratorFactoryService = new DefaultSerializerDecoratorService(FreecraftCoreSerializerKnownTypesDecoratorMetadata.Assembly.GetTypes()
+				.Where(t => t.HasAttribute<DecoratorHandlerAttribute>())
+				.Select(t => t.CreateInstance(serializerProvider) as DectoratorHandler), serializerProvider);
+
+			//TODO: Cleanup. Error handling
+			foreach(Type t in FreecraftCoreSerializerKnownTypesPrimitivesMetadata.Assembly.GetTypes().Where(t => t.HasAttribute<KnownTypeSerializerAttribute>()))
+			{
+				ITypeSerializerStrategy strategy = t.CreateInstance() as ITypeSerializerStrategy;
+				knownMappedSerializers.Add(strategy.SerializerType, strategy);
+			}
 		}
 
 		public void Compile()
@@ -73,16 +84,16 @@ namespace FreecraftCore.Serializer
 		{
 			//Ingoring all but wiretypes makes this a lot easier.
 			if (typeof(TTypeToRegister).GetCustomAttribute<WireMessageAttribute>() == null)
-				throw new InvalidOperationException($"Do not register any type that isn't marked with {nameof(WireMessageAttribute)}.");
+				throw new InvalidOperationException($"Do not register any type that isn't marked with {nameof(WireMessageAttribute)}. Only register WireMessages too; contained types will be registered automatically.");
 
 			//At this point this is a class marked with [WireMessage] so we should assume and treat it as a complex type
-			ITypeSerializerStrategy<TTypeToRegister> serializer = complexTypeRegisteryService.RegisterType<TTypeToRegister>();
+			ITypeSerializerStrategy<TTypeToRegister> serializer = complexTypeFactoryService.Create(new TypeBasedSerializationContext(typeof(TTypeToRegister))) as ITypeSerializerStrategy<TTypeToRegister>;
 
-			//Only register contextless serializers (call complex types should be contextless)
+			//Only register contextless serializers (all complex types should be contextless)
 			if (serializer.ContextRequirement == SerializationContextRequirement.Contextless)
 				knownMappedSerializers.Add(typeof(TTypeToRegister), serializer);
 
-			//Return the serializer
+			//Return the serializer; callers shouldn't need it though
 			return serializer;
 		}
 
@@ -92,87 +103,35 @@ namespace FreecraftCore.Serializer
 			throw new NotImplementedException();
 		}
 
-		/*private IComplexTypeRegistry complexRegistry { get; }
-
-		// roslyn automatically implemented properties, in particular for get-only properties: <{Name}>k__BackingField;
-		//var backingFieldName = $"<{property.Name}>k__BackingField";
-
-		
-
-		public SerializerService()
+		//Called as the fallback factory.
+		ITypeSerializerStrategy ISerializerStrategyFactory.Create(ISerializableTypeContext context)
 		{
-			
-			serializerMap = new Dictionary<Type, ITypeSerializerStrategy>();
+			//This service acts a the default/fallback factory for serializer creation. If any factory encounters a type
+			//inside of a type that it doesn't know about or requires handling outside of its scope it'll broadcast that
+			//and we will implement more complex handling here
 
-			foreach(ITypeSerializerStrategy knownSerializer in GetType().Assembly.GetTypes()
-				.Where(t => t.GetCustomAttribute<KnownTypeSerializerAttribute>() != null)
-				.Select(t => Activator.CreateInstance(t) as ITypeSerializerStrategy))
+			ITypeSerializerStrategy strategy = null;
+
+			//First check if the type can be decorated
+			if(decoratorFactoryService.RequiresDecorating(context))
 			{
-				serializerMap.Add(knownSerializer.SerializerType, knownSerializer);
+				strategy = decoratorFactoryService.Create(context);
+			}
+			else
+			{
+				//Then we've encountered a complex type
+				strategy = complexTypeFactoryService.Create(context);
 			}
 
-			complexRegistry = new DefaultComplexTypeRegistry(serializerMap);
+			//The serializer could be null; we should verify it
+			if (strategy == null)
+				throw new InvalidOperationException($"Failed to create serializer for Type: {context.TargetType} with Context: {context.ToString()}.");
+
+			//If the serializer is contextless we can register it with the general provider
+			if (strategy.ContextRequirement == SerializationContextRequirement.Contextless)
+				knownMappedSerializers.Add(context.TargetType, strategy);
+
+			return strategy;
 		}
-
-		public TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>(byte[] data)
-			where TTypeToDeserializeTo : new()
-		{
-			if (!isCompiled)
-				throw new InvalidOperationException($"Cannot use the service until it's compiled.");
-
-			if (data == null)
-				throw new ArgumentNullException(nameof(data), $"Provided bytes {nameof(data)} must not be null.");
-
-			if (!isTypeRegistered(typeof(TTypeToDeserializeTo)))
-				throw new InvalidOperationException($"Tried to deserialize Type: {typeof(TTypeToDeserializeTo).FullName} but the type is not known by the serializer service.");
-
-			//TODO: Error handling
-			using (var reader = new DefaultWireMemberReaderStrategy(data))
-			{
-				//TODO: Null checking
-				return ((ITypeSerializerStrategy<TTypeToDeserializeTo>)serializerMap[typeof(TTypeToDeserializeTo)]).Read(reader);
-			}
-		}
-
-		public bool isTypeRegistered(Type type)
-		{
-			//if not built we don't know any type
-			if (serializerMap == null)
-				return false;
-
-			return serializerMap.ContainsKey(type);
-		}
-
-		public bool RegisterType<TTypeToRegister>()
-			where TTypeToRegister : new()
-		{
-			if (isCompiled)
-				throw new InvalidOperationException($"Cannot register new types after the service has been compiled");
-
-			return complexRegistry.RegisterType<TTypeToRegister>();
-		}
-
-		public byte[] Serialize<TTypeToSerialize>(TTypeToSerialize data)
-			where TTypeToSerialize : new()
-		{
-			if (!isCompiled)
-				throw new InvalidOperationException($"Cannot use the service until it's compiled.");
-
-			if (!isTypeRegistered(typeof(TTypeToSerialize)))
-				throw new InvalidOperationException($"Tried to serialize Type: {typeof(TTypeToSerialize).FullName} but the type is not known by the serializer service.");
-
-			//TODO: Error handling
-			using (var writer = new DefaultWireMemberWriterStrategy())
-			{
-				((ITypeSerializerStrategy<TTypeToSerialize>)serializerMap[typeof(TTypeToSerialize)]).Write(data, writer);
-
-				return writer.GetBytes();
-			}	
-		}
-
-		public void Compile()
-		{
-			isCompiled = true;
-		}*/
 	}
 }
