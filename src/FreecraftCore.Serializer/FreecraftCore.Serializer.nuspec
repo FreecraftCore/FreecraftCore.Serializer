@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>FreecraftCore.Serializer</id>
+    <version>$version$</version>
+    <title>FreecraftCore.Serializer</title>
+    <authors>www.github.com/HelloKitty</authors>
+    <owners>www.github.com/HelloKitty</owners>
+    <licenseUrl>https://github.com/FreecraftCore/FreecraftCore.Serializer/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/FreecraftCore/FreecraftCore.Serializer/</projectUrl>
+    <description>Meta-data based serializer for the FreecraftCore project; a World of Warcraft emulation project.</description>
+    <copyright>Copyright 2015-2016</copyright>
+    <tags>World of Warcraft FreecraftCore Packet Payload Serializer Serialization</tags>
+    <dependencies>
+       <dependency id="FreecraftCore.Serializer.API" version="$version$" />
+       <dependency id="FreecraftCore.Serializer.Core" version="$version$" />
+       <dependency id="FreecraftCore.Serializer.KnownTypes.Decorators" version="$version$" />
+       <dependency id="FreecraftCore.Serializer.KnownTypes.Primitives" version="$version$" />
+       <dependency id="FreecraftCore.Serializer.Metadata" version="$version$" />
+       <dependency id="FreecraftCore.Serializer.Metadata.Internal" version="$version$" />
+       <dependency id="fasterflect" version="2.1.3" />
+    </dependencies>
+  </metadata>
+</package>
