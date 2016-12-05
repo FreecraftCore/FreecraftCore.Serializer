@@ -49,7 +49,7 @@ namespace FreecraftCore.Serializer
 		/// <returns></returns>
 		public bool isTypeRegistered(Type type)
 		{
-			return serializerProviderService.Get(type) != null;
+			return serializerProviderService.HasSerializerFor(type);
 		}
 
 		/// <summary>

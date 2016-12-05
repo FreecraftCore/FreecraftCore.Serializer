@@ -45,12 +45,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests\EnumTests.cs" />
     <Compile Include="Tests\GeneralTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.API\FreecraftCore.Serializer.API.csproj">
+      <Project>{B35A46CF-3219-4242-A292-6B0EF828065E}</Project>
+      <Name>FreecraftCore.Serializer.API</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj">
       <Project>{88be65a4-df8b-419c-b126-fea737ef9676}</Project>
       <Name>FreecraftCore.Serializer</Name>

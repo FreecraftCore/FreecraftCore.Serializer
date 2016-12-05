@@ -1,7 +1,9 @@
-﻿using NUnit.Framework;
+﻿using FreecraftCore.Serializer;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -63,6 +65,44 @@ namespace FreecraftCore.Serializer.Tests
 
 			//assert
 			Assert.False(result);
+		}
+
+		[Test]
+		public static void Test_Serializer_Throws_On_Non_Wiretype_Registerations()
+		{
+			//arrange
+			SerializerService service = new SerializerService();
+
+			//assert
+			Assert.Throws<InvalidOperationException>(() => service.RegisterType<TestClassUnmarked>());
+		}
+
+		[Test]
+		public static void Test_Serializer_Can_Register_WireType_Empty()
+		{
+			//arrange
+			SerializerService service = new SerializerService();
+
+			//act
+			Assert.DoesNotThrow(() => service.RegisterType<TestClassMarked>());
+		}
+
+		public class TestClassUnmarked
+		{
+			public TestClassUnmarked()
+			{
+
+			}
+		}
+
+		
+		[WireMessage]
+		public class TestClassMarked
+		{
+			public TestClassMarked()
+			{
+
+			}
 		}
 	}
 }
