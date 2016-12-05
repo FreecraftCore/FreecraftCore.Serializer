@@ -28,6 +28,18 @@ IEnumerable<SomeType> //Any collection except arrays are currently unsupported b
 ISomeInterface //Polymorphic serialization is not supported yet for interfaces. Only classes
 ```
 
+```
+[WireMessage]
+[WireBaseType(1, typeof(ChildType)]
+class BaseType { [WireMember(1)] int a; }
+
+[WireMessage]
+class ChildType : BaseType { [WireMember(1] int b; }
+
+//This serializer doesn't support multiple level serialization (it could but the WoW protocol doesn't lend itself to the idea)
+//So marking members in a base type for serialization and then members in a childtype will yield unknown behavior
+```
+
 ## Builds
 
 Available on a Nuget Feed: https://www.myget.org/F/hellokitty/api/v2 [![hellokitty MyGet Build Status](https://www.myget.org/BuildSource/Badge/hellokitty?identifier=a8048ae0-adcd-4997-8862-c3f5fc6adf34)](https://www.myget.org/feed/Packages/hellokitty)
