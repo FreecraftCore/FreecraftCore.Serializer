@@ -7,7 +7,7 @@ namespace FreecraftCore.Serializer
 	/// that have basetypes that deserialize to.
 	/// Blizzard's JAM for information on the concept).
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Class)] //classes or structs can be WireMessages
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true)] //classes or structs can be WireMessages
 	public class WireMessageBaseTypeAttribute : Attribute
 	{
 		/// <summary>

@@ -54,8 +54,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			foreach(WireMessageBaseTypeAttribute wa in typeof(TBaseType).Attributes<WireMessageBaseTypeAttribute>())
 			{
-				keyToTypeLookup.Add(wa.Index, wa.ChildType);
-				typeToKeyLookup.Add(wa.ChildType, wa.Index);
+				try
+				{
+					keyToTypeLookup.Add(wa.Index, wa.ChildType);
+					typeToKeyLookup.Add(wa.ChildType, wa.Index);
+				}
+				catch(ArgumentException e)
+				{
+					throw new InvalidOperationException($"Failed to register child Type: {wa.ChildType} for BaseType: {typeof(TBaseType).FullName} due to likely duplicate key index for {wa.Index}. Index must be unique per Type.", e);
+				}
 			}
 		}
 
@@ -75,6 +82,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			if (serializer == null)
 				throw new InvalidOperationException($"Couldn't locate serializer for {value.GetType().FullName} in the {nameof(IGeneralSerializerProvider)} service.");
+
+			serializer.Write(value, dest);
 		}
 
 		/// <summary>
@@ -84,7 +93,20 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <returns>The updated / replacement value.</returns>
 		public TBaseType Read(IWireMemberReaderStrategy source)
 		{
-			throw new NotImplementedException();
+			//Incoming should be a byte that indicates the child type to use
+			//Read it to lookup in the map to determine which type we should create
+			byte childIndexRequested = source.ReadByte();
+
+			//Check if we have that index
+			if (!keyToTypeLookup.ContainsKey(childIndexRequested))
+				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Index: {childIndexRequested} but the index didn't exist in the lookup table. Check the Type: {typeof(TBaseType).FullName} attributes for duplicate index.");
+
+			Type childTypeRequest = keyToTypeLookup[childIndexRequested];
+
+			if(childTypeRequest == null)
+				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Index: {childIndexRequested} but the lookup table provided a null type. This may indicate a failure in registeration of child types.");
+
+			return serializerProviderService.Get(childTypeRequest).Read(source) as TBaseType;
 		}
 
 		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
