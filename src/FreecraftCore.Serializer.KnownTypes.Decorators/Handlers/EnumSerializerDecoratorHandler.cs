@@ -52,7 +52,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//error handling and checking is done in base
 
 			//An enum only requires its base underlying type to be registered
-			return new Type[] { context.TargetType.UnderlyingSystemType };
+			return new Type[] { context.TargetType.GetEnumUnderlyingType() };
 		}
 	}
 }

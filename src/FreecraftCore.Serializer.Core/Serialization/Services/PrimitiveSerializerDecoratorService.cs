@@ -78,6 +78,9 @@ namespace FreecraftCore.Serializer
 						if(!generalSerializerProviderService.HasSerializerFor(t))
 							OnFoundUnknownAssociatedType?.Invoke(new TypeBasedSerializationContext(t));
 					}
+
+					//TODO: If we ever have mutliple decoration then this factory set will break things
+					factory = handler;
 				}
 			}
 
