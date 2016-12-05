@@ -1,4 +1,4 @@
-# FreecraftCore.Payload.Serializer
+# FreecraftCore.Serializer
 
 FreecraftCore is an open-source C#-based 3.3.5 World of Warcraft emulation project. It is derived from the work of Mangos and Trinitycore.
 
@@ -52,8 +52,8 @@ Available on a Nuget Feed: https://www.myget.org/F/hellokitty/api/v2 [![hellokit
 #### Linux/Mono - Unit Tests
 ||Debug x86|Debug x64|Release x86|Release x64|
 |:--:|:--:|:--:|:--:|:--:|:--:|
-|**master**| N/A | N/A | N/A | [![Build Status](https://travis-ci.org/FreecraftCore/FreecraftCore.Payload.Serializer.svg?branch=master)](https://travis-ci.org/FreecraftCore/FreecraftCore.Payload.Serializer) |
-|**dev**| N/A | N/A | N/A | [![Build Status](https://travis-ci.org/FreecraftCore/FreecraftCore.Payload.Serializer.svg?branch=dev)](https://travis-ci.org/FreecraftCore/FreecraftCore.Payload.Serializer)|
+|**master**| N/A | N/A | N/A | [![Build Status](https://travis-ci.org/FreecraftCore/FreecraftCore.Serializer.svg?branch=master)](https://travis-ci.org/FreecraftCore/FreecraftCore.Serializer) |
+|**dev**| N/A | N/A | N/A | [![Build Status](https://travis-ci.org/FreecraftCore/FreecraftCore.Serializer.svg?branch=dev)](https://travis-ci.org/FreecraftCore/FreecraftCore.Serializer)|
 
 #### Windows - Unit Tests
 
