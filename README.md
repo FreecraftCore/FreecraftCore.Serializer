@@ -10,6 +10,24 @@ The Serializer looks at metadata marked on message classes to build a simple ser
 
 To understand how this serializer works read documentation related to Protobuf-Net [here](https://www.codeproject.com/articles/642677/protobuf-net-the-unofficial-manual). The design is similar.
 
+## Unsupported Serialization Scenarios
+
+```
+[KnownSize(5)]
+[WireMember(1)]
+SomeType[][] //Multidimensional arrays are partially supported but not fixed sized ones.
+```
+
+```
+[WireMember(1)]
+IEnumerable<SomeType> //Any collection except arrays are currently unsupported but planned for future support
+```
+
+```
+[WireMember(1)]
+ISomeInterface //Polymorphic serialization is not supported yet for interfaces. Only classes
+```
+
 ## Builds
 
 Available on a Nuget Feed: https://www.myget.org/F/hellokitty/api/v2 [![hellokitty MyGet Build Status](https://www.myget.org/BuildSource/Badge/hellokitty?identifier=a8048ae0-adcd-4997-8862-c3f5fc6adf34)](https://www.myget.org/feed/Packages/hellokitty)
