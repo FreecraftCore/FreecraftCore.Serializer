@@ -36,7 +36,7 @@ namespace FreecraftCore.Serializer.Tests
 			strategy.Write(data, writer);
 
 			//assert
-			Assert.NotZero(writer.WriterStream.Length);
+			Assert.False(writer.WriterStream.Length == 0);
 		}
 
 		[Test]
