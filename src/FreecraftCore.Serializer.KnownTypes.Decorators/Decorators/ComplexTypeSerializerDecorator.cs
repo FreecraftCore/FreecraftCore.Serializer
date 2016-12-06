@@ -5,32 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using Fasterflect;
 using System.Reflection;
+using System.Linq.Expressions;
 
 namespace FreecraftCore.Serializer
 {
-
-	public static class ComplexTypeSerializerDecorator
-	{
-		/// <summary>
-		/// Creates a generic <see cref="ComplexTypeSerializerStrategy{TComplexType}"/> without access to compiletime type.
-		/// </summary>
-		/// <param name="complexType">Complex type for the strategy to serialize.</param>
-		/// <param name="serializerProvider">Serialization provider.</param>
-		/// <returns>A new instance of <see cref="ComplexTypeSerializerStrategy{TComplexType}"/>.</returns>
-		public static ITypeSerializerStrategy Create(Type complexType, IEnumerable<MemberAndSerializerPair> serializationDirections)
-		{
-			return typeof(ComplexTypeSerializerDecorator<>).MakeGenericType(complexType)
-				.CreateInstance(serializationDirections) as ITypeSerializerStrategy;
-		}
-	}
-
 	/// <summary>
 	/// Represents a complex type definition that combines multiple knowntypes or other complex types.
 	/// </summary>
 	/// <typeparam name="TComplexType"></typeparam>
 	public class ComplexTypeSerializerDecorator<TComplexType> : ITypeSerializerStrategy<TComplexType>
-		where TComplexType : new() //in .Net 4.0 > this is ok to do. Won't cause poor preformance
 	{
+		//New constaint is gone; this provided an efficient way to create new instances over Activator.CreateInstance.
+		//Search compiled lambda and new constaint operator on google to see dicussions about it
+		public static Func<TComplexType> instanceGeneratorDelegate { get; } = Expression.Lambda<Func<TComplexType>>(Expression.New(typeof(TComplexType))).Compile();
+
 		/// <summary>
 		/// Indicates the <see cref="TType"/> of the serializer.
 		/// </summary>
@@ -39,12 +27,12 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Ordered pairs of known serializer references and the memberinfos for wiremembers.
 		/// </summary>
-		IEnumerable<MemberAndSerializerPair> orderedMemberInfos { get; }
+		IEnumerable<MemberAndSerializerPair<TComplexType>> orderedMemberInfos { get; }
 
 		//Complex types should NEVER require context. It should be designed to avoid context requireing complex types.
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		public ComplexTypeSerializerDecorator(IEnumerable<MemberAndSerializerPair> serializationDirections) //todo: create a better way to provide serialization instructions
+		public ComplexTypeSerializerDecorator(IEnumerable<MemberAndSerializerPair<TComplexType>> serializationDirections) //todo: create a better way to provide serialization instructions
 		{
 			//These can be empty. If there are no members on a type there won't be anything to serialize.
 			if (serializationDirections == null)
@@ -56,7 +44,7 @@ namespace FreecraftCore.Serializer
 		//TODO: Error handling
 		public TComplexType Read(IWireMemberReaderStrategy source)
 		{
-			TComplexType instance = new TComplexType();
+			TComplexType instance = instanceGeneratorDelegate();
 
 			foreach (MemberAndSerializerPair serializerInfo in orderedMemberInfos)
 			{
@@ -79,11 +67,12 @@ namespace FreecraftCore.Serializer
 		//TODO: Error handling
 		public void Write(TComplexType value, IWireMemberWriterStrategy dest)
 		{
-			foreach(MemberAndSerializerPair serializerInfo in orderedMemberInfos)
+			foreach(MemberAndSerializerPair<TComplexType> serializerInfo in orderedMemberInfos)
 			{
 				//TODO: Check how TC handles optionals or nulls.
 				//Do we write nothing? Do we write 0?
-				object memberValue = value.TryGetValue(serializerInfo.MemberInformation.Name);
+				//object memberValue = value.TryGetValue(serializerInfo.MemberInformation.Name);
+				object memberValue = serializerInfo.MemberGetter(value); //instead of fasterflect we use delegate to getter
 
 				if (memberValue == null)
 					throw new InvalidOperationException($"Provider FieldName: {serializerInfo.MemberInformation.Name} on Type: {serializerInfo.MemberInformation.Type()} is null. The serializer doesn't support null.");

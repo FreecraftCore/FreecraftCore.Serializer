@@ -9,7 +9,6 @@ using Fasterflect;
 namespace FreecraftCore.Serializer.KnownTypes
 {
 	public class SubComplexTypeSerializerDecorator<TBaseType> : ITypeSerializerStrategy<TBaseType>
-		where TBaseType : class, new()
 	{
 		/// <summary>
 		/// Indicates the <see cref="TType"/> of the serializer.
@@ -109,7 +108,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if(childTypeRequest == null)
 				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Index: {childIndexRequested} but the lookup table provided a null type. This may indicate a failure in registeration of child types.");
 
-			return serializerProviderService.Get(childTypeRequest).Read(source) as TBaseType;
+			return (TBaseType)serializerProviderService.Get(childTypeRequest).Read(source);
 		}
 
 		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)

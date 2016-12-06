@@ -23,16 +23,16 @@ namespace FreecraftCore.Serializer
 			return !context.HasContextualMemberMetadata() && context.ContextRequirement == SerializationContextRequirement.Contextless;
 		}
 
-		protected override ITypeSerializerStrategy TryCreateSerializer(ISerializableTypeContext context)
+		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
 		{
 			//TODO: Cleaner/better way to provide instuctions
 			//Build the instructions for serializaiton
-			IEnumerable<MemberAndSerializerPair> orderedMemberInfos = context.TargetType.MembersWith<WireMemberAttribute>(System.Reflection.MemberTypes.Field | System.Reflection.MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
+			IEnumerable<MemberAndSerializerPair<TType>> orderedMemberInfos = context.TargetType.MembersWith<WireMemberAttribute>(System.Reflection.MemberTypes.Field | System.Reflection.MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
 				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder)
-				.Select(x => new MemberAndSerializerPair(x, serializerProviderService.Get(contextualKeyLookupFactoryService.Create(x))))
+				.Select(x => new MemberAndSerializerPair<TType>(x, serializerProviderService.Get(contextualKeyLookupFactoryService.Create(x))))
 				.ToArray();
 
-			return ComplexTypeSerializerDecorator.Create(context.TargetType, orderedMemberInfos);
+			return new ComplexTypeSerializerDecorator<TType>(orderedMemberInfos);
 		}
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)

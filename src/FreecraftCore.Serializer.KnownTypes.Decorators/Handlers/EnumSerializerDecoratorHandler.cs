@@ -33,11 +33,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			return context.TargetType.IsEnum;
 		}
 
-		protected override ITypeSerializerStrategy TryCreateSerializer(ISerializableTypeContext context)
+		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
 		{
 			//error handling in base
 			return typeof(EnumSerializerDecorator<,>).MakeGenericType(context.TargetType, context.TargetType.GetEnumUnderlyingType())
-						.CreateInstance(serializerProviderService) as ITypeSerializerStrategy;
+						.CreateInstance(serializerProviderService) as ITypeSerializerStrategy<TType>;
 		}
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)

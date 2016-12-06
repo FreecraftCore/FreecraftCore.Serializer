@@ -34,10 +34,7 @@ namespace FreecraftCore.Serializer
 			serializerStorageService = new SerializerStrategyProvider();
 
 			//Create the decoration service
-			serializerStrategyFactoryService = new DefaultSerializerStrategyFactory(SerializerDecoratorHandlerFactory.Create(serializerStorageService, new ContextLookupKeyFactoryService()), serializerStorageService);
-
-			//Subscribe to unknown type broadcasts
-			serializerStrategyFactoryService.OnFoundUnknownAssociatedType += ctx => ((ISerializerStrategyFactory)this).Create(ctx);
+			serializerStrategyFactoryService = new DefaultSerializerStrategyFactory(SerializerDecoratorHandlerFactory.Create(serializerStorageService, new ContextLookupKeyFactoryService()), serializerStorageService, this);
 
 			FreecraftCoreSerializerKnownTypesPrimitivesMetadata.Assembly.GetTypes()
 				.Where(t => t.HasAttribute<KnownTypeSerializerAttribute>())
@@ -51,8 +48,7 @@ namespace FreecraftCore.Serializer
 			isCompiled = true;
 		}
 
-		public TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>(byte[] data) 
-			where TTypeToDeserializeTo : new()
+		public TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>(byte[] data)
 		{
 			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
 #if DEBUG || DEBUGBUILD
@@ -76,15 +72,14 @@ namespace FreecraftCore.Serializer
 			return serializerStorageService.HasSerializerFor(type);
 		}
 
-		public ITypeSerializerStrategy<TTypeToRegister> RegisterType<TTypeToRegister>() 
-			where TTypeToRegister : new()
+		public ITypeSerializerStrategy<TTypeToRegister> RegisterType<TTypeToRegister>()
 		{
 			//Ingoring all but wiretypes makes this a lot easier.
 			if (typeof(TTypeToRegister).GetCustomAttribute<WireMessageAttribute>() == null)
 				throw new InvalidOperationException($"Do not register any type that isn't marked with {nameof(WireMessageAttribute)}. Only register WireMessages too; contained types will be registered automatically.");
 
 			//At this point this is a class marked with [WireMessage] so we should assume and treat it as a complex type
-			ITypeSerializerStrategy<TTypeToRegister> serializer = serializerStrategyFactoryService.Create(new TypeBasedSerializationContext(typeof(TTypeToRegister))) as ITypeSerializerStrategy<TTypeToRegister>;
+			ITypeSerializerStrategy<TTypeToRegister> serializer = serializerStrategyFactoryService.Create<TTypeToRegister>(new TypeBasedSerializationContext(typeof(TTypeToRegister))) as ITypeSerializerStrategy<TTypeToRegister>;
 
 			//All types calling RegisterType are contextless complex types. Register the result as a contextless type serializer
 			serializerStorageService.RegisterType(typeof(TTypeToRegister), serializer);
@@ -93,8 +88,7 @@ namespace FreecraftCore.Serializer
 			return serializer;
 		}
 
-		public byte[] Serialize<TTypeToSerialize>(TTypeToSerialize data) 
-			where TTypeToSerialize : new()
+		public byte[] Serialize<TTypeToSerialize>(TTypeToSerialize data)
 		{
 			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
 #if DEBUG || DEBUGBUILD
@@ -114,13 +108,13 @@ namespace FreecraftCore.Serializer
 		}
 
 		//Called as the fallback factory.
-		ITypeSerializerStrategy ISerializerStrategyFactory.Create(ISerializableTypeContext context)
+		public ITypeSerializerStrategy<TType> Create<TType>(ISerializableTypeContext context)
 		{
 			//This service acts a the default/fallback factory for serializer creation. If any factory encounters a type
 			//inside of a type that it doesn't know about or requires handling outside of its scope it'll broadcast that
 			//and we will implement more complex handling here
 
-			ITypeSerializerStrategy strategy = serializerStrategyFactoryService.Create(context);
+			ITypeSerializerStrategy<TType> strategy = serializerStrategyFactoryService.Create<TType>(context);
 
 			//The serializer could be null; we should verify it
 			if (strategy == null)

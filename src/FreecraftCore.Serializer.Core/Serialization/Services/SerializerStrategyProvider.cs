@@ -8,6 +8,8 @@ namespace FreecraftCore.Serializer
 {
 	public class SerializerStrategyProvider : IContextualSerializerProvider, IGeneralSerializerProvider, ISerializerStrategyRegistry
 	{
+		private IDictionary<Type, ITypeSerializerStrategy> contextlessSerializerLookupTable { get; }
+
 		/// <summary>
 		/// Lookup table that takes a context as a key and produces a serialization strategy.
 		/// </summary>
@@ -15,6 +17,7 @@ namespace FreecraftCore.Serializer
 
 		public SerializerStrategyProvider()
 		{
+			contextlessSerializerLookupTable = new Dictionary<Type, ITypeSerializerStrategy>();
 			strategyLookupTable = new Dictionary<ContextualSerializerLookupKey, ITypeSerializerStrategy>();
 		}
 
@@ -25,7 +28,7 @@ namespace FreecraftCore.Serializer
 		/// <returns>A valid <see cref="ITypeSerializerStrategy"/> or null if none were available.</returns>
 		public ITypeSerializerStrategy Get(Type type)
 		{
-			return strategyLookupTable[new ContextualSerializerLookupKey(ContextTypeFlags.None, NoContextKey.Value, type)];
+			return contextlessSerializerLookupTable[type];
 		}
 
 		/// <summary>
@@ -59,7 +62,7 @@ namespace FreecraftCore.Serializer
 		/// <returns>True if the provider has and can provide the a <see cref="ITypeSerializerStrategy"/> for the type.</returns>
 		public bool HasSerializerFor(Type type)
 		{
-			return strategyLookupTable.ContainsKey(new ContextualSerializerLookupKey(ContextTypeFlags.None, NoContextKey.Value, type));
+			return contextlessSerializerLookupTable.ContainsKey(type);
 		}
 
 		/// <summary>
@@ -92,8 +95,13 @@ namespace FreecraftCore.Serializer
 			if (this.HasSerializerFor(type))
 				return true;
 
+			//This is a contextless serializer. We should register it as contextless to save perf
+			//Though we should check if that is ture.
+			if (strategy.ContextRequirement != SerializationContextRequirement.Contextless)
+				throw new InvalidOperationException($"Provided serializer Type: {strategy.GetType().FullName} is not a contextless serializer. Cannot register without context.");
+
 			//Register a new contextless serializer
-			strategyLookupTable.Add(new ContextualSerializerLookupKey(ContextTypeFlags.None, NoContextKey.Value, type), strategy);
+			contextlessSerializerLookupTable.Add(type, strategy);
 
 			return true;
 		}

@@ -14,8 +14,7 @@ namespace FreecraftCore.Serializer
 		/// <typeparam name="TTypeToSerialize">Type that is being serialized (can be inferred).</typeparam>
 		/// <param name="data">Instance/value to serialize.</param>
 		/// <returns>Byte array representation of the object.</returns>
-		byte[] Serialize<TTypeToSerialize>(TTypeToSerialize data)
-			where TTypeToSerialize : new();
+		byte[] Serialize<TTypeToSerialize>(TTypeToSerialize data);
 
 		/// <summary>
 		/// Attempts to deserialize to <typeparamref name="TTypeToDeserializeTo"/> from the provided <see cref="byte[]"/>.
@@ -23,7 +22,6 @@ namespace FreecraftCore.Serializer
 		/// <typeparam name="TTypeToDeserializeTo"></typeparam>
 		/// <param name="data">Byte repsentation of <typeparamref name="TTypeToDeserializeTo"/>.</param>
 		/// <returns>An instance of <typeparamref name="TTypeToDeserializeTo"/> or null if failed.</returns>
-		TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>(byte[] data)
-			where TTypeToDeserializeTo : new();
+		TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>(byte[] data);
 	}
 }

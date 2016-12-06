@@ -35,12 +35,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			return context.TargetType.GetCustomAttributes<WireMessageBaseTypeAttribute>(false).Count() != 0;
 		}
 
-		protected override ITypeSerializerStrategy TryCreateSerializer(ISerializableTypeContext context)
+		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
 		{
 			//error handling in base
 
-			return typeof(SubComplexTypeSerializerDecorator<>).MakeGenericType(context.TargetType)
-				.CreateInstance(serializerProviderService) as ITypeSerializerStrategy;
+			return new SubComplexTypeSerializerDecorator<TType>(serializerProviderService);
 		}
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)

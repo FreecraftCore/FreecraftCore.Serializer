@@ -33,5 +33,10 @@ namespace FreecraftCore.Serializer.Tests
 		{
 			WriterStream.Write(data, 0, data.Length);
 		}
+
+		public void Write(byte[] data, int offset, int count)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

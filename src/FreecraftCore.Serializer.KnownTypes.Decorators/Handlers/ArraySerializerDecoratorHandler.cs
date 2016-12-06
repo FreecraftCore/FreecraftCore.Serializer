@@ -34,23 +34,28 @@ namespace FreecraftCore.Serializer.KnownTypes
 			return context.TargetType.IsArray;
 		}
 
-		protected override ITypeSerializerStrategy TryCreateSerializer(ISerializableTypeContext context)
+		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
 		{
+			/*if (typeof(TType) == typeof(int[]))
+			{
+				return new Int32ArraySerializerDecorator(serializerProviderService) as ITypeSerializerStrategy<TType>;
+			}*/
+
+			ICollectionSizeStrategy collectionSizeStrategy = null;
+
 			//TODO: Handle contextless requests. The future may require a single array serializer for all unknown sizes.
 			if (context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.FixedSize))
 			{
 				int knownSize = context.BuiltContextKey.Value.ContextSpecificKey.Key;
 
-				//If we know about the size then we should create a knownsize array decorator
-				return typeof(FixedSizeArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType())
-					.CreateInstance(serializerProviderService, (byte)knownSize) as ITypeSerializerStrategy;
+				collectionSizeStrategy = new FixedSizeCollectionSizeStrategy(knownSize);
 			}
 			else
-			{
-				//If we know about the size then we should create a knownsize array decorator
-				return typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType())
-					.CreateInstance(serializerProviderService) as ITypeSerializerStrategy;
-			}
+				collectionSizeStrategy = new UnknownSizeCollectionSizeStrategy();
+
+			//If we know about the size then we should create a knownsize array decorator
+			return typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType())
+				.CreateInstance(serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
 		}
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)

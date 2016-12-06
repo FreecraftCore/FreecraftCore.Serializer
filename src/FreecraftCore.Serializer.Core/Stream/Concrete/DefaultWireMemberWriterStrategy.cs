@@ -33,5 +33,10 @@ namespace FreecraftCore.Serializer
 		{
 			WriterStream.Write(data, 0, data.Length);
 		}
+
+		public void Write(byte[] data, int offset, int count)
+		{
+			WriterStream.Write(data, offset, count);
+		}
 	}
 }

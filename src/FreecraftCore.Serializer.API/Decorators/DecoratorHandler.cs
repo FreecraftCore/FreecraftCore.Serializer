@@ -38,7 +38,7 @@ namespace FreecraftCore.Serializer
 		/// <returns>True if the handler can decorate for the serialization of the specified <see cref="ISerializableTypeContext"/>.</returns>
 		public abstract bool CanHandle(ISerializableTypeContext context);
 
-		public ITypeSerializerStrategy Create(ISerializableTypeContext context)
+		public ITypeSerializerStrategy<TType> Create<TType>(ISerializableTypeContext context)
 		{
 			if (!CanHandle(context))
 				throw new InvalidOperationException($"Cannot handle Type: {context.TargetType.Name} with a {this.GetType().FullName}.");
@@ -49,7 +49,7 @@ namespace FreecraftCore.Serializer
 			if (!context.BuiltContextKey.HasValue)
 				throw new InvalidOperationException($"Failed to build a {nameof(ContextualSerializerLookupKey)} for the Type: {context.TargetType} with Context: {context.ToString()}.");
 
-			ITypeSerializerStrategy serializer = TryCreateSerializer(context);
+			ITypeSerializerStrategy<TType> serializer = TryCreateSerializer<TType>(context);
 
 			if (serializer == null)
 				throw new InvalidOperationException($"Failed to generate a serializer for Type: {context.TargetType.Name} with decorator factory {this.GetType().FullName}.");
@@ -84,6 +84,6 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="forType">Type the serializer is for.</param>
 		/// <returns>A valid <see cref="ITypeSerializerStrategy"/> or null if one could not be constructed.</returns>
-		protected abstract ITypeSerializerStrategy TryCreateSerializer(ISerializableTypeContext context);
+		protected abstract ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context);
 	}
 }

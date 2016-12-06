@@ -51,7 +51,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\Services\ContextLookupKeyFactoryService.cs" />
     <Compile Include="Serialization\Services\SerializerStrategyProvider.cs" />
-    <Compile Include="Serialization\Services\DefaultSerializerDecoratorService.cs" />
+    <Compile Include="Serialization\Services\DefaultSerializerStrategyFactory.cs" />
     <Compile Include="Stream\Concrete\DefaultWireMemberReaderStrategy.cs" />
     <Compile Include="Stream\Concrete\DefaultWireMemberWriterStrategy.cs" />
   </ItemGroup>

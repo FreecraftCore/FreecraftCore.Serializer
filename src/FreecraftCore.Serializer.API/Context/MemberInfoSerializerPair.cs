@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
+using Fasterflect;
 
 namespace FreecraftCore.Serializer
 {
@@ -11,7 +13,34 @@ namespace FreecraftCore.Serializer
 	/// Tuple-like pair of the <see cref="MemberInfo"/> context and the corresponding
 	/// <see cref="ITypeSerializerStrategy"/> for serializing the member.
 	/// </summary>
-	public class MemberAndSerializerPair
+	public class MemberAndSerializerPair<TContainingType> : MemberAndSerializerPair
+	{
+		/// <summary>
+		/// Delegate that can grab the <see cref="MemberInformation"/> member value.
+		/// </summary>
+		public Func<TContainingType, object> MemberGetter { get; }
+
+		public MemberAndSerializerPair(MemberInfo memberInfo, ITypeSerializerStrategy serializer)
+			: base(memberInfo, serializer)
+		{
+			//Due to perf problems fasterflect setting wasn't fast enough.
+			//Introducing a compiled lambda to delegate for get/set should provide the much needed preformance.
+
+			ParameterExpression instanceOfTypeToReadMemberOn = Expression.Parameter(memberInfo.DeclaringType, "instance");
+			MemberExpression member = Expression.PropertyOrField(instanceOfTypeToReadMemberOn, memberInfo.Name);
+			UnaryExpression castExpression = Expression.TypeAs(member, typeof(object)); //use object to box
+
+			//Build the getter lambda
+			MemberGetter = Expression.Lambda(castExpression, instanceOfTypeToReadMemberOn).Compile()
+				as Func<TContainingType, object>;
+		}
+	}
+
+	/// <summary>
+	/// Tuple-like pair of the <see cref="MemberInfo"/> context and the corresponding
+	/// <see cref="ITypeSerializerStrategy"/> for serializing the member.
+	/// </summary>
+	public abstract class MemberAndSerializerPair
 	{
 		/// <summary>
 		/// Cached <see cref="MemberInfo"/>.
@@ -33,6 +62,8 @@ namespace FreecraftCore.Serializer
 
 			MemberInformation = memberInfo;
 			TypeSerializer = serializer;
+
+			
 		}
 	}
 }

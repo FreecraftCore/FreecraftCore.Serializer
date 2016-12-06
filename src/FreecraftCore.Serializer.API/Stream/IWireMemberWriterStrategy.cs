@@ -18,6 +18,14 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="data"></param>
 		void Write(byte[] data);
+
+		/// <summary>
+		/// Overload for writes that require subarray writing.
+		/// </summary>
+		/// <param name="data">The array to subsect.</param>
+		/// <param name="offset">Offset from the begining.</param>
+		/// <param name="count">Bytes to be writtern starting from the offset.</param>
+		void Write(byte[] data, int offset, int count);
 		
 		/// <summary>
 		/// Writes the byte.

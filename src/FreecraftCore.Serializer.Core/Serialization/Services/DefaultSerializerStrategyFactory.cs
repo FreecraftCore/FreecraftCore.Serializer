@@ -25,11 +25,11 @@ namespace FreecraftCore.Serializer
 		private IGeneralSerializerProvider generalSerializerProviderService { get; }
 
 		/// <summary>
-		/// Event that can be subscribed to for alerts on found associated types.
+		/// Fallback factory (used to be an event broadcast)
 		/// </summary>
-		public event FoundUnknownAssociatedType OnFoundUnknownAssociatedType;
+		private ISerializerStrategyFactory fallbackFactoryService { get; }
 
-		public DefaultSerializerStrategyFactory(IEnumerable<DecoratorHandler> handlers, IGeneralSerializerProvider generalSerializerProvider)
+		public DefaultSerializerStrategyFactory(IEnumerable<DecoratorHandler> handlers, IGeneralSerializerProvider generalSerializerProvider, ISerializerStrategyFactory fallbackFactory)
 		{
 			if (generalSerializerProvider == null)
 				throw new ArgumentNullException(nameof(generalSerializerProvider), $"Provided {nameof(IGeneralSerializerProvider)} service was null.");
@@ -37,8 +37,12 @@ namespace FreecraftCore.Serializer
 			if (handlers == null)
 				throw new ArgumentNullException(nameof(handlers), $"Provided {nameof(DecoratorHandler)}s were null. Must be a non-null collection.");
 
+			if (fallbackFactory == null)
+				throw new ArgumentNullException(nameof(fallbackFactory), $"Provided {nameof(ISerializerStrategyFactory)}s were null. Must be a non-null collection.");
+
 			decoratorHandlers = handlers;
 			generalSerializerProviderService = generalSerializerProvider;
+			fallbackFactoryService = fallbackFactory;
 		}
 
 		/// <summary>
@@ -46,7 +50,7 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="context">The context.</param>
 		/// <returns>A decorated serializer or null if none could be created.</returns>
-		public ITypeSerializerStrategy Create(ISerializableTypeContext context)
+		public ITypeSerializerStrategy<TType> Create<TType>(ISerializableTypeContext context)
 		{
 			ISerializerStrategyFactory factory = null;
 
@@ -57,9 +61,10 @@ namespace FreecraftCore.Serializer
 					//If it can handle then we should register the associated types
 					foreach (ISerializableTypeContext subContext in handler.GetAssociatedSerializationContexts(context))
 					{
-						//Broadcast that we found an associated type if it's not known
-						//Because we only know the Type there will be no context and we need a TypeContext
-						OnFoundUnknownAssociatedType?.Invoke(subContext);
+						//TODO: Maybe figure out how to get type context inside here to call generic
+						//Maybe visitor?
+						//Call the create on the fallback handler
+						fallbackFactoryService.CallMethod(new Type[] { subContext.TargetType }, nameof(Create), subContext);
 					}
 
 					//TODO: If we ever have mutliple decoration then this factory set will break things
@@ -71,7 +76,7 @@ namespace FreecraftCore.Serializer
 			if (factory == null)
 				throw new InvalidOperationException($"Couldn't generate a strategy for Type: {context.TargetType}.");
 
-			return factory.Create(context);
+			return factory.Create<TType>(context);
 		}
 	}
 }

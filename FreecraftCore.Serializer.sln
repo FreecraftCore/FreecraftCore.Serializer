@@ -27,7 +27,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Serializer.Me
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Serializer.Strategy.Tests", "tests\FreecraftCore.Serializer.Strategy.Tests\FreecraftCore.Serializer.Strategy.Tests.csproj", "{71124C25-DB7D-453A-999F-0C10145B075D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Preformance.Tests", "Preformance.Tests\Preformance.Tests.csproj", "{F1F44ABD-5A55-499A-9ECA-8C11EF5C53B7}"
+EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -73,6 +78,10 @@ Global
 		{71124C25-DB7D-453A-999F-0C10145B075D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71124C25-DB7D-453A-999F-0C10145B075D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71124C25-DB7D-453A-999F-0C10145B075D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1F44ABD-5A55-499A-9ECA-8C11EF5C53B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1F44ABD-5A55-499A-9ECA-8C11EF5C53B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1F44ABD-5A55-499A-9ECA-8C11EF5C53B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1F44ABD-5A55-499A-9ECA-8C11EF5C53B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,5 +97,6 @@ Global
 		{2535B68D-30C8-4317-83A0-604869EF7583} = {2E903AB5-E882-49A7-A612-FCCB9F11D540}
 		{9EE23ED7-0B53-4643-8412-14A873FCC10F} = {C69D878A-A37C-4DBD-8D90-8AF30074E3C0}
 		{71124C25-DB7D-453A-999F-0C10145B075D} = {2E903AB5-E882-49A7-A612-FCCB9F11D540}
+		{F1F44ABD-5A55-499A-9ECA-8C11EF5C53B7} = {2E903AB5-E882-49A7-A612-FCCB9F11D540}
 	EndGlobalSection
 EndGlobal
