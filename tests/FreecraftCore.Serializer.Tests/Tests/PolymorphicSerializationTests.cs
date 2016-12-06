@@ -36,7 +36,7 @@ namespace FreecraftCore.Serializer.Tests
 			serializer.RegisterType<WireMessageTest>();
 			serializer.Compile();
 
-			WireMessageTest message = serializer.Deserialize<WireMessageTest>(serializer.Serialize(new WireMessageTest(new ChildTypeThree())));
+			WireMessageTest message = serializer.Deserialize<WireMessageTest>(serializer.Serialize(new WireMessageTest(new ChildTypeThree(), new ChildTypeThree())));
 
 			//assert
 			Assert.NotNull(message);
@@ -53,7 +53,7 @@ namespace FreecraftCore.Serializer.Tests
 			serializer.RegisterType<WireMessageTest>();
 			serializer.Compile();
 
-			WireMessageTest message = serializer.Deserialize<WireMessageTest>(serializer.Serialize(new WireMessageTest(new ChildTypeTwo(20, uint.MaxValue - 1000))));
+			WireMessageTest message = serializer.Deserialize<WireMessageTest>(serializer.Serialize(new WireMessageTest(new ChildTypeTwo(20, uint.MaxValue - 1000), new ChildTypeThree())));
 
 			//assert
 			Assert.NotNull(message);
@@ -62,18 +62,47 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.AreEqual((message.test as ChildTypeTwo).b, 20);
 		}
 
+		//Right now we dont support serializing null
+		[Test]
+		public static void Test_Cant_Polymorphic_Serialize_Null()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+
+			//act
+			serializer.RegisterType<WireMessageTest>();
+			serializer.Compile();
+
+			Assert.Throws<InvalidOperationException>(() => serializer.Deserialize<WireMessageTest>(serializer.Serialize(new WireMessageTest(null, null))));
+		}
+
 		[WireMessage]
 		public class WireMessageTest
 		{
 			[WireMember(1)]
 			public BaseTypeField test;
 
-			public WireMessageTest(BaseTypeField field)
+			[WireMember(2)]
+			public BaseTypeField anotherTest;
+
+			public WireMessageTest(BaseTypeField field, BaseTypeField another)
 			{
 				test = field;
+				anotherTest = another;
 			}
 
 			public WireMessageTest()
+			{
+
+			}
+		}
+
+		public class AnotherTest
+		{
+			[WireMember(1)]
+			public int a;
+
+			public AnotherTest()
 			{
 
 			}

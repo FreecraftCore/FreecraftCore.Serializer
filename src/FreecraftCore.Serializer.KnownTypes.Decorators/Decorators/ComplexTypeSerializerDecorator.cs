@@ -85,8 +85,8 @@ namespace FreecraftCore.Serializer
 				//Do we write nothing? Do we write 0?
 				object memberValue = value.TryGetValue(serializerInfo.MemberInformation.Name);
 
-				if (value == null || memberValue == null)
-					continue;
+				if (memberValue == null)
+					throw new InvalidOperationException($"Provider FieldName: {serializerInfo.MemberInformation.Name} on Type: {serializerInfo.MemberInformation.Type()} is null. The serializer doesn't support null.");
 
 				try
 				{
