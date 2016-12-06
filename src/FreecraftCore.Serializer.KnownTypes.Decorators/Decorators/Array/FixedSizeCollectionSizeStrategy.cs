@@ -20,7 +20,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		//TODO: Maybe pass in attribute
 		public FixedSizeCollectionSizeStrategy(int size)
 		{
-			FixedSize = size;
+			FixedSize = Math.Min(255, size); //WoW only sends byte sizes
 		}
 
 		/// <summary>
