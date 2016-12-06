@@ -71,7 +71,7 @@ namespace FreecraftCore.Serializer.Tests
 
 			byte[] bytes = serializer.Serialize(new VeryComplexType(6, wireMessageNested, arrayOne, arrayTwo));
 			Assert.NotNull(bytes);
-			Assert.NotZero(bytes.Length);
+			Assert.False(bytes.Length == 0 );
 			VeryComplexType message = serializer.Deserialize<VeryComplexType>(bytes);
 
 			//assert
