@@ -24,5 +24,19 @@ namespace FreecraftCore.Serializer.Tests
 			//assert
 			Assert.AreEqual(value, "Hello!");
 		}
+
+		[Test]
+		public static void Test_String_Serializer_Can_Serialize_Empty_String()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.Compile();
+
+			//act
+			string value = serializer.Deserialize<string>(serializer.Serialize(""));
+
+			//assert
+			Assert.Null(value);
+		}
 	}
 }
