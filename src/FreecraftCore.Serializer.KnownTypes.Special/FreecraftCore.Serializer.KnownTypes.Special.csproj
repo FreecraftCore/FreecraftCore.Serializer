@@ -41,6 +41,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Decorators\PackedDateTimeSerializerStrategyDecorator .cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FreecraftCore.Serializer.API\FreecraftCore.Serializer.API.csproj">
+      <Project>{b35a46cf-3219-4242-a292-6b0ef828065e}</Project>
+      <Name>FreecraftCore.Serializer.API</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj">
+      <Project>{6ce55491-b1e3-4c11-bffb-203e41563cb5}</Project>
+      <Name>FreecraftCore.Serializer.Metadata</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

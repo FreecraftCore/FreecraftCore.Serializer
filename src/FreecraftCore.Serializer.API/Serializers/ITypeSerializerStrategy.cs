@@ -48,6 +48,6 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="source">The reader providing the input data.</param>
 		/// <returns>The updated / replacement value.</returns>
-		TType Read(IWireMemberReaderStrategy source);
+		new TType Read(IWireMemberReaderStrategy source);
 	}
 }
