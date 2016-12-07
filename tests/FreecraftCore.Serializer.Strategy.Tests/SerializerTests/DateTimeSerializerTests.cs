@@ -68,9 +68,9 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 			//Check values
 			Assert.AreEqual(testValue.Minute, deserializedInstance.Minute);
 			Assert.AreEqual(testValue.Day, deserializedInstance.Day);
-			Assert.AreEqual(testValue.Month, deserializedInstance.Month);
 			Assert.AreEqual(testValue.Year, deserializedInstance.Year);
-			Assert.AreEqual(testValue.Minute, deserializedInstance.Minute);
+			Assert.AreEqual(testValue.Month, deserializedInstance.Month);
+			
 		}
 
 		[Test]
