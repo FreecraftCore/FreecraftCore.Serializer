@@ -56,9 +56,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 			
 			byte currentByte = source.ReadByte();
 			
+			//TODO: Security/prevent spoofs causing exceptions
 			while(currentByte != 0)
 			{
 				stringBytes.Add(currentByte);
+
+				currentByte = source.ReadByte();
 			}
 			
 			//Serializer design decision: Return null instead of String.Empty for no strings

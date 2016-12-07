@@ -49,6 +49,7 @@
     <Compile Include="Tests\GeneralTests.cs" />
     <Compile Include="Tests\PolymorphicSerializationTests.cs" />
     <Compile Include="Tests\SerializationTests.cs" />
+    <Compile Include="Tests\StringTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\FreecraftCore.Serializer.API\FreecraftCore.Serializer.API.csproj">
