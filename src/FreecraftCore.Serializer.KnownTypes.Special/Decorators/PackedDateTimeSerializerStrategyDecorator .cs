@@ -50,7 +50,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//int weekDay = (packedDate >> 11) & 7;
 			//int something2 = (packedDate >> 29) & 3; always 0
 
-			return new DateTime(2000, 1, 1).AddYears(year).AddMonths(month).AddDays(day).AddHours(hour).AddMinutes(minute);
+			return new DateTime(2000 + year, 1 + month, 1 + day, hour, minute, 0); //fluent building of the immutable DateTime was pretty but inefficient
 		}
 
 		public void Write(object value, IWireMemberWriterStrategy dest)
