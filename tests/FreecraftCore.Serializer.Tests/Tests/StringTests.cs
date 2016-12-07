@@ -12,7 +12,7 @@ namespace FreecraftCore.Serializer.Tests
 	public class StringTests
 	{
 		[Test]
-		public static void Test_String_Serializer_Serializes_And_Serializes()
+		public static void Test_String_Serializer_Serializes()
 		{
 			//arrange
 			SerializerService serializer = new SerializerService();
@@ -20,6 +20,9 @@ namespace FreecraftCore.Serializer.Tests
 
 			//act
 			string value = serializer.Deserialize<string>(serializer.Serialize("Hello!"));
+
+			//assert
+			Assert.AreEqual(value, "Hello!");
 		}
 	}
 }
