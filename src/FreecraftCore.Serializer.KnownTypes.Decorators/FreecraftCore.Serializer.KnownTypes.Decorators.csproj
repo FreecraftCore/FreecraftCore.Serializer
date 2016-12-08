@@ -53,7 +53,11 @@
     <Compile Include="Decorators\Array\UnknownSizeCollectionSizeStrategy.cs" />
     <Compile Include="Decorators\ComplexTypeSerializerDecorator.cs" />
     <Compile Include="Decorators\EnumSerializerDecorator.cs" />
+    <Compile Include="Decorators\String\FixedSizeStringSerializerDecorator.cs" />
+    <Compile Include="Decorators\String\FixedSizeStringSizeStrategy.cs" />
+    <Compile Include="Decorators\String\IStringSizeStrategy.cs" />
     <Compile Include="Decorators\SubComplexTypeSerializerDecorator.cs" />
+    <Compile Include="Handlers\StringSerializerDecoratorHandler.cs" />
     <Compile Include="SerializerDecoratorHandlerFactory.cs" />
     <Compile Include="Handlers\ComplexTypeSerializerDecoratorHandler.cs" />
     <Compile Include="Handlers\EnumSerializerDecoratorHandler.cs" />
@@ -82,6 +86,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

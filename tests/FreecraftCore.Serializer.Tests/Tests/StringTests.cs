@@ -38,5 +38,23 @@ namespace FreecraftCore.Serializer.Tests
 			//assert
 			Assert.Null(value);
 		}
+
+		[Test]
+		public static void Test_String_With_Null_Terminator_Is_Same()
+		{
+			//arrange
+			Assert.AreEqual("Hello", "Hello".PadRight(5, '\0'));
+
+			Assert.AreEqual("Hello".Length, "Hello".PadRight(5, '\0').Length);
+		}
+
+		[Test]
+		public static void Test_Fixed_String_Can_Write()
+		{
+			//arrange
+			FixedSizeStringSerializerDecorator stringSerializer = new FixedSizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy());
+
+			stringSerializer.Write("hello", new DefaultWireMemberWriterStrategy());
+		}
 	}
 }
