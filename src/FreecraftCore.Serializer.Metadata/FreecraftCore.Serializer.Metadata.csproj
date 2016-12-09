@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="Attributes\KnownSizeAttribute.cs" />
     <Compile Include="Attributes\PackedAttribute.cs" />
+    <Compile Include="Attributes\ReverseDataAttribute.cs" />
+    <Compile Include="Attributes\SendSizeAttribute.cs" />
     <Compile Include="Attributes\WireMemberAttribute.cs" />
     <Compile Include="Attributes\WireMessageAttribute.cs" />
     <Compile Include="Attributes\WireMessageBaseTypeAttribute.cs" />
