@@ -56,5 +56,18 @@ namespace FreecraftCore.Serializer.Tests
 
 			stringSerializer.Write("hello", new DefaultWireMemberWriterStrategy());
 		}
+
+		[Test]
+		public static void Test_Reverse_Decorator_Can_Reverse_Strings()
+		{
+			//arrange
+			ReverseStringSerializerDecorator serializer = new ReverseStringSerializerDecorator(new StringSerializerStrategy());
+			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+
+			//act
+			serializer.Write("Hello", writer);
+
+			Assert.AreEqual("olleH\0", new string(Encoding.ASCII.GetChars(writer.GetBytes())));
+		}
 	}
 }

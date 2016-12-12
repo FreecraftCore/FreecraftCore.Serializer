@@ -18,10 +18,20 @@ namespace FreecraftCore.Serializer
 			//We must inspect the metadata to build the key
 			if(context.HasContextualMemberMetadata())
 			{
-				//Check member data for fixed size attribute
-				//It's the only one that causes context to matter
+				//Build the relevant flags
+				ContextTypeFlags flags = ContextTypeFlags.None;
+
+				if (context.HasMemberAttribute<ReverseDataAttribute>())
+					flags |= ContextTypeFlags.Reverse;
+
+				if (context.HasMemberAttribute<EnumStringAttribute>())
+					flags |= ContextTypeFlags.EnumString;
+
+				if (context.HasMemberAttribute<SendSizeAttribute>())
+					return new ContextualSerializerLookupKey(flags | ContextTypeFlags.SendSize, new SendSizeContextKey(context.GetMemberAttribute<SendSizeAttribute>().TypeOfSize), context.TargetType);
+
 				if (context.HasMemberAttribute<KnownSizeAttribute>())
-					return new ContextualSerializerLookupKey(ContextTypeFlags.FixedSize, new FixedSizeContextKey(context.GetMemberAttribute<KnownSizeAttribute>().KnownSize), context.TargetType);
+					return new ContextualSerializerLookupKey(flags | ContextTypeFlags.FixedSize, new SizeContextKey(context.GetMemberAttribute<KnownSizeAttribute>().KnownSize), context.TargetType);
 			}
 
 			return new ContextualSerializerLookupKey(ContextTypeFlags.None, NoContextKey.Value, context.TargetType);

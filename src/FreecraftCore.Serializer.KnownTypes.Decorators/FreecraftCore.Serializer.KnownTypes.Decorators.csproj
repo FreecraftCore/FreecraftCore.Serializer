@@ -56,6 +56,7 @@
     <Compile Include="Decorators\String\FixedSizeStringSerializerDecorator.cs" />
     <Compile Include="Decorators\String\FixedSizeStringSizeStrategy.cs" />
     <Compile Include="Decorators\String\IStringSizeStrategy.cs" />
+    <Compile Include="Decorators\String\ReverseStringSerializerDecorator.cs" />
     <Compile Include="Decorators\SubComplexTypeSerializerDecorator.cs" />
     <Compile Include="Handlers\StringSerializerDecoratorHandler.cs" />
     <Compile Include="SerializerDecoratorHandlerFactory.cs" />

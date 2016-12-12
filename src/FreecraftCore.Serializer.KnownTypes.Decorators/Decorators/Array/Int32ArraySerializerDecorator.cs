@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
-	/*unchecked
-{
-	fixed (int* intPtr = &value[0])
+	//This is an exprimental serializer. Below is the best version I could come up with
+	//But even further down is the fastest hack to serialize an array.
+	/*fixed (int* intPtr = &value[0])
 	{
 		//Profiled and this is the fastest solution I could come up with.
 		//There isn't a way to directly set the int array to the byte array.
@@ -27,8 +27,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		dest.Write(bytes);
-	}
-}*/
+	}*/
 
 	/*public class Int32ArraySerializerDecorator : ArraySerializerDecorator<int>
 	{

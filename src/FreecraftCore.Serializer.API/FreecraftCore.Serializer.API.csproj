@@ -46,7 +46,8 @@
   <ItemGroup>
     <Compile Include="Context\ContextTypeFlags.cs" />
     <Compile Include="Context\Keys\ContextualSerializerLookupKey.cs" />
-    <Compile Include="Context\Keys\FixedSizeContextKey.cs" />
+    <Compile Include="Context\Keys\SendSizeContextKey.cs" />
+    <Compile Include="Context\Keys\SizeContextKey.cs" />
     <Compile Include="Context\Keys\IContextKey.cs" />
     <Compile Include="Context\Keys\IContextualSerializerLookupKeyFactory.cs" />
     <Compile Include="Context\Keys\NoContextKey.cs" />

@@ -7,21 +7,21 @@ using System.Threading.Tasks;
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
-	/// Key that unlocks serializers that have a [FixedSize(size)] context.
+	/// Key that unlocks serializers that have a [SendSize(SizeType)] context.
 	/// </summary>
-	public struct FixedSizeContextKey : IContextKey
+	public struct SendSizeContextKey : IContextKey
 	{
 		/// <summary>
 		/// Size/key
 		/// </summary>
 		public int Key { get; }
 
-		public FixedSizeContextKey(int fixedSize)
+		public SendSizeContextKey(SendSizeAttribute.SizeType sizeType)
 		{
-			if (fixedSize < 0)
-				throw new ArgumentException($"Provided size {nameof(fixedSize)} was less than 0 but sizes cannot be negative.");
+			if (!Enum.IsDefined(typeof(SendSizeAttribute), sizeType))
+				throw new ArgumentException($"Provided SizeType {sizeType} was invalid.");
 
-			Key = fixedSize;
+			Key = (int)sizeType;
 		}
 
 		//TODO: Override rest of methods

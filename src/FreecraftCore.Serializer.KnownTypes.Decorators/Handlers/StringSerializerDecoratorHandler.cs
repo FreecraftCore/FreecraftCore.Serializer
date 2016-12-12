@@ -22,6 +22,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
 		{
+			ITypeSerializerStrategy<string> serializer = null;
+
 			//It is possible that the WoW protocol expects a fixed-size string that both client and server know the length of
 			//This can be seen in the first packet Auth_Challenge: uint8   gamename[4];
 			//It can be seen that this field is a fixed length string (byte array)
@@ -30,14 +32,21 @@ namespace FreecraftCore.Serializer.KnownTypes
 				//read the key. It will have the size
 				int size = context.BuiltContextKey.Value.ContextSpecificKey.Key;
 
-				return new FixedSizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(context.BuiltContextKey.Value.ContextSpecificKey.Key), new StringSerializerStrategy())
-					as ITypeSerializerStrategy<TType>;
+				serializer = new FixedSizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(context.BuiltContextKey.Value.ContextSpecificKey.Key), new StringSerializerStrategy());
 			}
 
 			if (context.ContextRequirement == SerializationContextRequirement.Contextless)
 				return new StringSerializerStrategy() as ITypeSerializerStrategy<TType>; //The caller should know what he's doing.
 
-			throw new InvalidOperationException($"Failed to provided a serializer {GetType().FullName} failed for Context: {context.ToString()}.");
+			//At this point if it's null then it's just a default serializer
+			if (serializer == null)
+				serializer = new StringSerializerStrategy();
+
+			//At this point we need to check if the string should be reversed. If it should be then we need to decorate it
+			if (context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Reverse))
+				serializer = new ReverseStringSerializerDecorator(serializer);
+
+			return serializer as ITypeSerializerStrategy<TType>;
 		}
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)
