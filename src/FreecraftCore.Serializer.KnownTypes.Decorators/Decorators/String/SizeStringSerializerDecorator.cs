@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
-	public class FixedSizeStringSerializerDecorator : ITypeSerializerStrategy<string>
+	public class SizeStringSerializerDecorator : ITypeSerializerStrategy<string>
 	{
 		/// <summary>
 		/// Indicates the context requirement for this serializer strategy.
@@ -25,11 +25,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 		public IStringSizeStrategy sizeProvider { get; }
 
 		/// <summary>
-		/// 
+		/// The string serializer that is being decorated.
 		/// </summary>
 		private ITypeSerializerStrategy<string> decoratedSerializer { get; }
 
-		public FixedSizeStringSerializerDecorator(IStringSizeStrategy size, ITypeSerializerStrategy<string> stringSerializer)
+		public SizeStringSerializerDecorator(IStringSizeStrategy size, ITypeSerializerStrategy<string> stringSerializer)
 		{
 			sizeProvider = size;
 			decoratedSerializer = stringSerializer;
@@ -37,27 +37,27 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		public string Read(IWireMemberReaderStrategy source)
 		{
-			//The size is known so it is required that we override the handling of the default read
+			//The size must come from the strategy provided
 			int size = sizeProvider.Size(source);
 
 			byte[] bytes = source.ReadBytes(size);
 
-			return Encoding.ASCII.GetString(bytes);
+			return Encoding.ASCII.GetString(bytes).TrimEnd('\0'); //TODO: Come up with better way to avoid/remove null terminator for sent size strings
 		}
 
 		public void Write(string value, IWireMemberWriterStrategy dest)
 		{
 			int size = sizeProvider.Size(value, dest);
 
-			//Now that it is properly padded the string we can write it
-			//Don't write the size. The size is known
+			//Now that we know the size, and the header will be written if it was needed, we can write it
+			//Don't write the size. Leave it up to the strategy above
 			decoratedSerializer.Write(value, dest);
 
 			//If the size isn't the same as the provided size we need to pad it
 			if (value.Length < size)
 				dest.Write(new byte[(size - value.Length) + 1]);
 			else
-				dest.Write((byte)0);
+				dest.Write((byte)0); //always add null terminator
 		}
 
 		public void Write(object value, IWireMemberWriterStrategy dest)

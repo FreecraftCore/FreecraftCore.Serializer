@@ -36,6 +36,10 @@
       <HintPath>..\..\packages\fasterflect.2.1.3\lib\net40\Fasterflect.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MiscUtil, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3c42c4bfacf7596, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\JonSkeet.MiscUtil.0.1\lib\net35-Client\MiscUtil.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -53,10 +57,11 @@
     <Compile Include="Decorators\Array\UnknownSizeCollectionSizeStrategy.cs" />
     <Compile Include="Decorators\ComplexTypeSerializerDecorator.cs" />
     <Compile Include="Decorators\EnumSerializerDecorator.cs" />
-    <Compile Include="Decorators\String\FixedSizeStringSerializerDecorator.cs" />
+    <Compile Include="Decorators\String\SizeStringSerializerDecorator.cs" />
     <Compile Include="Decorators\String\FixedSizeStringSizeStrategy.cs" />
     <Compile Include="Decorators\String\IStringSizeStrategy.cs" />
     <Compile Include="Decorators\String\ReverseStringSerializerDecorator.cs" />
+    <Compile Include="Decorators\String\SizeIncludedStringSizeStrategy.cs" />
     <Compile Include="Decorators\SubComplexTypeSerializerDecorator.cs" />
     <Compile Include="Handlers\StringSerializerDecoratorHandler.cs" />
     <Compile Include="SerializerDecoratorHandlerFactory.cs" />

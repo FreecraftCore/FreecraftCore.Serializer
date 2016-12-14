@@ -52,9 +52,25 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Fixed_String_Can_Write()
 		{
 			//arrange
-			FixedSizeStringSerializerDecorator stringSerializer = new FixedSizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy());
+			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy());
 
 			stringSerializer.Write("hello", new DefaultWireMemberWriterStrategy());
+		}
+
+		[Test]
+		public static void Test_Fixed_String_Can_Read()
+		{
+			//arrange
+			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy());
+			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+
+			//act
+			stringSerializer.Write("hello", writer);
+			string value = stringSerializer.Read(new DefaultWireMemberReaderStrategy(writer.GetBytes()));
+
+			//assert
+			Assert.IsNotNullOrEmpty(value);
+			Assert.AreEqual("hello", value);
 		}
 
 		[Test]
@@ -68,6 +84,22 @@ namespace FreecraftCore.Serializer.Tests
 			serializer.Write("Hello", writer);
 
 			Assert.AreEqual("olleH\0", new string(Encoding.ASCII.GetChars(writer.GetBytes())));
+		}
+
+		[Test]
+		public static void Test_Send_With_Size_Can_Read()
+		{
+			//arrange
+			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(new ByteSerializerStrategy()), new StringSerializerStrategy());
+			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+
+			//act
+			stringSerializer.Write("hello", writer);
+			string value = stringSerializer.Read(new DefaultWireMemberReaderStrategy(writer.GetBytes()));
+
+			//assert
+			Assert.IsNotNullOrEmpty(value);
+			Assert.AreEqual("hello", value);
 		}
 	}
 }
