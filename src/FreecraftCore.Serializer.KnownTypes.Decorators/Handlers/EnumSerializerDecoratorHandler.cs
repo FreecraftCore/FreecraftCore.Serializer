@@ -35,6 +35,17 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
 		{
+			//If they want an enum string then we need to produce an string serializer
+			if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.EnumString))
+			{
+				ITypeSerializerStrategy<string> serializer = this.serializerProviderService.Get(context.BuiltContextKey.Value)
+					as ITypeSerializerStrategy<string>;
+
+				//Now we can decorate
+				return typeof(EnumSerializerDecorator<,>).MakeGenericType(context.TargetType).CreateInstance(serializerProviderService)
+					as ITypeSerializerStrategy<TType>;
+			}
+
 			//error handling in base
 			return typeof(EnumSerializerDecorator<,>).MakeGenericType(context.TargetType, context.TargetType.GetEnumUnderlyingType())
 						.CreateInstance(serializerProviderService) as ITypeSerializerStrategy<TType>;

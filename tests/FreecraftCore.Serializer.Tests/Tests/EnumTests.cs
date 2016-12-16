@@ -21,6 +21,17 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.True(service.isTypeRegistered<WireMessageWithEnum>());
 		}
 
+		[Test]
+		public static void Test_Serializer_Can_Serialize_And_Read_Enum_String()
+		{
+			//arrange
+			SerializerService service = new SerializerService();
+
+			//act
+			Assert.DoesNotThrow(() => service.RegisterType<WireMessageWithEnum>());
+			Assert.True(service.isTypeRegistered<WireMessageWithEnum>());
+		}
+
 		[WireMessage]
 		public class WireMessageWithEnum
 		{
