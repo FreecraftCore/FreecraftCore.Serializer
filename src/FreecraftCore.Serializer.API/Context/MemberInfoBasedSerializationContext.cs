@@ -68,9 +68,11 @@ namespace FreecraftCore.Serializer
 
 		private bool IsContextualMemberAttribute(Attribute attri)
 		{
+			//TODO: Why does this class decide what is contextual? This is bad.
 			//We don't check WireMessageBaseType because that isn't part of the context of the member. That's context on the Type.
 			//When registering a complex type a decorator may be available to handle that case but it's not relevant to the serialization context.
-			return attri.GetType() == typeof(PackedAttribute) || attri.GetType() == typeof(KnownSizeAttribute);
+			return attri.GetType() == typeof(PackedAttribute) || attri.GetType() == typeof(KnownSizeAttribute) || attri.GetType() == typeof(EnumStringAttribute)
+				|| attri.GetType() == typeof(SendSizeAttribute);
 		}
 	}
 }

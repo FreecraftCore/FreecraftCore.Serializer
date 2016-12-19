@@ -56,7 +56,8 @@
     <Compile Include="Decorators\Array\Int32ArraySerializerDecorator.cs" />
     <Compile Include="Decorators\Array\UnknownSizeCollectionSizeStrategy.cs" />
     <Compile Include="Decorators\ComplexTypeSerializerDecorator.cs" />
-    <Compile Include="Decorators\EnumSerializerDecorator.cs" />
+    <Compile Include="Decorators\Enum\EnumSerializerDecorator.cs" />
+    <Compile Include="Decorators\Enum\EnumStringSerializerDecorator.cs" />
     <Compile Include="Decorators\String\SizeStringSerializerDecorator.cs" />
     <Compile Include="Decorators\String\FixedSizeStringSizeStrategy.cs" />
     <Compile Include="Decorators\String\IStringSizeStrategy.cs" />

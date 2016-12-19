@@ -59,5 +59,17 @@ namespace FreecraftCore.Serializer
 		{
 			return context.BuiltContextKey.HasValue;
 		}
+
+		public static ISerializableTypeContext Override(this ISerializableTypeContext context, Type targetType)
+		{
+			//Decorate the context to override the target type
+			return new ContextTargetOverrideDecorator(context, targetType);
+		}
+
+		public static ISerializableTypeContext Override(this ISerializableTypeContext context, ContextualSerializerLookupKey key)
+		{
+			//Deocrate the context to set the provided key
+			return new ContextKeyOverrideDecorator(context, key);
+		}
 	}
 }

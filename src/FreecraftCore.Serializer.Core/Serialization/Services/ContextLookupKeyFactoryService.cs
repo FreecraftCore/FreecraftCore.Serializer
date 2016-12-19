@@ -32,6 +32,9 @@ namespace FreecraftCore.Serializer
 
 				if (context.HasMemberAttribute<KnownSizeAttribute>())
 					return new ContextualSerializerLookupKey(flags | ContextTypeFlags.FixedSize, new SizeContextKey(context.GetMemberAttribute<KnownSizeAttribute>().KnownSize), context.TargetType);
+
+				//If we're here then we have flags that weren't mutually exclusive
+				return new ContextualSerializerLookupKey(flags, new NoContextKey(), context.TargetType);
 			}
 
 			return new ContextualSerializerLookupKey(ContextTypeFlags.None, NoContextKey.Value, context.TargetType);

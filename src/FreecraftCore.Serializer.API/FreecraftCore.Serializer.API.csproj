@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Context\ContextKeyOverrideDecorator.cs" />
     <Compile Include="Context\ContextTypeFlags.cs" />
     <Compile Include="Context\Keys\ContextualSerializerLookupKey.cs" />
     <Compile Include="Context\Keys\SendSizeContextKey.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="Context\Keys\NoContextKey.cs" />
     <Compile Include="Context\MemberInfoBasedSerializationContext.cs" />
     <Compile Include="Context\MemberInfoSerializerPair.cs" />
+    <Compile Include="Context\ContextTargetOverrideDecorator.cs" />
     <Compile Include="Context\SerializationContextRequirement.cs" />
     <Compile Include="Context\TypeBasedSerializationContext.cs" />
     <Compile Include="Decorators\DecoratorHandler.cs" />

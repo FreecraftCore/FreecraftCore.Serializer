@@ -14,10 +14,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 	[DecoratorHandler]
 	public class EnumSerializerDecoratorHandler : DecoratorHandler
 	{
-		public EnumSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory contextualKeyLookupFactory)
+		private ISerializerStrategyFactory fallbackFactoryService { get; }
+
+		public EnumSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory contextualKeyLookupFactory, ISerializerStrategyFactory fallbackFactory)
 			: base(serializerProvider, contextualKeyLookupFactory)
 		{
+			if (fallbackFactory == null)
+				throw new ArgumentNullException(nameof(fallbackFactory), $"Provided argument {nameof(fallbackFactory)} was null.");
 
+			fallbackFactoryService = fallbackFactory;
 		}
 
 		/// <summary>
@@ -38,11 +43,20 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//If they want an enum string then we need to produce an string serializer
 			if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.EnumString))
 			{
-				ITypeSerializerStrategy<string> serializer = this.serializerProviderService.Get(context.BuiltContextKey.Value)
+				ContextualSerializerLookupKey stringKey = new ContextualSerializerLookupKey(context.BuiltContextKey.Value.ContextFlags, context.BuiltContextKey.Value.ContextSpecificKey, typeof(string));
+
+				ITypeSerializerStrategy<string> serializer = null;
+
+				if (serializerProviderService.HasSerializerFor(stringKey))
+				{
+					serializer = this.serializerProviderService.Get(context.BuiltContextKey.Value)
 					as ITypeSerializerStrategy<string>;
+				}
+				else
+					serializer = fallbackFactoryService.Create<string>(context.Override(typeof(string)).Override(stringKey)); //override the type and key
 
 				//Now we can decorate
-				return typeof(EnumSerializerDecorator<,>).MakeGenericType(context.TargetType).CreateInstance(serializerProviderService)
+				return typeof(EnumStringSerializerDecorator<>).MakeGenericType(context.TargetType).CreateInstance(serializer)
 					as ITypeSerializerStrategy<TType>;
 			}
 
