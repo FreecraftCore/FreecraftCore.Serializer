@@ -7,7 +7,7 @@ namespace FreecraftCore.Serializer
 	/// Marking a class with this attribute will prepare it for the wire. (Refer to the concept of Protobuf-net or
 	/// Blizzard's JAM for information on the concept).
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class)] //classes or structs can be WireMessages
+	[AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Interface)] //classes or structs can be WireMessages. Inteffaces now can be too.
 	public class WireMessageAttribute : Attribute
 	{
 		/// <summary>

@@ -76,6 +76,24 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.Throws<InvalidOperationException>(() => serializer.Deserialize<WireMessageTest>(serializer.Serialize(new WireMessageTest(null, null))));
 		}
 
+		[Test]
+		public static void Test_Can_Serialize_Deserialize_Child_Through_Interface()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+
+			//act
+			serializer.RegisterType<IBaseInterface>();
+			serializer.Compile();
+
+			IBaseInterface instance = serializer.Deserialize<IBaseInterface>(serializer.Serialize<IBaseInterface>(new ChildOfInterfaceTwo(5, 7)));
+
+			//assert
+			Assert.NotNull(instance);
+			Assert.AreEqual(5, ((ChildOfInterfaceTwo)instance).b);
+			Assert.AreEqual(7, ((ChildOfInterfaceTwo)instance).c);
+		}
+
 		[WireMessage]
 		public class WireMessageTest
 		{
@@ -156,6 +174,50 @@ namespace FreecraftCore.Serializer.Tests
 			public int c;
 
 			public ChildTypeThree()
+			{
+
+			}
+		}
+
+		[WireMessage]
+		[WireMessageBaseType(1, typeof(ChildOfInterfaceOne))]
+		[WireMessageBaseType(2, typeof(ChildOfInterfaceTwo))]
+		public interface IBaseInterface
+		{
+			int c { get; }
+		}
+
+		[WireMessage]
+		public class ChildOfInterfaceOne : IBaseInterface
+		{
+			[WireMember(1)]
+			public int a;
+
+			[WireMember(2)]
+			public int c { get; private set; }
+
+			public ChildOfInterfaceOne()
+			{
+
+			}
+		}
+
+		[WireMessage]
+		public class ChildOfInterfaceTwo : IBaseInterface
+		{
+			[WireMember(1)]
+			public int b;
+
+			[WireMember(2)]
+			public int c { get; private set; }
+
+			public ChildOfInterfaceTwo(int bValue, int cValue)
+			{
+				b = bValue;
+				c = cValue;
+			}
+
+			public ChildOfInterfaceTwo()
 			{
 
 			}
