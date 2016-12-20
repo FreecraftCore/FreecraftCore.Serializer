@@ -61,11 +61,6 @@ IEnumerable<SomeType> //Any collection except arrays are currently unsupported b
 ```
 
 ```
-[WireMember(1)]
-ISomeInterface //Polymorphic serialization is not supported yet for interfaces. Only classes
-```
-
-```
 [WireMessage]
 [WireBaseType(1, typeof(ChildType)]
 class BaseType { [WireMember(1)] int a; }
