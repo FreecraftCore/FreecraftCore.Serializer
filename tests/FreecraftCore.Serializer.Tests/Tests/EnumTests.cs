@@ -98,6 +98,7 @@ namespace FreecraftCore.Serializer.Tests
 		[WireMessage]
 		public class WireMessageWithStringEnum
 		{
+			[KnownSize(9)]
 			[EnumString]
 			[WireMember(1)]
 			public TestEnum test;
