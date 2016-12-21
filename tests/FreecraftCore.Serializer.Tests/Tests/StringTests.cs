@@ -69,7 +69,8 @@ namespace FreecraftCore.Serializer.Tests
 			string value = stringSerializer.Read(new DefaultWireMemberReaderStrategy(writer.GetBytes()));
 
 			//assert
-			Assert.IsNotNullOrEmpty(value);
+			Assert.NotNull(value);
+			Assert.IsNotEmpty(value);
 			Assert.AreEqual("hello", value);
 		}
 
@@ -98,7 +99,8 @@ namespace FreecraftCore.Serializer.Tests
 			string value = stringSerializer.Read(new DefaultWireMemberReaderStrategy(writer.GetBytes()));
 
 			//assert
-			Assert.IsNotNullOrEmpty(value);
+			Assert.NotNull(value);
+			Assert.IsNotEmpty(value);
 			Assert.AreEqual("hello", value);
 		}
 	}
