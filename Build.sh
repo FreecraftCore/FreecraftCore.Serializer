@@ -1,1 +1,2 @@
-xbuild ./FreecraftCore.Serializer.sln /p:DebugSymbols=False /d:MONO
+dotnet restore
+dotnet build src/*/project.json

@@ -36,6 +36,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
 		{
+			//TODO: This is an expirmental high preformance array serializer. It could have buffer overflows or other faults. It's not safe
 			/*if (typeof(TType) == typeof(int[]))
 			{
 				return new Int32ArraySerializerDecorator(serializerProviderService) as ITypeSerializerStrategy<TType>;
