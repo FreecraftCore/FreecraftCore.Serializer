@@ -1,0 +1,299 @@
+{
+  "locked": false,
+  "version": 2,
+  "targets": {
+    ".NETFramework,Version=v3.5": {
+      "fasterflect/2.1.3": {
+        "type": "package",
+        "compile": {
+          "lib/net35/Fasterflect.dll": {}
+        },
+        "runtime": {
+          "lib/net35/Fasterflect.dll": {}
+        }
+      },
+      "JonSkeet.MiscUtil/0.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/net35-Client/MiscUtil.dll": {}
+        },
+        "runtime": {
+          "lib/net35-Client/MiscUtil.dll": {}
+        }
+      },
+      "Net35Essentials/1.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/net35/Net35Essentials.dll": {}
+        },
+        "runtime": {
+          "lib/net35/Net35Essentials.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.API/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v3.5",
+        "dependencies": {
+          "FreecraftCore.Serializer.Metadata": "1.0.0",
+          "fasterflect": "2.1.3"
+        },
+        "compile": {
+          "net35/FreecraftCore.Serializer.API.dll": {}
+        },
+        "runtime": {
+          "net35/FreecraftCore.Serializer.API.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.KnownTypes.Primitives/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v3.5",
+        "dependencies": {
+          "FreecraftCore.Serializer.API": "1.0.0",
+          "FreecraftCore.Serializer.Metadata": "1.0.0",
+          "FreecraftCore.Serializer.Metadata.Internal": "1.0.0",
+          "fasterflect": "2.1.3"
+        },
+        "compile": {
+          "net35/FreecraftCore.Serializer.KnownTypes.Primitives.dll": {}
+        },
+        "runtime": {
+          "net35/FreecraftCore.Serializer.KnownTypes.Primitives.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.Metadata/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v3.5",
+        "compile": {
+          "net35/FreecraftCore.Serializer.Metadata.dll": {}
+        },
+        "runtime": {
+          "net35/FreecraftCore.Serializer.Metadata.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.Metadata.Internal/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v3.5",
+        "compile": {
+          "net35/FreecraftCore.Serializer.Metadata.Internal.dll": {}
+        },
+        "runtime": {
+          "net35/FreecraftCore.Serializer.Metadata.Internal.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5": {
+      "fasterflect/2.1.3": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Fasterflect.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Fasterflect.dll": {}
+        }
+      },
+      "JonSkeet.MiscUtil/0.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/net35-Client/MiscUtil.dll": {}
+        },
+        "runtime": {
+          "lib/net35-Client/MiscUtil.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.API/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "FreecraftCore.Serializer.Metadata": "1.0.0",
+          "fasterflect": "2.1.3"
+        },
+        "compile": {
+          "net45/FreecraftCore.Serializer.API.dll": {}
+        },
+        "runtime": {
+          "net45/FreecraftCore.Serializer.API.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.KnownTypes.Primitives/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "FreecraftCore.Serializer.API": "1.0.0",
+          "FreecraftCore.Serializer.Metadata": "1.0.0",
+          "FreecraftCore.Serializer.Metadata.Internal": "1.0.0",
+          "fasterflect": "2.1.3"
+        },
+        "compile": {
+          "net45/FreecraftCore.Serializer.KnownTypes.Primitives.dll": {}
+        },
+        "runtime": {
+          "net45/FreecraftCore.Serializer.KnownTypes.Primitives.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.Metadata/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "compile": {
+          "net45/FreecraftCore.Serializer.Metadata.dll": {}
+        },
+        "runtime": {
+          "net45/FreecraftCore.Serializer.Metadata.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.Metadata.Internal/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "compile": {
+          "net45/FreecraftCore.Serializer.Metadata.Internal.dll": {}
+        },
+        "runtime": {
+          "net45/FreecraftCore.Serializer.Metadata.Internal.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.6": {
+      "fasterflect/2.1.3": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Fasterflect.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Fasterflect.dll": {}
+        }
+      },
+      "JonSkeet.MiscUtil/0.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/net35-Client/MiscUtil.dll": {}
+        },
+        "runtime": {
+          "lib/net35-Client/MiscUtil.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.API/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.6",
+        "dependencies": {
+          "FreecraftCore.Serializer.Metadata": "1.0.0",
+          "fasterflect": "2.1.3"
+        },
+        "compile": {
+          "net46/FreecraftCore.Serializer.API.dll": {}
+        },
+        "runtime": {
+          "net46/FreecraftCore.Serializer.API.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.KnownTypes.Primitives/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.6",
+        "dependencies": {
+          "FreecraftCore.Serializer.API": "1.0.0",
+          "FreecraftCore.Serializer.Metadata": "1.0.0",
+          "FreecraftCore.Serializer.Metadata.Internal": "1.0.0",
+          "fasterflect": "2.1.3"
+        },
+        "compile": {
+          "net46/FreecraftCore.Serializer.KnownTypes.Primitives.dll": {}
+        },
+        "runtime": {
+          "net46/FreecraftCore.Serializer.KnownTypes.Primitives.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.Metadata/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.6",
+        "compile": {
+          "net46/FreecraftCore.Serializer.Metadata.dll": {}
+        },
+        "runtime": {
+          "net46/FreecraftCore.Serializer.Metadata.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.Metadata.Internal/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.6",
+        "compile": {
+          "net46/FreecraftCore.Serializer.Metadata.Internal.dll": {}
+        },
+        "runtime": {
+          "net46/FreecraftCore.Serializer.Metadata.Internal.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "fasterflect/2.1.3": {
+      "sha512": "DCYneTQ/fY3HieKSJdcA/Z9hCg/5maAZpoqySqO4+XC3BgUasHOrTZY4BEf76WZPZwIU5SNUhrPuxKSHyyg+mg==",
+      "type": "package",
+      "path": "fasterflect/2.1.3",
+      "files": [
+        "fasterflect.2.1.3.nupkg.sha512",
+        "fasterflect.nuspec",
+        "lib/net35/Fasterflect.XML",
+        "lib/net35/Fasterflect.dll",
+        "lib/net40/Fasterflect.XML",
+        "lib/net40/Fasterflect.dll"
+      ]
+    },
+    "JonSkeet.MiscUtil/0.1.0": {
+      "sha512": "/7dTDJgefIf0uSnxqVN20R8VwD0DA25+kUTYBqkFrx8VHZ7XsBfzDUWLod+mi4JXbFgUyPpH0XKQ3bx8FXi05A==",
+      "type": "package",
+      "path": "JonSkeet.MiscUtil/0.1.0",
+      "files": [
+        "JonSkeet.MiscUtil.0.1.0.nupkg.sha512",
+        "JonSkeet.MiscUtil.nuspec",
+        "lib/net35-Client/MiscUtil.dll",
+        "lib/net35-Client/MiscUtil.pdb",
+        "lib/net35-Client/MiscUtil.xml"
+      ]
+    },
+    "Net35Essentials/1.0.2": {
+      "sha512": "+TcBHsG294kae50xoyO5gEp8btHAIAf2FslV+3WBfvmdFIWI8dcvWXUzQh3ztpvgV+2rE4CK3bv5y8Kc0WLT5Q==",
+      "type": "package",
+      "path": "Net35Essentials/1.0.2",
+      "files": [
+        "Net35Essentials.1.0.2.nupkg.sha512",
+        "Net35Essentials.nuspec",
+        "lib/net35/Net35Essentials.dll"
+      ]
+    },
+    "FreecraftCore.Serializer.API/1.0.0": {
+      "type": "project",
+      "path": "../FreecraftCore.Serializer.API/project.json",
+      "msbuildProject": "../FreecraftCore.Serializer.API/FreecraftCore.Serializer.API.xproj"
+    },
+    "FreecraftCore.Serializer.KnownTypes.Primitives/1.0.0": {
+      "type": "project",
+      "path": "../FreecraftCore.Serializer.KnownTypes.Primitives/project.json",
+      "msbuildProject": "../FreecraftCore.Serializer.KnownTypes.Primitives/FreecraftCore.Serializer.KnownTypes.Primitives.xproj"
+    },
+    "FreecraftCore.Serializer.Metadata/1.0.0": {
+      "type": "project",
+      "path": "../FreecraftCore.Serializer.Metadata/project.json",
+      "msbuildProject": "../FreecraftCore.Serializer.Metadata/FreecraftCore.Serializer.Metadata.xproj"
+    },
+    "FreecraftCore.Serializer.Metadata.Internal/1.0.0": {
+      "type": "project",
+      "path": "../FreecraftCore.Serializer.Metadata.Internal/project.json",
+      "msbuildProject": "../FreecraftCore.Serializer.Metadata.Internal/FreecraftCore.Serializer.Metadata.Internal.xproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "": [
+      "FreecraftCore.Serializer.API >= 1.0.0-*",
+      "FreecraftCore.Serializer.KnownTypes.Primitives >= 1.0.0-*",
+      "FreecraftCore.Serializer.Metadata >= 1.0.0-*",
+      "FreecraftCore.Serializer.Metadata.Internal >= 1.0.0-*",
+      "JonSkeet.MiscUtil >= 0.1.0",
+      "fasterflect >= 2.1.3"
+    ],
+    ".NETFramework,Version=v3.5": [
+      "Net35Essentials >= 1.0.2"
+    ],
+    ".NETFramework,Version=v4.5": [],
+    ".NETFramework,Version=v4.6": []
+  },
+  "tools": {},
+  "projectFileToolGroups": {}
+}

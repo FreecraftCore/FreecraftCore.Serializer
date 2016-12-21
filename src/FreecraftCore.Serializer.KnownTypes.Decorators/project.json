@@ -1,0 +1,31 @@
+{
+    "version": "1.0.0-*",
+
+    "dependencies": {
+        "FreecraftCore.Serializer.Metadata": "1.0.0-*",
+        "FreecraftCore.Serializer.API": "1.0.0-*",
+        "fasterflect": "2.1.3",
+        "FreecraftCore.Serializer.Metadata.Internal": "1.0.0-*",
+        "JonSkeet.MiscUtil": "0.1.0",
+        "FreecraftCore.Serializer.KnownTypes.Primitives": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "net35": {
+            "dependencies": {
+                "Net35Essentials": "1.0.2"
+            }
+        },
+        "net45": {
+
+        },
+        "net46": {
+
+        }
+    },
+
+    "buildOptions": {
+        "allowUnsafe": true,
+        "optimize": true
+    }
+}

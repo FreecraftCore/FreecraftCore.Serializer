@@ -7,10 +7,10 @@
   <AllowDynamicCodeContractChecking>true</AllowDynamicCodeContractChecking>
   <AllowStaticCodeContractChecking>false</AllowStaticCodeContractChecking>
   <AllowCodeAnalysis>false</AllowCodeAnalysis>
-  <IgnoreThisComponentCompletely>false</IgnoreThisComponentCompletely>
+  <IgnoreThisComponentCompletely>true</IgnoreThisComponentCompletely>
   <RunPreBuildEvents>false</RunPreBuildEvents>
   <RunPostBuildEvents>false</RunPostBuildEvents>
-  <PreviouslyBuiltSuccessfully>true</PreviouslyBuiltSuccessfully>
+  <PreviouslyBuiltSuccessfully>false</PreviouslyBuiltSuccessfully>
   <TrackFileDependencies>false</TrackFileDependencies>
   <InstrumentAssembly>true</InstrumentAssembly>
   <PreventSigningOfAssembly>false</PreventSigningOfAssembly>
@@ -24,4 +24,7 @@
   <UseCPUArchitecture>AutoDetect</UseCPUArchitecture>
   <MSTestThreadApartmentState>STA</MSTestThreadApartmentState>
   <BuildProcessArchitecture>x86</BuildProcessArchitecture>
+  <IgnoredTests>
+    <AllTestsSelector />
+  </IgnoredTests>
 </ProjectConfiguration>

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 
 namespace FreecraftCore.Serializer.Tests
 {
@@ -69,7 +69,8 @@ namespace FreecraftCore.Serializer.Tests
 			string value = stringSerializer.Read(new DefaultWireMemberReaderStrategy(writer.GetBytes()));
 
 			//assert
-			Assert.IsNotNullOrEmpty(value);
+			Assert.NotNull(value);
+			Assert.IsNotEmpty(value);
 			Assert.AreEqual("hello", value);
 		}
 
@@ -98,7 +99,8 @@ namespace FreecraftCore.Serializer.Tests
 			string value = stringSerializer.Read(new DefaultWireMemberReaderStrategy(writer.GetBytes()));
 
 			//assert
-			Assert.IsNotNullOrEmpty(value);
+			Assert.NotNull(value);
+			Assert.IsNotEmpty(value);
 			Assert.AreEqual("hello", value);
 		}
 	}

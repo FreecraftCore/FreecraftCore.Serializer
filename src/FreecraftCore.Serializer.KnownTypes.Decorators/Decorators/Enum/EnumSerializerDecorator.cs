@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
@@ -28,9 +28,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (!typeof(TEnumType).IsEnum)
 				throw new InvalidOperationException($"Cannot create an enum decorator for type {typeof(TEnumType).FullName} because it is not an enum.");
-
+#if !NET35
 			if (typeof(TEnumType).GetEnumUnderlyingType() != typeof(TBaseType))
 				throw new InvalidOperationException($"Defining an Enum decorator requires {nameof(TEnumType)}'s base enum type to match {nameof(TBaseType)}.");
+#else
+			if (Enum.GetUnderlyingType(typeof(TEnumType)) != typeof(TBaseType))
+				throw new InvalidOperationException($"Defining an Enum decorator requires {nameof(TEnumType)}'s base enum type to match {nameof(TBaseType)}.");
+#endif
 
 			if (serializerProvider == null)
 				throw new ArgumentNullException(nameof(serializerProvider), $"Provided service {nameof(IGeneralSerializerProvider)} was null.");

@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using Fasterflect;
 using FreecraftCore.Serializer.API;
 
@@ -75,7 +74,7 @@ namespace FreecraftCore.Serializer
 		public ITypeSerializerStrategy<TTypeToRegister> RegisterType<TTypeToRegister>()
 		{
 			//Ingoring all but wiretypes makes this a lot easier.
-			if (typeof(TTypeToRegister).GetCustomAttribute<WireMessageAttribute>() == null)
+			if (typeof(TTypeToRegister).GetCustomAttribute<WireMessageAttribute>(true) == null)
 				throw new InvalidOperationException($"Do not register any type that isn't marked with {nameof(WireMessageAttribute)}. Only register WireMessages too; contained types will be registered automatically.");
 
 			//At this point this is a class marked with [WireMessage] so we should assume and treat it as a complex type

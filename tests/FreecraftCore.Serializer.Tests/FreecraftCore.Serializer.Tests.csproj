@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FreecraftCore.Serializer.Tests</RootNamespace>
     <AssemblyName>FreecraftCore.Serializer.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,8 +31,29 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    <Reference Include="FreecraftCore.Serializer">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Debug\net35\FreecraftCore.Serializer.dll</HintPath>
+    </Reference>
+    <Reference Include="FreecraftCore.Serializer.API">
+      <HintPath>..\..\src\FreecraftCore.Serializer.API\bin\Debug\net35\FreecraftCore.Serializer.API.dll</HintPath>
+    </Reference>
+    <Reference Include="FreecraftCore.Serializer.Core">
+      <HintPath>..\..\src\FreecraftCore.Serializer.Core\bin\Debug\net35\FreecraftCore.Serializer.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="FreecraftCore.Serializer.KnownTypes.Decorators">
+      <HintPath>..\..\src\FreecraftCore.Serializer.KnownTypes.Decorators\bin\Debug\net35\FreecraftCore.Serializer.KnownTypes.Decorators.dll</HintPath>
+    </Reference>
+    <Reference Include="FreecraftCore.Serializer.KnownTypes.Primitives">
+      <HintPath>..\..\src\FreecraftCore.Serializer.KnownTypes.Primitives\bin\Debug\net35\FreecraftCore.Serializer.KnownTypes.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="FreecraftCore.Serializer.KnownTypes.Special">
+      <HintPath>..\..\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\net35\FreecraftCore.Serializer.KnownTypes.Special.dll</HintPath>
+    </Reference>
+    <Reference Include="FreecraftCore.Serializer.Metadata">
+      <HintPath>..\..\src\FreecraftCore.Serializer.Metadata\bin\Debug\net35\FreecraftCore.Serializer.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.0.5813.39031, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.3.0.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -50,36 +72,6 @@
     <Compile Include="Tests\PolymorphicSerializationTests.cs" />
     <Compile Include="Tests\SerializationTests.cs" />
     <Compile Include="Tests\StringTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.API\FreecraftCore.Serializer.API.csproj">
-      <Project>{B35A46CF-3219-4242-A292-6B0EF828065E}</Project>
-      <Name>FreecraftCore.Serializer.API</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Core\FreecraftCore.Serializer.Core.csproj">
-      <Project>{8109c080-dfac-412c-9411-a73d287a4e40}</Project>
-      <Name>FreecraftCore.Serializer.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.KnownTypes.Decorators\FreecraftCore.Serializer.KnownTypes.Decorators.csproj">
-      <Project>{13315d16-64e6-4656-a9fc-a2198b9e3940}</Project>
-      <Name>FreecraftCore.Serializer.KnownTypes.Decorators</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.KnownTypes.Primitives\FreecraftCore.Serializer.KnownTypes.Primitives.csproj">
-      <Project>{d09f66ad-53b5-4774-97f2-3dcf52eb4d43}</Project>
-      <Name>FreecraftCore.Serializer.KnownTypes.Primitives</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Metadata.Internal\FreecraftCore.Serializer.Metadata.Internal.csproj">
-      <Project>{9ee23ed7-0b53-4643-8412-14a873fcc10f}</Project>
-      <Name>FreecraftCore.Serializer.Metadata.Internal</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj">
-      <Project>{6CE55491-B1E3-4C11-BFFB-203E41563CB5}</Project>
-      <Name>FreecraftCore.Serializer.Metadata</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj">
-      <Project>{88be65a4-df8b-419c-b126-fea737ef9676}</Project>
-      <Name>FreecraftCore.Serializer</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

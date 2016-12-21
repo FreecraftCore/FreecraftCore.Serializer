@@ -1,0 +1,26 @@
+{
+    "version": "1.0.0-*",
+
+    "dependencies": {
+        "FreecraftCore.Serializer.Metadata": "1.0.0-*",
+        "fasterflect": "2.1.3",
+        "FreecraftCore.Serializer.Metadata.Internal": "1.0.0-*",
+        "FreecraftCore.Serializer.API": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "net35": {
+        },
+        "net45": {
+
+        },
+        "net46": {
+
+        }
+    },
+
+    "buildOptions": {
+        "allowUnsafe": true,
+        "optimize": true 
+    }
+}

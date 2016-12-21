@@ -1,1 +1,3 @@
-%nuget% restore FreecraftCore.Serializer.sln
+dotnet restore
+
+
