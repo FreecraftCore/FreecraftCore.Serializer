@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
+
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
@@ -47,7 +47,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//error handling and checking is done in base
 
 			//Grab the children from the metadata; return type contexts so the types can be handled (no context is required because the children are their own registerable type
+#if !NET35
 			return GetAssociatedChildren(context.TargetType).Select(t => new TypeBasedSerializationContext(t));
+#else
+			return GetAssociatedChildren(context.TargetType).Select(t => new TypeBasedSerializationContext(t) as ISerializableTypeContext);
+#endif
 		}
 
 		private IEnumerable<Type> GetAssociatedChildren(Type type)

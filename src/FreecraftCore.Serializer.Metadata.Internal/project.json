@@ -1,0 +1,22 @@
+﻿{
+    "version": "1.0.0-*",
+
+    "dependencies": {
+    },
+
+    "frameworks": {
+        "net35": {
+        },
+        "net45": {
+
+        },
+        "net46": {
+
+        }
+    },
+
+    "buildOptions": {
+        "allowUnsafe": true,
+        "optimize": true
+    }
+}

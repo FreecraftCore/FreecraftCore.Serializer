@@ -1,0 +1,100 @@
+{
+  "locked": false,
+  "version": 2,
+  "targets": {
+    ".NETFramework,Version=v3.5": {
+      "fasterflect/2.1.3": {
+        "type": "package",
+        "compile": {
+          "lib/net35/Fasterflect.dll": {}
+        },
+        "runtime": {
+          "lib/net35/Fasterflect.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.Metadata/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v3.5",
+        "compile": {
+          "net35/FreecraftCore.Serializer.Metadata.dll": {}
+        },
+        "runtime": {
+          "net35/FreecraftCore.Serializer.Metadata.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5": {
+      "fasterflect/2.1.3": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Fasterflect.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Fasterflect.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.Metadata/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "compile": {
+          "net45/FreecraftCore.Serializer.Metadata.dll": {}
+        },
+        "runtime": {
+          "net45/FreecraftCore.Serializer.Metadata.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.6": {
+      "fasterflect/2.1.3": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Fasterflect.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Fasterflect.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.Metadata/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.6",
+        "compile": {
+          "net46/FreecraftCore.Serializer.Metadata.dll": {}
+        },
+        "runtime": {
+          "net46/FreecraftCore.Serializer.Metadata.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "fasterflect/2.1.3": {
+      "sha512": "DCYneTQ/fY3HieKSJdcA/Z9hCg/5maAZpoqySqO4+XC3BgUasHOrTZY4BEf76WZPZwIU5SNUhrPuxKSHyyg+mg==",
+      "type": "package",
+      "path": "fasterflect/2.1.3",
+      "files": [
+        "fasterflect.2.1.3.nupkg.sha512",
+        "fasterflect.nuspec",
+        "lib/net35/Fasterflect.XML",
+        "lib/net35/Fasterflect.dll",
+        "lib/net40/Fasterflect.XML",
+        "lib/net40/Fasterflect.dll"
+      ]
+    },
+    "FreecraftCore.Serializer.Metadata/1.0.0": {
+      "type": "project",
+      "path": "../FreecraftCore.Serializer.Metadata/project.json",
+      "msbuildProject": "../FreecraftCore.Serializer.Metadata/FreecraftCore.Serializer.Metadata.xproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "": [
+      "FreecraftCore.Serializer.Metadata >= 1.0.0-*",
+      "fasterflect >= 2.1.3"
+    ],
+    ".NETFramework,Version=v3.5": [],
+    ".NETFramework,Version=v4.5": [],
+    ".NETFramework,Version=v4.6": []
+  },
+  "tools": {},
+  "projectFileToolGroups": {}
+}
