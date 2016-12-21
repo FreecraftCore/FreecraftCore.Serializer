@@ -1,5 +1,4 @@
 ﻿using FreecraftCore.Serializer;
-using NUnit.Framework;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
@@ -11,7 +10,6 @@ using System.Text;
 
 namespace Preformance.Tests
 {
-	[TestFixture]
 	public class PrimitiveSerialization
 	{
 		static void Main(string[] args)
@@ -114,7 +112,6 @@ namespace Preformance.Tests
 			Console.ReadKey();
 		}
 
-		[Test]
 		public void Test_Single_Int_Serialization_Of_Class()
 		{
 
