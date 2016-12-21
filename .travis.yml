@@ -3,7 +3,6 @@ solution: ./FreecraftCore.Serializer.sln
 
 install:
   - nuget install NUnit.Runners -Version 3.0.1 -OutputDirectory tests/testrunner
-  - curl -sSL install: curl -s https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0-preview2/scripts/obtain/dotnet-install.sh
 
 before_script:
   - chmod +x ./tests/RunTests.sh
