@@ -78,6 +78,43 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.AreEqual(testInstance.test, TestEnum.Something.ToString());
 		}
 
+		[Test]
+		public static void Test_Serializer_Doesnt_Throw_On_EnumString_Serializer_Building_When_A_String_Serializer_Is_Avaliable()
+		{
+			//arrange
+			SerializerService service = new SerializerService();
+
+			service.RegisterType<ClassWithStringToMakeStringSerializerAvailable>();
+			Assert.DoesNotThrow(() => service.RegisterType<TestEnumStringFault>()); //this was causing problems when you tried to register multiple enumstrings due to fault with key lookup
+		}
+
+		[WireDataContract]
+		public class ClassWithStringToMakeStringSerializerAvailable
+		{
+			[KnownSize(3)]
+			[WireMember(1)]
+			public string value;
+		}
+
+		[WireDataContract]
+		public class TestEnumStringFault
+		{
+			[EnumString]
+			[KnownSize(3)]
+			[WireMember(1)]
+			public TestEnum value;
+
+			[EnumString]
+			[KnownSize(3)]
+			[WireMember(1)]
+			public TestEnum2 value2;
+
+			public TestEnumStringFault()
+			{
+
+			}
+		}
+
 		[WireDataContract]
 		public class WireDataContractWithEnum
 		{
@@ -131,6 +168,11 @@ namespace FreecraftCore.Serializer.Tests
 			Ok,
 			No,
 			Something
+		}
+		
+		public enum TestEnum2 : byte
+		{
+
 		}
 	}
 }

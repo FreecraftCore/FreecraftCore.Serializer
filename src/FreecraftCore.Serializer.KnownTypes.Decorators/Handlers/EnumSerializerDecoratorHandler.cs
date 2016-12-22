@@ -49,7 +49,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 				if (serializerProviderService.HasSerializerFor(stringKey))
 				{
-					serializer = this.serializerProviderService.Get(context.BuiltContextKey.Value)
+					serializer = this.serializerProviderService.Get(stringKey)
 					as ITypeSerializerStrategy<string>;
 				}
 				else
