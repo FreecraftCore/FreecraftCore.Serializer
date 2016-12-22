@@ -102,8 +102,22 @@ namespace FreecraftCore.Serializer.Tests
 			SerializerService service = new SerializerService();
 
 			//act
+			Assert.DoesNotThrow(() => service.RegisterType<TestClassMarked>());
 			Assert.DoesNotThrow(() => service.RegisterType<TestClassMarkedWithComplexMember>());
+			Assert.DoesNotThrow(() => service.RegisterType<TestClassMarkedWithComplexMember>());
+			Assert.DoesNotThrow(() => service.RegisterType<TestClassMarked>());
 			Assert.True(service.isTypeRegistered<TestClassMarkedWithComplexMember>());
+		}
+
+		[Test]
+		public static void Test_Serializer_Doesnt_Throw_On_Contextual_Field_Multiple_Register_Containing_Type()
+		{
+			//This was causing exceptions. We were registering a field's type multiple times if it was contextual. That's bad.
+			//arrange
+			SerializerService service = new SerializerService();
+
+			service.RegisterType<TestArrayWithFixedSize>();
+			Assert.DoesNotThrow(() => service.RegisterType<TestArrayWithFixedSize>());
 		}
 
 		public class TestClassUnmarked
@@ -130,7 +144,26 @@ namespace FreecraftCore.Serializer.Tests
 			[WireMember(1)]
 			public TestClassUnmarked unmarkedClass;
 
+			[WireMember(2)]
+			public TestClassUnmarked unmarkedClass2;
+
+			[WireMember(3)]
+			public TestClassMarked markedClass;
+
 			public TestClassMarkedWithComplexMember()
+			{
+
+			}
+		}
+
+		[WireDataContract]
+		public class TestArrayWithFixedSize
+		{
+			[KnownSize(5)]
+			[WireMember(1)]
+			public byte[] ints;
+
+			public TestArrayWithFixedSize()
 			{
 
 			}

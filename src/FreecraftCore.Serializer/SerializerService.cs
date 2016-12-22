@@ -32,8 +32,9 @@ namespace FreecraftCore.Serializer
 			//of this service
 			serializerStorageService = new SerializerStrategyProvider();
 
+			ContextLookupKeyFactoryService lookupKeyFactoryService = new ContextLookupKeyFactoryService();
 			//Create the decoration service
-			serializerStrategyFactoryService = new DefaultSerializerStrategyFactory(SerializerDecoratorHandlerFactory.Create(serializerStorageService, new ContextLookupKeyFactoryService(), this), serializerStorageService, this);
+			serializerStrategyFactoryService = new DefaultSerializerStrategyFactory(SerializerDecoratorHandlerFactory.Create(serializerStorageService, lookupKeyFactoryService, this), serializerStorageService, this, lookupKeyFactoryService);
 
 			FreecraftCoreSerializerKnownTypesPrimitivesMetadata.Assembly.GetTypes()
 				.Where(t => t.HasAttribute<KnownTypeSerializerAttribute>())

@@ -8,8 +8,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 {
 	public class StringSerializerDecoratorHandler : DecoratorHandler
 	{
-		public StringSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory keyFactory) 
-			: base(serializerProvider, keyFactory)
+		public StringSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider)
+			: base(serializerProvider)
 		{
 
 		}

@@ -26,5 +26,13 @@ namespace FreecraftCore.Serializer
 		/// <param name="type">Type to lookup a <see cref="ITypeSerializerStrategy"/> for.</param>
 		/// <returns>True if the provider has and can provide the a <see cref="ITypeSerializerStrategy"/> for the type.</returns>
 		bool HasSerializerFor(Type type);
+
+		/// <summary>
+		/// Indicates if the <see cref="IGeneralSerializerProvider"/> has a <see cref="ITypeSerializerStrategy"/> for
+		/// the provided key.
+		/// </summary>
+		/// <param name="lookupKey">The lookup key to use for searching.</param>
+		/// <returns>True if a serializer is found for the key.</returns>
+		bool HasSerializerFor(ContextualSerializerLookupKey lookupKey);
 	}
 }

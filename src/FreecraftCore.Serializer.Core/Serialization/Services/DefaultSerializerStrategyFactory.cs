@@ -29,7 +29,12 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		private ISerializerStrategyFactory fallbackFactoryService { get; }
 
-		public DefaultSerializerStrategyFactory(IEnumerable<DecoratorHandler> handlers, IGeneralSerializerProvider generalSerializerProvider, ISerializerStrategyFactory fallbackFactory)
+		/// <summary>
+		/// Lookup key factory service.
+		/// </summary>
+		private IContextualSerializerLookupKeyFactory lookupKeyFactoryService { get; }
+
+		public DefaultSerializerStrategyFactory(IEnumerable<DecoratorHandler> handlers, IGeneralSerializerProvider generalSerializerProvider, ISerializerStrategyFactory fallbackFactory, IContextualSerializerLookupKeyFactory lookupKeyFactory)
 		{
 			if (generalSerializerProvider == null)
 				throw new ArgumentNullException(nameof(generalSerializerProvider), $"Provided {nameof(IGeneralSerializerProvider)} service was null.");
@@ -39,6 +44,9 @@ namespace FreecraftCore.Serializer
 
 			if (fallbackFactory == null)
 				throw new ArgumentNullException(nameof(fallbackFactory), $"Provided {nameof(ISerializerStrategyFactory)}s were null. Must be a non-null collection.");
+
+			//TODO: null check
+			lookupKeyFactoryService = lookupKeyFactory;
 
 			decoratorHandlers = handlers;
 			generalSerializerProviderService = generalSerializerProvider;
@@ -54,6 +62,13 @@ namespace FreecraftCore.Serializer
 		{
 			ISerializerStrategyFactory factory = null;
 
+			//Build the contextual key first. We used to do this as one of the last steps but we need
+			//to grab the key to check if it already exists.
+			context.BuiltContextKey = lookupKeyFactoryService.Create(context);
+
+			if (generalSerializerProviderService.HasSerializerFor(context.BuiltContextKey.Value))
+				throw new InvalidOperationException($"Tried to create multiple serializer for already created serialize with Context: {context.ToString()}.");
+
 			foreach (DecoratorHandler handler in decoratorHandlers)
 			{
 				if (handler.CanHandle(context))
@@ -61,6 +76,16 @@ namespace FreecraftCore.Serializer
 					//If it can handle then we should register the associated types
 					foreach (ISerializableTypeContext subContext in handler.GetAssociatedSerializationContexts(context))
 					{
+						//populate key first; we need to check if we already know about it
+						subContext.BuiltContextKey = lookupKeyFactoryService.Create(subContext);
+
+						//Had to add check for if it was registered; don't want to register a type multiple times; was casuing exceptions too
+						if (subContext.ContextRequirement == SerializationContextRequirement.Contextless && generalSerializerProviderService.HasSerializerFor(subContext.TargetType))
+							continue;
+
+						if (subContext.BuiltContextKey.HasValue && this.generalSerializerProviderService.HasSerializerFor(subContext.BuiltContextKey.Value))
+							continue;
+
 						//TODO: Maybe figure out how to get type context inside here to call generic
 						//Maybe visitor?
 						//Call the create on the fallback handler

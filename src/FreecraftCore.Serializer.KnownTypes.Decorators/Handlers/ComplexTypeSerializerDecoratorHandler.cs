@@ -12,10 +12,14 @@ namespace FreecraftCore.Serializer
 	[DecoratorHandler]
 	public class ComplexTypeSerializerDecoratorHandler : DecoratorHandler
 	{
-		public ComplexTypeSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory contextualKeyLookupFactory)
-			: base(serializerProvider, contextualKeyLookupFactory)
-		{
+		private IContextualSerializerLookupKeyFactory contextualKeyLookupFactoryService { get; }
 
+		public ComplexTypeSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory contextualKeyLookupFactory)
+			: base(serializerProvider)
+		{
+			//TODO: null check
+
+			contextualKeyLookupFactoryService = contextualKeyLookupFactory;
 		}
 
 		public override bool CanHandle(ISerializableTypeContext context)

@@ -16,10 +16,10 @@ namespace FreecraftCore.Serializer.API
 			//Order matters. The last handler act as the essentially a default handler except it does still have some requirements but not much
 			return new List<DecoratorHandler>
 			{
-				new ArraySerializerDecoratorHandler(serializerProvider, lookupKeyFactory),
-				new EnumSerializerDecoratorHandler(serializerProvider, lookupKeyFactory, fallbackFactory),
-				new StringSerializerDecoratorHandler(serializerProvider, lookupKeyFactory),
-				new SubComplexTypeSerializerDecoratorHandler(serializerProvider, lookupKeyFactory),
+				new ArraySerializerDecoratorHandler(serializerProvider),
+				new EnumSerializerDecoratorHandler(serializerProvider, fallbackFactory),
+				new StringSerializerDecoratorHandler(serializerProvider),
+				new SubComplexTypeSerializerDecoratorHandler(serializerProvider),
 				new ComplexTypeSerializerDecoratorHandler(serializerProvider, lookupKeyFactory) //it's important that this is the final/last handler
 			};
 		}

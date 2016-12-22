@@ -16,8 +16,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 	{
 		private ISerializerStrategyFactory fallbackFactoryService { get; }
 
-		public EnumSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory contextualKeyLookupFactory, ISerializerStrategyFactory fallbackFactory)
-			: base(serializerProvider, contextualKeyLookupFactory)
+		public EnumSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider, ISerializerStrategyFactory fallbackFactory)
+			: base(serializerProvider)
 		{
 			if (fallbackFactory == null)
 				throw new ArgumentNullException(nameof(fallbackFactory), $"Provided argument {nameof(fallbackFactory)} was null.");

@@ -14,21 +14,12 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		protected IContextualSerializerProvider serializerProviderService { get; }
 
-		/// <summary>
-		/// Conextual key factory.
-		/// </summary>
-		protected IContextualSerializerLookupKeyFactory contextualKeyLookupFactoryService { get; }
-
-		public DecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory keyFactory)
+		public DecoratorHandler(IContextualSerializerProvider serializerProvider)
 		{
 			if (serializerProvider == null)
 				throw new ArgumentNullException(nameof(serializerProvider), $"Provided argument {nameof(serializerProvider)} is null.");
 
-			if(keyFactory == null)
-				throw new ArgumentNullException(nameof(keyFactory), $"Provided argument {nameof(keyFactory)} is null.");
-
 			serializerProviderService = serializerProvider;
-			contextualKeyLookupFactoryService = keyFactory;
 		}
 
 		/// <summary>
@@ -42,9 +33,6 @@ namespace FreecraftCore.Serializer
 		{
 			if (!CanHandle(context))
 				throw new InvalidOperationException($"Cannot handle Type: {context.TargetType.Name} with a {this.GetType().FullName}.");
-
-			//Build the key first
-			context.BuiltContextKey = this.contextualKeyLookupFactoryService.Create(context);
 
 			if (!context.BuiltContextKey.HasValue)
 				throw new InvalidOperationException($"Failed to build a {nameof(ContextualSerializerLookupKey)} for the Type: {context.TargetType} with Context: {context.ToString()}.");

@@ -15,8 +15,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 	[DecoratorHandler]
 	public class SubComplexTypeSerializerDecoratorHandler : DecoratorHandler
 	{
-		public SubComplexTypeSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory contextualKeyLookupFactory)
-			: base(serializerProvider, contextualKeyLookupFactory)
+		public SubComplexTypeSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider)
+			: base(serializerProvider)
 		{
 
 		}

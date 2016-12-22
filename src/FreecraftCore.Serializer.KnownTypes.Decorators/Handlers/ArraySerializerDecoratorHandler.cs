@@ -15,8 +15,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 	[DecoratorHandler]
 	public class ArraySerializerDecoratorHandler : DecoratorHandler
 	{
-		public ArraySerializerDecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory contextualKeyLookupFactory)
-			: base(serializerProvider, contextualKeyLookupFactory)
+		public ArraySerializerDecoratorHandler(IContextualSerializerProvider serializerProvider)
+			: base(serializerProvider)
 		{
 
 		}
