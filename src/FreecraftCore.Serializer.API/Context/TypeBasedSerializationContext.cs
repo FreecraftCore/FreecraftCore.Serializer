@@ -58,7 +58,7 @@ namespace FreecraftCore.Serializer
 		private bool IsContextualTypeAttribute(Attribute attri)
 		{
 			//We're interested in subtype metadata for Type contexts. Nothing else really.
-			return attri.GetType() == typeof(WireMessageBaseTypeAttribute);
+			return attri.GetType() == typeof(WireDataContractBaseTypeAttribute);
 		}
 	}
 }

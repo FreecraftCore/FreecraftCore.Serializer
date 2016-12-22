@@ -115,7 +115,7 @@ namespace FreecraftCore.Serializer.Tests
 		}
 
 		
-		[WireMessage]
+		[WireDataContract]
 		public class TestClassMarked
 		{
 			public TestClassMarked()
@@ -124,7 +124,7 @@ namespace FreecraftCore.Serializer.Tests
 			}
 		}
 
-		[WireMessage]
+		[WireDataContract]
 		public class TestClassMarkedWithComplexMember
 		{
 			[WireMember(1)]

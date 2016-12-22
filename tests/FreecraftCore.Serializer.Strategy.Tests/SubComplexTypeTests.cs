@@ -22,15 +22,15 @@ namespace FreecraftCore.Payload.Serializer
 			TestWithSubType instance = service.Deserialize<TestWithSubType>(service.Serialize(new TestWithSubType()));
 		}
 
-		[WireMessage]
+		[WireDataContract]
 		public class TestWithSubType
 		{
 			[WireMember(1)]
 			public BaseType test;
 		}
 
-		[WireMessage]
-		[WireMessageBaseType(1, typeof(ChildType))]
+		[WireDataContract]
+		[WireDataContractBaseType(1, typeof(ChildType))]
 		public class BaseType
 		{
 			public BaseType()
@@ -39,7 +39,7 @@ namespace FreecraftCore.Payload.Serializer
 			}
 		}
 
-		[WireMessage]
+		[WireDataContract]
 		public class ChildType
 		{
 			[WireMember(1)]

@@ -11,16 +11,16 @@ namespace FreecraftCore.Serializer.Tests
 	public static class SerializationTests
 	{
 		[Test]
-		public static void Test_Can_Serializer_Then_Deserialize_Empty_WireMessage()
+		public static void Test_Can_Serializer_Then_Deserialize_Empty_WireDataContract()
 		{
 			//arrange
 			SerializerService serializer = new SerializerService();
 
 			//act
-			serializer.RegisterType<EmptyWireMessage>();
+			serializer.RegisterType<EmptyWireDataContract>();
 			serializer.Compile();
 
-			EmptyWireMessage message = serializer.Deserialize<EmptyWireMessage>(serializer.Serialize(new EmptyWireMessage()));
+			EmptyWireDataContract message = serializer.Deserialize<EmptyWireDataContract>(serializer.Serialize(new EmptyWireDataContract()));
 
 			//assert
 			Assert.NotNull(message);
@@ -33,10 +33,10 @@ namespace FreecraftCore.Serializer.Tests
 			SerializerService serializer = new SerializerService();
 
 			//act
-			serializer.RegisterType<BasicWireMessage>();
+			serializer.RegisterType<BasicWireDataContract>();
 			serializer.Compile();
 
-			BasicWireMessage message = serializer.Deserialize<BasicWireMessage>(serializer.Serialize(new BasicWireMessage(5)));
+			BasicWireDataContract message = serializer.Deserialize<BasicWireDataContract>(serializer.Serialize(new BasicWireDataContract(5)));
 
 			//assert
 			Assert.NotNull(message);
@@ -63,13 +63,13 @@ namespace FreecraftCore.Serializer.Tests
 			SerializerService serializer = new SerializerService();
 			TestEnum[] arrayOne = new TestEnum[] { TestEnum.Zero, TestEnum.One };
 			TestEnum[] arrayTwo = new TestEnum[3] { TestEnum.Two, TestEnum.One, TestEnum.Zero };
-			BasicWireMessage wireMessageNested = new BasicWireMessage(8);
+			BasicWireDataContract WireDataContractNested = new BasicWireDataContract(8);
 
 			//act
 			serializer.RegisterType<VeryComplexType>();
 			serializer.Compile();
 
-			byte[] bytes = serializer.Serialize(new VeryComplexType(6, wireMessageNested, arrayOne, arrayTwo));
+			byte[] bytes = serializer.Serialize(new VeryComplexType(6, WireDataContractNested, arrayOne, arrayTwo));
 			Assert.NotNull(bytes);
 			Assert.False(bytes.Length == 0 );
 			VeryComplexType message = serializer.Deserialize<VeryComplexType>(bytes);
@@ -85,40 +85,40 @@ namespace FreecraftCore.Serializer.Tests
 				Assert.AreEqual(arrayTwo[i], message.testEnumsAnother[i], $"Failed for index {i}.");
 		}
 
-		[WireMessage]
-		public class EmptyWireMessage
+		[WireDataContract]
+		public class EmptyWireDataContract
 		{
-			public EmptyWireMessage()
+			public EmptyWireDataContract()
 			{
 
 			}
 		}
 
-		[WireMessage]
-		public class BasicWireMessage
+		[WireDataContract]
+		public class BasicWireDataContract
 		{
 			[WireMember(1)]
 			public int a;
 
-			public BasicWireMessage(int aVal)
+			public BasicWireDataContract(int aVal)
 			{
 				a = aVal;
 			}
 
-			public BasicWireMessage()
+			public BasicWireDataContract()
 			{
 
 			}
 		}
 
-		[WireMessage]
+		[WireDataContract]
 		public class VeryComplexType
 		{
 			[WireMember(1)]
 			public int a;
 
 			[WireMember(5)]
-			public BasicWireMessage b;
+			public BasicWireDataContract b;
 
 			[WireMember(7)]
 			public TestEnum[] testEnums { get; private set; }
@@ -127,7 +127,7 @@ namespace FreecraftCore.Serializer.Tests
 			[WireMember(8)]
 			public TestEnum[] testEnumsAnother { get; private set; }
 
-			public VeryComplexType(int aVal, BasicWireMessage nestedMessage, TestEnum[] enumsOne, TestEnum[] enumsTwo)
+			public VeryComplexType(int aVal, BasicWireDataContract nestedMessage, TestEnum[] enumsOne, TestEnum[] enumsTwo)
 			{
 				a = aVal;
 				b = nestedMessage;

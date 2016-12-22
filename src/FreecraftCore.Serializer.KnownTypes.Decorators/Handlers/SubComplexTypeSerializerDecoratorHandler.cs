@@ -32,14 +32,34 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//Check if the type has wirebase type attributes.
 			//If it does then the type is complex and can have subtypes coming across the wire
-			return context.TargetType.GetCustomAttributes<WireMessageBaseTypeAttribute>(false).Count() != 0;
+			return context.TargetType.GetCustomAttributes<WireDataContractBaseTypeAttribute>(false).Count() != 0;
 		}
 
 		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
 		{
 			//error handling in base
 
-			return new SubComplexTypeSerializerDecorator<TType>(serializerProviderService);
+			IChildKeyStrategy keyStrategy = null;
+
+			//Check the WireDataContract attribute for keysize information
+			WireDataContractAttribute WireDataContractMetaData = typeof(TType).GetCustomAttribute<WireDataContractAttribute>(true);
+
+			//Build the strategy for child size and value read/write
+			switch(WireDataContractMetaData.OptionalChildTypeKeySize)
+			{
+				case WireDataContractAttribute.KeyType.Byte:
+					keyStrategy = new ByteChildKeyStrategy();
+					break;
+				case WireDataContractAttribute.KeyType.Int32:
+					keyStrategy = new Int32ChildKeyStrategy(this.serializerProviderService.Get<int>());
+					break;
+				case WireDataContractAttribute.KeyType.None:
+				default:
+					throw new InvalidOperationException($"Encountered Type: {typeof(TType).FullName} that requires child type mapping but has provided {nameof(WireDataContractAttribute.KeyType)} Value: {WireDataContractMetaData.OptionalChildTypeKeySize} which is invalid.");
+			}
+
+			//Won't be null at this point. Should be a valid strategy. We also don't need to deal with context since there is only EVER 1 serializer of this type per type.
+			return new SubComplexTypeSerializerDecorator<TType>(serializerProviderService, keyStrategy);
 		}
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)
@@ -56,7 +76,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		private IEnumerable<Type> GetAssociatedChildren(Type type)
 		{
-			return type.Attributes<WireMessageBaseTypeAttribute>().Select(x => x.ChildType);
+			return type.Attributes<WireDataContractBaseTypeAttribute>().Select(x => x.ChildType);
 		}
 	}
 }

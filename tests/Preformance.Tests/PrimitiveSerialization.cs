@@ -118,7 +118,7 @@ namespace Preformance.Tests
 		}
 
 		[ProtoContract]
-		[WireMessage]
+		[WireDataContract]
 		public class TestSingleInt
 		{
 			[ProtoMember(1)]
@@ -137,7 +137,7 @@ namespace Preformance.Tests
 		}
 
 		[ProtoContract]
-		[WireMessage]
+		[WireDataContract]
 		public class TestMoreComplexType
 		{
 			[ProtoMember(1)]

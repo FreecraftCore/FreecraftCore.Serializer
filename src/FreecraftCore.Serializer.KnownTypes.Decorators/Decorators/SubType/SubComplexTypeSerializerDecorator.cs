@@ -38,11 +38,20 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// </summary>
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		public SubComplexTypeSerializerDecorator(IGeneralSerializerProvider serializerProvider)
+		/// <summary>
+		/// Provides read and write stragey for child keys.
+		/// </summary>
+		private IChildKeyStrategy keyStrategy { get; }
+
+		public SubComplexTypeSerializerDecorator(IGeneralSerializerProvider serializerProvider, IChildKeyStrategy childKeyStrategy)
 		{
 			if (serializerProvider == null)
 				throw new ArgumentNullException(nameof(serializerProvider), $"Provided {nameof(serializerProvider)} service was null.");
 
+			if (childKeyStrategy == null)
+				throw new ArgumentNullException(nameof(childKeyStrategy), $"Provided {nameof(IChildKeyStrategy)} used for key read and write is null.");
+
+			keyStrategy = childKeyStrategy;
 			serializerProviderService = serializerProvider;
 			typeToKeyLookup = new Dictionary<Type, int>();
 			keyToTypeLookup = new Dictionary<int, Type>();
@@ -51,7 +60,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//0 is reserved for base
 			keyToTypeLookup.Add(0, typeof(TBaseType));
 
-			foreach(WireMessageBaseTypeAttribute wa in typeof(TBaseType).Attributes<WireMessageBaseTypeAttribute>())
+			foreach(WireDataContractBaseTypeAttribute wa in typeof(TBaseType).Attributes<WireDataContractBaseTypeAttribute>())
 			{
 				try
 				{
@@ -78,7 +87,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (!typeToKeyLookup.ContainsKey(value.GetType()))
 				throw new InvalidOperationException($"Cannot serialize Type: {value.GetType()} in {this.GetType().FullName}.");
 
-			dest.Write((byte)typeToKeyLookup[value.GetType()]);
+			//Defer key writing to the key writing strategy
+			keyStrategy.Write(typeToKeyLookup[value.GetType()], dest);
 
 			ITypeSerializerStrategy serializer = serializerProviderService.Get(value.GetType());
 
@@ -97,7 +107,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			//Incoming should be a byte that indicates the child type to use
 			//Read it to lookup in the map to determine which type we should create
-			byte childIndexRequested = source.ReadByte();
+			int childIndexRequested = keyStrategy.Read(source); //defer to key reader (could be int, byte or something else)
 
 			//Check if we have that index
 			if (!keyToTypeLookup.ContainsKey(childIndexRequested))
@@ -121,21 +131,4 @@ namespace FreecraftCore.Serializer.KnownTypes
 			return Read(source);
 		}
 	}
-
-/*//First all children must be registered. Their object graphs may contain members that are complex
-				IEnumerable<WireMessageBaseTypeAttribute> subtypeAttributes = typeBeingSerialized.GetCustomAttributes<WireMessageBaseTypeAttribute>(false);
-
-				foreach (Type childType in subtypeAttributes.Select(x => x.ChildType))
-				{
-					//Call generic registry
-					contractRegistry.CallMethod(new Type[] { childType }, "RegisterType"); //todo: replace reflection
-				}
-
-				//At this point all children are registered. A SubComplexTypeDecorator would be able to gather and map the serializers
-				ITypeSerializerStrategy generatedSerializer = typeof(SubComplexTypeSerializerDecorator<>).MakeGenericType(typeBeingSerialized).CreateInstance(serializerFactoryService) as ITypeSerializerStrategy;
-
-				if (generatedSerializer == null)
-					throw new InvalidOperationException($"Failed to generate decorated serializer for Type: {typeBeingSerialized}.");
-
-				return generatedSerializer;*/
 }

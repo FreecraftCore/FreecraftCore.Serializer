@@ -7,8 +7,8 @@ namespace FreecraftCore.Serializer
 	/// that have basetypes that deserialize to.
 	/// Blizzard's JAM for information on the concept).
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true)] //classes or structs can be WireMessages
-	public class WireMessageBaseTypeAttribute : Attribute
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true)] //classes or structs can be WireDataContracts
+	public class WireDataContractBaseTypeAttribute : Attribute
 	{
 		/// <summary>
 		/// The child type. Should be a child of the targeted class.
@@ -21,9 +21,9 @@ namespace FreecraftCore.Serializer
 		public int Index { get; }
 
 		/// <summary>
-		/// Creates a new Meta-data attribute indicating the type is a WireMessage.
+		/// Creates a new Meta-data attribute indicating the type is a WireDataContract.
 		/// </summary>
-		public WireMessageBaseTypeAttribute(int uniqueIndex, Type childType)
+		public WireDataContractBaseTypeAttribute(int uniqueIndex, Type childType)
 		{
 			if (uniqueIndex < 1)
 				throw new ArgumentException($"Provided wire child index is less than 1. Was: {uniqueIndex}.");
@@ -32,7 +32,6 @@ namespace FreecraftCore.Serializer
 				throw new ArgumentNullException(nameof(childType), $"Provided {childType} was null.");
 
 			ChildType = childType;
-
 			Index = uniqueIndex;
 		}
 	}

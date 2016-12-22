@@ -17,8 +17,8 @@ namespace FreecraftCore.Serializer.Tests
 			SerializerService service = new SerializerService();
 
 			//act
-			Assert.DoesNotThrow(() => service.RegisterType<WireMessageWithEnum>());
-			Assert.True(service.isTypeRegistered<WireMessageWithEnum>());
+			Assert.DoesNotThrow(() => service.RegisterType<WireDataContractWithEnum>());
+			Assert.True(service.isTypeRegistered<WireDataContractWithEnum>());
 		}
 
 		[Test]
@@ -26,11 +26,11 @@ namespace FreecraftCore.Serializer.Tests
 		{
 			//arrange
 			SerializerService service = new SerializerService();
-			service.RegisterType<WireMessageWithEnum>();
+			service.RegisterType<WireDataContractWithEnum>();
 			service.Compile();
 
 			//act
-			WireMessageWithEnum testInstance = service.Deserialize<WireMessageWithEnum>((service.Serialize<WireMessageWithEnum>(new WireMessageWithEnum(TestEnum.Ok))));
+			WireDataContractWithEnum testInstance = service.Deserialize<WireDataContractWithEnum>((service.Serialize<WireDataContractWithEnum>(new WireDataContractWithEnum(TestEnum.Ok))));
 
 			//assert
 			Assert.AreEqual(testInstance.test, TestEnum.Ok);
@@ -43,8 +43,8 @@ namespace FreecraftCore.Serializer.Tests
 			SerializerService service = new SerializerService();
 
 			//act
-			Assert.DoesNotThrow(() => service.RegisterType<WireMessageWithStringEnum>());
-			Assert.True(service.isTypeRegistered<WireMessageWithStringEnum>());
+			Assert.DoesNotThrow(() => service.RegisterType<WireDataContractWithStringEnum>());
+			Assert.True(service.isTypeRegistered<WireDataContractWithStringEnum>());
 		}
 
 		[Test]
@@ -52,11 +52,11 @@ namespace FreecraftCore.Serializer.Tests
 		{
 			//arrange
 			SerializerService service = new SerializerService();
-			service.RegisterType<WireMessageWithStringEnum>();
+			service.RegisterType<WireDataContractWithStringEnum>();
 			service.Compile();
 
 			//act
-			WireMessageWithStringEnum testInstance = service.Deserialize<WireMessageWithStringEnum>((service.Serialize<WireMessageWithStringEnum>(new WireMessageWithStringEnum(TestEnum.Something))));
+			WireDataContractWithStringEnum testInstance = service.Deserialize<WireDataContractWithStringEnum>((service.Serialize<WireDataContractWithStringEnum>(new WireDataContractWithStringEnum(TestEnum.Something))));
 
 			//assert
 			Assert.AreEqual(testInstance.test, TestEnum.Something);
@@ -67,54 +67,54 @@ namespace FreecraftCore.Serializer.Tests
 		{
 			//arrange
 			SerializerService service = new SerializerService();
-			service.RegisterType<WireMessageWithStringEnum>();
+			service.RegisterType<WireDataContractWithStringEnum>();
 			service.RegisterType<TestIsSerializingToStringClass>();
 			service.Compile();
 
 			//act
-			TestIsSerializingToStringClass testInstance = service.Deserialize<TestIsSerializingToStringClass>((service.Serialize<WireMessageWithStringEnum>(new WireMessageWithStringEnum(TestEnum.Something))));
+			TestIsSerializingToStringClass testInstance = service.Deserialize<TestIsSerializingToStringClass>((service.Serialize<WireDataContractWithStringEnum>(new WireDataContractWithStringEnum(TestEnum.Something))));
 
 			//assert
 			Assert.AreEqual(testInstance.test, TestEnum.Something.ToString());
 		}
 
-		[WireMessage]
-		public class WireMessageWithEnum
+		[WireDataContract]
+		public class WireDataContractWithEnum
 		{
 			[WireMember(1)]
 			public TestEnum test;
 
-			public WireMessageWithEnum(TestEnum value)
+			public WireDataContractWithEnum(TestEnum value)
 			{
 				test = value;
 			}
 
-			public WireMessageWithEnum()
+			public WireDataContractWithEnum()
 			{
 
 			}
 		}
 
-		[WireMessage]
-		public class WireMessageWithStringEnum
+		[WireDataContract]
+		public class WireDataContractWithStringEnum
 		{
 			[KnownSize(9)]
 			[EnumString]
 			[WireMember(1)]
 			public TestEnum test;
 
-			public WireMessageWithStringEnum(TestEnum value)
+			public WireDataContractWithStringEnum(TestEnum value)
 			{
 				test = value;
 			}
 
-			public WireMessageWithStringEnum()
+			public WireDataContractWithStringEnum()
 			{
 
 			}
 		}
 
-		[WireMessage]
+		[WireDataContract]
 		public class TestIsSerializingToStringClass
 		{
 			[WireMember(1)]

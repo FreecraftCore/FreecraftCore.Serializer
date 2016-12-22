@@ -17,11 +17,11 @@ namespace FreecraftCore.Serializer.Tests
 			SerializerService serializer = new SerializerService();
 
 			//act
-			serializer.RegisterType<WireMessageTest>();
+			serializer.RegisterType<WireDataContractTest>();
 			serializer.Compile();
 
 			//assert
-			Assert.True(serializer.isTypeRegistered<WireMessageTest>());
+			Assert.True(serializer.isTypeRegistered<WireDataContractTest>());
 			Assert.True(serializer.isTypeRegistered<ChildTypeOne>());
 			Assert.True(serializer.isTypeRegistered<BaseTypeField>());
 		}
@@ -33,10 +33,10 @@ namespace FreecraftCore.Serializer.Tests
 			SerializerService serializer = new SerializerService();
 
 			//act
-			serializer.RegisterType<WireMessageTest>();
+			serializer.RegisterType<WireDataContractTest>();
 			serializer.Compile();
 
-			WireMessageTest message = serializer.Deserialize<WireMessageTest>(serializer.Serialize(new WireMessageTest(new ChildTypeThree(), new ChildTypeThree())));
+			WireDataContractTest message = serializer.Deserialize<WireDataContractTest>(serializer.Serialize(new WireDataContractTest(new ChildTypeThree(), new ChildTypeThree())));
 
 			//assert
 			Assert.NotNull(message);
@@ -50,10 +50,10 @@ namespace FreecraftCore.Serializer.Tests
 			SerializerService serializer = new SerializerService();
 
 			//act
-			serializer.RegisterType<WireMessageTest>();
+			serializer.RegisterType<WireDataContractTest>();
 			serializer.Compile();
 
-			WireMessageTest message = serializer.Deserialize<WireMessageTest>(serializer.Serialize(new WireMessageTest(new ChildTypeTwo(20, uint.MaxValue - 1000), new ChildTypeThree())));
+			WireDataContractTest message = serializer.Deserialize<WireDataContractTest>(serializer.Serialize(new WireDataContractTest(new ChildTypeTwo(20, uint.MaxValue - 1000), new ChildTypeThree())));
 
 			//assert
 			Assert.NotNull(message);
@@ -70,10 +70,10 @@ namespace FreecraftCore.Serializer.Tests
 			SerializerService serializer = new SerializerService();
 
 			//act
-			serializer.RegisterType<WireMessageTest>();
+			serializer.RegisterType<WireDataContractTest>();
 			serializer.Compile();
 
-			Assert.Throws<InvalidOperationException>(() => serializer.Deserialize<WireMessageTest>(serializer.Serialize(new WireMessageTest(null, null))));
+			Assert.Throws<InvalidOperationException>(() => serializer.Deserialize<WireDataContractTest>(serializer.Serialize(new WireDataContractTest(null, null))));
 		}
 
 		[Test]
@@ -94,8 +94,8 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.AreEqual(7, ((ChildOfInterfaceTwo)instance).c);
 		}
 
-		[WireMessage]
-		public class WireMessageTest
+		[WireDataContract]
+		public class WireDataContractTest
 		{
 			[WireMember(1)]
 			public BaseTypeField test;
@@ -103,13 +103,13 @@ namespace FreecraftCore.Serializer.Tests
 			[WireMember(2)]
 			public BaseTypeField anotherTest;
 
-			public WireMessageTest(BaseTypeField field, BaseTypeField another)
+			public WireDataContractTest(BaseTypeField field, BaseTypeField another)
 			{
 				test = field;
 				anotherTest = another;
 			}
 
-			public WireMessageTest()
+			public WireDataContractTest()
 			{
 
 			}
@@ -126,9 +126,10 @@ namespace FreecraftCore.Serializer.Tests
 			}
 		}
 
-		[WireMessageBaseType(1, typeof(ChildTypeOne))]
-		[WireMessageBaseType(2, typeof(ChildTypeTwo))]
-		[WireMessageBaseType(3, typeof(ChildTypeThree))]
+		[WireDataContract(WireDataContractAttribute.KeyType.Int32)]
+		[WireDataContractBaseType(1, typeof(ChildTypeOne))]
+		[WireDataContractBaseType(2, typeof(ChildTypeTwo))]
+		[WireDataContractBaseType(3, typeof(ChildTypeThree))]
 		public class BaseTypeField
 		{
 
@@ -179,15 +180,15 @@ namespace FreecraftCore.Serializer.Tests
 			}
 		}
 
-		[WireMessage]
-		[WireMessageBaseType(1, typeof(ChildOfInterfaceOne))]
-		[WireMessageBaseType(2, typeof(ChildOfInterfaceTwo))]
+		[WireDataContract(WireDataContractAttribute.KeyType.Byte)]
+		[WireDataContractBaseType(1, typeof(ChildOfInterfaceOne))]
+		[WireDataContractBaseType(2, typeof(ChildOfInterfaceTwo))]
 		public interface IBaseInterface
 		{
 			int c { get; }
 		}
 
-		[WireMessage]
+		[WireDataContract]
 		public class ChildOfInterfaceOne : IBaseInterface
 		{
 			[WireMember(1)]
@@ -202,7 +203,7 @@ namespace FreecraftCore.Serializer.Tests
 			}
 		}
 
-		[WireMessage]
+		[WireDataContract]
 		public class ChildOfInterfaceTwo : IBaseInterface
 		{
 			[WireMember(1)]
