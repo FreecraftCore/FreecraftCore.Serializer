@@ -22,6 +22,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
 		{
+			if (context.ContextRequirement == SerializationContextRequirement.Contextless)
+				return new StringSerializerStrategy() as ITypeSerializerStrategy<TType>; //The caller should know what he's doing.
+
 			//TODO: Throw on invalid metadata combinations
 
 			ITypeSerializerStrategy<string> serializer = null;
@@ -57,9 +60,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 						throw new InvalidOperationException($"Encountered requested {nameof(SendSizeAttribute.SizeType)} marked on Type: {context.TargetType}.");
 				}
 			}
-
-			if (context.ContextRequirement == SerializationContextRequirement.Contextless)
-				return new StringSerializerStrategy() as ITypeSerializerStrategy<TType>; //The caller should know what he's doing.
 
 			//At this point if it's null then it's just a default serializer
 			if (serializer == null)
