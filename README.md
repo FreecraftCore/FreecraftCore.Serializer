@@ -15,7 +15,7 @@ To understand how this serializer works read documentation related to Protobuf-N
 ## Creating a Payload/WireMessage/Packet
 
 ```
-[WireMessage] //mark wire messages with this attribute
+[WireDataContract] //mark wire messages with this attribute
 public class MyMessagePayload
 {
   [WireMember(1)] //Mark members you want sent over the network with [WireMember] attributes. A unique per class int key is required.
@@ -35,7 +35,7 @@ public class MyMessagePayload
   }
 }
 
-public class MyCustomType //non wiremessages don't need to be marked (for now)
+public class MyCustomType //non wiremessages don't need to be marked but if you want to use polymorphic serialization you should mark
 {
   [WireMember(1)]
   public int data;
@@ -61,11 +61,11 @@ IEnumerable<SomeType> //Any collection except arrays are currently unsupported b
 ```
 
 ```
-[WireMessage]
+[WireDataContract(WireDataContractAttribute.KeySize.Int32)] //sends the type information encoded as an Int32
 [WireBaseType(1, typeof(ChildType)]
 class BaseType { [WireMember(1)] int a; }
 
-[WireMessage]
+[WireDataContract]
 class ChildType : BaseType { [WireMember(1] int b; }
 
 //This serializer doesn't support multiple level serialization (it could but the WoW protocol doesn't lend itself to the idea)
