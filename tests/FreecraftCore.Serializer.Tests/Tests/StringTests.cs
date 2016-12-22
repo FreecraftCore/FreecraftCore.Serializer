@@ -117,5 +117,56 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.IsNotEmpty(value);
 			Assert.AreEqual("Hello", value);
 		}
+
+		[Test]
+		public static void Test_DontTerminate_Serializer_Doesnt_Add_Terminator()
+		{
+			//arrange
+			DontTerminateStringSerializerDecorator serializer = new DontTerminateStringSerializerDecorator(new StringSerializerStrategy());
+			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+
+			//act
+			serializer.Write("Hello", writer);
+			byte[] bytes = writer.GetBytes();
+
+			//assert
+			Assert.NotNull(bytes);
+			Assert.IsNotEmpty(bytes);
+
+			Assert.False(bytes[bytes.Length - 1] == 0);
+			Assert.True(bytes.Length == 5);
+		}
+
+		[Test]
+		public static void Test_SerializerService_Can_Handle_DontTerminate_Marked_Data()
+		{
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType<TestDontTerminateString>();
+
+			serializer.Compile();
+
+			//act
+			byte[] bytes = serializer.Serialize(new TestDontTerminateString("Hello"));
+
+			//assert
+			Assert.NotNull(bytes);
+			Assert.IsNotEmpty(bytes);
+
+			Assert.False(bytes[bytes.Length - 1] == 0);
+			Assert.True(bytes.Length == 5);
+		}
+
+		[WireDataContract]
+		public class TestDontTerminateString
+		{
+			[DontTerminate]
+			[WireMember(1)]
+			public string Test;
+
+			public TestDontTerminateString(string test)
+			{
+				Test = test;
+			}
+		}
 	}
 }

@@ -27,7 +27,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//TODO: Throw on invalid metadata combinations
 
-			ITypeSerializerStrategy<string> serializer = null;
+			ITypeSerializerStrategy<string> serializer = serializerProviderService.Get<string>();
+
+			//Determine which base string serializer we want to decorate
+			if (context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.DontTerminate))
+				serializer = new DontTerminateStringSerializerDecorator(serializer);
 
 			//It is possible that the WoW protocol expects a fixed-size string that both client and server know the length of
 			//This can be seen in the first packet Auth_Challenge: uint8   gamename[4];
@@ -37,7 +41,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 				//read the key. It will have the size
 				int size = context.BuiltContextKey.Value.ContextSpecificKey.Key;
 
-				serializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(context.BuiltContextKey.Value.ContextSpecificKey.Key), serializerProviderService.Get<string>());
+				serializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(context.BuiltContextKey.Value.ContextSpecificKey.Key), serializer);
 			}
 
 			//It is also possible that the WoW protocol expects a length prefixed string
@@ -47,23 +51,19 @@ namespace FreecraftCore.Serializer.KnownTypes
 				switch ((SendSizeAttribute.SizeType)context.BuiltContextKey.Value.ContextSpecificKey.Key)
 				{
 					case SendSizeAttribute.SizeType.Byte:
-						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(serializerProviderService.Get<byte>()), serializerProviderService.Get<string>());
+						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(serializerProviderService.Get<byte>()), serializer);
 						break;
 					case SendSizeAttribute.SizeType.Int32:
-						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<int>(serializerProviderService.Get<int>()), serializerProviderService.Get<string>());
+						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<int>(serializerProviderService.Get<int>()), serializer);
 						break;
 					case SendSizeAttribute.SizeType.UShort:
-						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<ushort>(serializerProviderService.Get<ushort>()), serializerProviderService.Get<string>());
+						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<ushort>(serializerProviderService.Get<ushort>()), serializer);
 						break;
 
 					default:
 						throw new InvalidOperationException($"Encountered requested {nameof(SendSizeAttribute.SizeType)} marked on Type: {context.TargetType}.");
 				}
 			}
-
-			//At this point if it's null then it's just a default serializer
-			if (serializer == null)
-				serializer = serializerProviderService.Get<string>();
 
 			//At this point we need to check if the string should be reversed. If it should be then we need to decorate it
 			if (context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Reverse))

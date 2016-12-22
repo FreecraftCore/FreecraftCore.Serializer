@@ -29,6 +29,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//(ctr+f << for std::string): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_source.html
 			//They use 0 byte to terminate the string in the stream
 			
+			//TODO: Pointer hack for speed
 			//Convert the string to bytes
 			//Not sure about encoding yet
 			byte[] stringBytes = Encoding.ASCII.GetBytes(value);

@@ -27,6 +27,10 @@ namespace FreecraftCore.Serializer
 				if (context.HasMemberAttribute<EnumStringAttribute>())
 					flags |= ContextTypeFlags.EnumString;
 
+				//Check for no terminate too
+				if (context.HasMemberAttribute<DontTerminateAttribute>())
+					flags |= ContextTypeFlags.DontTerminate;
+
 				if (context.HasMemberAttribute<SendSizeAttribute>())
 					return new ContextualSerializerLookupKey(flags | ContextTypeFlags.SendSize, new SendSizeContextKey(context.GetMemberAttribute<SendSizeAttribute>().TypeOfSize), context.TargetType);
 

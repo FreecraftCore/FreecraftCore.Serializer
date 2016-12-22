@@ -16,7 +16,8 @@ namespace FreecraftCore.Serializer
 		FixedSize = 1 << 1,
 		EnumString = 1 << 2,
 		SendSize = 1 << 3,
-		Reverse = 1 << 4
+		Reverse = 1 << 4,
+		DontTerminate = 1 << 5
 		//We could add more types of context but this should be fine for now
 	}
 }
