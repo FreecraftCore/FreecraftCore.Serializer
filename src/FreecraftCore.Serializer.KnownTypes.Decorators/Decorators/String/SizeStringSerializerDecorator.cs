@@ -42,7 +42,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			byte[] bytes = source.ReadBytes(size);
 
-			return Encoding.ASCII.GetString(bytes).TrimEnd('\0'); //TODO: Come up with better way to avoid/remove null terminator for sent size strings
+			//TODO: Pointer hack for preformance
+			//This is the only way to remove padding that I know of
+			//There may be a more efficient way of removing the padding
+			//There is actually an unsafe pointer hack to improve preformance here too.
+			//profile and add later.
+			return Encoding.ASCII.GetString(bytes).TrimEnd('\0'); 
 		}
 
 		public void Write(string value, IWireMemberWriterStrategy dest)
@@ -53,11 +58,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//Don't write the size. Leave it up to the strategy above
 			decoratedSerializer.Write(value, dest);
 
-			//If the size isn't the same as the provided size we need to pad it
+			//the tricky part here is that the serializer just wrote the string plus the null terminator
+			//So, if the length of the string was less than the expected size write some more 0s.
+			//However, DO NOT write another null terminator either way because we already have one.
 			if (value.Length < size)
-				dest.Write(new byte[(size - value.Length) + 1]);
-			else
-				dest.Write((byte)0); //always add null terminator
+				dest.Write(new byte[(size - value.Length)]);
 		}
 
 		public void Write(object value, IWireMemberWriterStrategy dest)

@@ -58,6 +58,20 @@ namespace FreecraftCore.Serializer.Tests
 		}
 
 		[Test]
+		public static void Test_Fixed_String_Can_Write_Proper_Length()
+		{
+			//arrange
+			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy());
+			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+
+			//act
+			stringSerializer.Write("hello", writer);
+
+			//assert
+			Assert.AreEqual(6, writer.GetBytes().Length);
+		}
+
+		[Test]
 		public static void Test_Fixed_String_Can_Read()
 		{
 			//arrange
@@ -95,13 +109,13 @@ namespace FreecraftCore.Serializer.Tests
 			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
 
 			//act
-			stringSerializer.Write("hello", writer);
+			stringSerializer.Write("Hello", writer);
 			string value = stringSerializer.Read(new DefaultWireMemberReaderStrategy(writer.GetBytes()));
 
 			//assert
 			Assert.NotNull(value);
 			Assert.IsNotEmpty(value);
-			Assert.AreEqual("hello", value);
+			Assert.AreEqual("Hello", value);
 		}
 	}
 }
