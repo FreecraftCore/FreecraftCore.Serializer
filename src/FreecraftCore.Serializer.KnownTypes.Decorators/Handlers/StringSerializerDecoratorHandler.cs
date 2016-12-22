@@ -29,8 +29,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			ITypeSerializerStrategy<string> serializer = serializerProviderService.Get<string>();
 
+			bool shouldTerminate = !context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.DontTerminate);
+
 			//Determine which base string serializer we want to decorate
-			if (context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.DontTerminate))
+			if (!shouldTerminate)
 				serializer = new DontTerminateStringSerializerDecorator(serializer);
 
 			//It is possible that the WoW protocol expects a fixed-size string that both client and server know the length of
@@ -51,13 +53,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 				switch ((SendSizeAttribute.SizeType)context.BuiltContextKey.Value.ContextSpecificKey.Key)
 				{
 					case SendSizeAttribute.SizeType.Byte:
-						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(serializerProviderService.Get<byte>()), serializer);
+						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(serializerProviderService.Get<byte>(), shouldTerminate), serializer);
 						break;
 					case SendSizeAttribute.SizeType.Int32:
-						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<int>(serializerProviderService.Get<int>()), serializer);
+						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<int>(serializerProviderService.Get<int>(), shouldTerminate), serializer);
 						break;
 					case SendSizeAttribute.SizeType.UShort:
-						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<ushort>(serializerProviderService.Get<ushort>()), serializer);
+						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<ushort>(serializerProviderService.Get<ushort>(), shouldTerminate), serializer);
 						break;
 
 					default:

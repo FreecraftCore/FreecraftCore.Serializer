@@ -11,12 +11,16 @@ namespace FreecraftCore.Serializer.KnownTypes
 	{
 		private ITypeSerializerStrategy<TSizeType> sizeSerializer { get; }
 
-		public SizeIncludedStringSizeStrategy(ITypeSerializerStrategy<TSizeType> serializer)
+		private bool includeNullTerminatorInSizeCalculation { get; }
+
+		public SizeIncludedStringSizeStrategy(ITypeSerializerStrategy<TSizeType> serializer, bool shouldCountNullTerminator)
 		{
 			if (serializer == null)
 				throw new ArgumentNullException(nameof(serializer), $"Provided argument {serializer} is null.");
 
 			sizeSerializer = serializer;
+
+			includeNullTerminatorInSizeCalculation = shouldCountNullTerminator;
 		}
 
 		public int Size(IWireMemberReaderStrategy reader)
@@ -33,7 +37,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//add one for null terminator
 			//Using JonSkeets MiscUtils we can convert objects efficently
-			sizeSerializer.Write(MiscUtil.Operator<int, TSizeType>.Convert(size + 1), writer);
+			sizeSerializer.Write(MiscUtil.Operator<int, TSizeType>.Convert(size + (includeNullTerminatorInSizeCalculation ? 1 : 0)), writer);
 
 			return size;
 		}

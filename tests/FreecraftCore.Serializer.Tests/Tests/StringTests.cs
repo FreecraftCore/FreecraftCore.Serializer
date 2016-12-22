@@ -105,7 +105,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Send_With_Size_Can_Read()
 		{
 			//arrange
-			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(new ByteSerializerStrategy()), new StringSerializerStrategy());
+			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(new ByteSerializerStrategy(), true), new StringSerializerStrategy());
 			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
 
 			//act
