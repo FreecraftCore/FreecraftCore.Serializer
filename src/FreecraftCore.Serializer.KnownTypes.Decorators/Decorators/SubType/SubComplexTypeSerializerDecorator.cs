@@ -56,9 +56,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			typeToKeyLookup = new Dictionary<Type, int>();
 			keyToTypeLookup = new Dictionary<int, Type>();
 
-			//TODO: Support base. Right now there is no point really because base types can't have serializable fields mixed with child fields anyway
-			//0 is reserved for base
-			keyToTypeLookup.Add(0, typeof(TBaseType));
+			//We no longer reserve 0. Sometimes type information of a child is sent as a 0 in WoW protocol. We can opt for mostly metadata market style interfaces.
 
 			foreach(WireDataContractBaseTypeAttribute wa in typeof(TBaseType).Attributes<WireDataContractBaseTypeAttribute>())
 			{

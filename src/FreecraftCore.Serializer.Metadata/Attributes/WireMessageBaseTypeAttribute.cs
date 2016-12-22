@@ -25,8 +25,8 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		public WireDataContractBaseTypeAttribute(int uniqueIndex, Type childType)
 		{
-			if (uniqueIndex < 1)
-				throw new ArgumentException($"Provided wire child index is less than 1. Was: {uniqueIndex}.");
+			if (uniqueIndex < 0)
+				throw new ArgumentException($"Provided wire child index is less than 0. Was: {uniqueIndex}.");
 
 			if (childType == null)
 				throw new ArgumentNullException(nameof(childType), $"Provided {childType} was null.");
