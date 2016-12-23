@@ -17,6 +17,13 @@ namespace FreecraftCore.Serializer
 		/// Reads a byte from the stream.
 		/// </summary>
 		byte ReadByte();
+
+		/// <summary>
+		/// Reads a byte from the stream.
+		/// Doesn't remove it from the stream or move it forward.
+		/// </summary>
+		/// <returns>The byte peeked.</returns>
+		byte PeekByte();
 		
 		/// <summary>
 		/// Reads all bytes from the stream.
@@ -30,5 +37,12 @@ namespace FreecraftCore.Serializer
 		/// <param name="count">How many bytes to read.</param>
 		/// <returns>A byte array of the read bytes.</returns>
 		byte[] ReadBytes(int count);
+
+		/// <summary>
+		/// Peeks <paramref name="count"/> many bytes from the stream.
+		/// </summary>
+		/// <param name="count">How many bytes to peek.</param>
+		/// <returns>A byte array of the peeked bytes.</returns>
+		byte[] PeakBytes(int count);
 	}
 }

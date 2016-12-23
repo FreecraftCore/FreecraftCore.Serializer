@@ -58,7 +58,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//We no longer reserve 0. Sometimes type information of a child is sent as a 0 in WoW protocol. We can opt for mostly metadata market style interfaces.
 
-			foreach(WireDataContractBaseTypeAttribute wa in typeof(TBaseType).Attributes<WireDataContractBaseTypeAttribute>())
+			foreach (WireDataContractBaseTypeAttribute wa in typeof(TBaseType).Attributes<WireDataContractBaseTypeAttribute>())
 			{
 				try
 				{
@@ -85,6 +85,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (!typeToKeyLookup.ContainsKey(value.GetType()))
 				throw new InvalidOperationException($"Cannot serialize Type: {value.GetType()} in {this.GetType().FullName}.");
 
+			//TODO: Oh man, this is a disaster. How do we handle the default? How do we tell consumers to use the default?
 			//Defer key writing to the key writing strategy
 			keyStrategy.Write(typeToKeyLookup[value.GetType()], dest);
 
@@ -109,7 +110,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//Check if we have that index
 			if (!keyToTypeLookup.ContainsKey(childIndexRequested))
+			{
 				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Index: {childIndexRequested} but the index didn't exist in the lookup table. Check the Type: {typeof(TBaseType).FullName} attributes for duplicate index.");
+			}
 
 			Type childTypeRequest = keyToTypeLookup[childIndexRequested];
 

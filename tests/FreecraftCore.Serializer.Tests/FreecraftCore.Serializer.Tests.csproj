@@ -72,6 +72,7 @@
     <Compile Include="Tests\PolymorphicSerializationTests.cs" />
     <Compile Include="Tests\SerializationTests.cs" />
     <Compile Include="Tests\StringTests.cs" />
+    <Compile Include="Tests\SubtypeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

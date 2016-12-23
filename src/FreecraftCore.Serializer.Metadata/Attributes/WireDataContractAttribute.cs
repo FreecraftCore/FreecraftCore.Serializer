@@ -24,15 +24,22 @@ namespace FreecraftCore.Serializer
 		public KeyType OptionalChildTypeKeySize { get; }
 
 		/// <summary>
+		/// Indicates if the type information used for mapping base to child should
+		/// be consumed when encountered.
+		/// </summary>
+		public bool ShouldConsumeTypeInformation { get; }
+
+		/// <summary>
 		/// Creates a new Meta-data attribute indicating the type is a WireDataContract.
 		/// </summary>
-		public WireDataContractAttribute(KeyType keyType = KeyType.None)
+		public WireDataContractAttribute(KeyType keyType = KeyType.None, bool shouldConsumeTypeInformation = true)
 		{
 			//The keytype provided is optional to be none.
 			//If you want to wire up children to this for polymorphic serialization then
 			//A provided keysize must be declared on the 1 WireDataContract instead of the N many WireBaseType attributes
 
 			OptionalChildTypeKeySize = keyType;
+			ShouldConsumeTypeInformation = shouldConsumeTypeInformation;
 		}
 	}
 }

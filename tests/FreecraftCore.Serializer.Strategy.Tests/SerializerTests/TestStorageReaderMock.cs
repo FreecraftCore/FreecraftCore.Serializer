@@ -43,5 +43,15 @@ namespace FreecraftCore.Serializer.Tests
 
 			return bytes;
 		}
+
+		public byte PeekByte()
+		{
+			throw new NotImplementedException();
+		}
+
+		public byte[] PeakBytes(int count)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

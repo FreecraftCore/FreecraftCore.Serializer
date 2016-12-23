@@ -59,5 +59,25 @@ namespace FreecraftCore.Serializer
 
 			return bytes;
 		}
+
+		public byte PeekByte()
+		{
+			byte b = ReadByte();
+
+			//Move it back one
+			ReaderStream.Position = ReaderStream.Position - 1;
+
+			return b;
+		}
+
+		public byte[] PeakBytes(int count)
+		{
+			byte[] bytes = ReadBytes(count);
+
+			//Now move the stream back
+			ReaderStream.Position = ReaderStream.Position - count;
+
+			return bytes;
+		}
 	}
 }
