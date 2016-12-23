@@ -66,9 +66,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 			keyStrategy = childKeyStrategy;
 			serializerProviderService = serializerProvider;
 
+			defaultSerializer = typeof(TBaseType).Attribute<DefaultNoFlagsAttribute>() != null
+				? serializerProviderService.Get(typeof(TBaseType).Attribute<DefaultNoFlagsAttribute>().ChildType) : null;
+
 			//We no longer reserve 0. Sometimes type information of a child is sent as a 0 in WoW protocol. We can opt for mostly metadata market style interfaces.
 
-			List<ChildKeyPair> pairs = new List<ChildKeyPair>();
+			List <ChildKeyPair> pairs = new List<ChildKeyPair>();
 
 			foreach (WireDataContractBaseTypeByFlagsAttribute waf in typeof(TBaseType).Attributes<WireDataContractBaseTypeByFlagsAttribute>())
 			{

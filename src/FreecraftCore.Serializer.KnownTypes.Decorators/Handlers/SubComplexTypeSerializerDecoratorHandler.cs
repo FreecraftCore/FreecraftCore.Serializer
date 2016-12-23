@@ -58,10 +58,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 					throw new InvalidOperationException($"Encountered Type: {typeof(TType).FullName} that requires child type mapping but has provided {nameof(WireDataContractAttribute.KeyType)} Value: {contractAttribute.OptionalChildTypeKeySize} which is invalid.");
 			}
 
-			//TODO: flags implementation
-
-			//Won't be null at this point. Should be a valid strategy. We also don't need to deal with context since there is only EVER 1 serializer of this type per type.
-			return new SubComplexTypeSerializerDecorator<TType>(serializerProviderService, keyStrategy);
+			//Depending on if we're flags or key return the right serializer decorator.
+			if (typeof(TType).Attribute<WireDataContractBaseTypeByFlagsAttribute>() == null)
+				//Won't be null at this point. Should be a valid strategy. We also don't need to deal with context since there is only EVER 1 serializer of this type per type.
+				return new SubComplexTypeSerializerDecorator<TType>(serializerProviderService, keyStrategy);
+			else
+				return new SubComplexTypeWithFlagsSerializerDecorator<TType>(serializerProviderService, keyStrategy);
 		}
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)
@@ -83,7 +85,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		private IEnumerable<Type> GetAssociatedChildren(Type type)
 		{
-			return type.Attributes<WireDataContractBaseTypeAttribute>().Select(x => x.ChildType);
+			IEnumerable<Type> baseTypesByKey = type.Attributes<WireDataContractBaseTypeAttribute>().Select(x => x.ChildType);
+
+			IEnumerable<Type> baseTypesByFlags = type.Attributes<WireDataContractBaseTypeByFlagsAttribute>().Select(x => x.ChildType);
+
+			return baseTypesByKey.Concat(baseTypesByFlags);
 		}
 	}
 }

@@ -71,6 +71,22 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.Throws<InvalidOperationException>(() => service.Deserialize<TestBaseType>(service.Serialize((TestBaseType)new ChildType() { i = 2, s = 17 })));
 		}
 
+		[Test]
+		public static void Can_Deserialize_With_Flags_Type_Information()
+		{
+			//arrange
+			SerializerService service = new SerializerService();
+			service.RegisterType<BaseTypeByFlags>();
+			service.Compile();
+
+			//act
+			BaseTypeByFlags flagsInstance = service.Deserialize<BaseTypeByFlags>(new byte[] { 5 | 6, 0, 0, 0, 7 });
+
+			//assert
+			Assert.NotNull(flagsInstance);
+			Assert.AreEqual(typeof(ChildTypeByFlags), flagsInstance.GetType());
+		}
+
 		[WireDataContractBaseType(5, typeof(ChildType))]
 		[WireDataContract(WireDataContractAttribute.KeyType.Byte, false)]
 		public class TestBaseType
@@ -85,6 +101,20 @@ namespace FreecraftCore.Serializer.Tests
 
 			[WireMember(2)]
 			public int s;
+		}
+
+		[WireDataContractBaseTypeByFlags(5, typeof(ChildTypeByFlags))]
+		[WireDataContract(WireDataContractAttribute.KeyType.Byte)]
+		public class BaseTypeByFlags
+		{
+
+		}
+
+		[WireDataContract]
+		public class ChildTypeByFlags : BaseTypeByFlags
+		{
+			[WireMember(1)]
+			public int i;
 		}
 	}
 }
