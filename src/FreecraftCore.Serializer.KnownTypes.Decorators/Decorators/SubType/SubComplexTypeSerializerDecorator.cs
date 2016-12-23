@@ -20,8 +20,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// </summary>
 		private IGeneralSerializerProvider serializerProviderService { get; }
 
-		private ITypeSerializerStrategy<TBaseType> baseSerializerStrategy { get; }
-
 		/// <summary>
 		/// The lookup table that maps ints to the Type.
 		/// </summary>
@@ -79,9 +77,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <param name="dest">The writer entity that is accumulating the output data.</param>
 		public void Write(TBaseType value, IWireMemberWriterStrategy dest)
 		{
-			if (value == null)
-				throw new Exception();
-
 			if (!typeToKeyLookup.ContainsKey(value.GetType()))
 				throw new InvalidOperationException($"Cannot serialize Type: {value.GetType()} in {this.GetType().FullName}.");
 
