@@ -116,6 +116,11 @@ namespace FreecraftCore.Serializer.Tests
 			{
 				test = t;
 			}
+
+			public KnownSizeEnumStringTest()
+			{
+
+			}
 		}
 
 		public enum TestStringEnum

@@ -167,6 +167,11 @@ namespace FreecraftCore.Serializer.Tests
 			{
 				Test = test;
 			}
+
+			public TestDontTerminateString()
+			{
+				
+			}
 		}
 	}
 }
