@@ -51,8 +51,35 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 				collectionSizeStrategy = new FixedSizeCollectionSizeStrategy(knownSize);
 			}
-			else
-				collectionSizeStrategy = new UnknownSizeCollectionSizeStrategy();
+			else if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.SendSize))
+			{
+				switch ((SendSizeAttribute.SizeType)context.BuiltContextKey.Value.ContextSpecificKey.Key)
+				{
+					case SendSizeAttribute.SizeType.Byte:
+						collectionSizeStrategy = new ByteSizeCollectionSizeStrategy();
+						break;
+					case SendSizeAttribute.SizeType.Int32:
+						collectionSizeStrategy = new Int32SizeCollectionSizeStrategy(this.serializerProviderService.Get<int>());
+						break;
+					case SendSizeAttribute.SizeType.UShort:
+						collectionSizeStrategy = new UInt16SizeCollectionSizeStrategy(this.serializerProviderService.Get<ushort>());
+						break;
+
+					default:
+						throw new InvalidOperationException($"Encountered unsupported {nameof(SendSizeAttribute.SizeType)} Value: {context.BuiltContextKey.Value.ContextSpecificKey.Key}");
+				}
+			}
+
+			//TODO: Should we really have a default?
+			//if they marked it with nothing then use a the byte
+			if (collectionSizeStrategy == null)
+				collectionSizeStrategy = new ByteSizeCollectionSizeStrategy();
+
+			if (context.TargetType == null)
+				throw new InvalidOperationException($"Provided target type null.");
+
+			if (context.TargetType.GetElementType() == null)
+				throw new InvalidOperationException($"Element type null.");
 
 			//If we know about the size then we should create a knownsize array decorator
 			return typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType())

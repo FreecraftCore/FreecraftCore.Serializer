@@ -8,14 +8,17 @@ using System.Text;
 namespace FreecraftCore.Serializer.KnownTypes
 {
 	/// <summary>
-	/// Size strategy for fixed size collections.
+	/// Size strategy for collections that send a <see cref="ushort"/> size.
 	/// </summary>
-	public class UnknownSizeCollectionSizeStrategy : ICollectionSizeStrategy
+	public class UInt16SizeCollectionSizeStrategy : ICollectionSizeStrategy
 	{
-		//TODO: Maybe pass in attribute
-		public UnknownSizeCollectionSizeStrategy()
-		{
+		private ITypeSerializerStrategy<ushort> shortSerializer { get; }
 
+		public UInt16SizeCollectionSizeStrategy(ITypeSerializerStrategy<ushort> serializer)
+		{
+			//TODO: Null check
+
+			shortSerializer = serializer;
 		}
 
 		/// <summary>
@@ -23,8 +26,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// </summary>
 		public int Size(IWireMemberReaderStrategy reader)
 		{
-			//In the future we may need to read more than a byte. As far as I can tell collection sizes are always uint8.
-			return reader.ReadByte();
+			//Reads a short from the stream.
+			return shortSerializer.Read(reader);
 		}
 
 		/// <summary>
@@ -34,8 +37,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			where TCollectionType : IEnumerable, IEnumerable<TElementType>
 		{
 
-			//Since the size is unknown it's critical that we write the size to the stream.
-			writer.Write((byte)collection.Count());
+			//Write a short size to the stream
+			shortSerializer.Write((ushort)collection.Count(), writer);
 
 			//We don't know the size so just provide the size of the collection
 			return collection.Count();
