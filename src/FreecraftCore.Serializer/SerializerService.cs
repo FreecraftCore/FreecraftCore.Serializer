@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using Fasterflect;
 using FreecraftCore.Serializer.API;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
@@ -19,11 +20,13 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Dictionary of known <see cref="Type"/>s and their corresponding <see cref="ITypeSerializerStrategy"/>s.
 		/// </summary>
+		[NotNull]
 		private SerializerStrategyProvider serializerStorageService { get; }
 
 		/// <summary>
 		/// Service responsible for handling decoratable semi-complex types.
 		/// </summary>
+		[NotNull]
 		DefaultSerializerStrategyFactory serializerStrategyFactoryService { get; }
 
 		public SerializerService()
@@ -48,8 +51,11 @@ namespace FreecraftCore.Serializer
 			isCompiled = true;
 		}
 
-		public TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>(byte[] data)
+		/// <inheritdoc />
+		public TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>([NotNull] byte[] data)
 		{
+			if (data == null) throw new ArgumentNullException(nameof(data));
+
 			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
 #if DEBUG || DEBUGBUILD
 			if (!serializerStorageService.HasSerializerFor<TTypeToDeserializeTo>())
@@ -72,6 +78,7 @@ namespace FreecraftCore.Serializer
 			return serializerStorageService.HasSerializerFor(type);
 		}
 
+		/// <inheritdoc />
 		public ITypeSerializerStrategy<TTypeToRegister> RegisterType<TTypeToRegister>()
 		{
 			//Ingoring all but wiretypes makes this a lot easier.
@@ -88,8 +95,10 @@ namespace FreecraftCore.Serializer
 			return serializer;
 		}
 
-		public byte[] Serialize<TTypeToSerialize>(TTypeToSerialize data)
+		public byte[] Serialize<TTypeToSerialize>([NotNull] TTypeToSerialize data)
 		{
+			if (data == null) throw new ArgumentNullException(nameof(data));
+
 			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
 #if DEBUG || DEBUGBUILD
 			if (!serializerStorageService.HasSerializerFor<TTypeToSerialize>())
@@ -108,8 +117,11 @@ namespace FreecraftCore.Serializer
 		}
 
 		//Called as the fallback factory.
-		public ITypeSerializerStrategy<TType> Create<TType>(ISerializableTypeContext context)
+		/// <inheritdoc />
+		public ITypeSerializerStrategy<TType> Create<TType>([NotNull] ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
 			//This service acts a the default/fallback factory for serializer creation. If any factory encounters a type
 			//inside of a type that it doesn't know about or requires handling outside of its scope it'll broadcast that
 			//and we will implement more complex handling here

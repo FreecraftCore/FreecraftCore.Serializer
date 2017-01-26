@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -9,13 +10,17 @@ namespace FreecraftCore.Serializer.KnownTypes
 	public class EnumStringSerializerDecorator<TEnumType> : ITypeSerializerStrategy<TEnumType>
 			where TEnumType : struct
 	{
-		public Type SerializerType { get { return typeof(TEnumType); } }
+		/// <inheritdoc />
+		public Type SerializerType { get; } = typeof(TEnumType);
 
+		/// <inheritdoc />
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
 
+		/// <inheritdoc />
+		[NotNull]
 		public ITypeSerializerStrategy<string> decoratedSerializer { get; }
 
-		public EnumStringSerializerDecorator(ITypeSerializerStrategy<string> stringSerializer)
+		public EnumStringSerializerDecorator([NotNull] ITypeSerializerStrategy<string> stringSerializer)
 		{
 			if (stringSerializer == null)
 				throw new ArgumentNullException(nameof(stringSerializer), $"Provided argument {stringSerializer} is null.");
@@ -23,13 +28,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			decoratedSerializer = stringSerializer;
 		}
 
-		/// <summary>
-		/// Perform the steps necessary to deserialize this data.
-		/// </summary>
-		/// <param name="source">The reader providing the input data.</param>
-		/// <returns>The updated / replacement value.</returns>
+		/// <inheritdoc />
 		public TEnumType Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			//Read the string serialized version of the enum value
 			string readString = decoratedSerializer.Read(source);
 
@@ -37,24 +40,28 @@ namespace FreecraftCore.Serializer.KnownTypes
 			return (TEnumType)Enum.Parse(typeof(TEnumType), readString);
 		}
 
-		/// <summary>
-		/// Perform the steps necessary to serialize this data.
-		/// </summary>
-		/// <param name="value">The value to be serialized.</param>
-		/// <param name="dest">The writer entity that is accumulating the output data.</param>
+		/// <inheritdoc />
 		public void Write(TEnumType value, IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			//Just write the string to the stream
 			decoratedSerializer.Write(value.ToString(), dest);
 		}
 
+		/// <inheritdoc />
 		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			Write((TEnumType)value, dest);
 		}
 
+		/// <inheritdoc />
 		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			return Read(source);
 		}
 	}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer
@@ -12,9 +13,10 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Serializer provider service.
 		/// </summary>
+		[NotNull]
 		protected IContextualSerializerProvider serializerProviderService { get; }
 
-		public DecoratorHandler(IContextualSerializerProvider serializerProvider)
+		protected DecoratorHandler([NotNull] IContextualSerializerProvider serializerProvider)
 		{
 			if (serializerProvider == null)
 				throw new ArgumentNullException(nameof(serializerProvider), $"Provided argument {nameof(serializerProvider)} is null.");
@@ -22,15 +24,17 @@ namespace FreecraftCore.Serializer
 			serializerProviderService = serializerProvider;
 		}
 
-		/// <summary>
-		/// Indicates if the <see cref="ISerializerDecoraterHandler"/> is able to handle the specified <see cref="ISerializableTypeContext"/>.
-		/// </summary>
-		/// <param name="context">The member context.</param>
-		/// <returns>True if the handler can decorate for the serialization of the specified <see cref="ISerializableTypeContext"/>.</returns>
+		/// <inheritdoc />
+		[Pure]
 		public abstract bool CanHandle(ISerializableTypeContext context);
 
-		public ITypeSerializerStrategy<TType> Create<TType>(ISerializableTypeContext context)
+		/// <inheritdoc />
+		[Pure]
+		[NotNull]
+		public ITypeSerializerStrategy<TType> Create<TType>([NotNull] ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
 			if (!CanHandle(context))
 				throw new InvalidOperationException($"Cannot handle Type: {context.TargetType.Name} with a {this.GetType().FullName}.");
 
@@ -45,14 +49,12 @@ namespace FreecraftCore.Serializer
 			return serializer;
 		}
 
-		/// <summary>
-		/// Gets a collection of <see cref="ISerializableTypeContext"/>s that represent the total collection
-		/// of sub-contexts needed to be handled for the given provided <paramref name="context"/>.
-		/// </summary>
-		/// <param name="context"></param>
-		/// <returns></returns>
-		public IEnumerable<ISerializableTypeContext> GetAssociatedSerializationContexts(ISerializableTypeContext context)
+		/// <inheritdoc />
+		[Pure]
+		public IEnumerable<ISerializableTypeContext> GetAssociatedSerializationContexts([NotNull] ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
 			if (!CanHandle(context))
 				throw new InvalidOperationException($"Cannot handle Type: {context.TargetType.Name} with a {this.GetType().FullName}.");
 
@@ -65,13 +67,17 @@ namespace FreecraftCore.Serializer
 		}
 
 		//TODO: Doc
-		protected abstract IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context);
+		[Pure]
+		[NotNull]
+		protected abstract IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts([NotNull] ISerializableTypeContext context);
 
 		/// <summary>
-		/// Creates a <see cref="ITypeSerializerStrategy"/> for the provided <paramref name="forType"/>.
+		/// Creates a <see cref="ITypeSerializerStrategy"/> for the provided <paramref name="context"/>.
 		/// </summary>
-		/// <param name="forType">Type the serializer is for.</param>
+		/// <param name="context">Type the serializer is for.</param>
 		/// <returns>A valid <see cref="ITypeSerializerStrategy"/> or null if one could not be constructed.</returns>
-		protected abstract ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context);
+		[Pure]
+		[NotNull]
+		protected abstract ITypeSerializerStrategy<TType> TryCreateSerializer<TType>([NotNull] ISerializableTypeContext context);
 	}
 }

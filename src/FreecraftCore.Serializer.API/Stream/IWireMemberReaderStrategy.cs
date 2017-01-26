@@ -1,5 +1,7 @@
 ﻿using System;
+using System.CodeDom;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
@@ -7,12 +9,7 @@ namespace FreecraftCore.Serializer
 	/// Description of IWireMemberReader.
 	/// </summary>
 	public interface IWireMemberReaderStrategy : IDisposable
-	{
-		/*/// <summary>
-		/// The <see cref="Stream"/> object the <see cref="IWireMemberReaderStrategy"/> is reading from.
-		/// </summary>
-		Stream ReaderStream { get; }*/
-		
+	{	
 		/// <summary>
 		/// Reads a byte from the stream.
 		/// </summary>
@@ -28,21 +25,26 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Reads all bytes from the stream.
 		/// </summary>
-		/// <returns>Returns all bytes left in the stream.</returns>
+		/// <returns>Returns all bytes left in the stream. If there are no bytes left it returns an empty non-null array.</returns>
+		[NotNull]
 		byte[] ReadAllBytes();
-		
+
 		/// <summary>
 		/// Reads <paramref name="count"/> many bytes from the stream.
 		/// </summary>
 		/// <param name="count">How many bytes to read.</param>
+		/// <exception cref="ArgumentOutOfRangeException">If the provided <see cref="count"/> is negative or exceeds the length of the underlying data.</exception>
 		/// <returns>A byte array of the read bytes.</returns>
+		[NotNull]
 		byte[] ReadBytes(int count);
 
 		/// <summary>
 		/// Peeks <paramref name="count"/> many bytes from the stream.
 		/// </summary>
 		/// <param name="count">How many bytes to peek.</param>
+		/// <exception cref="ArgumentOutOfRangeException">If the provided <see cref="count"/> is negative or exceeds the length of the underlying data.</exception>
 		/// <returns>A byte array of the peeked bytes.</returns>
+		[NotNull]
 		byte[] PeakBytes(int count);
 	}
 }

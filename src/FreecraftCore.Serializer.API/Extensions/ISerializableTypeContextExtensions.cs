@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer
@@ -14,10 +15,13 @@ namespace FreecraftCore.Serializer
 		/// <typeparam name="TAttributeType">The <see cref="Attribute"/> to look for.</typeparam>
 		/// <param name="context">Context.</param>
 		/// <returns>True if the context has the <typeparamref name="TAttributeType"/>.</returns>
-		public static bool HasMemberAttribute<TAttributeType>(this ISerializableTypeContext context)
+		[Pure]
+		public static bool HasMemberAttribute<TAttributeType>([NotNull] this ISerializableTypeContext context)
 			where TAttributeType : Attribute
 		{
-			return context.MemberMetadata.Where(x => x.GetType() == typeof(TAttributeType)).Count() != 0;
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
+			return context.MemberMetadata.Any(x => x.GetType() == typeof(TAttributeType));
 		}
 
 		/// <summary>
@@ -25,29 +29,47 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <typeparam name="TAttributeType">The <see cref="Attribute"/> to look for.</typeparam>
 		/// <param name="context">Context.</param>
+		/// <exception cref="InvalidOperationException"></exception>
 		/// <returns>True if the context has the <typeparamref name="TAttributeType"/>.</returns>
-		public static TAttributeType GetMemberAttribute<TAttributeType>(this ISerializableTypeContext context)
+		[Pure]
+		[NotNull]
+		public static TAttributeType GetMemberAttribute<TAttributeType>([NotNull] this ISerializableTypeContext context)
 			where TAttributeType : Attribute
 		{
-			return context.MemberMetadata.FirstOrDefault(x => x.GetType() == typeof(TAttributeType)) as TAttributeType;
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
+			TAttributeType attri = context.MemberMetadata.FirstOrDefault(x => x.GetType() == typeof(TAttributeType)) as TAttributeType;
+
+			if (attri == null)
+				throw new InvalidOperationException($"Requested Attribute Type {typeof(TAttributeType).FullName} was unavailable.");
+
+			return attri;
 		}
 
-		public static bool HasContextualMemberMetadata(this ISerializableTypeContext context)
+		//TODO: Doc
+		[Pure]
+		public static bool HasContextualMemberMetadata([NotNull] this ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
 			//If there is no context requirement then there is probably no context metadata or shouldn't be
 			if (context.ContextRequirement != SerializationContextRequirement.RequiresContext)
 				return false;
 
-			return context.MemberMetadata.Count() != 0;
+			return context.MemberMetadata.Any();
 		}
 
-		public static bool HasContextualTypeMetadata(this ISerializableTypeContext context)
+		//TODO: Doc
+		[Pure]
+		public static bool HasContextualTypeMetadata([NotNull] this ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
 			//If there is no context requirement then there is probably no context metadata or shouldn't be
 			if (context.ContextRequirement != SerializationContextRequirement.RequiresContext)
 				return false;
 
-			return context.TypeMetadata.Count() != 0;
+			return context.TypeMetadata.Any();
 		}
 
 		/// <summary>
@@ -55,19 +77,33 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		public static bool HasContextualKey(this ISerializableTypeContext context)
+		[Pure]
+		public static bool HasContextualKey([NotNull] this ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
 			return context.BuiltContextKey.HasValue;
 		}
 
-		public static ISerializableTypeContext Override(this ISerializableTypeContext context, Type targetType)
+		//TODO: Doc
+		[Pure]
+		[NotNull]
+		public static ISerializableTypeContext Override([NotNull] this ISerializableTypeContext context, [NotNull] Type targetType)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+			if (targetType == null) throw new ArgumentNullException(nameof(targetType));
+
 			//Decorate the context to override the target type
 			return new ContextTargetOverrideDecorator(context, targetType);
 		}
 
-		public static ISerializableTypeContext Override(this ISerializableTypeContext context, ContextualSerializerLookupKey key)
+		//TODO: Doc
+		[Pure]
+		[NotNull]
+		public static ISerializableTypeContext Override([NotNull] this ISerializableTypeContext context, ContextualSerializerLookupKey key)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
 			//Deocrate the context to set the provided key
 			return new ContextKeyOverrideDecorator(context, key);
 		}

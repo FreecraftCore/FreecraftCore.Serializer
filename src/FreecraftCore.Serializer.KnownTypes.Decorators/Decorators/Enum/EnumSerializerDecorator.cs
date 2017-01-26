@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -14,17 +15,19 @@ namespace FreecraftCore.Serializer.KnownTypes
 	public class EnumSerializerDecorator<TEnumType, TBaseType> : ITypeSerializerStrategy<TEnumType>
 		where TEnumType : struct
 	{
-		public Type SerializerType { get { return typeof(TEnumType); } }
+		/// <inheritdoc />
+		public Type SerializerType { get; } = typeof(TEnumType);
 
 		/// <summary>
 		/// Decorated serializer. For example. An enum Type : byte would have a ITypeSerializerStrategy{byte}.
 		/// </summary>
+		[NotNull]
 		private ITypeSerializerStrategy<TBaseType> serializerStrategy { get; }
 
 		//Enums don't require context (Though closer look at TC/WoW payloads may indicate packing in the future)
-		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
+		public SerializationContextRequirement ContextRequirement => SerializationContextRequirement.Contextless;
 
-		public EnumSerializerDecorator(IGeneralSerializerProvider serializerProvider)
+		public EnumSerializerDecorator([NotNull] IGeneralSerializerProvider serializerProvider)
 		{
 			if (!typeof(TEnumType).IsEnum)
 				throw new InvalidOperationException($"Cannot create an enum decorator for type {typeof(TEnumType).FullName} because it is not an enum.");
@@ -39,27 +42,30 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (serializerProvider == null)
 				throw new ArgumentNullException(nameof(serializerProvider), $"Provided service {nameof(IGeneralSerializerProvider)} was null.");
 
-			serializerStrategy = serializerProvider.Get<TBaseType>();
+			try
+			{
+				serializerStrategy = serializerProvider.Get<TBaseType>();
+			}
+			catch (InvalidOperationException e)
+			{
+				throw new InvalidOperationException($"Failed to create strategy for Type: {typeof(TBaseType).FullName} for enum decorator for enum Type: {typeof(TEnumType).FullName}", e);
+			}
 		}
 
-
-		/// <summary>
-		/// Perform the steps necessary to deserialize this data.
-		/// </summary>
-		/// <param name="source">The reader providing the input data.</param>
-		/// <returns>The updated / replacement value.</returns>
+		/// <inheritdoc />
 		public TEnumType Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//TODO: Should be handle exceptions?
 			return (TEnumType)Enum.ToObject(typeof(TEnumType), (TBaseType)serializerStrategy.Read(source));
 		}
 
-		/// <summary>
-		/// Perform the steps necessary to serialize this data.
-		/// </summary>
-		/// <param name="value">The value to be serialized.</param>
-		/// <param name="dest">The writer entity that is accumulating the output data.</param>
+		/// <inheritdoc />
 		public void Write(TEnumType value, IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			//Not great. It's slow conversion and box. Then casting the box to call.
 			object boxedBaseEnumValue = Convert.ChangeType(value, typeof(TBaseType));
 
@@ -69,13 +75,19 @@ namespace FreecraftCore.Serializer.KnownTypes
 			serializerStrategy.Write((TBaseType)boxedBaseEnumValue, dest);
 		}
 
+		/// <inheritdoc />
 		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			Write((TEnumType)value, dest);
 		}
 
+		/// <inheritdoc />
 		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			return Read(source);
 		}
 

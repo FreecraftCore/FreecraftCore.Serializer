@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
@@ -20,17 +21,20 @@ namespace FreecraftCore.Serializer
 		/// The <see cref="FreecraftCore"/> attribute metadata associated with the member (if any).
 		/// (If the context isn't unique then the Metadata is for the <see cref="Type"/> and not from a <see cref="MemberInfo"/>)
 		/// </summary>
+		[NotNull]
 		IEnumerable<Attribute> MemberMetadata { get; }
 
 		/// <summary>
 		/// The <see cref="FreecraftCore"/> attribute metadata associated with the <see cref="Type"/>
 		/// (Not all types have interesting metadata)
 		/// </summary>
+		[NotNull]
 		IEnumerable<Attribute> TypeMetadata { get; }
 
 		/// <summary>
 		/// Represents the type.
 		/// </summary>
+		[NotNull]
 		Type TargetType { get; }
 
 		/// <summary>

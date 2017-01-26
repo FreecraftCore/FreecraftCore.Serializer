@@ -11,6 +11,8 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public interface ISerializerService : ISerializationContractRegister, ISerializationService
 	{
+		//TODO: This is kind of poorly designed
+
 		/// <summary>
 		/// Call to finalize the serialization service.
 		/// This is required to serialize or deserialize types.

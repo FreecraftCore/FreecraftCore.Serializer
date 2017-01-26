@@ -17,6 +17,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// </summary>
 		public int Size(IWireMemberReaderStrategy reader)
 		{
+			if (reader == null) throw new ArgumentNullException(nameof(reader));
+
 			//Read the byte size from the stream.
 			return reader.ReadByte();
 		}
@@ -27,6 +29,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 		public int Size<TCollectionType, TElementType>(TCollectionType collection, IWireMemberWriterStrategy writer)
 			where TCollectionType : IEnumerable, IEnumerable<TElementType>
 		{
+			if (collection == null) throw new ArgumentNullException(nameof(collection));
+			if (writer == null) throw new ArgumentNullException(nameof(writer));
 
 			//Since the size is unknown it's critical that we write the size to the stream.
 			writer.Write((byte)collection.Count());

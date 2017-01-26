@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer
@@ -17,39 +18,45 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Decorator handlers for primitives.
 		/// </summary>
+		[NotNull]
 		private IEnumerable<DecoratorHandler> decoratorHandlers { get; }
 
 		/// <summary>
 		/// General serializer provider service.
 		/// </summary>
-		private IGeneralSerializerProvider generalSerializerProviderService { get; }
+		[NotNull]
+		private IContextualSerializerProvider serializerProviderService { get; }
 
 		/// <summary>
 		/// Fallback factory (used to be an event broadcast)
 		/// </summary>
+		[NotNull]
 		private ISerializerStrategyFactory fallbackFactoryService { get; }
 
 		/// <summary>
 		/// Lookup key factory service.
 		/// </summary>
+		[NotNull]
 		private IContextualSerializerLookupKeyFactory lookupKeyFactoryService { get; }
 
-		public DefaultSerializerStrategyFactory(IEnumerable<DecoratorHandler> handlers, IGeneralSerializerProvider generalSerializerProvider, ISerializerStrategyFactory fallbackFactory, IContextualSerializerLookupKeyFactory lookupKeyFactory)
+		public DefaultSerializerStrategyFactory([NotNull] IEnumerable<DecoratorHandler> handlers, [NotNull] IContextualSerializerProvider serializerProvider, 
+			[NotNull] ISerializerStrategyFactory fallbackFactory, [NotNull] IContextualSerializerLookupKeyFactory lookupKeyFactory)
 		{
-			if (generalSerializerProvider == null)
-				throw new ArgumentNullException(nameof(generalSerializerProvider), $"Provided {nameof(IGeneralSerializerProvider)} service was null.");
+			if (serializerProvider == null)
+				throw new ArgumentNullException(nameof(serializerProvider), $"Provided {nameof(IContextualSerializerProvider)} service was null.");
 
 			if (handlers == null)
 				throw new ArgumentNullException(nameof(handlers), $"Provided {nameof(DecoratorHandler)}s were null. Must be a non-null collection.");
 
 			if (fallbackFactory == null)
-				throw new ArgumentNullException(nameof(fallbackFactory), $"Provided {nameof(ISerializerStrategyFactory)}s were null. Must be a non-null collection.");
+				throw new ArgumentNullException(nameof(fallbackFactory), $"Provided {nameof(ISerializerStrategyFactory)} service was null.");
 
-			//TODO: null check
+			if (lookupKeyFactory == null)
+				throw new ArgumentNullException(nameof(lookupKeyFactory), $"Provided {nameof(IContextualSerializerLookupKeyFactory)} service was null.");
+
 			lookupKeyFactoryService = lookupKeyFactory;
-
 			decoratorHandlers = handlers;
-			generalSerializerProviderService = generalSerializerProvider;
+			serializerProviderService = serializerProvider;
 			fallbackFactoryService = fallbackFactory;
 		}
 
@@ -57,45 +64,48 @@ namespace FreecraftCore.Serializer
 		/// Attempts to produce a decorated serializer for the provided <see cref="ISerializableTypeContext"/>.
 		/// </summary>
 		/// <param name="context">The context.</param>
-		/// <returns>A decorated serializer or null if none could be created.</returns>
-		public ITypeSerializerStrategy<TType> Create<TType>(ISerializableTypeContext context)
+		/// <exception cref="InvalidOperationException">Throws if the <see cref="ITypeSerializerStrategy{TType}"/> could not be created.</exception>
+		/// <returns>A decorated serializer.</returns>
+		public ITypeSerializerStrategy<TType> Create<TType>([NotNull] ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
 			ISerializerStrategyFactory factory = null;
 
 			//Build the contextual key first. We used to do this as one of the last steps but we need
 			//to grab the key to check if it already exists.
 			context.BuiltContextKey = lookupKeyFactoryService.Create(context);
 
-			if (generalSerializerProviderService.HasSerializerFor(context.BuiltContextKey.Value))
+			if (serializerProviderService.HasSerializerFor(context.BuiltContextKey.Value))
 				throw new InvalidOperationException($"Tried to create multiple serializer for already created serialize with Context: {context.ToString()}.");
 
 			foreach (DecoratorHandler handler in decoratorHandlers)
 			{
-				if (handler.CanHandle(context))
+				if (!handler.CanHandle(context))
+					continue;
+
+				//If it can handle then we should register the associated types
+				foreach (ISerializableTypeContext subContext in handler.GetAssociatedSerializationContexts(context))
 				{
-					//If it can handle then we should register the associated types
-					foreach (ISerializableTypeContext subContext in handler.GetAssociatedSerializationContexts(context))
-					{
-						//populate key first; we need to check if we already know about it
-						subContext.BuiltContextKey = lookupKeyFactoryService.Create(subContext);
+					//populate key first; we need to check if we already know about it
+					subContext.BuiltContextKey = lookupKeyFactoryService.Create(subContext);
 
-						//Had to add check for if it was registered; don't want to register a type multiple times; was casuing exceptions too
-						if (subContext.ContextRequirement == SerializationContextRequirement.Contextless && generalSerializerProviderService.HasSerializerFor(subContext.TargetType))
-							continue;
+					//Had to add check for if it was registered; don't want to register a type multiple times; was casuing exceptions too
+					if (subContext.ContextRequirement == SerializationContextRequirement.Contextless && serializerProviderService.HasSerializerFor(subContext.TargetType))
+						continue;
 
-						if (subContext.BuiltContextKey.HasValue && this.generalSerializerProviderService.HasSerializerFor(subContext.BuiltContextKey.Value))
-							continue;
+					if (subContext.BuiltContextKey.HasValue && this.serializerProviderService.HasSerializerFor(subContext.BuiltContextKey.Value))
+						continue;
 
-						//TODO: Maybe figure out how to get type context inside here to call generic
-						//Maybe visitor?
-						//Call the create on the fallback handler
-						fallbackFactoryService.CallMethod(new Type[] { subContext.TargetType }, nameof(Create), subContext);
-					}
-
-					//TODO: If we ever have mutliple decoration then this factory set will break things
-					factory = handler;
-					break;
+					//TODO: Maybe figure out how to get type context inside here to call generic
+					//Maybe visitor?
+					//Call the create on the fallback handler
+					fallbackFactoryService.CallMethod(new Type[] { subContext.TargetType }, nameof(Create), subContext);
 				}
+
+				//TODO: If we ever have mutliple decoration then this factory set will break things
+				factory = handler;
+				break;
 			}
 
 			if (factory == null)

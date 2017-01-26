@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
@@ -7,6 +8,7 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Indicates the <see cref="TType"/> of the serializer.
 		/// </summary>
+		[NotNull]
 		Type SerializerType { get; }
 
 		/// <summary>
@@ -20,14 +22,17 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="value">The value to be serialized.</param>
 		/// <param name="dest">The writer entity that is accumulating the output data.</param>
-		void Write(object value, IWireMemberWriterStrategy dest);
+		[Pure]
+		void Write(object value, [NotNull] IWireMemberWriterStrategy dest);
 
 		/// <summary>
 		/// Perform the steps necessary to deserialize this data.
 		/// </summary>
 		/// <param name="source">The reader providing the input data.</param>
 		/// <returns>The updated / replacement value.</returns>
-		object Read(IWireMemberReaderStrategy source);
+		[Pure]
+		[NotNull]
+		object Read([NotNull] IWireMemberReaderStrategy source);
 	}
 
 	//This concept is based on JAM (Blizzard's messaging system/protocol and Protobuf-net's serializer strategies https://github.com/mgravell/protobuf-net/tree/master/protobuf-net/Serializers
@@ -41,13 +46,13 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="value">The value to be serialized.</param>
 		/// <param name="dest">The writer entity that is accumulating the output data.</param>
-		void Write(TType value, IWireMemberWriterStrategy dest);
+		void Write(TType value, [NotNull] IWireMemberWriterStrategy dest);
 
 		/// <summary>
 		/// Perform the steps necessary to deserialize this data.
 		/// </summary>
 		/// <param name="source">The reader providing the input data.</param>
 		/// <returns>The updated / replacement value.</returns>
-		new TType Read(IWireMemberReaderStrategy source);
+		new TType Read([NotNull] IWireMemberReaderStrategy source);
 	}
 }

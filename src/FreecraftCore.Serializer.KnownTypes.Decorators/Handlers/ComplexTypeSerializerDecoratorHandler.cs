@@ -5,6 +5,7 @@ using System.Text;
 
 using Fasterflect;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
@@ -12,26 +13,33 @@ namespace FreecraftCore.Serializer
 	[DecoratorHandler]
 	public class ComplexTypeSerializerDecoratorHandler : DecoratorHandler
 	{
+		[NotNull]
 		private IContextualSerializerLookupKeyFactory contextualKeyLookupFactoryService { get; }
 
-		public ComplexTypeSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider, IContextualSerializerLookupKeyFactory contextualKeyLookupFactory)
+		public ComplexTypeSerializerDecoratorHandler([NotNull] IContextualSerializerProvider serializerProvider, [NotNull] IContextualSerializerLookupKeyFactory contextualKeyLookupFactory)
 			: base(serializerProvider)
 		{
-			//TODO: null check
+			if (contextualKeyLookupFactory == null) throw new ArgumentNullException(nameof(contextualKeyLookupFactory));
 
 			contextualKeyLookupFactoryService = contextualKeyLookupFactory;
 		}
 
-		public override bool CanHandle(ISerializableTypeContext context)
+		/// <inheritdoc />
+		public override bool CanHandle([NotNull] ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
 			return !context.HasContextualMemberMetadata() && context.ContextRequirement == SerializationContextRequirement.Contextless;
 		}
 
+		/// <inheritdoc />
 		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
 			//TODO: Cleaner/better way to provide instuctions
 			//Build the instructions for serializaiton
-			IEnumerable<MemberAndSerializerPair<TType>> orderedMemberInfos = context.TargetType.MembersWith<WireMemberAttribute>(System.Reflection.MemberTypes.Field | System.Reflection.MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
+			IEnumerable<MemberAndSerializerPair<TType>> orderedMemberInfos = context.TargetType.MembersWith<WireMemberAttribute>(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
 				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder)
 				.Select(x => new MemberAndSerializerPair<TType>(x, serializerProviderService.Get(contextualKeyLookupFactoryService.Create(x))))
 				.ToArray();
@@ -39,8 +47,11 @@ namespace FreecraftCore.Serializer
 			return new ComplexTypeSerializerDecorator<TType>(orderedMemberInfos);
 		}
 
+		/// <inheritdoc />
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
 			//We need context when we refer to the members of a Type. They could be marked with metadata that could cause a serializer to be context based
 
 #if !NET35

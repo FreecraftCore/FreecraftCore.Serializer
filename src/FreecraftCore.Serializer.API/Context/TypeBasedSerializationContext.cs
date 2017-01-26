@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer
@@ -11,35 +12,21 @@ namespace FreecraftCore.Serializer
 	//TODO: Refactor out of API project
 	public class TypeBasedSerializationContext : ISerializableTypeContext
 	{
-		/// <summary>
-		/// Indicates if this context is unique to a member.
-		/// </summary>
+		/// <inheritdoc />
 		public SerializationContextRequirement ContextRequirement { get; }
 
-		/// <summary>
-		/// The <see cref="FreecraftCore"/> attribute metadata associated with the type.
-		/// (If the context isn't unique then the Metadata is for the <see cref="Type"/> and not from a <see cref="MemberInfo"/>)
-		/// </summary>
+		/// <inheritdoc />
 		public IEnumerable<Attribute> MemberMetadata { get; }
 
-		/// <summary>
-		/// The <see cref="FreecraftCore"/> attribute metadata associated with the <see cref="Type"/>
-		/// (Not all types have interesting metadata)
-		/// </summary>
+		/// <inheritdoc />
 		public IEnumerable<Attribute> TypeMetadata { get; }
 
-		/// <summary>
-		/// Represents the type.
-		/// </summary>
+		/// <inheritdoc />
 		public Type TargetType { get; }
 
-		/// <summary>
-		/// The conextual lookup key that should be associated with the serialization context.
-		/// If null there is no context.
-		/// </summary>
 		public ContextualSerializerLookupKey? BuiltContextKey { get; set; }
 
-		public TypeBasedSerializationContext(Type type)
+		public TypeBasedSerializationContext([NotNull] Type type)
 		{
 			if (type == null)
 				throw new ArgumentNullException(nameof(type), $"Provided member {nameof(type)} is null.");
@@ -55,7 +42,8 @@ namespace FreecraftCore.Serializer
 			MemberMetadata = Enumerable.Empty<Attribute>();
 		}
 
-		private bool IsContextualTypeAttribute(Attribute attri)
+		[Pure]
+		private static bool IsContextualTypeAttribute(Attribute attri)
 		{
 			//We're interested in subtype metadata for Type contexts. Nothing else really.
 			return attri.GetType() == typeof(WireDataContractBaseTypeAttribute);

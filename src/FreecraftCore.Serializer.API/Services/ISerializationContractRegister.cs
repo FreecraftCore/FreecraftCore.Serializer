@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer
@@ -9,9 +10,10 @@ namespace FreecraftCore.Serializer
 	public interface ISerializationContractRegister
 	{
 		/// <summary>
-		/// Attempts to register a contract for the provided <see cref="Type"/>.
+		/// Attempts to register a contract for the provided <typeparam name="TTypeToRegister"></typeparam>.
 		/// </summary>
-		/// <returns>The type serializer if successfully registered.</returns>
+		/// <returns>The <see cref="ITypeSerializerStrategy{TType}"/> for the requested <typeparamref name="TTypeToRegister"/>.</returns>
+		[NotNull]
 		ITypeSerializerStrategy<TTypeToRegister> RegisterType<TTypeToRegister>();
 
 		/// <summary>
@@ -19,6 +21,7 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns>True if a serializer is registered for the provided <see cref="Type"/>.</returns>
-		bool isTypeRegistered(Type type);
+		[Pure]
+		bool isTypeRegistered([NotNull] Type type);
 	}
 }

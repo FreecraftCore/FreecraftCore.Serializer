@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
@@ -18,14 +19,16 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Represents the context specific key.
 		/// </summary>
+		[NotNull]
 		public IContextKey ContextSpecificKey { get; }
 
 		/// <summary>
 		/// The <see cref="Type"/> of the context.
 		/// </summary>
+		[NotNull]
 		public Type ContextType { get; }
 
-		public ContextualSerializerLookupKey(ContextTypeFlags flags, IContextKey contextSpecificKey, Type type)
+		public ContextualSerializerLookupKey(ContextTypeFlags flags, [NotNull] IContextKey contextSpecificKey, [NotNull] Type type)
 		{
 			if (contextSpecificKey == null)
 				throw new ArgumentNullException(nameof(contextSpecificKey), $"Provided argument {nameof(contextSpecificKey)} is null.");
@@ -38,12 +41,14 @@ namespace FreecraftCore.Serializer
 			ContextSpecificKey = contextSpecificKey;
 		}
 
+		[Pure]
 		public bool Equals(ContextualSerializerLookupKey x, ContextualSerializerLookupKey y)
 		{
 			return x.ContextType == y.ContextType && x.ContextFlags == y.ContextFlags && x.ContextSpecificKey?.GetType() == y.ContextSpecificKey?.GetType() 
 				&& x.ContextSpecificKey?.Key == y.ContextSpecificKey?.Key;
 		}
 
+		[Pure]
 		public int GetHashCode(ContextualSerializerLookupKey obj)
 		{
 			//Hack to have multi dimensional key values to hashe to unique values, or probably hash to unique values 
@@ -51,27 +56,28 @@ namespace FreecraftCore.Serializer
 			return obj.ToString().GetHashCode();
 		}
 
+		[Pure]
 		public override string ToString()
 		{
 			return $"{this.ContextFlags.ToString()}-{this.ContextSpecificKey?.GetType()?.Name}-{this.ContextSpecificKey.Key}-{ContextType?.FullName}";
 		}
 
+		[Pure]
 		public override int GetHashCode()
 		{
 			return GetHashCode(this);
 		}
 
+		[Pure]
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
 				return false;
 
-			if (obj.GetType() != this.GetType()) //call GetType because someone may dervive from this type
-				return false;
-
-			return Equals((ContextualSerializerLookupKey)obj);
+			return obj.GetType() == this.GetType() && Equals((ContextualSerializerLookupKey)obj);
 		}
 
+		[Pure]
 		public bool Equals(ContextualSerializerLookupKey other)
 		{
 			return Equals(this, other);

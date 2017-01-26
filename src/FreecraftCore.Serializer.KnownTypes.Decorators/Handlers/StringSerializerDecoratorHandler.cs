@@ -2,28 +2,42 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
 	public class StringSerializerDecoratorHandler : DecoratorHandler
 	{
-		public StringSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider)
+		public StringSerializerDecoratorHandler([NotNull] IContextualSerializerProvider serializerProvider)
 			: base(serializerProvider)
 		{
 
 		}
 
+		/// <inheritdoc />
 		public override bool CanHandle(ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
 			//We can handle strings. Maybe char[] but that's an odd case.
 			return context.TargetType == typeof(string);
 		}
 
+		//TODO: Refactor
+		/// <inheritdoc />
 		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
+			if(typeof(TType) != typeof(string))
+				throw new InvalidOperationException($"{nameof(StringSerializerDecoratorHandler)} cannot handle creation of serializer decorators involves {typeof(string).FullName}.");
+
+			if(!context.HasContextualKey())
+				throw new ArgumentException($"Provided context {nameof(context)} did not contain a valid {nameof(context.BuiltContextKey)}.");
+
 			if (context.ContextRequirement == SerializationContextRequirement.Contextless)
-				return new StringSerializerStrategy() as ITypeSerializerStrategy<TType>; //The caller should know what he's doing.
+				return (ITypeSerializerStrategy<TType>) new StringSerializerStrategy(); //The caller should know what he's doing.
 
 			//TODO: Throw on invalid metadata combinations
 
@@ -71,7 +85,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Reverse))
 				serializer = new ReverseStringSerializerDecorator(serializer);
 
-			return serializer as ITypeSerializerStrategy<TType>;
+			return (ITypeSerializerStrategy<TType>) serializer;
 		}
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)

@@ -1,13 +1,14 @@
-﻿{
+{
     "version": "1.0.0-*",
 
-    "dependencies": {
-        "FreecraftCore.Serializer.Metadata": "1.0.0-*",
-        "FreecraftCore.Serializer.KnownTypes.Primitives": "1.0.0-*",
-        "FreecraftCore.Serializer.KnownTypes.Decorators": "1.0.0-*",
-        "FreecraftCore.Serializer.Core": "1.0.0-*",
-        "fasterflect": "2.1.3"
-    },
+  "dependencies": {
+    "FreecraftCore.Serializer.Metadata": "1.0.0-*",
+    "FreecraftCore.Serializer.KnownTypes.Primitives": "1.0.0-*",
+    "FreecraftCore.Serializer.KnownTypes.Decorators": "1.0.0-*",
+    "FreecraftCore.Serializer.Core": "1.0.0-*",
+    "fasterflect": "2.1.3",
+    "JetBrains.Annotations": "10.2.1"
+  },
 
     "frameworks": {
         "net35": {

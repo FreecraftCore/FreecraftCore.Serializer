@@ -6,6 +6,7 @@ using System.Text;
 
 using System.Linq.Expressions;
 using Fasterflect;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
@@ -18,11 +19,15 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Delegate that can grab the <see cref="MemberInformation"/> member value.
 		/// </summary>
+		[NotNull]
 		public Func<TContainingType, object> MemberGetter { get; }
 
-		public MemberAndSerializerPair(MemberInfo memberInfo, ITypeSerializerStrategy serializer)
+		public MemberAndSerializerPair([NotNull] MemberInfo memberInfo, [NotNull] ITypeSerializerStrategy serializer)
 			: base(memberInfo, serializer)
 		{
+			if (memberInfo == null) throw new ArgumentNullException(nameof(memberInfo));
+			if (serializer == null) throw new ArgumentNullException(nameof(serializer));
+
 			//Due to perf problems fasterflect setting wasn't fast enough.
 			//Introducing a compiled lambda to delegate for get/set should provide the much needed preformance.
 
@@ -33,6 +38,9 @@ namespace FreecraftCore.Serializer
 			//Build the getter lambda
 			MemberGetter = Expression.Lambda(castExpression, instanceOfTypeToReadMemberOn).Compile()
 				as Func<TContainingType, object>;
+
+			if(MemberGetter == null)
+				throw new InvalidOperationException($"Failed to build {nameof(MemberAndSerializerPair)} for Member: {memberInfo.Name} for Type: {typeof(TContainingType).FullName}.");;
 		}
 	}
 
@@ -45,14 +53,16 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Cached <see cref="MemberInfo"/>.
 		/// </summary>
+		[NotNull]
 		public MemberInfo MemberInformation { get; }
 
 		/// <summary>
 		/// Serializer to serialize for the <see cref="MemberInformation"/>.
 		/// </summary>
+		[NotNull]
 		public ITypeSerializerStrategy TypeSerializer { get; }
 
-		public MemberAndSerializerPair(MemberInfo memberInfo, ITypeSerializerStrategy serializer)
+		protected MemberAndSerializerPair([NotNull] MemberInfo memberInfo, [NotNull] ITypeSerializerStrategy serializer)
 		{
 			if (memberInfo == null)
 				throw new ArgumentNullException(nameof(memberInfo), $"Provided argument {nameof(memberInfo)} is null.");

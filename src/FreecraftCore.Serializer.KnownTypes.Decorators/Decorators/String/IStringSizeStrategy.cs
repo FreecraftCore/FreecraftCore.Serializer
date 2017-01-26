@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -13,12 +14,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 	{
 		/// <summary>
 		/// Determines the size of the string
+		/// <exception cref="ArgumentNullException">Throws if any parameter provided is null.</exception>
 		/// </summary>
-		int Size(string stringValue, IWireMemberWriterStrategy writer);
+		int Size([NotNull] string stringValue, [NotNull] IWireMemberWriterStrategy writer);
 
 		/// <summary>
 		/// Determines the size of the string fromt he stream.
 		/// </summary>
-		int Size(IWireMemberReaderStrategy reader);
+		int Size([NotNull] IWireMemberReaderStrategy reader);
 	}
 }

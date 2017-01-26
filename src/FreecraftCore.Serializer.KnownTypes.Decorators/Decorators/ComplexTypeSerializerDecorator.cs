@@ -6,6 +6,7 @@ using System.Text;
 using Fasterflect;
 using System.Reflection;
 using System.Linq.Expressions;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
@@ -19,20 +20,20 @@ namespace FreecraftCore.Serializer
 		//Search compiled lambda and new constaint operator on google to see dicussions about it
 		public static Func<TComplexType> instanceGeneratorDelegate { get; } = Expression.Lambda<Func<TComplexType>>(Expression.New(typeof(TComplexType))).Compile();
 
-		/// <summary>
-		/// Indicates the <see cref="TType"/> of the serializer.
-		/// </summary>
-		public Type SerializerType { get { return typeof(TComplexType); } }
+		/// <inheritdoc />
+		public Type SerializerType { get; } = typeof(TComplexType);
 
 		/// <summary>
 		/// Ordered pairs of known serializer references and the memberinfos for wiremembers.
 		/// </summary>
+		[NotNull]
 		IEnumerable<MemberAndSerializerPair<TComplexType>> orderedMemberInfos { get; }
 
 		//Complex types should NEVER require context. It should be designed to avoid context requireing complex types.
+		/// <inheritdoc />
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		public ComplexTypeSerializerDecorator(IEnumerable<MemberAndSerializerPair<TComplexType>> serializationDirections) //todo: create a better way to provide serialization instructions
+		public ComplexTypeSerializerDecorator([NotNull] IEnumerable<MemberAndSerializerPair<TComplexType>> serializationDirections) //todo: create a better way to provide serialization instructions
 		{
 			//These can be empty. If there are no members on a type there won't be anything to serialize.
 			if (serializationDirections == null)
@@ -42,11 +43,14 @@ namespace FreecraftCore.Serializer
 		}
 
 		//TODO: Error handling
+		/// <inheritdoc />
 		public TComplexType Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			TComplexType instance = instanceGeneratorDelegate();
 
-			foreach (MemberAndSerializerPair serializerInfo in orderedMemberInfos)
+			foreach (MemberAndSerializerPair<TComplexType> serializerInfo in orderedMemberInfos)
 			{
 				instance.TrySetValue(serializerInfo.MemberInformation.Name, serializerInfo.TypeSerializer.Read(source));
 			}
@@ -54,19 +58,28 @@ namespace FreecraftCore.Serializer
 			return instance;
 		}
 
+		/// <inheritdoc />
 		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			Write((TComplexType)value, dest);
 		}
 
+		/// <inheritdoc />
 		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			return Read(source);
 		}
 
 		//TODO: Error handling
+		/// <inheritdoc />
 		public void Write(TComplexType value, IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			foreach(MemberAndSerializerPair<TComplexType> serializerInfo in orderedMemberInfos)
 			{
 				//TODO: Check how TC handles optionals or nulls.

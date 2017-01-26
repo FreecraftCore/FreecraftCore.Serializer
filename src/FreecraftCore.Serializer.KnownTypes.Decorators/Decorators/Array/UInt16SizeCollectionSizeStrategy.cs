@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -12,11 +13,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// </summary>
 	public class UInt16SizeCollectionSizeStrategy : ICollectionSizeStrategy
 	{
+		[NotNull]
 		private ITypeSerializerStrategy<ushort> shortSerializer { get; }
 
-		public UInt16SizeCollectionSizeStrategy(ITypeSerializerStrategy<ushort> serializer)
+		public UInt16SizeCollectionSizeStrategy([NotNull] ITypeSerializerStrategy<ushort> serializer)
 		{
-			//TODO: Null check
+			if (serializer == null) throw new ArgumentNullException(nameof(serializer));
 
 			shortSerializer = serializer;
 		}
@@ -26,6 +28,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// </summary>
 		public int Size(IWireMemberReaderStrategy reader)
 		{
+			if (reader == null) throw new ArgumentNullException(nameof(reader));
+
 			//Reads a short from the stream.
 			return shortSerializer.Read(reader);
 		}
@@ -36,6 +40,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 		public int Size<TCollectionType, TElementType>(TCollectionType collection, IWireMemberWriterStrategy writer)
 			where TCollectionType : IEnumerable, IEnumerable<TElementType>
 		{
+			if (collection == null) throw new ArgumentNullException(nameof(collection));
+			if (writer == null) throw new ArgumentNullException(nameof(writer));
 
 			//Write a short size to the stream
 			shortSerializer.Write((ushort)collection.Count(), writer);

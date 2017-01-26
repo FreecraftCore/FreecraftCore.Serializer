@@ -2,41 +2,45 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
 	public class SizeStringSerializerDecorator : ITypeSerializerStrategy<string>
 	{
-		/// <summary>
-		/// Indicates the context requirement for this serializer strategy.
-		/// (Ex. If it requires context then a new one must be made or context must be provided to it for it to serializer for multiple members)
-		/// </summary>
+		/// <inheritdoc />
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
 
-		/// <summary>
-		/// Indicates the <see cref="TType"/> of the serializer.
-		/// </summary>
+		/// <inheritdoc />
 		public Type SerializerType { get; } = typeof(string);
 
 		/// <summary>
 		/// Provides the size of the fixed string.
 		/// </summary>
+		[NotNull]
 		public IStringSizeStrategy sizeProvider { get; }
 
 		/// <summary>
 		/// The string serializer that is being decorated.
 		/// </summary>
+		[NotNull]
 		private ITypeSerializerStrategy<string> decoratedSerializer { get; }
 
-		public SizeStringSerializerDecorator(IStringSizeStrategy size, ITypeSerializerStrategy<string> stringSerializer)
+		public SizeStringSerializerDecorator([NotNull] IStringSizeStrategy size, [NotNull] ITypeSerializerStrategy<string> stringSerializer)
 		{
+			if (size == null) throw new ArgumentNullException(nameof(size));
+			if (stringSerializer == null) throw new ArgumentNullException(nameof(stringSerializer));
+
 			sizeProvider = size;
 			decoratedSerializer = stringSerializer;
 		}
 
+		/// <inheritdoc />
 		public string Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			//The size must come from the strategy provided
 			int size = sizeProvider.Size(source);
 
@@ -50,8 +54,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 			return Encoding.ASCII.GetString(bytes).TrimEnd('\0'); 
 		}
 
-		public void Write(string value, IWireMemberWriterStrategy dest)
+		/// <inheritdoc />
+		public void Write([NotNull] string value, IWireMemberWriterStrategy dest)
 		{
+			if (value == null) throw new ArgumentNullException(nameof(value));
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			int size = sizeProvider.Size(value, dest);
 
 			//Now that we know the size, and the header will be written if it was needed, we can write it
@@ -65,11 +73,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 				dest.Write(new byte[(size - value.Length)]);
 		}
 
+		/// <inheritdoc />
 		public void Write(object value, IWireMemberWriterStrategy dest)
 		{
 			Write((string)value, dest);
 		}
 
+		/// <inheritdoc />
 		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
 		{
 			return Read(source);

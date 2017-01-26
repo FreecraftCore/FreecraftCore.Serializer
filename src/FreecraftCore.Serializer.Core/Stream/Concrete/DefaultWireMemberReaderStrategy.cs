@@ -3,36 +3,30 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer
 {
-	public class DefaultWireMemberReaderStrategy : IWireMemberReaderStrategy, IDisposable
+	/// <summary>
+	/// Default implementation of the <see cref="IWireMemberReaderStrategy"/> that reads bytes from
+	/// an internally managed stream.
+	/// </summary>
+	public class DefaultWireMemberReaderStrategy : IWireMemberReaderStrategy
 	{
-		public bool isDisposed { get; private set; } = false;
-
 		/// <summary>
 		/// Allocated stream with the byte buffer.
 		/// </summary>
-		private Stream ReaderStream { get; } = new MemoryStream();
+		[NotNull]
+		private Stream ReaderStream { get; }
 
 		//TODO: Overloads that take the byte buffer instead
-		public DefaultWireMemberReaderStrategy(byte[] bytes)
+		public DefaultWireMemberReaderStrategy([NotNull] byte[] bytes)
 		{
 			if (bytes == null)
 				throw new ArgumentNullException(nameof(bytes), $"Provided argument {nameof(bytes)} must not be null.");
 
-			//Empty classes can produce empty byte buffers
-			/*if (bytes.Length == 0)
-				throw new ArgumentException($"Provided argument {nameof(bytes)} must not be null.", nameof(bytes));*/
-
 			ReaderStream = new MemoryStream(bytes);
-		}
-
-		public void Dispose()
-		{
-			ReaderStream.Dispose();
-			isDisposed = true;
 		}
 
 		public byte[] ReadAllBytes()
@@ -45,6 +39,7 @@ namespace FreecraftCore.Serializer
 			//would be -1 if it's invalid
 			int b = ReaderStream.ReadByte();
 
+			//TODO: Contract interface doesn't mention throwing in this case. Should we throw?
 			if (b == -1)
 				throw new InvalidOperationException("Failed to read a desired byte from the stream.");
 
@@ -78,6 +73,11 @@ namespace FreecraftCore.Serializer
 			ReaderStream.Position = ReaderStream.Position - count;
 
 			return bytes;
+		}
+
+		public void Dispose()
+		{
+			ReaderStream?.Dispose();
 		}
 	}
 }

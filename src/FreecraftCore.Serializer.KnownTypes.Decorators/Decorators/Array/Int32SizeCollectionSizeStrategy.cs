@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -14,28 +15,30 @@ namespace FreecraftCore.Serializer.KnownTypes
 	{
 		private ITypeSerializerStrategy<int> intSerializer { get; }
 
-		public Int32SizeCollectionSizeStrategy(ITypeSerializerStrategy<int> serializer)
+		public Int32SizeCollectionSizeStrategy([NotNull] ITypeSerializerStrategy<int> serializer)
 		{
-			//TODO: Null check
+			if (serializer == null) throw new ArgumentNullException(nameof(serializer));
 
 			intSerializer = serializer;
 		}
 
-		/// <summary>
-		/// Determines the size of the collection from the stream.
-		/// </summary>
+
+		/// <inheritdoc />
 		public int Size(IWireMemberReaderStrategy reader)
 		{
+			if (reader == null) throw new ArgumentNullException(nameof(reader));
+
 			//Reads a int from the stream.
 			return intSerializer.Read(reader);
 		}
 
-		/// <summary>
-		/// The size to consider the collection.
-		/// </summary>
+		/// <inheritdoc />
 		public int Size<TCollectionType, TElementType>(TCollectionType collection, IWireMemberWriterStrategy writer)
 			where TCollectionType : IEnumerable, IEnumerable<TElementType>
 		{
+			if (collection == null) throw new ArgumentNullException(nameof(collection));
+			if (writer == null) throw new ArgumentNullException(nameof(writer));
+
 			//Write an int size to the stream
 			intSerializer.Write((ushort)collection.Count(), writer);
 

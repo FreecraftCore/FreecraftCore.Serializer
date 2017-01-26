@@ -85,6 +85,7 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.True(response.Realms.First().isLocked == false);
 			Assert.True(response.Realms.First().Information.Flags == RealmFlags.None);
 			Assert.AreEqual(response.Realms.First().Information.RealmString, "Trinity");
+			Assert.AreEqual(response.Realms.First().Information.RealmAddress.RealmAddress.Value.ToString(), "127.0.0.1");
 		}
 
 		/// <summary>
@@ -150,7 +151,7 @@ namespace FreecraftCore.Serializer.Tests
 			/// Endpoint information for the realm.
 			/// </summary>
 			[WireMember(3)]
-			public RealmEndpoint RealmAddress { get; }
+			public RealmEndpoint RealmAddress { get; private set; }
 
 			//Maybe wrap this into something? Query it for realm pop info? I don't know
 			//TOOD: Research Mangos and Ember to find out why this is a float.

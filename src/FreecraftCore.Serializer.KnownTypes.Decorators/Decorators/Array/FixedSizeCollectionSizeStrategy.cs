@@ -17,30 +17,39 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// </summary>
 		public int FixedSize { get; }
 
-		//TODO: Maybe pass in attribute
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <exception cref="ArgumentOutOfRangeException">Throws if the provided <see cref="size"/> is 0, less than or greater than the value of a byte.</exception>
+		/// <param name="size"></param>
 		public FixedSizeCollectionSizeStrategy(int size)
 		{
-			//TODO: Does it only send byte sized collections? Auth sends uint16 realm count
-			FixedSize = Math.Min(255, size); //WoW only sends byte sizes
+			if (size <= 0 || size > 255)
+				throw new ArgumentOutOfRangeException(nameof(size),
+					$"Provided {nameof(size)} must be bounded between 1 and 255. Was {size}.");
+
+			FixedSize = size;
 		}
 
-		/// <summary>
-		/// The size to consider the collection.
-		/// </summary>
+
+		/// <inheritdoc />
 		public int Size<TCollectionType, TElementType>(TCollectionType collection, IWireMemberWriterStrategy writer)
 			where TCollectionType : IEnumerable, IEnumerable<TElementType>
 		{
+			if (collection == null) throw new ArgumentNullException(nameof(collection));
+			if (writer == null) throw new ArgumentNullException(nameof(writer));
+
 			//This is a fixed size stragey. Don't look at the collection
 			//Don't write anything to the stream either. Consumers know the size too
 
 			return FixedSize;
 		}
 
-		/// <summary>
-		/// Determines the size of the collection from the stream.
-		/// </summary>
+		/// <inheritdoc />
 		public int Size(IWireMemberReaderStrategy reader)
 		{
+			if (reader == null) throw new ArgumentNullException(nameof(reader));
+
 			//It's always a fixed size. Just reutnr the size.
 			return FixedSize;
 		}

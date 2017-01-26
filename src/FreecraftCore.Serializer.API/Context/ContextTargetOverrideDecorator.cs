@@ -1,58 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
 	//Use to override target type
+	/// <summary>
+	/// Decorator used to override the <see cref="TargetType"/> of the provided
+	/// <see cref="ISerializableTypeContext"/>.
+	/// </summary>
 	public class ContextTargetOverrideDecorator : ISerializableTypeContext
 	{
+		/// <inheritdoc />
 		public ContextualSerializerLookupKey? BuiltContextKey
 		{
 			get
 			{
-				return ((ISerializableTypeContext)managedContext).BuiltContextKey;
+				return managedContext.BuiltContextKey;
 			}
 
 			set
 			{
-				((ISerializableTypeContext)managedContext).BuiltContextKey = value;
+				managedContext.BuiltContextKey = value;
 			}
 		}
 
-		public SerializationContextRequirement ContextRequirement
-		{
-			get
-			{
-				return ((ISerializableTypeContext)managedContext).ContextRequirement;
-			}
-		}
+		public SerializationContextRequirement ContextRequirement => managedContext.ContextRequirement;
 
-		public IEnumerable<Attribute> MemberMetadata
-		{
-			get
-			{
-				return ((ISerializableTypeContext)managedContext).MemberMetadata;
-			}
-		}
+		//Don't do null checks. Null check is enforced in ctor
+		/// <inheritdoc />
+		public IEnumerable<Attribute> MemberMetadata => managedContext.MemberMetadata;
 
+		/// <inheritdoc />
 		public Type TargetType { get; }
 
-		public IEnumerable<Attribute> TypeMetadata
-		{
-			get
-			{
-				return ((ISerializableTypeContext)managedContext).TypeMetadata;
-			}
-		}
+		/// <inheritdoc />
+		public IEnumerable<Attribute> TypeMetadata => managedContext.TypeMetadata;
 
+		[NotNull]
 		private ISerializableTypeContext managedContext { get; }
 
-		public ContextTargetOverrideDecorator(ISerializableTypeContext context, Type targetType)
+		public ContextTargetOverrideDecorator([NotNull] ISerializableTypeContext context, [NotNull] Type targetType)
 		{
-			managedContext = context;
+			if (context == null) throw new ArgumentNullException(nameof(context));
+			if (targetType == null) throw new ArgumentNullException(nameof(targetType));
 
+			managedContext = context;
 			TargetType = targetType;
 		}
 	}

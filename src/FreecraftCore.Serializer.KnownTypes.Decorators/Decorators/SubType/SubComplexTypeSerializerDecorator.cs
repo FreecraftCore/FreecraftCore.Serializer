@@ -5,40 +5,41 @@ using System.Text;
 
 using System.Reflection;
 using Fasterflect;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
 	public class SubComplexTypeSerializerDecorator<TBaseType> : ITypeSerializerStrategy<TBaseType>
 	{
-		/// <summary>
-		/// Indicates the <see cref="TType"/> of the serializer.
-		/// </summary>
-		public Type SerializerType { get { return typeof(TBaseType); } }
+		/// <inheritdoc />
+		public Type SerializerType { get; } = typeof(TBaseType);
 
 		/// <summary>
 		/// General serializer provider service.
 		/// </summary>
+		[NotNull]
 		private IGeneralSerializerProvider serializerProviderService { get; }
 
 		/// <summary>
 		/// The lookup table that maps ints to the Type.
 		/// </summary>
+		[NotNull]
 		private IDictionary<int, Type> keyToTypeLookup { get; }
 
 		/// <summary>
 		/// The lookup table that maps types to an int.
 		/// </summary>
+		[NotNull]
 		private IDictionary<Type, int> typeToKeyLookup { get; }
 
-		/// <summary>
-		/// Indicates the context requirement for this serializer strategy.
-		/// (Ex. If it requires context then a new one must be made or context must be provided to it for it to serializer for multiple members)
-		/// </summary>
+
+		/// <inheritdoc />
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
 		/// <summary>
 		/// Provides read and write stragey for child keys.
 		/// </summary>
+		[NotNull]
 		private IChildKeyStrategy keyStrategy { get; }
 
 		public SubComplexTypeSerializerDecorator(IGeneralSerializerProvider serializerProvider, IChildKeyStrategy childKeyStrategy)
@@ -55,7 +56,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			keyToTypeLookup = new Dictionary<int, Type>();
 
 			//We no longer reserve 0. Sometimes type information of a child is sent as a 0 in WoW protocol. We can opt for mostly metadata market style interfaces.
-
+			//TODO: Add support for basetype serialization metadata marking.
 			foreach (WireDataContractBaseTypeAttribute wa in typeof(TBaseType).Attributes<WireDataContractBaseTypeAttribute>())
 			{
 				try
@@ -70,13 +71,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			}
 		}
 
-		/// <summary>
-		/// Perform the steps necessary to serialize this data.
-		/// </summary>
-		/// <param name="value">The value to be serialized.</param>
-		/// <param name="dest">The writer entity that is accumulating the output data.</param>
+		/// <inheritdoc />
 		public void Write(TBaseType value, IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			if (!typeToKeyLookup.ContainsKey(value.GetType()))
 				throw new InvalidOperationException($"Cannot serialize Type: {value.GetType()} in {this.GetType().FullName}.");
 
@@ -84,21 +83,26 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//Defer key writing to the key writing strategy
 			keyStrategy.Write(typeToKeyLookup[value.GetType()], dest);
 
-			ITypeSerializerStrategy serializer = serializerProviderService.Get(value.GetType());
+			ITypeSerializerStrategy serializer;
 
-			if (serializer == null)
-				throw new InvalidOperationException($"Couldn't locate serializer for {value.GetType().FullName} in the {nameof(IGeneralSerializerProvider)} service.");
+			try
+			{
+				serializer = serializerProviderService.Get(value.GetType());
+
+			}
+			catch (KeyNotFoundException e)
+			{
+				throw new InvalidOperationException($"Couldn't locate serializer for {value.GetType().FullName} in the {nameof(IGeneralSerializerProvider)} service.", e);
+			}
 
 			serializer.Write(value, dest);
 		}
 
-		/// <summary>
-		/// Perform the steps necessary to deserialize this data.
-		/// </summary>
-		/// <param name="source">The reader providing the input data.</param>
-		/// <returns>The updated / replacement value.</returns>
+		/// <inheritdoc />
 		public TBaseType Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			//Incoming should be a byte that indicates the child type to use
 			//Read it to lookup in the map to determine which type we should create
 			int childIndexRequested = keyStrategy.Read(source); //defer to key reader (could be int, byte or something else)
@@ -114,16 +118,23 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if(childTypeRequest == null)
 				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Index: {childIndexRequested} but the lookup table provided a null type. This may indicate a failure in registeration of child types.");
 
+			//TODO: Handle exception
 			return (TBaseType)serializerProviderService.Get(childTypeRequest).Read(source);
 		}
 
+		/// <inheritdoc />
 		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			Write((TBaseType)value, dest);
 		}
 
+		/// <inheritdoc />
 		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			return Read(source);
 		}
 	}

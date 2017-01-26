@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
@@ -13,14 +14,16 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// Attempts to the read the child key from the source.
 		/// </summary>
 		/// <param name="source"></param>
+		/// <exception cref="ArgumentNullException">Throws if the <see cref="source"/> provided was null.</exception>
 		/// <returns>Integer casted child key.</returns>
-		int Read(IWireMemberReaderStrategy source);
+		int Read([NotNull] IWireMemberReaderStrategy source);
 
 		/// <summary>
 		/// Writes the key to the stream using the size implemented by the strategy.
 		/// </summary>
 		/// <param name="value"></param>
 		/// <param name="dest"></param>
-		void Write(int value, IWireMemberWriterStrategy dest);
+		/// <exception cref="ArgumentNullException">Throws if the <see cref="dest"/> provided was null.</exception>
+		void Write(int value, [NotNull] IWireMemberWriterStrategy dest);
 	}
 }

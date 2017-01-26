@@ -12,6 +12,15 @@
           "lib/net35/Fasterflect.dll": {}
         }
       },
+      "JetBrains.Annotations/10.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/net/JetBrains.Annotations.dll": {}
+        },
+        "runtime": {
+          "lib/net/JetBrains.Annotations.dll": {}
+        }
+      },
       "FreecraftCore.Serializer.Metadata/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v3.5",
@@ -33,6 +42,15 @@
           "lib/net40/Fasterflect.dll": {}
         }
       },
+      "JetBrains.Annotations/10.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/net/JetBrains.Annotations.dll": {}
+        },
+        "runtime": {
+          "lib/net/JetBrains.Annotations.dll": {}
+        }
+      },
       "FreecraftCore.Serializer.Metadata/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5",
@@ -52,6 +70,15 @@
         },
         "runtime": {
           "lib/net40/Fasterflect.dll": {}
+        }
+      },
+      "JetBrains.Annotations/10.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/net/JetBrains.Annotations.dll": {}
+        },
+        "runtime": {
+          "lib/net/JetBrains.Annotations.dll": {}
         }
       },
       "FreecraftCore.Serializer.Metadata/1.0.0": {
@@ -80,6 +107,23 @@
         "lib/net40/Fasterflect.dll"
       ]
     },
+    "JetBrains.Annotations/10.2.1": {
+      "sha512": "yTPQ3CsP2I/3vgAsXWby3Bf+dbzsQC5I8/aOsktLi/cSvr50tVTANcL5rTrEmIllbEhZbtZ0rxzxJ2RU8UkMRg==",
+      "type": "package",
+      "path": "JetBrains.Annotations/10.2.1",
+      "files": [
+        "JetBrains.Annotations.10.2.1.nupkg.sha512",
+        "JetBrains.Annotations.nuspec",
+        "lib/net/JetBrains.Annotations.dll",
+        "lib/net/JetBrains.Annotations.xml",
+        "lib/netstandard1.0/JetBrains.Annotations.NetStandard.dll",
+        "lib/netstandard1.0/JetBrains.Annotations.NetStandard.xml",
+        "lib/portable-net4+sl4+wp7+netcore45/JetBrains.Annotations.PCL1.dll",
+        "lib/portable-net4+sl4+wp7+netcore45/JetBrains.Annotations.PCL1.xml",
+        "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/JetBrains.Annotations.PCL328.dll",
+        "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/JetBrains.Annotations.PCL328.xml"
+      ]
+    },
     "FreecraftCore.Serializer.Metadata/1.0.0": {
       "type": "project",
       "path": "../FreecraftCore.Serializer.Metadata/project.json",
@@ -89,6 +133,7 @@
   "projectFileDependencyGroups": {
     "": [
       "FreecraftCore.Serializer.Metadata >= 1.0.0-*",
+      "JetBrains.Annotations >= 10.2.1",
       "fasterflect >= 2.1.3"
     ],
     ".NETFramework,Version=v3.5": [],

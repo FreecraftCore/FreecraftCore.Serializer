@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer
@@ -16,8 +17,11 @@ namespace FreecraftCore.Serializer
 		/// Provides a <see cref="ITypeSerializerStrategy"/> for the <see cref="Type"/>.
 		/// </summary>
 		/// <param name="type">The type the <see cref="ITypeSerializerStrategy"/> serializes.</param>
+		/// <exception cref="KeyNotFoundException">Throws if the provided <see cref="type"/> was not found.</exception>
 		/// <returns>A valid <see cref="ITypeSerializerStrategy"/> or null if none were available.</returns>
-		ITypeSerializerStrategy Get(Type type);
+		[Pure]
+		[NotNull]
+		ITypeSerializerStrategy Get([NotNull] Type type);
 
 		/// <summary>
 		/// Indicates if the <see cref="IGeneralSerializerProvider"/> has a <see cref="ITypeSerializerStrategy"/> for
@@ -25,14 +29,7 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="type">Type to lookup a <see cref="ITypeSerializerStrategy"/> for.</param>
 		/// <returns>True if the provider has and can provide the a <see cref="ITypeSerializerStrategy"/> for the type.</returns>
-		bool HasSerializerFor(Type type);
-
-		/// <summary>
-		/// Indicates if the <see cref="IGeneralSerializerProvider"/> has a <see cref="ITypeSerializerStrategy"/> for
-		/// the provided key.
-		/// </summary>
-		/// <param name="lookupKey">The lookup key to use for searching.</param>
-		/// <returns>True if a serializer is found for the key.</returns>
-		bool HasSerializerFor(ContextualSerializerLookupKey lookupKey);
+		[Pure]
+		bool HasSerializerFor([NotNull] Type type);
 	}
 }

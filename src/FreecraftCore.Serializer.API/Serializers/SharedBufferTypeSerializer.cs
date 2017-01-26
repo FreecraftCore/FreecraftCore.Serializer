@@ -16,11 +16,11 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		protected object syncObj { get; } = new object();
 
-		/// <summary>
-		/// Indicates the <see cref="TType"/> of the serializer.
-		/// </summary>
+
+		/// <inheritdoc />
 		public Type SerializerType { get; } = typeof(TType);
 
+		/// <inheritdoc />
 		public abstract SerializationContextRequirement ContextRequirement { get; }
 
 		/// <summary>
@@ -28,21 +28,25 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		protected byte[] sharedByteBuffer;
 
-		public SharedBufferTypeSerializer()
+		protected SharedBufferTypeSerializer()
 		{
 			//Cant use sizeof
 			sharedByteBuffer = new byte[Marshal.SizeOf(typeof(TType))];
 		}
-		
+
+		/// <inheritdoc />
 		public abstract void Write(TType value, IWireMemberWriterStrategy dest);
-	
+
+		/// <inheritdoc />
 		public abstract TType Read(IWireMemberReaderStrategy source);
 
+		/// <inheritdoc />
 		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
 		{
 			Write((TType)value, dest);
 		}
 
+		/// <inheritdoc />
 		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
 		{
 			return Read(source);

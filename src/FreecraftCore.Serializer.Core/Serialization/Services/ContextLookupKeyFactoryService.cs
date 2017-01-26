@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer
@@ -12,38 +13,39 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public class ContextLookupKeyFactoryService : IContextualSerializerLookupKeyFactory
 	{
-		//Context is talked about a lot in this project. Context doesn't matter here. Any instance of this class yields the same results
-		public ContextualSerializerLookupKey Create(ISerializableTypeContext context)
+		/// <inheritdoc />
+		public ContextualSerializerLookupKey Create([NotNull] ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
 			//We must inspect the metadata to build the key
-			if(context.HasContextualMemberMetadata())
-			{
-				//Build the relevant flags
-				ContextTypeFlags flags = ContextTypeFlags.None;
+			if (!context.HasContextualMemberMetadata())
+				return new ContextualSerializerLookupKey(ContextTypeFlags.None, NoContextKey.Value, context.TargetType);
 
-				if (context.HasMemberAttribute<ReverseDataAttribute>())
-					flags |= ContextTypeFlags.Reverse;
+			//Build the relevant flags
+			ContextTypeFlags flags = ContextTypeFlags.None;
 
-				if (context.HasMemberAttribute<EnumStringAttribute>())
-					flags |= ContextTypeFlags.EnumString;
+			if (context.HasMemberAttribute<ReverseDataAttribute>())
+				flags |= ContextTypeFlags.Reverse;
 
-				//Check for no terminate too
-				if (context.HasMemberAttribute<DontTerminateAttribute>())
-					flags |= ContextTypeFlags.DontTerminate;
+			if (context.HasMemberAttribute<EnumStringAttribute>())
+				flags |= ContextTypeFlags.EnumString;
 
-				if (context.HasMemberAttribute<SendSizeAttribute>())
-					return new ContextualSerializerLookupKey(flags | ContextTypeFlags.SendSize, new SendSizeContextKey(context.GetMemberAttribute<SendSizeAttribute>().TypeOfSize), context.TargetType);
+			//Check for no terminate too
+			if (context.HasMemberAttribute<DontTerminateAttribute>())
+				flags |= ContextTypeFlags.DontTerminate;
 
-				if (context.HasMemberAttribute<KnownSizeAttribute>())
-					return new ContextualSerializerLookupKey(flags | ContextTypeFlags.FixedSize, new SizeContextKey(context.GetMemberAttribute<KnownSizeAttribute>().KnownSize), context.TargetType);
+			if (context.HasMemberAttribute<SendSizeAttribute>())
+				return new ContextualSerializerLookupKey(flags | ContextTypeFlags.SendSize, new SendSizeContextKey(context.GetMemberAttribute<SendSizeAttribute>().TypeOfSize), context.TargetType);
 
-				//If we're here then we have flags that weren't mutually exclusive
-				return new ContextualSerializerLookupKey(flags, new NoContextKey(), context.TargetType);
-			}
+			if (context.HasMemberAttribute<KnownSizeAttribute>())
+				return new ContextualSerializerLookupKey(flags | ContextTypeFlags.FixedSize, new SizeContextKey(context.GetMemberAttribute<KnownSizeAttribute>().KnownSize), context.TargetType);
 
-			return new ContextualSerializerLookupKey(ContextTypeFlags.None, NoContextKey.Value, context.TargetType);
+			//If we're here then we have flags that weren't mutually exclusive
+			return new ContextualSerializerLookupKey(flags, new NoContextKey(), context.TargetType);
 		}
 
+		/// <inheritdoc />
 		public ContextualSerializerLookupKey Create(MemberInfo memberInfo)
 		{
 			//Clever and lazy

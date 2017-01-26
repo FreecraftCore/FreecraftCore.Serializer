@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer
@@ -25,18 +26,18 @@ namespace FreecraftCore.Serializer
 		}
 
 		//TODO: Override rest of methods
+		/// <inheritdoc />
+		[Pure]
 		public bool Equals(IContextKey x, IContextKey y)
 		{
-			if (x.GetType() == y.GetType())
-				if (x.Key == y.Key)
-					return true;
+			if (x.GetType() != y.GetType())
+				return false;
 
-			return false;
+			return x.Key == y.Key;
 		}
 
-		public int GetHashCode(IContextKey obj)
-		{
-			return Key;
-		}
+		/// <inheritdoc />
+		[Pure]
+		public int GetHashCode(IContextKey obj) => Key;
 	}
 }

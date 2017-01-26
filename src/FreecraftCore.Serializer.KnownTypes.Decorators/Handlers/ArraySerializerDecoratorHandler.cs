@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -15,17 +16,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 	[DecoratorHandler]
 	public class ArraySerializerDecoratorHandler : DecoratorHandler
 	{
-		public ArraySerializerDecoratorHandler(IContextualSerializerProvider serializerProvider)
+		public ArraySerializerDecoratorHandler([NotNull] IContextualSerializerProvider serializerProvider)
 			: base(serializerProvider)
 		{
 
 		}
 
-		/// <summary>
-		/// Indicates if the <see cref="ISerializerDecoraterHandler"/> is able to handle the specified <see cref="ISerializableTypeContext"/>.
-		/// </summary>
-		/// <param name="context">The member context.</param>
-		/// <returns>True if the handler can decorate for the serialization of the specified <see cref="ISerializableTypeContext"/>.</returns>
+		/// <inheritdoc />
 		public override bool CanHandle(ISerializableTypeContext context)
 		{
 			if (context == null)
@@ -34,8 +31,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 			return context.TargetType.IsArray;
 		}
 
+		//TODO: Refactor; mess; too long
+		/// <inheritdoc />
 		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
+			if(!context.BuiltContextKey.HasValue)
+				throw new InvalidOperationException($"Provided {nameof(ISerializableTypeContext)} did not contain a valid {nameof(context.BuiltContextKey)} for Context: {context.ToString()}.");
+
 			//TODO: This is an expirmental high preformance array serializer. It could have buffer overflows or other faults. It's not safe
 			/*if (typeof(TType) == typeof(int[]))
 			{
@@ -82,16 +86,24 @@ namespace FreecraftCore.Serializer.KnownTypes
 				throw new InvalidOperationException($"Element type null.");
 
 			//If we know about the size then we should create a knownsize array decorator
-			return typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType())
+			ITypeSerializerStrategy<TType> strat = typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType())
 				.CreateInstance(serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
+
+			if(strat == null)
+				throw new InvalidOperationException($"Failed to construct an {nameof(ArraySerializerDecorator<TType>)} for the Type: {typeof(TType).FullName} in final creation step.");
+
+			return strat;
 		}
 
+		/// <inheritdoc />
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)
 		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
 			//error handling and checking is done in base
 
+			//TODO: Handling for GetElementType == null
 			//array inner-type never have context
-			return new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetElementType()) }; 
+			return new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetElementType()) };
 		}
 	}
 }

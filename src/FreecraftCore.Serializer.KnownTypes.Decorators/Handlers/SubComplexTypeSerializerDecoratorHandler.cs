@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -15,16 +16,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 	[DecoratorHandler]
 	public class SubComplexTypeSerializerDecoratorHandler : DecoratorHandler
 	{
-		public SubComplexTypeSerializerDecoratorHandler(IContextualSerializerProvider serializerProvider)
+		public SubComplexTypeSerializerDecoratorHandler([NotNull] IContextualSerializerProvider serializerProvider)
 			: base(serializerProvider)
 		{
 
 		}
-		/// <summary>
-		/// Indicates if the <see cref="ISerializerDecoraterHandler"/> is able to handle the specified <see cref="ISerializableTypeContext"/>.
-		/// </summary>
-		/// <param name="context">The member context.</param>
-		/// <returns>True if the handler can decorate for the serialization of the specified <see cref="ISerializableTypeContext"/>.</returns>
+
+		/// <inheritdoc />
 		public override bool CanHandle(ISerializableTypeContext context)
 		{
 			if (context == null)
@@ -32,15 +30,18 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//Check if the type has wirebase type attributes.
 			//If it does then the type is complex and can have subtypes coming across the wire
-			return context.TargetType.GetCustomAttributes<WireDataContractBaseTypeAttribute>(false).Count() != 0 || context.TargetType.GetCustomAttribute<WireDataContractBaseTypeByFlagsAttribute>(false) != null;
+			return context.TargetType.GetCustomAttributes<WireDataContractBaseTypeAttribute>(false).Any() || context.TargetType.GetCustomAttribute<WireDataContractBaseTypeByFlagsAttribute>(false) != null;
 		}
 
+		//TODO: Refactor
+		/// <inheritdoc />
 		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
 		{
-			//error handling in base
+			if (context == null) throw new ArgumentNullException(nameof(context));
 
 			IChildKeyStrategy keyStrategy = null;
 
+			//TODO: Check if we can get this from context?
 			//Check the WireDataContract attribute for keysize information
 			WireDataContractAttribute contractAttribute = typeof(TType).GetCustomAttribute<WireDataContractAttribute>(true);
 
@@ -68,7 +69,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)
 		{
-			//error handling and checking is done in base
+			if (context == null) throw new ArgumentNullException(nameof(context));
 
 			//We need to include the potential default child type now
 			IEnumerable<ISerializableTypeContext> contexts = context.TargetType.Attribute<DefaultNoFlagsAttribute>() != null ?
@@ -83,8 +84,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 #endif
 		}
 
-		private IEnumerable<Type> GetAssociatedChildren(Type type)
+		[NotNull]
+		private IEnumerable<Type> GetAssociatedChildren([NotNull] Type type)
 		{
+			if (type == null) throw new ArgumentNullException(nameof(type));
+
 			IEnumerable<Type> baseTypesByKey = type.Attributes<WireDataContractBaseTypeAttribute>().Select(x => x.ChildType);
 
 			IEnumerable<Type> baseTypesByFlags = type.Attributes<WireDataContractBaseTypeByFlagsAttribute>().Select(x => x.ChildType);

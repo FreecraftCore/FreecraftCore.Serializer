@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer
@@ -11,35 +12,22 @@ namespace FreecraftCore.Serializer
 	//TODO: Refactor out of API project
 	public class MemberInfoBasedSerializationContext : ISerializableTypeContext
 	{
-		/// <summary>
-		/// Indicates if this context is unique to a member.
-		/// </summary>
+		/// <inheritdoc />
 		public SerializationContextRequirement ContextRequirement { get; }
 
-		/// <summary>
-		/// The <see cref="FreecraftCore"/> attribute metadata associated with the type.
-		/// (If the context isn't unique then the Metadata is for the <see cref="Type"/> and not from a <see cref="MemberInfo"/>)
-		/// </summary>
+		/// <inheritdoc />
 		public IEnumerable<Attribute> MemberMetadata { get; }
 
-		/// <summary>
-		/// The <see cref="FreecraftCore"/> attribute metadata associated with the <see cref="Type"/>
-		/// (Not all types have interesting metadata)
-		/// </summary>
+		/// <inheritdoc />
 		public IEnumerable<Attribute> TypeMetadata { get; }
 
-		/// <summary>
-		/// Represents the type.
-		/// </summary>
+		/// <inheritdoc />
 		public Type TargetType { get; }
 
-		/// <summary>
-		/// The conextual lookup key that should be associated with the serialization context.
-		/// If null there is no context.
-		/// </summary>
+		/// <inheritdoc />
 		public ContextualSerializerLookupKey? BuiltContextKey { get; set; }
 
-		public MemberInfoBasedSerializationContext(MemberInfo memberInfoContext)
+		public MemberInfoBasedSerializationContext([NotNull] MemberInfo memberInfoContext)
 		{
 			if (memberInfoContext == null)
 				throw new ArgumentNullException(nameof(memberInfoContext), $"Provided member {nameof(memberInfoContext)} is null.");
@@ -57,16 +45,18 @@ namespace FreecraftCore.Serializer
 				.Where(IsContextualTypeAttribute);
 
 			//If there is any metadata in the member metdata then this serialization will require context.
-			ContextRequirement = MemberMetadata.Count() > 0 ? SerializationContextRequirement.RequiresContext : SerializationContextRequirement.Contextless;
+			ContextRequirement = MemberMetadata.Any() ? SerializationContextRequirement.RequiresContext : SerializationContextRequirement.Contextless;
 		}
 
-		private bool IsContextualTypeAttribute(Attribute attri)
+		[Pure]
+		private static bool IsContextualTypeAttribute(Attribute attri)
 		{
 			//We're interested in subtype metadata for Type contexts. Nothing else really.
 			return attri.GetType() == typeof(WireDataContractBaseTypeAttribute) || attri.GetType() == typeof(WireDataContractBaseTypeByFlagsAttribute);
 		}
 
-		private bool IsContextualMemberAttribute(Attribute attri)
+		[Pure]
+		private static bool IsContextualMemberAttribute(Attribute attri)
 		{
 			//TODO: Why does this class decide what is contextual? This is bad.
 			//We don't check WireDataContractBaseType because that isn't part of the context of the member. That's context on the Type.

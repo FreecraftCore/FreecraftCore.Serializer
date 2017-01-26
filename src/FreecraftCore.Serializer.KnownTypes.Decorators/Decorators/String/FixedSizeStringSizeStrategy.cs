@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -15,19 +16,27 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		public FixedSizeStringSizeStrategy(int size)
 		{
-			if (size < 0)
-				throw new ArgumentException($"Provided size {size} is less than 0.", nameof(size));
+			if (size <= 0)
+				throw new ArgumentOutOfRangeException(nameof(size), size, $"Provided size {size} is less than or equal to 0.");
 
 			FixedSize = size;
 		}
 
+		/// <inheritdoc />
 		public int Size(IWireMemberReaderStrategy reader)
 		{
+			if (reader == null) throw new ArgumentNullException(nameof(reader));
+
 			return FixedSize;
 		}
 
+		/// <inheritdoc />
 		public int Size(string stringValue, IWireMemberWriterStrategy writer)
 		{
+			//Strings can't be null as fixed size. Force empty.
+			if (stringValue == null) throw new ArgumentNullException(nameof(stringValue));
+			if (writer == null) throw new ArgumentNullException(nameof(writer));
+
 			if (stringValue.Length > FixedSize)
 				throw new InvalidOperationException($"Enountered string size larged than {FixedSize} declared.");
 
