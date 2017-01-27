@@ -46,6 +46,7 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="value">The value to be serialized.</param>
 		/// <param name="dest">The writer entity that is accumulating the output data.</param>
+		[Pure]
 		void Write(TType value, [NotNull] IWireMemberWriterStrategy dest);
 
 		/// <summary>
@@ -53,6 +54,8 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="source">The reader providing the input data.</param>
 		/// <returns>The updated / replacement value.</returns>
+		[Pure]
+		[NotNull]
 		new TType Read([NotNull] IWireMemberReaderStrategy source);
 	}
 }

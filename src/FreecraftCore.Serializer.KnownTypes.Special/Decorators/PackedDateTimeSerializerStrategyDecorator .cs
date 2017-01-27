@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -11,23 +12,16 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// </summary>
 	public class PackedDateTimeSerializerStrategyDecorator : ITypeSerializerStrategy<DateTime>
 	{
-		/// <summary>
-		/// Indicates the context requirement for this serializer strategy.
-		/// (Ex. If it requires context then a new one must be made or context must be provided to it for it to serialize for multiple members)
-		/// </summary>
+		/// <inheritdoc />
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
 
-		/// <summary>
-		/// Indicates the <see cref="TType"/> of the serializer.
-		/// </summary>
+		/// <inheritdoc />
 		public Type SerializerType { get; } = typeof(DateTime);
 
-		/// <summary>
-		/// Serializer this special type decorator decorates around.
-		/// </summary>
+		[NotNull]
 		private ITypeSerializerStrategy<int> decoratedSerializer { get; }
 
-		public PackedDateTimeSerializerStrategyDecorator(ITypeSerializerStrategy<int> intSerializer)
+		public PackedDateTimeSerializerStrategyDecorator([NotNull] ITypeSerializerStrategy<int> intSerializer)
 		{
 			if (intSerializer == null)
 				throw new ArgumentNullException(nameof(intSerializer), $"Provided arg {intSerializer} is null.");
@@ -35,8 +29,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			decoratedSerializer = intSerializer;
 		}
 
+		/// <inheritdoc />
 		public DateTime Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			//Based on ByteBuffer.h from the Trinitycore Project, Jackpoz's 3.3.5 packet bot and WoWPacketParser
 			int packedDateTime = decoratedSerializer.Read(source); //reads the packed int value from the stream
 
@@ -53,13 +50,17 @@ namespace FreecraftCore.Serializer.KnownTypes
 			return new DateTime(2000 + year, 1 + month, 1 + day, hour, minute, 0); //fluent building of the immutable DateTime was pretty but inefficient
 		}
 
+		/// <inheritdoc />
 		public void Write(object value, IWireMemberWriterStrategy dest)
 		{
 			Write((DateTime)value, dest);
 		}
 
+		/// <inheritdoc />
 		public void Write(DateTime value, IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			//Based on ByteBuffer.h from the Trinitycore Project as well as Jackpoz's 3.3.5 packet bot.
 			//Trinitycore: append<uint32>((lt.tm_year - 100) << 24 | lt.tm_mon << 20 | (lt.tm_mday - 1) << 14 | lt.tm_wday << 11 | lt.tm_hour << 6 | lt.tm_min);
 
@@ -69,6 +70,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			decoratedSerializer.Write(packedTime, dest);
 		}
 
+		/// <inheritdoc />
 		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
 		{
 			return Read(source);

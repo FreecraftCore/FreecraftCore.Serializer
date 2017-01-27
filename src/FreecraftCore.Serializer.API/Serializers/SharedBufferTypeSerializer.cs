@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
@@ -35,19 +36,19 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public abstract void Write(TType value, IWireMemberWriterStrategy dest);
+		public abstract void Write(TType value, [NotNull] IWireMemberWriterStrategy dest);
 
 		/// <inheritdoc />
-		public abstract TType Read(IWireMemberReaderStrategy source);
+		public abstract TType Read([NotNull] IWireMemberReaderStrategy source);
 
 		/// <inheritdoc />
-		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
+		void ITypeSerializerStrategy.Write(object value, [NotNull] IWireMemberWriterStrategy dest)
 		{
 			Write((TType)value, dest);
 		}
 
 		/// <inheritdoc />
-		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
+		object ITypeSerializerStrategy.Read([NotNull] IWireMemberReaderStrategy source)
 		{
 			return Read(source);
 		}

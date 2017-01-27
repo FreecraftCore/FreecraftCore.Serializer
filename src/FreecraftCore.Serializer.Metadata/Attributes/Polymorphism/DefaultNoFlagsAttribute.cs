@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
@@ -13,9 +14,10 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Indicates the default child type to deserialize to.
 		/// </summary>
+		[NotNull]
 		public Type ChildType { get; }
 
-		public DefaultNoFlagsAttribute(Type childType)
+		public DefaultNoFlagsAttribute([NotNull] Type childType)
 		{
 			if (childType == null)
 				throw new ArgumentNullException(nameof(childType), $"When marking a type with {nameof(DefaultNoFlagsAttribute)} you must provided a valid non-null Type.");

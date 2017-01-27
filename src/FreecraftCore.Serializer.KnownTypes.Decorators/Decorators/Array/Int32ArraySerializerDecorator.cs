@@ -31,7 +31,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 	/*public class Int32ArraySerializerDecorator : ArraySerializerDecorator<int>
 	{
-		public Int32ArraySerializerDecorator(IGeneralSerializerProvider serializerProvider) : base(serializerProvider, new UnknownSizeCollectionSizeStrategy(), SerializationContextRequirement.Contextless)
+		public Int32ArraySerializerDecorator(IGeneralSerializerProvider serializerProvider, ICollectionSizeStrategy sizeStrategy, SerializationContextRequirement requirement) 
+			: base(serializerProvider, sizeStrategy, requirement)
 		{
 
 		}

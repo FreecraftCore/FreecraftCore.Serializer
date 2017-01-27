@@ -1,8 +1,9 @@
 {
     "version": "1.0.0-*",
 
-    "dependencies": {
-    },
+  "dependencies": {
+    "JetBrains.Annotations": "10.2.1"
+  },
 
     "frameworks": {
         "net35": {

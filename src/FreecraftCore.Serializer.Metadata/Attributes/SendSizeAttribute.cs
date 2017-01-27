@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -25,6 +26,9 @@ namespace FreecraftCore.Serializer
 
 		public SendSizeAttribute(SizeType sizeType)
 		{
+			if (!Enum.IsDefined(typeof(SizeType), sizeType))
+				throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(SizeType));
+
 			TypeOfSize = sizeType;
 		}
 	}

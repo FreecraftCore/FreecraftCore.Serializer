@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace FreecraftCore.Serializer
 {
@@ -34,6 +35,9 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		public WireDataContractAttribute(KeyType keyType = KeyType.None, bool shouldConsumeTypeInformation = true)
 		{
+			if (!Enum.IsDefined(typeof(KeyType), keyType))
+				throw new InvalidEnumArgumentException(nameof(keyType), (int) keyType, typeof(KeyType));
+
 			//The keytype provided is optional to be none.
 			//If you want to wire up children to this for polymorphic serialization then
 			//A provided keysize must be declared on the 1 WireDataContract instead of the N many WireBaseType attributes

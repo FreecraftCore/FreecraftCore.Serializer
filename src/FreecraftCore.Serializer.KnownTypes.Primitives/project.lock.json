@@ -39,6 +39,9 @@
       "FreecraftCore.Serializer.Metadata/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v3.5",
+        "dependencies": {
+          "JetBrains.Annotations": "10.2.1"
+        },
         "compile": {
           "net35/FreecraftCore.Serializer.Metadata.dll": {}
         },
@@ -94,6 +97,9 @@
       "FreecraftCore.Serializer.Metadata/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "JetBrains.Annotations": "10.2.1"
+        },
         "compile": {
           "net45/FreecraftCore.Serializer.Metadata.dll": {}
         },
@@ -149,6 +155,9 @@
       "FreecraftCore.Serializer.Metadata/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.6",
+        "dependencies": {
+          "JetBrains.Annotations": "10.2.1"
+        },
         "compile": {
           "net46/FreecraftCore.Serializer.Metadata.dll": {}
         },

@@ -9,48 +9,40 @@ namespace FreecraftCore.Serializer.KnownTypes
 	public class ByteSerializerStrategy : ITypeSerializerStrategy<byte>
 	{
 		//All primitive serializer stragies are contextless
+		/// <inheritdoc />
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		/// <summary>
-		/// Indicates the <see cref="TType"/> of the serializer.
-		/// </summary>
+		/// <inheritdoc />
 		public Type SerializerType { get; } = typeof(byte);
 
-		/// <summary>
-		/// Perform the steps necessary to serialize the byte.
-		/// </summary>
-		/// <param name="value">The byte to be serialized.</param>
-		/// <param name="dest">The writer entity that is accumulating the output data.</param>
+		/// <inheritdoc />
 		public void Write(byte value, IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			//Similar to read, this is simple; just write a byte
 			dest.Write(value);
 		}
 
-		/// <summary>
-		/// Perform the steps necessary to deserialize a byte.
-		/// </summary>
-		/// <param name="source">The reader providing the input data.</param>
-		/// <returns>A byte value from the reader.</returns>
+		/// <inheritdoc />
 		public byte Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			//This is a pretty simple request; just read a byte
 			return source.ReadByte();
 		}
 
+		/// <inheritdoc />
 		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
 		{
 			Write((byte)value, dest);
 		}
 
+		/// <inheritdoc />
 		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
 		{
 			return Read(source);
-		}
-
-		public ByteSerializerStrategy()
-		{
-			//this serializer needs no subserializers or services.
 		}
 	}
 }

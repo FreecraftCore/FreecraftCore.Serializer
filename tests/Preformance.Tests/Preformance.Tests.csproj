@@ -33,32 +33,26 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FreecraftCore.Serializer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Debug\net35\FreecraftCore.Serializer.dll</HintPath>
+    <Reference Include="FreecraftCore.Serializer">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net35\FreecraftCore.Serializer.dll</HintPath>
     </Reference>
-    <Reference Include="FreecraftCore.Serializer.API, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\src\FreecraftCore.Serializer.API\bin\Debug\net35\FreecraftCore.Serializer.API.dll</HintPath>
+    <Reference Include="FreecraftCore.Serializer.API">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net35\FreecraftCore.Serializer.API.dll</HintPath>
     </Reference>
-    <Reference Include="FreecraftCore.Serializer.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\src\FreecraftCore.Serializer.Core\bin\Debug\net35\FreecraftCore.Serializer.Core.dll</HintPath>
+    <Reference Include="FreecraftCore.Serializer.Core">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net35\FreecraftCore.Serializer.Core.dll</HintPath>
     </Reference>
-    <Reference Include="FreecraftCore.Serializer.KnownTypes.Decorators, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\src\FreecraftCore.Serializer.KnownTypes.Decorators\bin\Debug\net35\FreecraftCore.Serializer.KnownTypes.Decorators.dll</HintPath>
+    <Reference Include="FreecraftCore.Serializer.KnownTypes.Decorators">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net35\FreecraftCore.Serializer.KnownTypes.Decorators.dll</HintPath>
     </Reference>
-    <Reference Include="FreecraftCore.Serializer.KnownTypes.Primitives, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\src\FreecraftCore.Serializer.KnownTypes.Primitives\bin\Debug\net35\FreecraftCore.Serializer.KnownTypes.Primitives.dll</HintPath>
+    <Reference Include="FreecraftCore.Serializer.KnownTypes.Primitives">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net35\FreecraftCore.Serializer.KnownTypes.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="FreecraftCore.Serializer.KnownTypes.Special">
-      <HintPath>..\..\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\net35\FreecraftCore.Serializer.KnownTypes.Special.dll</HintPath>
+    <Reference Include="FreecraftCore.Serializer.Metadata">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net35\FreecraftCore.Serializer.Metadata.dll</HintPath>
     </Reference>
-    <Reference Include="FreecraftCore.Serializer.Metadata, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\src\FreecraftCore.Serializer.Metadata\bin\Debug\net35\FreecraftCore.Serializer.Metadata.dll</HintPath>
+    <Reference Include="FreecraftCore.Serializer.Metadata.Internal">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net35\FreecraftCore.Serializer.Metadata.Internal.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net, Version=2.1.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <HintPath>..\..\packages\protobuf-net.2.1.0\lib\net451\protobuf-net.dll</HintPath>

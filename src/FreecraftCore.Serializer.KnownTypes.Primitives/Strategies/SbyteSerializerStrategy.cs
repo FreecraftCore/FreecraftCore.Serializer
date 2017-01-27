@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
@@ -10,13 +11,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 	public class SByteSerializerStrategy : SharedBufferTypeSerializer<sbyte>
 	{
 		//All primitive serializer stragies are contextless
+		/// <inheritdoc />
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		/// <summary>
-		/// Perform the steps necessary to serialize the sbyte.
-		/// </summary>
-		/// <param name="value">The sbyte to be serialized.</param>
-		/// <param name="dest">The writer entity that is accumulating the output data.</param>
+		/// <inheritdoc />
 		public unsafe override void Write(sbyte value, IWireMemberWriterStrategy dest)
 		{
 			//Must lock to prevent issues with shared buffer.
@@ -31,14 +29,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 				dest.Write(sharedByteBuffer);
 			}
 		}
-		
-		/// <summary>
-		/// Perform the steps necessary to deserialize a sbyte.
-		/// </summary>
-		/// <param name="source">The reader providing the input data.</param>
-		/// <returns>A sbyte value from the reader.</returns>
+
+		/// <inheritdoc />
 		public unsafe override sbyte Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			//Read 2 bytes (sbyte size)
 			byte[] bytes = source.ReadBytes(sizeof(sbyte));
 			

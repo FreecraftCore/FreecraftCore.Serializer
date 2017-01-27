@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -14,15 +15,14 @@ namespace FreecraftCore.Serializer.KnownTypes
 	public class DoubleSerializerStrategy : SharedBufferTypeSerializer<double>
 	{
 		//All primitive serializer stragies are contextless
+		/// <inheritdoc />
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		/// <summary>
-		/// Perform the steps necessary to serialize the double.
-		/// </summary>
-		/// <param name="value">The udouble to be serialized.</param>
-		/// <param name="dest">The writer entity that is accumulating the output data.</param>
-		public unsafe override void Write(double value, IWireMemberWriterStrategy dest)
+		/// <inheritdoc />
+		public unsafe override void Write(double value, [NotNull] IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			//Must lock to prevent issues with shared buffer.
 			lock (syncObj)
 			{
@@ -36,13 +36,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			}
 		}
 
-		/// <summary>
-		/// Perform the steps necessary to deserialize a double.
-		/// </summary>
-		/// <param name="source">The reader providing the input data.</param>
-		/// <returns>A udouble value from the reader.</returns>
-		public unsafe override double Read(IWireMemberReaderStrategy source)
+		/// <inheritdoc />
+		public unsafe override double Read([NotNull] IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			//Read 4 bytes (double size)
 			byte[] bytes = source.ReadBytes(sizeof(double));
 

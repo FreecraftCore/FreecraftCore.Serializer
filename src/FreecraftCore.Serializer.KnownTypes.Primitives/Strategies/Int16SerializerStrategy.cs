@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
@@ -10,15 +11,14 @@ namespace FreecraftCore.Serializer.KnownTypes
 	public class Int16SerializerStrategy : SharedBufferTypeSerializer<Int16>
 	{
 		//All primitive serializer stragies are contextless
+		/// <inheritdoc />
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		/// <summary>
-		/// Perform the steps necessary to serialize the int16.
-		/// </summary>
-		/// <param name="value">The int16 to be serialized.</param>
-		/// <param name="dest">The writer entity that is accumulating the output data.</param>
+		/// <inheritdoc />
 		public unsafe override void Write(Int16 value, IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			//Must lock to prevent issues with shared buffer.
 			lock(syncObj)
 			{
@@ -31,14 +31,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 				dest.Write(sharedByteBuffer);
 			}
 		}
-		
-		/// <summary>
-		/// Perform the steps necessary to deserialize a int16.
-		/// </summary>
-		/// <param name="source">The reader providing the input data.</param>
-		/// <returns>A int16 value from the reader.</returns>
+
+		/// <inheritdoc />
 		public unsafe override Int16 Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			//Read 2 bytes (int16 size)
 			byte[] bytes = source.ReadBytes(sizeof(Int16));
 			

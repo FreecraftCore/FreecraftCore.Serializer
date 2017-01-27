@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
@@ -12,13 +13,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 		//All primitive serializer stragies are contextless
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		/// <summary>
-		/// Perform the steps necessary to serialize the int.
-		/// </summary>
-		/// <param name="value">The uint to be serialized.</param>
-		/// <param name="dest">The writer entity that is accumulating the output data.</param>
+		/// <inheritdoc />
 		public unsafe override void Write(int value, IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			//Must lock to prevent issues with shared buffer.
 			lock(syncObj)
 			{
@@ -31,14 +30,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 				dest.Write(sharedByteBuffer);
 			}
 		}
-		
-		/// <summary>
-		/// Perform the steps necessary to deserialize a int.
-		/// </summary>
-		/// <param name="source">The reader providing the input data.</param>
-		/// <returns>A uint value from the reader.</returns>
+
+		/// <inheritdoc />
 		public unsafe override int Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			//Read 4 bytes (int size)
 			byte[] bytes = source.ReadBytes(sizeof(int));
 			

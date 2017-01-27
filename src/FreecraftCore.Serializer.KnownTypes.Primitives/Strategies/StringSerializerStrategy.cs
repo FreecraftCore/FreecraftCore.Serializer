@@ -11,20 +11,17 @@ namespace FreecraftCore.Serializer.KnownTypes
 	public class StringSerializerStrategy : ITypeSerializerStrategy<string>
 	{
 		//All primitive serializer stragies are contextless
+		/// <inheritdoc />
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		/// <summary>
-		/// Indicates the <see cref="TType"/> of the serializer.
-		/// </summary>
+		/// <inheritdoc />
 		public Type SerializerType { get; } = typeof(string);
 
-		/// <summary>
-		/// Perform the steps necessary to serialize the string.
-		/// </summary>
-		/// <param name="value">The string to be serialized.</param>
-		/// <param name="dest">The writer entity that is accumulating the output data.</param>
+		/// <inheritdoc />
 		public void Write(string value, IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			//Review the source for Trinitycore's string reading for their ByteBuffer (payload/packet) Type.
 			//(ctr+f << for std::string): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_source.html
 			//They use 0 byte to terminate the string in the stream
@@ -47,6 +44,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <returns>A string value from the reader.</returns>
 		public string Read(IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			//Review the source for Trinitycore's string reading for their ByteBuffer (payload/packet) Type.
 			//(ctr+f >> for std::string): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_source.html
 			//They use 0 byte to terminate the string in the stream
@@ -65,12 +64,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 				currentByte = source.ReadByte();
 			}
 			
+			//TODO: Invesitgate expected WoW/TC behavior for strings of length 0. Currently violates contract for return type.
 			//Serializer design decision: Return null instead of String.Empty for no strings
-			if(stringBytes.Count == 0)
-				return null;
-			else
-				//Don't yet know the encoding we need
-				return System.Text.Encoding.ASCII.GetString(stringBytes.ToArray()); //shouldn't need to reallocate array.
+			return stringBytes.Count == 0 ? null : System.Text.Encoding.ASCII.GetString(stringBytes.ToArray());
 		}
 
 		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
@@ -81,11 +77,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
 		{
 			return Read(source);
-		}
-
-		public StringSerializerStrategy()
-		{
-			//this serializer needs no subserializers or services.
 		}
 	}
 }
