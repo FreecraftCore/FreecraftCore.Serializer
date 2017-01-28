@@ -115,10 +115,11 @@ namespace FreecraftCore.Serializer.Tests
 
 			//assert
 			Assert.True(result.GetType() == typeof(WireChildWithDefault));
+			Assert.AreEqual(((WireChildWithDefault)result).i, 55);
 		}
 
 		[DefaultChild(typeof(WireChildWithDefault))]
-		[WireDataContract(WireDataContractAttribute.KeyType.Byte)]
+		[WireDataContract(WireDataContractAttribute.KeyType.Byte, TypeInformationHandlingFlags.DontConsumeRead)]
 		[WireDataContractBaseType(1, typeof(WireChildNotDefault))]
 		public class WireBaseWithDefault
 		{
@@ -132,7 +133,8 @@ namespace FreecraftCore.Serializer.Tests
 
 		public class WireChildWithDefault : WireBaseWithDefault
 		{
-			
+			[WireMember(1)]
+			public byte i;
 		}
 
 		[WireDataContract]

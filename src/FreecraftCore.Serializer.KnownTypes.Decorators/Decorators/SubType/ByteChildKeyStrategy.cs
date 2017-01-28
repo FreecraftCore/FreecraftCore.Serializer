@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using JetBrains.Annotations;
 
@@ -13,11 +14,17 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <summary>
 		/// Indicates if the key should be consumed from the stream.
 		/// </summary>
-		private bool shouldConsumeKey { get; }
+		private TypeInformationHandlingFlags typeHandlingFlags { get; }
 
-		public ByteChildKeyStrategy(bool consumeKey)
+		public ByteChildKeyStrategy(TypeInformationHandlingFlags typeHandling)
 		{
-			shouldConsumeKey = consumeKey;
+			int i;
+
+			if (!Enum.IsDefined(typeof(TypeInformationHandlingFlags), typeHandling) && Int32.TryParse(typeHandling.ToString(), out i))
+				throw new InvalidEnumArgumentException(nameof(typeHandling), (int)typeHandling,
+					typeof(TypeInformationHandlingFlags));
+
+			typeHandlingFlags = typeHandling;
 		}
 
 		/// <inheritdoc />
@@ -26,7 +33,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//Read a byte from the stream; should be the byte sized child key
-			return shouldConsumeKey ? source.ReadByte() : source.PeekByte();
+			return typeHandlingFlags.HasFlag(TypeInformationHandlingFlags.DontConsumeRead)
+				? source.PeekByte()
+				: source.ReadByte();
 		}
 
 		/// <inheritdoc />
@@ -37,7 +46,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//If the key should be consumed then we should write one, to be consumed.
 			//Otherwise if it's not then something in the stream will be read and then left in
 			//meaning we need to write nothing
-			if(shouldConsumeKey)
+			if(!typeHandlingFlags.HasFlag(TypeInformationHandlingFlags.DontWrite))
 				dest.Write((byte)value); //Write the byte sized key to the stream.
 		}
 	}

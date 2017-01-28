@@ -49,10 +49,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 			switch (contractAttribute.OptionalChildTypeKeySize)
 			{
 				case WireDataContractAttribute.KeyType.Byte:
-					keyStrategy = new ByteChildKeyStrategy(contractAttribute.ShouldConsumeTypeInformation);
+					keyStrategy = new ByteChildKeyStrategy(contractAttribute.TypeHandling);
 					break;
 				case WireDataContractAttribute.KeyType.Int32:
-					keyStrategy = new Int32ChildKeyStrategy(this.serializerProviderService.Get<int>(), contractAttribute.ShouldConsumeTypeInformation);
+					keyStrategy = new Int32ChildKeyStrategy(this.serializerProviderService.Get<int>(), contractAttribute.TypeHandling);
 					break;
 				case WireDataContractAttribute.KeyType.None:
 				default:

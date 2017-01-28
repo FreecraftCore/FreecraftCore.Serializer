@@ -88,7 +88,7 @@ namespace FreecraftCore.Serializer.Tests
 		}
 
 		[WireDataContractBaseType(5, typeof(ChildType))]
-		[WireDataContract(WireDataContractAttribute.KeyType.Byte, false)]
+		[WireDataContract(WireDataContractAttribute.KeyType.Byte, TypeInformationHandlingFlags.DontConsumeRead | TypeInformationHandlingFlags.DontWrite)]
 		public class TestBaseType
 		{
 
