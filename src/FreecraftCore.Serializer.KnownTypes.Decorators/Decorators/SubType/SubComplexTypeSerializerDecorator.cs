@@ -42,6 +42,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 		[NotNull]
 		private IChildKeyStrategy keyStrategy { get; }
 
+		//TODO: Reimplement default type handling cleanly
+		[CanBeNull]
+		public ITypeSerializerStrategy DefaultSerializer { get; }
+
+		private int defaultChildKeyValue { get; } = -1;
+
 		public SubComplexTypeSerializerDecorator(IGeneralSerializerProvider serializerProvider, IChildKeyStrategy childKeyStrategy)
 		{
 			if (serializerProvider == null)
@@ -55,7 +61,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 			typeToKeyLookup = new Dictionary<Type, int>();
 			keyToTypeLookup = new Dictionary<int, Type>();
 
-			//We no longer reserve 0. Sometimes type information of a child is sent as a 0 in WoW protocol. We can opt for mostly metadata market style interfaces.
+			DefaultSerializer = typeof(TBaseType).Attribute<DefaultChildAttribute>() != null
+				? serializerProviderService.Get(typeof(TBaseType).Attribute<DefaultChildAttribute>().ChildType) : null;
+
+			//We no longer reserve 0. Sometimes type information of a child is sent as a 0 in WoW protocol. We can opt for mostly metadata marker style interfaces.
 			//TODO: Add support for basetype serialization metadata marking.
 			foreach (WireDataContractBaseTypeAttribute wa in typeof(TBaseType).Attributes<WireDataContractBaseTypeAttribute>())
 			{
@@ -76,8 +85,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
+			//TODO: Clean up default serializer implementation
 			if (!typeToKeyLookup.ContainsKey(value.GetType()))
-				throw new InvalidOperationException($"Cannot serialize Type: {value.GetType()} in {this.GetType().FullName}.");
+			{
+				throw new InvalidOperationException($"{this.GetType()} attempted to serialize a child Type: {value.GetType()} but no valid type matches. Writing cannot use default types.");
+			}
 
 			//TODO: Oh man, this is a disaster. How do we handle the default? How do we tell consumers to use the default?
 			//Defer key writing to the key writing strategy
@@ -110,7 +122,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//Check if we have that index
 			if (!keyToTypeLookup.ContainsKey(childIndexRequested))
 			{
-				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Index: {childIndexRequested} but the index didn't exist in the lookup table. Check the Type: {typeof(TBaseType).FullName} attributes for duplicate index.");
+				if (DefaultSerializer != null)
+				{
+					return (TBaseType)DefaultSerializer.Read(source);
+				}
+				else
+					throw new InvalidOperationException($"{this.GetType()} attempted to deserialize a child of Type: {typeof(TBaseType).FullName} with Key: {childIndexRequested} but no valid type matches and there is no default type.");
+
 			}
 
 			Type childTypeRequest = keyToTypeLookup[childIndexRequested];

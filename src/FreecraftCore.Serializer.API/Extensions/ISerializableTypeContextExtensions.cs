@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
@@ -106,6 +107,21 @@ namespace FreecraftCore.Serializer
 
 			//Deocrate the context to set the provided key
 			return new ContextKeyOverrideDecorator(context, key);
+		}
+
+		//TODO: Doc
+		[Pure]
+		[NotNull]
+		public static ISerializableTypeContext Override([NotNull] this ISerializableTypeContext context, SerializationContextRequirement requirement)
+		{
+			if (context == null) throw new ArgumentNullException(nameof(context));
+
+			if (!Enum.IsDefined(typeof(SerializationContextRequirement), requirement))
+				throw new InvalidEnumArgumentException(nameof(requirement), (int) requirement,
+					typeof(SerializationContextRequirement));
+
+			//Deocrate the context to set the provided key
+			return new ContextRequirementOverrideDecorator(context, requirement);
 		}
 	}
 }

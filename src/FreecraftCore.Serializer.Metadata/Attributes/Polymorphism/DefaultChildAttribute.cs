@@ -9,7 +9,7 @@ namespace FreecraftCore.Serializer
 	/// Indicates the default child to deserialize if no flags were found.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-	public class DefaultNoFlagsAttribute : Attribute
+	public class DefaultChildAttribute : Attribute
 	{
 		/// <summary>
 		/// Indicates the default child type to deserialize to.
@@ -17,10 +17,10 @@ namespace FreecraftCore.Serializer
 		[NotNull]
 		public Type ChildType { get; }
 
-		public DefaultNoFlagsAttribute([NotNull] Type childType)
+		public DefaultChildAttribute([NotNull] Type childType)
 		{
 			if (childType == null)
-				throw new ArgumentNullException(nameof(childType), $"When marking a type with {nameof(DefaultNoFlagsAttribute)} you must provided a valid non-null Type.");
+				throw new ArgumentNullException(nameof(childType), $"When marking a type with {nameof(DefaultChildAttribute)} you must provided a valid non-null Type.");
 
 			ChildType = childType;
 		}

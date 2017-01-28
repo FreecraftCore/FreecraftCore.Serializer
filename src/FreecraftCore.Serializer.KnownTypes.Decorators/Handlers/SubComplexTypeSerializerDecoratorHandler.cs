@@ -72,8 +72,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
 			//We need to include the potential default child type now
-			IEnumerable<ISerializableTypeContext> contexts = context.TargetType.Attribute<DefaultNoFlagsAttribute>() != null ?
-				new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.Attribute<DefaultNoFlagsAttribute>().ChildType) } : Enumerable.Empty<ISerializableTypeContext>();
+			IEnumerable<ISerializableTypeContext> contexts = context.TargetType.Attribute<DefaultChildAttribute>() != null ?
+				new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.Attribute<DefaultChildAttribute>().ChildType) } : Enumerable.Empty<ISerializableTypeContext>();
 
 
 			//Grab the children from the metadata; return type contexts so the types can be handled (no context is required because the children are their own registerable type

@@ -94,6 +94,47 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.AreEqual(7, ((ChildOfInterfaceTwo)instance).c);
 		}
 
+		[Test]
+		public static void Test_Can_Serialize_Then_Deserialize_DefaultChild_From_Non_Default_Child()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType<WireBaseWithDefault>();
+			serializer.Compile();
+
+			//act
+			byte[] bytes = serializer.Serialize(new WireChildNotDefault());
+
+			//fiddle with type info
+			bytes[0] = 55;
+
+			Assert.False(bytes.Length == 0);
+
+			WireBaseWithDefault result =
+				serializer.Deserialize<WireBaseWithDefault>(bytes);
+
+			//assert
+			Assert.True(result.GetType() == typeof(WireChildWithDefault));
+		}
+
+		[DefaultChild(typeof(WireChildWithDefault))]
+		[WireDataContract(WireDataContractAttribute.KeyType.Byte)]
+		[WireDataContractBaseType(1, typeof(WireChildNotDefault))]
+		public class WireBaseWithDefault
+		{
+			
+		}
+
+		public class WireChildNotDefault : WireBaseWithDefault
+		{
+			
+		}
+
+		public class WireChildWithDefault : WireBaseWithDefault
+		{
+			
+		}
+
 		[WireDataContract]
 		public class WireDataContractTest
 		{

@@ -51,23 +51,6 @@ namespace FreecraftCore.Serializer
 			isCompiled = true;
 		}
 
-		/// <inheritdoc />
-		public TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>([NotNull] byte[] data)
-		{
-			if (data == null) throw new ArgumentNullException(nameof(data));
-
-			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
-#if DEBUG || DEBUGBUILD
-			if (!serializerStorageService.HasSerializerFor<TTypeToDeserializeTo>())
-				throw new InvalidOperationException($"Serializer cannot deserialize to Type: {typeof(TTypeToDeserializeTo).FullName} because it's not registered.");
-#endif
-
-			if (!isCompiled)
-				throw new InvalidOperationException($"You cannot deserialize before compiling the serializer.");
-
-			return serializerStorageService.Get<TTypeToDeserializeTo>().Read(new DefaultWireMemberReaderStrategy(data));
-		}
-
 		/// <summary>
 		/// Indicates if the provided <see cref="Type"/> is registered.
 		/// </summary>
@@ -95,6 +78,23 @@ namespace FreecraftCore.Serializer
 			return serializer;
 		}
 
+		/// <inheritdoc />
+		public TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>([NotNull] byte[] data)
+		{
+			if (data == null) throw new ArgumentNullException(nameof(data));
+
+			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
+#if DEBUG || DEBUGBUILD
+			if (!serializerStorageService.HasSerializerFor<TTypeToDeserializeTo>())
+				throw new InvalidOperationException($"Serializer cannot deserialize to Type: {typeof(TTypeToDeserializeTo).FullName} because it's not registered.");
+#endif
+
+			if (!isCompiled)
+				throw new InvalidOperationException($"You cannot deserialize before compiling the serializer.");
+
+			return (TTypeToDeserializeTo)GetLeastDerivedSerializer<TTypeToDeserializeTo>().Read(new DefaultWireMemberReaderStrategy(data));
+		}
+
 		public byte[] Serialize<TTypeToSerialize>([NotNull] TTypeToSerialize data)
 		{
 			if (data == null) throw new ArgumentNullException(nameof(data));
@@ -110,9 +110,32 @@ namespace FreecraftCore.Serializer
 
 			using (DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy())
 			{
-				serializerStorageService.Get<TTypeToSerialize>().Write(data, writer);
+				GetLeastDerivedSerializer<TTypeToSerialize>().Write(data, writer);
 
 				return writer.GetBytes();
+			}
+		}
+
+		private ITypeSerializerStrategy GetLeastDerivedSerializer<TType>()
+		{
+			return serializerStorageService.Get<TType>();
+
+			Type t = typeof(TType).BaseType;
+
+			//If t isn't null it has at least one base type, we need to move up the object graph if so.
+			if (t != null && t != typeof(object))
+			{
+				//Find the root type
+				while (t.BaseType != null && t.BaseType != typeof(object))
+				{
+					t = t.BaseType;
+				}
+
+				return serializerStorageService.Get(t);
+			}
+			else
+			{
+				return serializerStorageService.Get<TType>();
 			}
 		}
 

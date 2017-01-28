@@ -69,8 +69,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			keyStrategy = childKeyStrategy;
 			serializerProviderService = serializerProvider;
 
-			DefaultSerializer = typeof(TBaseType).Attribute<DefaultNoFlagsAttribute>() != null
-				? serializerProviderService.Get(typeof(TBaseType).Attribute<DefaultNoFlagsAttribute>().ChildType) : null;
+			DefaultSerializer = typeof(TBaseType).Attribute<DefaultChildAttribute>() != null
+				? serializerProviderService.Get(typeof(TBaseType).Attribute<DefaultChildAttribute>().ChildType) : null;
 
 			//We no longer reserve 0. Sometimes type information of a child is sent as a 0 in WoW protocol. We can opt for mostly metadata market style interfaces.
 
@@ -112,11 +112,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 					return;
 				}
 
-			//Well, it's probably the default type then
-			if (DefaultSerializer != null)
-				DefaultSerializer.Write(value, dest);
-			else
-				throw new InvalidOperationException($"Couldn't locate serializer for {value.GetType().FullName} in the {nameof(SubComplexTypeWithFlagsSerializerDecorator<TBaseType>)} service.");
+			//We can't write default types.
+			throw new InvalidOperationException($"Failed to serialize Type: {value.GetType().FullName}. No prepared serializer could be found. Make sure to properly setup child mapping.");
 		}
 
 		/// <inheritdoc />
