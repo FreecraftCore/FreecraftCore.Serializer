@@ -118,8 +118,6 @@ namespace FreecraftCore.Serializer
 
 		private ITypeSerializerStrategy GetLeastDerivedSerializer<TType>()
 		{
-			return serializerStorageService.Get<TType>();
-
 			Type t = typeof(TType).BaseType;
 
 			//If t isn't null it has at least one base type, we need to move up the object graph if so.
