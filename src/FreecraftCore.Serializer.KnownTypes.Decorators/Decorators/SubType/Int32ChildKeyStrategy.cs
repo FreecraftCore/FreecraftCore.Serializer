@@ -14,18 +14,18 @@ namespace FreecraftCore.Serializer.KnownTypes
 		[NotNull]
 		private ITypeSerializerStrategy<int> managedIntegerSerializer { get; }
 
-		private TypeInformationHandlingFlags typeHandlingFlags { get; }
+		private InformationHandlingFlags typeHandlingFlags { get; }
 
-		public Int32ChildKeyStrategy([NotNull] ITypeSerializerStrategy<int> intSerializer, TypeInformationHandlingFlags typeHandling)
+		public Int32ChildKeyStrategy([NotNull] ITypeSerializerStrategy<int> intSerializer, InformationHandlingFlags typeHandling)
 		{
 			if (intSerializer == null)
 				throw new ArgumentNullException(nameof(intSerializer), $"Provided {nameof(ITypeSerializerStrategy<int>)} was null.");
 
 			int i;
 
-			if (!Enum.IsDefined(typeof(TypeInformationHandlingFlags), typeHandling) && Int32.TryParse(typeHandling.ToString(), out i))
+			if (!Enum.IsDefined(typeof(InformationHandlingFlags), typeHandling) && Int32.TryParse(typeHandling.ToString(), out i))
 				throw new InvalidEnumArgumentException(nameof(typeHandling), (int)typeHandling,
-					typeof(TypeInformationHandlingFlags));
+					typeof(InformationHandlingFlags));
 
 			//We need an int serializer to know how to write the int sized key.
 			managedIntegerSerializer = intSerializer;
@@ -37,7 +37,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//Read an int from the stream. It should be the child type key
-			return typeHandlingFlags.HasFlag(TypeInformationHandlingFlags.DontConsumeRead) ? ConvertToInt(source.PeakBytes(4)) 
+			return typeHandlingFlags.HasFlag(InformationHandlingFlags.DontConsumeRead) ? ConvertToInt(source.PeakBytes(4)) 
 				: managedIntegerSerializer.Read(source);
 		}
 
@@ -48,7 +48,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//If the key should be consumed then we should write one, to be consumed.
 			//Otherwise if it's not then something in the stream will be read and then left in
 			//meaning we need to write nothing
-			if (!typeHandlingFlags.HasFlag(TypeInformationHandlingFlags.DontWrite))
+			if (!typeHandlingFlags.HasFlag(InformationHandlingFlags.DontWrite))
 				managedIntegerSerializer.Write(value, dest); //Write the int sized key to the stream.
 		}
 

@@ -119,7 +119,7 @@ namespace FreecraftCore.Serializer.Tests
 		}
 
 		[DefaultChild(typeof(WireChildWithDefault))]
-		[WireDataContract(WireDataContractAttribute.KeyType.Byte, TypeInformationHandlingFlags.DontConsumeRead)]
+		[WireDataContract(WireDataContractAttribute.KeyType.Byte, InformationHandlingFlags.DontConsumeRead)]
 		[WireDataContractBaseType(1, typeof(WireChildNotDefault))]
 		public class WireBaseWithDefault
 		{

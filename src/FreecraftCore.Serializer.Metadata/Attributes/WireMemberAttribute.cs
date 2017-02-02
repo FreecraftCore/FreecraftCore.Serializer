@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace FreecraftCore.Serializer
 {
@@ -25,7 +26,7 @@ namespace FreecraftCore.Serializer
 		{
 			if(memberOrder < 0)
 				throw new ArgumentException($"Provider argument {nameof(memberOrder)} must be greater than or equal to 0.", nameof(memberOrder));
-			
+
 			MemberOrder = memberOrder;
 		}
 	}

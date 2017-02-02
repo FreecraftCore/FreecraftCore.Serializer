@@ -39,9 +39,9 @@ namespace FreecraftCore.Serializer
 
 			//TODO: Cleaner/better way to provide instuctions
 			//Build the instructions for serializaiton
-			IEnumerable<MemberAndSerializerPair<TType>> orderedMemberInfos = context.TargetType.MembersWith<WireMemberAttribute>(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
+			IEnumerable<MemberSerializationMediatorStrategy<TType>> orderedMemberInfos = context.TargetType.MembersWith<WireMemberAttribute>(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
 				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder)
-				.Select(x => new MemberAndSerializerPair<TType>(x, serializerProviderService.Get(contextualKeyLookupFactoryService.Create(x))))
+				.Select(x => new MemberSerializationMediatorStrategy<TType>(x, serializerProviderService.Get(contextualKeyLookupFactoryService.Create(x))))
 				.ToArray();
 
 			return new ComplexTypeSerializerDecorator<TType>(orderedMemberInfos);

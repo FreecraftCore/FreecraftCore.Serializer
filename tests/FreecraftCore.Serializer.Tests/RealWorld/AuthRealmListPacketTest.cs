@@ -373,7 +373,7 @@ namespace FreecraftCore.Serializer.Tests
 		/// </summary>
 		[DefaultChild(typeof(DefaultRealmInformation))]
 		[WireDataContractBaseTypeByFlags((int)RealmFlags.SpecifyBuild, typeof(RealmCompleteInformation))]
-		[WireDataContract(WireDataContractAttribute.KeyType.Byte, TypeInformationHandlingFlags.DontConsumeRead)] //AuthServer sents byte flags that can be used to determine type information
+		[WireDataContract(WireDataContractAttribute.KeyType.Byte, InformationHandlingFlags.DontConsumeRead)] //AuthServer sents byte flags that can be used to determine type information
 		public interface IRealmInformation
 		{
 			/// <summary>

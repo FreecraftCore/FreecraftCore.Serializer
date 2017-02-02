@@ -28,21 +28,21 @@ namespace FreecraftCore.Serializer
 		/// Indicates if the type information used for mapping base to child should
 		/// be consumed when encountered.
 		/// </summary>
-		public TypeInformationHandlingFlags TypeHandling { get; }
+		public InformationHandlingFlags TypeHandling { get; }
 
 		/// <summary>
 		/// Creates a new Meta-data attribute indicating the type is a WireDataContract.
 		/// </summary>
-		public WireDataContractAttribute(KeyType keyType = KeyType.None, TypeInformationHandlingFlags typeHandling = TypeInformationHandlingFlags.Default)
+		public WireDataContractAttribute(KeyType keyType = KeyType.None, InformationHandlingFlags typeHandling = InformationHandlingFlags.Default)
 		{
 			if (!Enum.IsDefined(typeof(KeyType), keyType))
 				throw new InvalidEnumArgumentException(nameof(keyType), (int) keyType, typeof(KeyType));
 
 			int i;
 
-			if (!Enum.IsDefined(typeof(TypeInformationHandlingFlags), typeHandling) && Int32.TryParse(typeHandling.ToString(), out i))
+			if (!Enum.IsDefined(typeof(InformationHandlingFlags), typeHandling) && Int32.TryParse(typeHandling.ToString(), out i))
 				throw new InvalidEnumArgumentException(nameof(typeHandling), (int) typeHandling,
-					typeof(TypeInformationHandlingFlags));
+					typeof(InformationHandlingFlags));
 
 			//The keytype provided is optional to be none.
 			//If you want to wire up children to this for polymorphic serialization then

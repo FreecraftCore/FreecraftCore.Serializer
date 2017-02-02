@@ -5,7 +5,7 @@ using System.Linq;
 namespace FreecraftCore.Serializer
 {
 	[Flags]
-	public enum TypeInformationHandlingFlags : byte
+	public enum InformationHandlingFlags : byte
 	{
 		/// <summary>
 		/// Default behaviour.

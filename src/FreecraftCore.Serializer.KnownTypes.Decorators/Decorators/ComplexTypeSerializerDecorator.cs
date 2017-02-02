@@ -27,13 +27,13 @@ namespace FreecraftCore.Serializer
 		/// Ordered pairs of known serializer references and the memberinfos for wiremembers.
 		/// </summary>
 		[NotNull]
-		IEnumerable<MemberAndSerializerPair<TComplexType>> orderedMemberInfos { get; }
+		IEnumerable<MemberSerializationMediatorStrategy<TComplexType>> orderedMemberInfos { get; }
 
 		//Complex types should NEVER require context. It should be designed to avoid context requireing complex types.
 		/// <inheritdoc />
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		public ComplexTypeSerializerDecorator([NotNull] IEnumerable<MemberAndSerializerPair<TComplexType>> serializationDirections) //todo: create a better way to provide serialization instructions
+		public ComplexTypeSerializerDecorator([NotNull] IEnumerable<MemberSerializationMediatorStrategy<TComplexType>> serializationDirections) //todo: create a better way to provide serialization instructions
 		{
 			//These can be empty. If there are no members on a type there won't be anything to serialize.
 			if (serializationDirections == null)
@@ -50,9 +50,9 @@ namespace FreecraftCore.Serializer
 
 			TComplexType instance = instanceGeneratorDelegate();
 
-			foreach (MemberAndSerializerPair<TComplexType> serializerInfo in orderedMemberInfos)
+			foreach (MemberSerializationMediatorStrategy<TComplexType> serializerInfo in orderedMemberInfos)
 			{
-				instance.TrySetValue(serializerInfo.MemberInformation.Name, serializerInfo.TypeSerializer.Read(source));
+				serializerInfo.SetMember(instance, source);
 			}
 
 			return instance;
@@ -80,24 +80,9 @@ namespace FreecraftCore.Serializer
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			foreach(MemberAndSerializerPair<TComplexType> serializerInfo in orderedMemberInfos)
+			foreach(MemberSerializationMediatorStrategy<TComplexType> serializerInfo in orderedMemberInfos)
 			{
-				//TODO: Check how TC handles optionals or nulls.
-				//Do we write nothing? Do we write 0?
-				//object memberValue = value.TryGetValue(serializerInfo.MemberInformation.Name);
-				object memberValue = serializerInfo.MemberGetter(value); //instead of fasterflect we use delegate to getter
-
-				if (memberValue == null)
-					throw new InvalidOperationException($"Provider FieldName: {serializerInfo.MemberInformation.Name} on Type: {serializerInfo.MemberInformation.Type()} is null. The serializer doesn't support null.");
-
-				try
-				{
-					serializerInfo.TypeSerializer.Write(memberValue, dest);
-				}
-				catch (NullReferenceException e)
-				{
-					throw new InvalidOperationException($"Serializer failed to find serializer for member name: {serializerInfo.MemberInformation.Name} and type: {serializerInfo.MemberInformation.Type()}.", e);
-				}
+				serializerInfo.ReadMember(value, dest);
 			}
 		}
 	}
