@@ -2,14 +2,14 @@
 
 namespace FreecraftCore.Serializer
 {
-	public interface IMemberSerializationMediatorStrategy<TContainingType> : IMemberSerializationMediatorStrategy
+	public interface IMemberSerializationMediator<TContainingType> : IMemberSerializationMediator
 	{
 		void ReadMember([NotNull] TContainingType obj, [NotNull] IWireMemberWriterStrategy dest);
 
 		void SetMember(TContainingType obj, [NotNull] IWireMemberReaderStrategy source);
 	}
 
-	public interface IMemberSerializationMediatorStrategy
+	public interface IMemberSerializationMediator
 	{
 		void ReadMember(object obj, [NotNull] IWireMemberWriterStrategy dest);
 

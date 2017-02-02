@@ -27,13 +27,13 @@ namespace FreecraftCore.Serializer
 		/// Ordered pairs of known serializer references and the memberinfos for wiremembers.
 		/// </summary>
 		[NotNull]
-		IEnumerable<MemberSerializationMediatorStrategy<TComplexType>> orderedMemberInfos { get; }
+		IEnumerable<IMemberSerializationMediator<TComplexType>> orderedMemberInfos { get; }
 
 		//Complex types should NEVER require context. It should be designed to avoid context requireing complex types.
 		/// <inheritdoc />
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		public ComplexTypeSerializerDecorator([NotNull] IEnumerable<MemberSerializationMediatorStrategy<TComplexType>> serializationDirections) //todo: create a better way to provide serialization instructions
+		public ComplexTypeSerializerDecorator([NotNull] IEnumerable<IMemberSerializationMediator<TComplexType>> serializationDirections) //todo: create a better way to provide serialization instructions
 		{
 			//These can be empty. If there are no members on a type there won't be anything to serialize.
 			if (serializationDirections == null)
@@ -50,7 +50,7 @@ namespace FreecraftCore.Serializer
 
 			TComplexType instance = instanceGeneratorDelegate();
 
-			foreach (MemberSerializationMediatorStrategy<TComplexType> serializerInfo in orderedMemberInfos)
+			foreach (MemberSerializationMediator<TComplexType> serializerInfo in orderedMemberInfos)
 			{
 				serializerInfo.SetMember(instance, source);
 			}
@@ -80,7 +80,7 @@ namespace FreecraftCore.Serializer
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			foreach(MemberSerializationMediatorStrategy<TComplexType> serializerInfo in orderedMemberInfos)
+			foreach(MemberSerializationMediator<TComplexType> serializerInfo in orderedMemberInfos)
 			{
 				serializerInfo.ReadMember(value, dest);
 			}

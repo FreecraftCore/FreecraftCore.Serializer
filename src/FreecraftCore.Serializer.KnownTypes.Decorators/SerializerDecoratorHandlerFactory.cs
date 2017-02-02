@@ -27,7 +27,7 @@ namespace FreecraftCore.Serializer.API
 				new EnumSerializerDecoratorHandler(serializerProvider, fallbackFactory),
 				new StringSerializerDecoratorHandler(serializerProvider),
 				new SubComplexTypeSerializerDecoratorHandler(serializerProvider),
-				new ComplexTypeSerializerDecoratorHandler(serializerProvider, lookupKeyFactory) //it's important that this is the final/last handler
+				new ComplexTypeSerializerDecoratorHandler(serializerProvider, new MemberSerializationMediatorFactory(serializerProvider, lookupKeyFactory)) //it's important that this is the final/last handler
 			};
 		}
 	}
