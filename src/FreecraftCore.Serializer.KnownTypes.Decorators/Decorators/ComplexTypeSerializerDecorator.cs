@@ -14,7 +14,7 @@ namespace FreecraftCore.Serializer
 	/// Represents a complex type definition that combines multiple knowntypes or other complex types.
 	/// </summary>
 	/// <typeparam name="TComplexType"></typeparam>
-	public class ComplexTypeSerializerDecorator<TComplexType> : ITypeSerializerStrategy<TComplexType>
+	public class ComplexTypeSerializerDecorator<TComplexType> : ITypeSerializerStrategy<TComplexType> //TComplex type should be a class. Can't constraint it though.
 	{
 		//New constaint is gone; this provided an efficient way to create new instances over Activator.CreateInstance.
 		//Search compiled lambda and new constaint operator on google to see dicussions about it
@@ -27,7 +27,7 @@ namespace FreecraftCore.Serializer
 		/// Ordered pairs of known serializer references and the memberinfos for wiremembers.
 		/// </summary>
 		[NotNull]
-		IEnumerable<IMemberSerializationMediator<TComplexType>> orderedMemberInfos { get; }
+		private IEnumerable<IMemberSerializationMediator<TComplexType>> orderedMemberInfos { get; }
 
 		//Complex types should NEVER require context. It should be designed to avoid context requireing complex types.
 		/// <inheritdoc />
@@ -38,6 +38,9 @@ namespace FreecraftCore.Serializer
 			//These can be empty. If there are no members on a type there won't be anything to serialize.
 			if (serializationDirections == null)
 				throw new ArgumentNullException(nameof(serializationDirections), $"Provided argument {nameof(serializationDirections)} is null.");
+
+			if(!typeof(TComplexType).IsClass)
+				throw new ArgumentException($"Provided generic Type: {typeof(TComplexType).FullName} must be a reference type.", nameof(TComplexType));
 
 			orderedMemberInfos = serializationDirections;
 		}
