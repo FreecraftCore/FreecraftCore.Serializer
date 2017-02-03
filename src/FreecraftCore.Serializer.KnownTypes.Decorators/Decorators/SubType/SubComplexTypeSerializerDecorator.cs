@@ -46,8 +46,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 		[CanBeNull]
 		public ITypeSerializerStrategy DefaultSerializer { get; }
 
-		private int defaultChildKeyValue { get; } = -1;
-
 		public SubComplexTypeSerializerDecorator(IGeneralSerializerProvider serializerProvider, IChildKeyStrategy childKeyStrategy)
 		{
 			if (serializerProvider == null)

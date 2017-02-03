@@ -23,18 +23,18 @@ namespace FreecraftCore.Serializer.API.Reflection
 			return;
 		}
 
-		public void SetMember(object obj, IWireMemberReaderStrategy source)
+		public void ReadMember(TContainingType obj, IWireMemberWriterStrategy dest)
 		{
 			//We ignore reading the member since we're not writing it
 			return;
 		}
 
-		public void ReadMember(TContainingType obj, IWireMemberWriterStrategy dest)
+		public void SetMember(TContainingType obj, IWireMemberReaderStrategy source)
 		{
-			decoratedMediator.ReadMember(obj, dest);
+			decoratedMediator.SetMember(obj, source);
 		}
 
-		public void SetMember(TContainingType obj, IWireMemberReaderStrategy source)
+		public void SetMember(object obj, IWireMemberReaderStrategy source)
 		{
 			decoratedMediator.SetMember(obj, source);
 		}

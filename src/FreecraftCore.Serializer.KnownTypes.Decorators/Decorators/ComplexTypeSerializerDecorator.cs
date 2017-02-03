@@ -50,7 +50,7 @@ namespace FreecraftCore.Serializer
 
 			TComplexType instance = instanceGeneratorDelegate();
 
-			foreach (MemberSerializationMediator<TComplexType> serializerInfo in orderedMemberInfos)
+			foreach (IMemberSerializationMediator<TComplexType> serializerInfo in orderedMemberInfos)
 			{
 				serializerInfo.SetMember(instance, source);
 			}
@@ -80,7 +80,7 @@ namespace FreecraftCore.Serializer
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			foreach(MemberSerializationMediator<TComplexType> serializerInfo in orderedMemberInfos)
+			foreach(IMemberSerializationMediator<TComplexType> serializerInfo in orderedMemberInfos)
 			{
 				serializerInfo.ReadMember(value, dest);
 			}

@@ -14,14 +14,14 @@ namespace FreecraftCore.Serializer
 	public class ComplexTypeSerializerDecoratorHandler : DecoratorHandler
 	{
 		[NotNull]
-		private IContextualSerializerLookupKeyFactory contextualKeyLookupFactoryService { get; }
+		private IMemberSerializationMediatorFactory SerializationMediatorFactory { get; }
 
-		public ComplexTypeSerializerDecoratorHandler([NotNull] IContextualSerializerProvider serializerProvider, [NotNull] IContextualSerializerLookupKeyFactory contextualKeyLookupFactory)
+		public ComplexTypeSerializerDecoratorHandler([NotNull] IContextualSerializerProvider serializerProvider, [NotNull] IMemberSerializationMediatorFactory serializationMediatorFactory)
 			: base(serializerProvider)
 		{
-			if (contextualKeyLookupFactory == null) throw new ArgumentNullException(nameof(contextualKeyLookupFactory));
+			if (serializationMediatorFactory == null) throw new ArgumentNullException(nameof(serializationMediatorFactory));
 
-			contextualKeyLookupFactoryService = contextualKeyLookupFactory;
+			SerializationMediatorFactory = serializationMediatorFactory;
 		}
 
 		/// <inheritdoc />
@@ -39,9 +39,9 @@ namespace FreecraftCore.Serializer
 
 			//TODO: Cleaner/better way to provide instuctions
 			//Build the instructions for serializaiton
-			IEnumerable<MemberSerializationMediatorStrategy<TType>> orderedMemberInfos = context.TargetType.MembersWith<WireMemberAttribute>(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
+			IEnumerable<IMemberSerializationMediator<TType>> orderedMemberInfos = context.TargetType.MembersWith<WireMemberAttribute>(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
 				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder)
-				.Select(x => new MemberSerializationMediatorStrategy<TType>(x, serializerProviderService.Get(contextualKeyLookupFactoryService.Create(x))))
+				.Select(x => SerializationMediatorFactory.Create<TType>(x))
 				.ToArray();
 
 			return new ComplexTypeSerializerDecorator<TType>(orderedMemberInfos);

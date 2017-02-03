@@ -120,6 +120,57 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.DoesNotThrow(() => service.RegisterType<TestArrayWithFixedSize>());
 		}
 
+		[Test]
+		public static void Test_DontWrite_Doesnt_Write_Values()
+		{
+			//arrange
+			SerializerService service = new SerializerService();
+			service.RegisterType<TestClassDontWriteField>();
+			service.Compile();
+
+			//act
+			byte[] bytes = service.Serialize(new TestClassDontWriteField(5));
+			
+
+			//assert
+			Assert.IsEmpty(bytes);
+		}
+
+		[Test]
+		public static void Test_DontWrite_Still_Reads_Values()
+		{
+			//arrange
+			SerializerService service = new SerializerService();
+			service.RegisterType<TestClassDontWriteField>();
+			service.Compile();
+
+			//act
+			byte[] bytes = {5, 0, 0, 0};
+			TestClassDontWriteField obj = service.Deserialize<TestClassDontWriteField>(bytes);
+
+			//assert
+			Assert.IsNotNull(obj);
+			Assert.AreEqual(5, obj.i);
+		}
+
+		[WireDataContract]
+		public class TestClassDontWriteField
+		{
+			[DontWrite]
+			[WireMember(1)]
+			public int i;
+
+			public TestClassDontWriteField(int val)
+			{
+				i = val;
+			}
+
+			public TestClassDontWriteField()
+			{
+				
+			}
+		}
+
 		public class TestClassUnmarked
 		{
 			public TestClassUnmarked()
