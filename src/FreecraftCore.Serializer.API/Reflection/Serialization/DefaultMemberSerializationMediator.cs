@@ -15,7 +15,7 @@ namespace FreecraftCore.Serializer
 
 		}
 
-		public override void ReadMember([NotNull] TContainingType obj, [NotNull] IWireMemberWriterStrategy dest)
+		public override void WriteMember([NotNull] TContainingType obj, [NotNull] IWireMemberWriterStrategy dest)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
@@ -38,9 +38,9 @@ namespace FreecraftCore.Serializer
 			}
 		}
 
-		public override void ReadMember(object obj, [NotNull] IWireMemberWriterStrategy dest)
+		public override void WriteMember(object obj, [NotNull] IWireMemberWriterStrategy dest)
 		{
-			ReadMember((TContainingType)obj, dest);
+			WriteMember((TContainingType)obj, dest);
 		}
 
 		public override void SetMember(object obj, IWireMemberReaderStrategy source)

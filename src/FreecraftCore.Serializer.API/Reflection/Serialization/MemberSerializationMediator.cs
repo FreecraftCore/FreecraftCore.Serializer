@@ -44,7 +44,7 @@ namespace FreecraftCore.Serializer
 				throw new InvalidOperationException($"Failed to build {nameof(MemberSerializationMediator)} for Member: {memberInfo.Name} for Type: {typeof(TContainingType).FullName}.");;
 		}
 
-		public abstract void ReadMember(TContainingType obj, IWireMemberWriterStrategy dest);
+		public abstract void WriteMember(TContainingType obj, IWireMemberWriterStrategy dest);
 
 		public abstract void SetMember(TContainingType obj, IWireMemberReaderStrategy source);
 	}
@@ -81,6 +81,6 @@ namespace FreecraftCore.Serializer
 
 		public abstract void SetMember(object obj, [NotNull] IWireMemberReaderStrategy source);
 
-		public abstract void ReadMember(object obj, [NotNull] IWireMemberWriterStrategy dest);
+		public abstract void WriteMember(object obj, [NotNull] IWireMemberWriterStrategy dest);
 	}
 }

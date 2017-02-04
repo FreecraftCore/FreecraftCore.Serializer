@@ -25,7 +25,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public override bool CanHandle([NotNull] ISerializableTypeContext context)
+		public override bool CanHandle(ISerializableTypeContext context)
 		{
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
