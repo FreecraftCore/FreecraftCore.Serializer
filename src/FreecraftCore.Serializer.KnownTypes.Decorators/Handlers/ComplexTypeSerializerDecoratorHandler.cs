@@ -47,7 +47,7 @@ namespace FreecraftCore.Serializer
 
 			//We need context when we refer to the members of a Type. They could be marked with metadata that could cause a serializer to be context based
 
-			return new SerializationTypeContextCollection(context.TargetType);
+			return new TypeMemberParsedTypeContextCollection(context.TargetType);
 		}
 	}
 }

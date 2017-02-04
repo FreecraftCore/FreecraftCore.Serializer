@@ -76,7 +76,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 				new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.Attribute<DefaultChildAttribute>().ChildType) } : Enumerable.Empty<ISerializableTypeContext>();
 
 
-			contexts.Concat(new SerializationTypeContextCollection(context.TargetType));
+			contexts.Concat(new TypeMemberParsedTypeContextCollection(context.TargetType));
 
 			//Grab the children from the metadata; return type contexts so the types can be handled (no context is required because the children are their own registerable type
 #if !NET35

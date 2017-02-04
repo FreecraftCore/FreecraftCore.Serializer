@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
-	public class SerializationTypeContextCollection : IEnumerable<ISerializableTypeContext>
+	public class TypeMemberParsedTypeContextCollection : IEnumerable<ISerializableTypeContext>
 	{
 		[NotNull]
 		public Type TypeToInspect { get; }
@@ -16,7 +16,7 @@ namespace FreecraftCore.Serializer
 		[NotNull]
 		private Lazy<IEnumerable<ISerializableTypeContext>> contextCollection { get; }
 
-		public SerializationTypeContextCollection([NotNull] Type typeToInspect)
+		public TypeMemberParsedTypeContextCollection([NotNull] Type typeToInspect)
 		{
 			if (typeToInspect == null) throw new ArgumentNullException(nameof(typeToInspect));
 
