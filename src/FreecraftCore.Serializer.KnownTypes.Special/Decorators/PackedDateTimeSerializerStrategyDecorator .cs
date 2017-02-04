@@ -75,5 +75,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			return Read(source);
 		}
+
+		public DateTime Read(ref DateTime obj, IWireMemberReaderStrategy source)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

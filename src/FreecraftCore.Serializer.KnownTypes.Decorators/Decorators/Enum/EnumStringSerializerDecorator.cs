@@ -64,5 +64,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			return Read(source);
 		}
+
+		public TEnumType Read(ref TEnumType obj, IWireMemberReaderStrategy source)
+		{
+			obj = Read(source);
+
+			return obj;
+		}
 	}
 }

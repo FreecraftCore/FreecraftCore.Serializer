@@ -57,5 +57,14 @@ namespace FreecraftCore.Serializer
 		[Pure]
 		[NotNull]
 		new TType Read([NotNull] IWireMemberReaderStrategy source);
+
+		/// <summary>
+		/// Preform the steps necessary to deserialize the data into the provided <paramref name="obj"/>.
+		/// </summary>
+		/// <param name="obj">Possibly null ref object of type the serializer handles.</param>
+		/// <param name="source">The reader providing the input data.</param>
+		/// <returns>A non-null instance of the <typeparamref name="TType"/> object.</returns>
+		[NotNull]
+		TType Read([CanBeNull] ref TType obj, [NotNull] IWireMemberReaderStrategy source);
 	}
 }

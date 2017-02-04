@@ -102,5 +102,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 					decoratedSerializer.Write(value[i], dest);
 			}
 		}
+
+		public TObjectType[] Read(ref TObjectType[] obj, IWireMemberReaderStrategy source)
+		{
+			obj = Read(source);
+
+			return obj;
+		}
 	}
 }

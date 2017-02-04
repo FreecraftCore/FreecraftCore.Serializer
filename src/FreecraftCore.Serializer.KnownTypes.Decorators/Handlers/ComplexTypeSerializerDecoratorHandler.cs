@@ -37,14 +37,7 @@ namespace FreecraftCore.Serializer
 		{
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			//TODO: Cleaner/better way to provide instuctions
-			//Build the instructions for serializaiton
-			IEnumerable<IMemberSerializationMediator<TType>> orderedMemberInfos = context.TargetType.MembersWith<WireMemberAttribute>(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
-				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder)
-				.Select(x => SerializationMediatorFactory.Create<TType>(x))
-				.ToArray();
-
-			return new ComplexTypeSerializerDecorator<TType>(orderedMemberInfos);
+			return new ComplexTypeSerializerDecorator<TType>(new MemberSerializationMediatorCollection<TType>(SerializationMediatorFactory));
 		}
 
 		/// <inheritdoc />
@@ -54,17 +47,7 @@ namespace FreecraftCore.Serializer
 
 			//We need context when we refer to the members of a Type. They could be marked with metadata that could cause a serializer to be context based
 
-#if !NET35
-			return context.TargetType.Members(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyVisibility)
-				.Where(mi => mi.HasAttribute<WireMemberAttribute>())
-				.Select(mi => new MemberInfoBasedSerializationContext(mi)); //provide memberinfo context; context is important for complex type members
-
-#else
-			//net35 doesn't have co/contra-variance. Unity3D does though because it's psuedo-net35. Just cast on net35
-			return context.TargetType.Members(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyVisibility)
-				.Where(mi => mi.HasAttribute<WireMemberAttribute>())
-				.Select(mi => new MemberInfoBasedSerializationContext(mi) as ISerializableTypeContext); //provide memberinfo context; context is important for complex type members
-#endif
+			return new SerializationTypeContextCollection(context.TargetType);
 		}
 	}
 }

@@ -56,5 +56,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			return Read(source);
 		}
+
+		public bool Read(ref bool obj, IWireMemberReaderStrategy source)
+		{
+			obj = Read(source);
+
+			return obj;
+		}
 	}
 }

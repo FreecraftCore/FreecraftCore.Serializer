@@ -53,12 +53,31 @@ namespace FreecraftCore.Serializer
 
 			TComplexType instance = instanceGeneratorDelegate();
 
+			return Read(instance, source);
+		}
+
+		/// <inheritdoc />
+		public TComplexType Read(ref TComplexType obj, IWireMemberReaderStrategy source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			return obj == null ? Read(source) : Read(obj = instanceGeneratorDelegate(), source);
+		}
+
+		/// <summary>
+		/// Initializes the provided <typeparamref name="TComplexType"/> from the
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		private TComplexType Read([NotNull] TComplexType obj, [NotNull] IWireMemberReaderStrategy source)
+		{
 			foreach (IMemberSerializationMediator<TComplexType> serializerInfo in orderedMemberInfos)
 			{
-				serializerInfo.SetMember(instance, source);
+				serializerInfo.SetMember(obj, source);
 			}
 
-			return instance;
+			return obj;
 		}
 
 		/// <inheritdoc />

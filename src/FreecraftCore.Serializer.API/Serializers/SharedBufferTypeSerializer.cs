@@ -52,5 +52,13 @@ namespace FreecraftCore.Serializer
 		{
 			return Read(source);
 		}
+
+		public TType Read(ref TType obj, IWireMemberReaderStrategy source)
+		{
+			//TODO: Support complex shared struct types with shared buffers. Not important though.
+			obj = Read(source);
+
+			return obj;
+		}
 	}
 }

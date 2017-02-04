@@ -153,5 +153,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			return Read(source);
 		}
+
+		public TBaseType Read(ref TBaseType obj, IWireMemberReaderStrategy source)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

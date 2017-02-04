@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using System.Reflection;
 using Fasterflect;
 using JetBrains.Annotations;
@@ -152,6 +151,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			return Read(source);
+		}
+
+		public TBaseType Read(ref TBaseType obj, IWireMemberReaderStrategy source)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
