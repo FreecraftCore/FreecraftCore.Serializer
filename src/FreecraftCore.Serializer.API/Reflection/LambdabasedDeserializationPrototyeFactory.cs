@@ -53,37 +53,44 @@ namespace FreecraftCore.Serializer
 
 	public class LambdabasedDeserializationPrototyeFactory<TType> : LambdabasedDeserializationPrototyeFactory, IDeserializationPrototypeFactory<TType>
 	{
-		//Mono doesn't like creating lambdas for interface types. .NET will do it, but will probably throw if you invoke it.
-		//However, Mono will throw if you try to compile the lambda
-#if __MonoCS__ || MONO
 		//New constaint is gone; this provided an efficient way to create new instances over Activator.CreateInstance.
 		//Search compiled lambda and new constaint operator on google to see dicussions about it
 		private static Func<TType> instanceGeneratorDelegate { get; }
 
 		static LambdabasedDeserializationPrototyeFactory()
 		{
-			if (!typeof(TType).IsInterface)
+			//We use runtime checks for Mono to prevent something that fails on Mono but doesn't on .NET
+			//Mono doesn't like creating lambdas for interface types. .NET will do it, but will probably throw if you invoke it.
+			//However, Mono will throw if you try to compile the lambda
+			if (MonoExtensions.isRunningMono())
+			{
+				if (!typeof(TType).IsInterface)
+					instanceGeneratorDelegate = Expression.Lambda<Func<TType>>(Expression.New(typeof(TType))).Compile();
+				else
+					instanceGeneratorDelegate = null;
+			}
+			else
+			{
 				instanceGeneratorDelegate = Expression.Lambda<Func<TType>>(Expression.New(typeof(TType))).Compile();
-			else
-				instanceGeneratorDelegate = null;
+			}
 		}
 
 		public TType Create()
 		{
-			if(instanceGeneratorDelegate != null)
+			//We use runtime checks for Mono to prevent something that fails on Mono but doesn't on .NET
+			//Mono doesn't like creating lambdas for interface types. .NET will do it, but will probably throw if you invoke it.
+			//However, Mono will throw if you try to compile the lambda
+			if (MonoExtensions.isRunningMono())
+			{
+				if (instanceGeneratorDelegate != null)
+					return instanceGeneratorDelegate();
+				else
+					throw new InvalidOperationException($"Tried to create an instance of Type: {typeof(TType)} but Type was an interface. Cannot create an interface type.");
+			}
+			else
+			{
 				return instanceGeneratorDelegate();
-			else
-				throw new InvalidOperationException($"Tried to create an instance of Type: {typeof(TType)} but Type was an interface. Cannot create an interface type.");
+			}
 		}
-#else
-		//New constaint is gone; this provided an efficient way to create new instances over Activator.CreateInstance.
-		//Search compiled lambda and new constaint operator on google to see dicussions about it
-		private static Func<TType> instanceGeneratorDelegate { get; } = Expression.Lambda<Func<TType>>(Expression.New(typeof(TType))).Compile();
-
-		public TType Create()
-		{
-			return instanceGeneratorDelegate();
-		}
-#endif
 	}
 }
