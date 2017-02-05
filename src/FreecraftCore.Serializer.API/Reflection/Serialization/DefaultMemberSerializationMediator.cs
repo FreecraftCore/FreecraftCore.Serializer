@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
-	public class DefaultMemberSerializationMediator<TContainingType> : MemberSerializationMediator<TContainingType>
+	public class DefaultMemberSerializationMediator<TContainingType, TMemberType> : MemberSerializationMediator<TContainingType, TMemberType>
 	{
 		public DefaultMemberSerializationMediator([NotNull] MemberInfo memberInfo, [NotNull] ITypeSerializerStrategy serializer) 
 			: base(memberInfo, serializer)
@@ -54,8 +54,12 @@ namespace FreecraftCore.Serializer
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
+#if NET35
 			//TODO: Can we do this more efficiently without reading string name?
 			obj.TrySetValue(MemberInformation.Name, TypeSerializer.Read(source));
+#else
+			MemberAccessor(obj, (TMemberType)TypeSerializer.Read(source));
+#endif
 		}
 	}
 }

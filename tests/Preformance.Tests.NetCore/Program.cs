@@ -18,7 +18,7 @@ namespace Preformance.Tests
 			//first
 			TestSingleInt testInstance = new TestSingleInt(5);
 			//
-			TestMoreComplexType complex = new TestMoreComplexType(new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, });
+			TestMoreComplexType complex = new TestMoreComplexType(new int[] {1, 2, 3, 4, 5});// 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, });
 			SerializerService serializer = new SerializerService();
 			serializer.RegisterType<TestSingleInt>();
 			serializer.RegisterType<TestMoreComplexType>();
@@ -70,29 +70,42 @@ namespace Preformance.Tests
 			#endregion
 			*/
 
+			byte[] bytesFromFreecraft = serializer.Serialize(complex);
+
 			GC.Collect();
 			serializerWatch.Reset();
 			serializerWatch.Start();
 
 			for (int i = 0; i < 1000000; i++)
 			{
-				serializer.Serialize(complex);
+				//serializer.Serialize(complex);
+				TestMoreComplexType t = serializer.Deserialize<TestMoreComplexType>(bytesFromFreecraft);
 			}
 			serializerWatch.Stop();
 
 			Console.WriteLine($"{serializerWatch.ElapsedTicks} - Time for FreecraftCore Serializer");
 
+
+			MemoryStream protobufStream = new MemoryStream();
+			ProtoBuf.Serializer.Serialize(protobufStream, complex);
+			protobufStream.Position = 0;
+
 			GC.Collect();
 			serializerWatch.Reset();
 			serializerWatch.Start();
 
+
+
 			for (int i = 0; i < 1000000; i++)
 			{
-				using (MemoryStream stream = new MemoryStream())
+				/*using (MemoryStream stream = new MemoryStream())
 				{
 					ProtoBuf.Serializer.Serialize(stream, complex);
 					stream.Position = 0;
-				}
+				}*/
+
+				TestMoreComplexType t = ProtoBuf.Serializer.Deserialize<TestMoreComplexType>(protobufStream);
+				protobufStream.Position = 0;
 			}
 
 			serializerWatch.Stop();

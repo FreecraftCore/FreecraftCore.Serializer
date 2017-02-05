@@ -28,10 +28,15 @@ namespace FreecraftCore.Serializer
 			if (info == null) throw new ArgumentNullException(nameof(info));
 
 			//Construct a default and then we can decorate as needed
+			//We now have a generic arg for the member type which we don't technically have a compile time ref to
+			//therefore we must use activator to create
 			IMemberSerializationMediator<TContainingType> mediator = 
-				new DefaultMemberSerializationMediator<TContainingType>(info, typeSerializerProvider.Get(lookupKeyFactory.Create(info)));
+				Activator.CreateInstance(typeof(DefaultMemberSerializationMediator<,>).MakeGenericType(new Type[] { typeof(TContainingType), info.Type()}),
+					info, typeSerializerProvider.Get(lookupKeyFactory.Create(info))) as IMemberSerializationMediator<TContainingType>;
 
-			if(info.HasAttribute<DontWriteAttribute>())
+			//new DefaultMemberSerializationMediator<TContainingType>(info, typeSerializerProvider.Get(lookupKeyFactory.Create(info)));
+
+			if (info.HasAttribute<DontWriteAttribute>())
 				mediator = new DisableWriteMemberSerializationMediatorDecorator<TContainingType>(mediator);
 
 			if(info.HasAttribute<DontReadAttribute>())
