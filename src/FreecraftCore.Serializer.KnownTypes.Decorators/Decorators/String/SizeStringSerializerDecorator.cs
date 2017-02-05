@@ -7,13 +7,10 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
-	public class SizeStringSerializerDecorator : ITypeSerializerStrategy<string>
+	public class SizeStringSerializerDecorator : SimpleTypeSerializerStrategy<string>
 	{
 		/// <inheritdoc />
-		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
-
-		/// <inheritdoc />
-		public Type SerializerType { get; } = typeof(string);
+		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
 
 		/// <summary>
 		/// Provides the size of the fixed string.
@@ -37,7 +34,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public string Read(IWireMemberReaderStrategy source)
+		public override string Read(IWireMemberReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
@@ -55,7 +52,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public void Write([NotNull] string value, IWireMemberWriterStrategy dest)
+		public override void Write([NotNull] string value, IWireMemberWriterStrategy dest)
 		{
 			if (value == null) throw new ArgumentNullException(nameof(value));
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
@@ -71,25 +68,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//However, DO NOT write another null terminator either way because we already have one.
 			if (value.Length < size)
 				dest.Write(new byte[(size - value.Length)]);
-		}
-
-		/// <inheritdoc />
-		public void Write(object value, IWireMemberWriterStrategy dest)
-		{
-			Write((string)value, dest);
-		}
-
-		/// <inheritdoc />
-		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
-		{
-			return Read(source);
-		}
-
-		public string Read(ref string obj, IWireMemberReaderStrategy source)
-		{
-			obj = Read(source);
-
-			return obj;
 		}
 	}
 }

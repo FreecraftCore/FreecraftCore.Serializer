@@ -33,6 +33,16 @@ namespace FreecraftCore.Serializer
 		[Pure]
 		[NotNull]
 		object Read([NotNull] IWireMemberReaderStrategy source);
+
+		//TODO: Fix doc
+		/// <summary>
+		/// Preform the steps necessary to deserialize the data into the provided <paramref name="obj"/>.
+		/// </summary>
+		/// <param name="obj">Possibly null ref object of type the serializer handles.</param>
+		/// <param name="source">The reader providing the input data.</param>
+		/// <returns>A non-null instance of the <typeparamref name="TType"/> object.</returns>
+		[NotNull]
+		object Read([CanBeNull] ref object obj, [NotNull] IWireMemberReaderStrategy source);
 	}
 
 	//This concept is based on JAM (Blizzard's messaging system/protocol and Protobuf-net's serializer strategies https://github.com/mgravell/protobuf-net/tree/master/protobuf-net/Serializers

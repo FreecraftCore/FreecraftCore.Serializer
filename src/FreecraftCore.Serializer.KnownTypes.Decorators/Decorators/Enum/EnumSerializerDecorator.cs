@@ -12,12 +12,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// </summary>
 	/// <typeparam name="TEnumType">The type of the Enum.</typeparam>
 	/// <typeparam name="TBaseType">The basetype of the Enum.</typeparam>
-	public class EnumSerializerDecorator<TEnumType, TBaseType> : ITypeSerializerStrategy<TEnumType>
+	public class EnumSerializerDecorator<TEnumType, TBaseType> : SimpleTypeSerializerStrategy<TEnumType>
 		where TEnumType : struct
 	{
-		/// <inheritdoc />
-		public Type SerializerType { get; } = typeof(TEnumType);
-
 		/// <summary>
 		/// Decorated serializer. For example. An enum Type : byte would have a ITypeSerializerStrategy{byte}.
 		/// </summary>
@@ -25,7 +22,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		private ITypeSerializerStrategy<TBaseType> serializerStrategy { get; }
 
 		//Enums don't require context (Though closer look at TC/WoW payloads may indicate packing in the future)
-		public SerializationContextRequirement ContextRequirement => SerializationContextRequirement.Contextless;
+		public override SerializationContextRequirement ContextRequirement => SerializationContextRequirement.Contextless;
 
 		public EnumSerializerDecorator([NotNull] IGeneralSerializerProvider serializerProvider)
 		{
@@ -53,7 +50,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public TEnumType Read(IWireMemberReaderStrategy source)
+		public override TEnumType Read(IWireMemberReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
@@ -62,7 +59,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public void Write(TEnumType value, IWireMemberWriterStrategy dest)
+		public override void Write(TEnumType value, IWireMemberWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
@@ -73,29 +70,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 				throw new Exception();
 
 			serializerStrategy.Write((TBaseType)boxedBaseEnumValue, dest);
-		}
-
-		/// <inheritdoc />
-		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
-		{
-			if (dest == null) throw new ArgumentNullException(nameof(dest));
-
-			Write((TEnumType)value, dest);
-		}
-
-		/// <inheritdoc />
-		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
-		{
-			if (source == null) throw new ArgumentNullException(nameof(source));
-
-			return Read(source);
-		}
-
-		public TEnumType Read(ref TEnumType obj, IWireMemberReaderStrategy source)
-		{
-			obj = Read(source);
-
-			return obj;
 		}
 	}
 }

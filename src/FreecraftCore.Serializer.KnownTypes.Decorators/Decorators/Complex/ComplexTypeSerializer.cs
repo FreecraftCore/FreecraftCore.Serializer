@@ -84,5 +84,14 @@ namespace FreecraftCore.Serializer
 				serializerInfo.WriteMember(obj, dest);
 			}
 		}
+
+		public object Read(ref object obj, IWireMemberReaderStrategy source)
+		{
+			TType castedObj = (TType) obj;
+
+			SetMembersFromReaderData(castedObj, source);
+
+			return obj;
+		}
 	}
 }

@@ -11,14 +11,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// Known-type serializer for the <see cref="bool"/> value-type.
 	/// </summary>
 	[KnownTypeSerializer]
-	public class BoolSerializerStrategy : ITypeSerializerStrategy<bool>
+	public class BoolSerializerStrategy : SimpleTypeSerializerStrategy<bool>
 	{
 		//All primitive serializer stragies are contextless
 		/// <inheritdoc />
-		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
-
-		/// <inheritdoc />
-		public Type SerializerType { get; } = typeof(bool);
+		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
 		//Trinitycore Bytebuffer implementation
 		/*ByteBuffer &operator>>(bool &value)
@@ -28,7 +25,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}*/
 
 		/// <inheritdoc />
-		public bool Read(IWireMemberReaderStrategy source)
+		public override bool Read(IWireMemberReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
@@ -38,30 +35,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public void Write(bool value, IWireMemberWriterStrategy dest)
+		public override void Write(bool value, IWireMemberWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			dest.Write((byte)(value ? 1 : 0));
-		}
-
-		/// <inheritdoc />
-		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
-		{
-			Write((bool)value, dest);
-		}
-
-		/// <inheritdoc />
-		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
-		{
-			return Read(source);
-		}
-
-		public bool Read(ref bool obj, IWireMemberReaderStrategy source)
-		{
-			obj = Read(source);
-
-			return obj;
 		}
 	}
 }

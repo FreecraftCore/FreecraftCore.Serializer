@@ -13,12 +13,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// Decorator for array types.
 	/// </summary>
 	/// <typeparam name="TObjectType">The type of the object the array contains.</typeparam>
-	public class ArraySerializerDecorator<TObjectType> : ITypeSerializerStrategy<TObjectType[]>
+	public class ArraySerializerDecorator<TObjectType> : SimpleTypeSerializerStrategy<TObjectType[]>
 	{
 		/// <inheritdoc />
-		public Type SerializerType { get; } = typeof(TObjectType[]);
+		public override Type SerializerType { get; } = typeof(TObjectType[]);
 
-		public SerializationContextRequirement ContextRequirement { get; }
+		public override SerializationContextRequirement ContextRequirement { get; }
 
 		/// <summary>
 		/// The decorated underlying element serializer.
@@ -58,7 +58,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public virtual TObjectType[] Read(IWireMemberReaderStrategy source)
+		public override TObjectType[] Read(IWireMemberReaderStrategy source)
 		{
 			TObjectType[] objectArray = new TObjectType[sizeStrategyService.Size(source)];
 
@@ -71,23 +71,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
-		{
-			if (dest == null) throw new ArgumentNullException(nameof(dest));
-
-			Write((TObjectType[])value, dest);
-		}
-
-		/// <inheritdoc />
-		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
-		{
-			if (source == null) throw new ArgumentNullException(nameof(source));
-
-			return Read(source);
-		}
-
-		/// <inheritdoc />
-		public virtual void Write(TObjectType[] value, IWireMemberWriterStrategy dest)
+		public override void Write(TObjectType[] value, IWireMemberWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
@@ -101,13 +85,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 				for (int i = 0; i < size; i++)
 					decoratedSerializer.Write(value[i], dest);
 			}
-		}
-
-		public TObjectType[] Read(ref TObjectType[] obj, IWireMemberReaderStrategy source)
-		{
-			obj = Read(source);
-
-			return obj;
 		}
 	}
 }

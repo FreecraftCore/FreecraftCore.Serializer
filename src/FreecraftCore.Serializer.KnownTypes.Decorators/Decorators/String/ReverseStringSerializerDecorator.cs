@@ -8,13 +8,10 @@ using JetBrains.Annotations;
 namespace FreecraftCore.Serializer.KnownTypes
 {
 	//TODO: Doc
-	public class ReverseStringSerializerDecorator : ITypeSerializerStrategy<string>
+	public class ReverseStringSerializerDecorator : SimpleTypeSerializerStrategy<string>
 	{
 		/// <inheritdoc />
-		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
-
-		/// <inheritdoc />
-		public Type SerializerType { get; } = typeof(string);
+		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
 
 		[NotNull]
 		public ITypeSerializerStrategy<string> decoratedSerializer { get; }
@@ -28,7 +25,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public string Read(IWireMemberReaderStrategy source)
+		public override string Read(IWireMemberReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
@@ -38,32 +35,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public void Write(object value, IWireMemberWriterStrategy dest)
-		{
-			if (dest == null) throw new ArgumentNullException(nameof(dest));
-
-			Write((string)value, dest);
-		}
-
-		/// <inheritdoc />
-		public void Write(string value, IWireMemberWriterStrategy dest)
+		public override void Write(string value, IWireMemberWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			decoratedSerializer.Write(new string(value.Reverse().ToArray()), dest);
-		}
-
-		/// <inheritdoc />
-		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
-		{
-			return Read(source);
-		}
-
-		public string Read(ref string obj, IWireMemberReaderStrategy source)
-		{
-			obj = Read(source);
-
-			return obj;
 		}
 	}
 }

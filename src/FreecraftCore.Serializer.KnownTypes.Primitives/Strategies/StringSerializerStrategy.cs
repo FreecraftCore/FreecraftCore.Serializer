@@ -8,17 +8,17 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// <see cref="ITypeSerializerStrategy"/> for Type <see cref="string"/>.
 	/// </summary>
 	[KnownTypeSerializer]
-	public class StringSerializerStrategy : ITypeSerializerStrategy<string>
+	public class StringSerializerStrategy : SimpleTypeSerializerStrategy<string>
 	{
 		//All primitive serializer stragies are contextless
 		/// <inheritdoc />
-		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
+		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
 		/// <inheritdoc />
 		public Type SerializerType { get; } = typeof(string);
 
 		/// <inheritdoc />
-		public void Write(string value, IWireMemberWriterStrategy dest)
+		public override void Write(string value, IWireMemberWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
@@ -42,7 +42,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// </summary>
 		/// <param name="source">The reader providing the input data.</param>
 		/// <returns>A string value from the reader.</returns>
-		public string Read(IWireMemberReaderStrategy source)
+		public override string Read(IWireMemberReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
@@ -67,23 +67,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//TODO: Invesitgate expected WoW/TC behavior for strings of length 0. Currently violates contract for return type.
 			//Serializer design decision: Return null instead of String.Empty for no strings
 			return stringBytes.Count == 0 ? null : System.Text.Encoding.ASCII.GetString(stringBytes.ToArray());
-		}
-
-		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
-		{
-			Write((string)value, dest);
-		}
-
-		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
-		{
-			return Read(source);
-		}
-
-		public string Read(ref string obj, IWireMemberReaderStrategy source)
-		{
-			obj = Read(source);
-
-			return obj;
 		}
 	}
 }

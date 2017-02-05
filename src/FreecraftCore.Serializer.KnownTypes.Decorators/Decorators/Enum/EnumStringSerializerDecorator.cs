@@ -7,14 +7,11 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
-	public class EnumStringSerializerDecorator<TEnumType> : ITypeSerializerStrategy<TEnumType>
+	public class EnumStringSerializerDecorator<TEnumType> : SimpleTypeSerializerStrategy<TEnumType>
 			where TEnumType : struct
 	{
 		/// <inheritdoc />
-		public Type SerializerType { get; } = typeof(TEnumType);
-
-		/// <inheritdoc />
-		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
+		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
 
 		/// <inheritdoc />
 		[NotNull]
@@ -29,7 +26,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public TEnumType Read(IWireMemberReaderStrategy source)
+		public override TEnumType Read(IWireMemberReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
@@ -41,35 +38,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public void Write(TEnumType value, IWireMemberWriterStrategy dest)
+		public override void Write(TEnumType value, IWireMemberWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			//Just write the string to the stream
 			decoratedSerializer.Write(value.ToString(), dest);
-		}
-
-		/// <inheritdoc />
-		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
-		{
-			if (dest == null) throw new ArgumentNullException(nameof(dest));
-
-			Write((TEnumType)value, dest);
-		}
-
-		/// <inheritdoc />
-		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
-		{
-			if (source == null) throw new ArgumentNullException(nameof(source));
-
-			return Read(source);
-		}
-
-		public TEnumType Read(ref TEnumType obj, IWireMemberReaderStrategy source)
-		{
-			obj = Read(source);
-
-			return obj;
 		}
 	}
 }

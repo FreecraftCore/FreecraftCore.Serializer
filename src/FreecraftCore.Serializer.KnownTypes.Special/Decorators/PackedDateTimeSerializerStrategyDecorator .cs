@@ -10,13 +10,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// <summary>
 	/// Serializer for the packed <see cref="DateTime"/> that is based on the packing implemented on Trinitycore.
 	/// </summary>
-	public class PackedDateTimeSerializerStrategyDecorator : ITypeSerializerStrategy<DateTime>
+	public class PackedDateTimeSerializerStrategyDecorator : SimpleTypeSerializerStrategy<DateTime>
 	{
 		/// <inheritdoc />
-		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
-
-		/// <inheritdoc />
-		public Type SerializerType { get; } = typeof(DateTime);
+		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
 
 		[NotNull]
 		private ITypeSerializerStrategy<int> decoratedSerializer { get; }
@@ -30,7 +27,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public DateTime Read(IWireMemberReaderStrategy source)
+		public override DateTime Read(IWireMemberReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
@@ -51,13 +48,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public void Write(object value, IWireMemberWriterStrategy dest)
-		{
-			Write((DateTime)value, dest);
-		}
-
-		/// <inheritdoc />
-		public void Write(DateTime value, IWireMemberWriterStrategy dest)
+		public override void Write(DateTime value, IWireMemberWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
@@ -68,17 +59,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//pass to decorated serializer
 			decoratedSerializer.Write(packedTime, dest);
-		}
-
-		/// <inheritdoc />
-		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
-		{
-			return Read(source);
-		}
-
-		public DateTime Read(ref DateTime obj, IWireMemberReaderStrategy source)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }
