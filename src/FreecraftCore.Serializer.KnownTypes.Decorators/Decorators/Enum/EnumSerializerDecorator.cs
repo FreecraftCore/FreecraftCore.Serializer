@@ -63,6 +63,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
+			//TODO: Increase perf
 			//Not great. It's slow conversion and box. Then casting the box to call.
 			object boxedBaseEnumValue = Convert.ChangeType(value, typeof(TBaseType));
 

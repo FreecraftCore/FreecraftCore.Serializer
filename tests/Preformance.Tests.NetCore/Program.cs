@@ -18,7 +18,7 @@ namespace Preformance.Tests
 			//first
 			TestSingleInt testInstance = new TestSingleInt(5);
 			//
-			TestMoreComplexType complex = new TestMoreComplexType(new int[] {1, 2, 3, 4, 5, 6});//7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, });
+			TestMoreComplexType complex = new TestMoreComplexType(new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 567, 234, 6225, 732164, 50, 245662, 36542, });
 			SerializerService serializer = new SerializerService();
 			serializer.RegisterType<TestSingleInt>();
 			serializer.RegisterType<TestMoreComplexType>();
@@ -74,7 +74,7 @@ namespace Preformance.Tests
 			serializerWatch.Reset();
 			serializerWatch.Start();
 
-			for (int i = 0; i < 10000; i++)
+			for (int i = 0; i < 1000000; i++)
 			{
 				serializer.Serialize(complex);
 			}
@@ -86,7 +86,7 @@ namespace Preformance.Tests
 			serializerWatch.Reset();
 			serializerWatch.Start();
 
-			for (int i = 0; i < 10000; i++)
+			for (int i = 0; i < 1000000; i++)
 			{
 				using (MemoryStream stream = new MemoryStream())
 				{
@@ -108,7 +108,7 @@ namespace Preformance.Tests
 				if (complex.intArray[i] != test.intArray[i])
 					throw new Exception();
 			}
-				
+
 
 			Console.ReadKey();
 		}

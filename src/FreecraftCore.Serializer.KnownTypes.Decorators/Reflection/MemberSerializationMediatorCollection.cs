@@ -46,7 +46,8 @@ namespace FreecraftCore.Serializer
 			//Build the instructions for serializion with mediators
 			return typeof(TTargetType).MembersWith<WireMemberAttribute>(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
 				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder)
-				.Select(x => mediatorFactory.Create<TTargetType>(x));
+				.Select(x => mediatorFactory.Create<TTargetType>(x))
+				.ToArray();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()

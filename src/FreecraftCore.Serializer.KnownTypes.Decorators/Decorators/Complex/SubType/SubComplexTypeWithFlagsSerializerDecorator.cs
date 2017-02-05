@@ -83,6 +83,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
+			//TODO: Test perf
 			//Defer key writing to the key writing strategy
 			foreach (ChildKeyPair childKey in serializers)
 				if(childKey.Serializer.SerializerType == value.GetType())
@@ -111,6 +112,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//Ask the key strategy for what flags are present
 			int flags = keyStrategy.Read(source); //defer to key reader (could be int, byte or something else)
 
+			//TODO: Test perf
 			foreach (ChildKeyPair childKey in serializers)
 			{
 				if ((childKey.Flags & flags) != 0)

@@ -14,11 +14,12 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
+		//We use an array now for more performant iteration
 		/// <summary>
 		/// Ordered pairs of known serializer references and the memberinfos for wiremembers.
 		/// </summary>
 		[NotNull]
-		protected IEnumerable<IMemberSerializationMediator<TType>> orderedMemberInfos { get; }
+		protected IMemberSerializationMediator<TType>[] orderedMemberInfos { get; }
 
 		/// <summary>
 		/// General serializer provider service.
@@ -35,7 +36,7 @@ namespace FreecraftCore.Serializer
 			if (serializerProvider == null)
 				throw new ArgumentNullException(nameof(serializerProvider), $"Provided {nameof(serializerProvider)} service was null.");
 
-			orderedMemberInfos = serializationDirections;
+			orderedMemberInfos = serializationDirections.ToArray();
 			serializerProviderService = serializerProvider;
 		}
 
@@ -71,18 +72,24 @@ namespace FreecraftCore.Serializer
 
 		protected void SetMembersFromReaderData(TType obj, IWireMemberReaderStrategy source)
 		{
-			foreach (IMemberSerializationMediator<TType> serializerInfo in orderedMemberInfos)
+			//replaced for perf
+			/*foreach (IMemberSerializationMediator<TType> serializerInfo in orderedMemberInfos)
 			{
 				serializerInfo.SetMember(obj, source);
-			}
+			}*/
+			for(int i = 0; i < orderedMemberInfos.Length; i++)
+				orderedMemberInfos[i].SetMember(obj, source);
 		}
 
 		protected void WriteMemberData(TType obj, IWireMemberWriterStrategy dest)
 		{
-			foreach (IMemberSerializationMediator<TType> serializerInfo in orderedMemberInfos)
+			//replaced for perf
+			/*foreach (IMemberSerializationMediator<TType> serializerInfo in orderedMemberInfos)
 			{
 				serializerInfo.WriteMember(obj, dest);
-			}
+			}*/
+			for (int i = 0; i < orderedMemberInfos.Length; i++)
+				orderedMemberInfos[i].WriteMember(obj, dest);
 		}
 
 		public object Read(ref object obj, IWireMemberReaderStrategy source)

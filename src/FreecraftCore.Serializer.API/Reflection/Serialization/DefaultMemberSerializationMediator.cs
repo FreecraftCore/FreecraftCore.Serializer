@@ -25,8 +25,8 @@ namespace FreecraftCore.Serializer
 			//object memberValue = value.TryGetValue(serializerInfo.MemberInformation.Name);
 			object memberValue = MemberGetter(obj); //instead of fasterflect we use delegate to getter
 
-			if (memberValue == null)
-				throw new InvalidOperationException($"Provider FieldName: {MemberInformation.Name} on Type: {MemberInformation.Type()} is null. The serializer doesn't support null.");
+			//We used to do a null check here. It was kind of pointless to do and it was slightly expensive since they weren't all
+			//reference types. No reason to check nullness; it's just a perf issue
 
 			try
 			{

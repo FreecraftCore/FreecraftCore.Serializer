@@ -29,13 +29,15 @@ namespace FreecraftCore.Serializer
 #if !NET35
 			return TypeToInspect.Members(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyVisibility)
 				.Where(mi => mi.HasAttribute<WireMemberAttribute>())
-				.Select(mi => new MemberInfoBasedSerializationContext(mi)); //provide memberinfo context; context is important for complex type members
+				.Select(mi => new MemberInfoBasedSerializationContext(mi)) //provide memberinfo context; context is important for complex type members
+				.ToArray();
 
 #else
 			//net35 doesn't have co/contra-variance. Unity3D does though because it's psuedo-net35. Just cast on net35
 			return TypeToInspect.Members(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyVisibility)
 				.Where(mi => mi.HasAttribute<WireMemberAttribute>())
-				.Select(mi => new MemberInfoBasedSerializationContext(mi) as ISerializableTypeContext); //provide memberinfo context; context is important for complex type members
+				.Select(mi => new MemberInfoBasedSerializationContext(mi) as ISerializableTypeContext) //provide memberinfo context; context is important for complex type members
+				.ToArray();
 #endif
 		}
 

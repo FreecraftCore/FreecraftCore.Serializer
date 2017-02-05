@@ -27,6 +27,7 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public ITypeSerializerStrategy Get([NotNull]Type type)
 		{
+			//TODO: If we just grab the serializer and throw instead we can get a speed up
 			if(!contextlessSerializerLookupTable.ContainsKey(type))
 				throw new KeyNotFoundException($"Requested Type: {type.FullName} was not found in the provider service {this.GetType().FullName}.");
 
