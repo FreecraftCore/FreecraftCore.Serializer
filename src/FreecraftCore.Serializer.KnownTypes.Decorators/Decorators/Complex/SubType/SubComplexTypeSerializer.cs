@@ -7,10 +7,16 @@ namespace FreecraftCore.Serializer.KnownTypes
 {
 	public abstract class SubComplexTypeSerializer<TBaseType> : ComplexTypeSerializer<TBaseType>
 	{
-		protected SubComplexTypeSerializer([NotNull] IEnumerable<IMemberSerializationMediator<TBaseType>> serializationDirections) 
-			: base(serializationDirections)
-		{
+		[NotNull]
+		protected IDeserializationPrototypeFactory<TBaseType> prototypeGeneratorService { get; }
 
+		protected SubComplexTypeSerializer([NotNull] IDeserializationPrototypeFactory<TBaseType> prototypeGenerator, [NotNull] IEnumerable<IMemberSerializationMediator<TBaseType>> serializationDirections, 
+			[NotNull] IGeneralSerializerProvider serializerProvider) 
+			: base(serializationDirections, serializerProvider)
+		{
+			if (prototypeGenerator == null) throw new ArgumentNullException(nameof(prototypeGenerator));
+
+			this.prototypeGeneratorService = prototypeGenerator;
 		}
 	}
 }

@@ -16,10 +16,16 @@ namespace FreecraftCore.Serializer.KnownTypes
 	[DecoratorHandler]
 	public class SubComplexTypeSerializerDecoratorHandler : DecoratorHandler
 	{
-		public SubComplexTypeSerializerDecoratorHandler([NotNull] IContextualSerializerProvider serializerProvider)
+		[NotNull]
+		public IMemberSerializationMediatorFactory mediatorFactoryService { get; }
+
+		public SubComplexTypeSerializerDecoratorHandler([NotNull] IContextualSerializerProvider serializerProvider,
+			[NotNull] IMemberSerializationMediatorFactory mediatorFactory)
 			: base(serializerProvider)
 		{
+			if (mediatorFactory == null) throw new ArgumentNullException(nameof(mediatorFactory));
 
+			mediatorFactoryService = mediatorFactory;
 		}
 
 		/// <inheritdoc />
@@ -62,9 +68,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//Depending on if we're flags or key return the right serializer decorator.
 			if (typeof(TType).Attribute<WireDataContractBaseTypeByFlagsAttribute>() == null)
 				//Won't be null at this point. Should be a valid strategy. We also don't need to deal with context since there is only EVER 1 serializer of this type per type.
-				return new SubComplexTypeSerializerDecorator<TType>(serializerProviderService, keyStrategy);
+				return new SubComplexTypeSerializerDecorator<TType>(new LambdabasedDeserializationPrototyeFactory<TType>(), new MemberSerializationMediatorCollection<TType>(mediatorFactoryService),  serializerProviderService, keyStrategy);
 			else
-				return new SubComplexTypeWithFlagsSerializerDecorator<TType>(serializerProviderService, keyStrategy);
+				return new SubComplexTypeWithFlagsSerializerDecorator<TType>(new LambdabasedDeserializationPrototyeFactory<TType>(), new MemberSerializationMediatorCollection<TType>(mediatorFactoryService), serializerProviderService, keyStrategy);
 		}
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)

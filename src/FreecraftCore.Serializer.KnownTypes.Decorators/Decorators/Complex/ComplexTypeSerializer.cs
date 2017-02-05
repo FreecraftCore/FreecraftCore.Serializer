@@ -20,20 +20,39 @@ namespace FreecraftCore.Serializer
 		[NotNull]
 		protected IEnumerable<IMemberSerializationMediator<TType>> orderedMemberInfos { get; }
 
-		protected ComplexTypeSerializer([NotNull] IEnumerable<IMemberSerializationMediator<TType>> serializationDirections)
+		/// <summary>
+		/// General serializer provider service.
+		/// </summary>
+		[NotNull]
+		protected IGeneralSerializerProvider serializerProviderService { get; }
+
+		protected ComplexTypeSerializer([NotNull] IEnumerable<IMemberSerializationMediator<TType>> serializationDirections, [NotNull] IGeneralSerializerProvider serializerProvider)
 		{
 			//These can be empty. If there are no members on a type there won't be anything to serialize.
 			if (serializationDirections == null)
 				throw new ArgumentNullException(nameof(serializationDirections), $"Provided argument {nameof(serializationDirections)} is null.");
 
+			if (serializerProvider == null)
+				throw new ArgumentNullException(nameof(serializerProvider), $"Provided {nameof(serializerProvider)} service was null.");
+
 			orderedMemberInfos = serializationDirections;
+			serializerProviderService = serializerProvider;
 		}
 
 		/// <inheritdoc />
 		public abstract TType Read(IWireMemberReaderStrategy source);
 
 		/// <inheritdoc />
-		public abstract TType Read(ref TType obj, IWireMemberReaderStrategy source);
+		public TType Read(ref TType obj, IWireMemberReaderStrategy source)
+		{
+			if (obj == null) throw new ArgumentNullException(nameof(obj));
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//Basically if someone calls this method they want us to set the members from the reader
+			SetMembersFromReaderData(obj, source);
+
+			return obj;
+		}
 
 		/// <inheritdoc />
 		public abstract void Write(TType value, IWireMemberWriterStrategy dest);

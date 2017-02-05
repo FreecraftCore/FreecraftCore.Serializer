@@ -37,7 +37,7 @@ namespace FreecraftCore.Serializer
 		{
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return new ComplexTypeSerializerDecorator<TType>(new MemberSerializationMediatorCollection<TType>(SerializationMediatorFactory));
+			return new ComplexTypeSerializerDecorator<TType>(new MemberSerializationMediatorCollection<TType>(SerializationMediatorFactory), new LambdabasedDeserializationPrototyeFactory<TType>(), serializerProviderService);
 		}
 
 		/// <inheritdoc />

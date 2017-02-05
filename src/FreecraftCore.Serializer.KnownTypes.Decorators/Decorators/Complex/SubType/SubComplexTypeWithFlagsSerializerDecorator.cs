@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
-	public class SubComplexTypeWithFlagsSerializerDecorator<TBaseType> : ITypeSerializerStrategy<TBaseType>
+	public class SubComplexTypeWithFlagsSerializerDecorator<TBaseType> : SubComplexTypeSerializer<TBaseType>
 	{
 		private class ChildKeyPair
 		{
@@ -32,18 +32,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 			}
 		}
 
-		/// <inheritdoc />
-		public Type SerializerType { get; } = typeof(TBaseType);
-
-		/// <summary>
-		/// General serializer provider service.
-		/// </summary>
-		[NotNull]
-		private IGeneralSerializerProvider serializerProviderService { get; }
-
-		/// <inheritdoc />
-		public SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
-
 		/// <summary>
 		/// Provides read and write stragey for child keys.
 		/// </summary>
@@ -57,16 +45,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 		[CanBeNull]
 		public ITypeSerializerStrategy DefaultSerializer { get; }
 
-		public SubComplexTypeWithFlagsSerializerDecorator([NotNull] IGeneralSerializerProvider serializerProvider, [NotNull] IChildKeyStrategy childKeyStrategy)
+		public SubComplexTypeWithFlagsSerializerDecorator([NotNull] IDeserializationPrototypeFactory<TBaseType> prototypeGenerator, [NotNull] IEnumerable<IMemberSerializationMediator<TBaseType>> serializationDirections, 
+			[NotNull] IGeneralSerializerProvider serializerProvider, [NotNull] IChildKeyStrategy childKeyStrategy)
+			: base(prototypeGenerator, serializationDirections, serializerProvider)
 		{
-			if (serializerProvider == null)
-				throw new ArgumentNullException(nameof(serializerProvider), $"Provided {nameof(serializerProvider)} service was null.");
 
 			if (childKeyStrategy == null)
 				throw new ArgumentNullException(nameof(childKeyStrategy), $"Provided {nameof(IChildKeyStrategy)} used for key read and write is null.");
 
 			keyStrategy = childKeyStrategy;
-			serializerProviderService = serializerProvider;
 
 			DefaultSerializer = typeof(TBaseType).Attribute<DefaultChildAttribute>() != null
 				? serializerProviderService.Get(typeof(TBaseType).Attribute<DefaultChildAttribute>().ChildType) : null;
@@ -92,7 +79,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// </summary>
 		/// <param name="value">The value to be serialized.</param>
 		/// <param name="dest">The writer entity that is accumulating the output data.</param>
-		public void Write(TBaseType value, IWireMemberWriterStrategy dest)
+		public override void Write(TBaseType value, IWireMemberWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
@@ -116,7 +103,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public TBaseType Read(IWireMemberReaderStrategy source)
+		public override TBaseType Read(IWireMemberReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
@@ -135,27 +122,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 				return (TBaseType)DefaultSerializer.Read(source);
 			else
 				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Flags: {flags} but no valid type matches and there is no default type.");
-		}
-
-		/// <inheritdoc />
-		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
-		{
-			if (dest == null) throw new ArgumentNullException(nameof(dest));
-
-			Write((TBaseType)value, dest);
-		}
-
-		/// <inheritdoc />
-		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
-		{
-			if (source == null) throw new ArgumentNullException(nameof(source));
-
-			return Read(source);
-		}
-
-		public TBaseType Read(ref TBaseType obj, IWireMemberReaderStrategy source)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

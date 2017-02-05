@@ -16,15 +16,18 @@ namespace FreecraftCore.Serializer
 	/// <typeparam name="TComplexType"></typeparam>
 	public class ComplexTypeSerializerDecorator<TComplexType> : ComplexTypeSerializer<TComplexType> //TComplex type should be a class. Can't constraint it though.
 	{
-		//New constaint is gone; this provided an efficient way to create new instances over Activator.CreateInstance.
-		//Search compiled lambda and new constaint operator on google to see dicussions about it
-		private static Func<TComplexType> instanceGeneratorDelegate { get; } = Expression.Lambda<Func<TComplexType>>(Expression.New(typeof(TComplexType))).Compile();
+		[NotNull]
+		protected IDeserializationPrototypeFactory<TComplexType> prototypeGeneratorService { get; }
 
-		public ComplexTypeSerializerDecorator([NotNull] IEnumerable<IMemberSerializationMediator<TComplexType>> serializationDirections) //todo: create a better way to provide serialization instructions
-			: base(serializationDirections)
+		public ComplexTypeSerializerDecorator([NotNull] IEnumerable<IMemberSerializationMediator<TComplexType>> serializationDirections, [NotNull] IDeserializationPrototypeFactory<TComplexType> prototypeGenerator, [NotNull] IGeneralSerializerProvider serializerProvider) //todo: create a better way to provide serialization instructions
+			: base(serializationDirections, serializerProvider)
 		{
+			if (prototypeGenerator == null) throw new ArgumentNullException(nameof(prototypeGenerator));
+
 			if(!typeof(TComplexType).IsClass)
 				throw new ArgumentException($"Provided generic Type: {typeof(TComplexType).FullName} must be a reference type.", nameof(TComplexType));
+
+			prototypeGeneratorService = prototypeGenerator;
 		}
 
 		//TODO: Error handling
@@ -33,7 +36,7 @@ namespace FreecraftCore.Serializer
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
-			return Read(instanceGeneratorDelegate(), source);
+			return Read(prototypeGeneratorService.Create(), source);
 		}
 
 		private TComplexType Read(TComplexType obj, IWireMemberReaderStrategy source)
@@ -41,14 +44,6 @@ namespace FreecraftCore.Serializer
 			SetMembersFromReaderData(obj, source);
 
 			return obj;
-		}
-
-		/// <inheritdoc />
-		public override TComplexType Read(ref TComplexType obj, IWireMemberReaderStrategy source)
-		{
-			if (source == null) throw new ArgumentNullException(nameof(source));
-
-			return obj == null ? Read(source) : Read(obj = instanceGeneratorDelegate(), source);
 		}
 
 		//TODO: Error handling
