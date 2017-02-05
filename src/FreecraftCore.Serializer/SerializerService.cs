@@ -92,7 +92,12 @@ namespace FreecraftCore.Serializer
 			if (!isCompiled)
 				throw new InvalidOperationException($"You cannot deserialize before compiling the serializer.");
 
-			return (TTypeToDeserializeTo)GetLeastDerivedSerializer<TTypeToDeserializeTo>().Read(new DefaultWireMemberReaderStrategy(data));
+			TTypeToDeserializeTo deserializeObject = (TTypeToDeserializeTo)GetLeastDerivedSerializer<TTypeToDeserializeTo>().Read(new DefaultWireMemberReaderStrategy(data));
+
+			//invoke after deserialization if it's available
+			(deserializeObject as ISerializationEventListener)?.OnAfterDeserialization();
+
+			return deserializeObject;
 		}
 
 		public byte[] Serialize<TTypeToSerialize>([NotNull] TTypeToSerialize data)
@@ -107,6 +112,9 @@ namespace FreecraftCore.Serializer
 
 			if (!isCompiled)
 				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
+
+			//invoke after deserialization if it's available
+			(data as ISerializationEventListener)?.OnBeforeSerialization();
 
 			using (DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy())
 			{
