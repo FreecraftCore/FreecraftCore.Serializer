@@ -64,7 +64,6 @@ namespace FreecraftCore.Serializer
 			MemberAccessor = Expression.Lambda<Action<TContainingType, TMemberType>>(assignExp, targetExp, valueExp)
 				.Compile();
 #endif
-
 			//TODO: Handle for net35. Profile fasterflect vs reflection emit
 		}
 

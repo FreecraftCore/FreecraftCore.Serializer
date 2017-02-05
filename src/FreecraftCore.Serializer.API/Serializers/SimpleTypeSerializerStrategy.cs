@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace FreecraftCore.Serializer
 {
@@ -26,18 +27,34 @@ namespace FreecraftCore.Serializer
 			return Read(source);
 		}
 
-		public TType Read(ref TType obj, IWireMemberReaderStrategy source)
+		public TType ReadIntoObject(ref TType obj, IWireMemberReaderStrategy source)
 		{
 			obj = Read(source);
 
 			return obj;
 		}
 
-		public object Read(ref object obj, IWireMemberReaderStrategy source)
+		public object ReadIntoObject(ref object obj, IWireMemberReaderStrategy source)
 		{
 			TType castedObj = (TType)obj;
 
-			return Read(ref castedObj, source);
+			return ReadIntoObject(ref castedObj, source);
+		}
+
+		public void ObjectIntoWriter(object obj, IWireMemberWriterStrategy dest)
+		{
+			if (obj == null) throw new ArgumentNullException(nameof(obj));
+
+			ObjectIntoWriter((TType)obj, dest);
+		}
+
+		public void ObjectIntoWriter(TType obj, IWireMemberWriterStrategy dest)
+		{
+			if (obj == null) throw new ArgumentNullException(nameof(obj));
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//This is a simple type so the only way to write it is to just write the value
+			this.Write(obj, dest);
 		}
 	}
 }

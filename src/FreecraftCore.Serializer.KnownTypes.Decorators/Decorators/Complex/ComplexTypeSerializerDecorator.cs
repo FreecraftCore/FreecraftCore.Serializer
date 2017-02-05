@@ -73,10 +73,10 @@ namespace FreecraftCore.Serializer
 			//read all base type members first
 			//WARNING: This caused HUGE perf probleems. Several orders of magnitude slower than Protobuf
 			//We MUST not check if the serializer exists and we must precache the gets.
-			/*if(reversedInheritanceHierarchy.Count() != 0)
+			if(reversedInheritanceHierarchy.Count() != 0)
 				foreach(Type t in reversedInheritanceHierarchy)
 					if(serializerProviderService.HasSerializerFor(t))
-						serializerProviderService.Get(t).Read(ref castedObj, source);*/
+						serializerProviderService.Get(t).ReadIntoObject(ref castedObj, source);
 
 			SetMembersFromReaderData(obj, source);
 
@@ -88,6 +88,14 @@ namespace FreecraftCore.Serializer
 		public override void Write(TComplexType value, IWireMemberWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//Writes base members first and goes down the inheritance line
+			//WARNING: This caused HUGE perf probleems. Several orders of magnitude slower than Protobuf
+			//We MUST not check if the serializer exists and we must precache the gets.
+			if (reversedInheritanceHierarchy.Count() != 0)
+				foreach (Type t in reversedInheritanceHierarchy)
+					if (serializerProviderService.HasSerializerFor(t))
+						serializerProviderService.Get(t).ObjectIntoWriter(value, dest);
 
 			WriteMemberData(value, dest);
 		}

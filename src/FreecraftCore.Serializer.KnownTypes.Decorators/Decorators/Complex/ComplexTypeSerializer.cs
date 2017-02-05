@@ -44,18 +44,6 @@ namespace FreecraftCore.Serializer
 		public abstract TType Read(IWireMemberReaderStrategy source);
 
 		/// <inheritdoc />
-		public TType Read(ref TType obj, IWireMemberReaderStrategy source)
-		{
-			if (obj == null) throw new ArgumentNullException(nameof(obj));
-			if (source == null) throw new ArgumentNullException(nameof(source));
-
-			//Basically if someone calls this method they want us to set the members from the reader
-			SetMembersFromReaderData(obj, source);
-
-			return obj;
-		}
-
-		/// <inheritdoc />
 		public abstract void Write(TType value, IWireMemberWriterStrategy dest);
 
 		/// <inheritdoc />
@@ -70,8 +58,10 @@ namespace FreecraftCore.Serializer
 			return Read(source);
 		}
 
-		protected void SetMembersFromReaderData(TType obj, IWireMemberReaderStrategy source)
+		protected void SetMembersFromReaderData(TType obj, [NotNull] IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			//replaced for perf
 			/*foreach (IMemberSerializationMediator<TType> serializerInfo in orderedMemberInfos)
 			{
@@ -81,8 +71,10 @@ namespace FreecraftCore.Serializer
 				orderedMemberInfos[i].SetMember(obj, source);
 		}
 
-		protected void WriteMemberData(TType obj, IWireMemberWriterStrategy dest)
+		protected void WriteMemberData(TType obj, [NotNull] IWireMemberWriterStrategy dest)
 		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
 			//replaced for perf
 			/*foreach (IMemberSerializationMediator<TType> serializerInfo in orderedMemberInfos)
 			{
@@ -92,13 +84,43 @@ namespace FreecraftCore.Serializer
 				orderedMemberInfos[i].WriteMember(obj, dest);
 		}
 
-		public object Read(ref object obj, IWireMemberReaderStrategy source)
+		public object ReadIntoObject(ref object obj, IWireMemberReaderStrategy source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			TType castedObj = (TType) obj;
 
-			SetMembersFromReaderData(castedObj, source);
+			return ReadIntoObject(ref castedObj, source);
+		}
+
+				/// <inheritdoc />
+		public TType ReadIntoObject(ref TType obj, IWireMemberReaderStrategy source)
+		{
+			if (obj == null) throw new ArgumentNullException(nameof(obj));
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//Basically if someone calls this method they want us to set the members from the reader
+			SetMembersFromReaderData(obj, source);
 
 			return obj;
+		}
+
+		public void ObjectIntoWriter(object obj, IWireMemberWriterStrategy dest)
+		{
+			if (obj == null) throw new ArgumentNullException(nameof(obj));
+
+			ObjectIntoWriter((TType)obj, dest);
+		}
+
+		public void ObjectIntoWriter(TType obj, IWireMemberWriterStrategy dest)
+		{
+			if (obj == null) throw new ArgumentNullException(nameof(obj));
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//This method is only responsible for writing the members
+			//Even if we're suppose to write type data for this type we don't
+			//Just members
+			WriteMemberData(obj, dest);
 		}
 	}
 }
