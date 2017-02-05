@@ -55,7 +55,7 @@ namespace FreecraftCore.Serializer
 	{
 		//Mono doesn't like creating lambdas for interface types. .NET will do it, but will probably throw if you invoke it.
 		//However, Mono will throw if you try to compile the lambda
-#if __MonoCS__
+#if __MonoCS__ || MONO
 		//New constaint is gone; this provided an efficient way to create new instances over Activator.CreateInstance.
 		//Search compiled lambda and new constaint operator on google to see dicussions about it
 		private static Func<TType> instanceGeneratorDelegate { get; }
