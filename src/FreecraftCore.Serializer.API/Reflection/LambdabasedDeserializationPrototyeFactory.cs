@@ -59,38 +59,19 @@ namespace FreecraftCore.Serializer
 
 		static LambdabasedDeserializationPrototyeFactory()
 		{
-			//We use runtime checks for Mono to prevent something that fails on Mono but doesn't on .NET
-			//Mono doesn't like creating lambdas for interface types. .NET will do it, but will probably throw if you invoke it.
-			//However, Mono will throw if you try to compile the lambda
-			if (MonoExtensions.isRunningMono())
-			{
-				if (!typeof(TType).IsInterface)
-					instanceGeneratorDelegate = Expression.Lambda<Func<TType>>(Expression.New(typeof(TType))).Compile();
-				else
-					instanceGeneratorDelegate = null;
-			}
-			else
-			{
-				instanceGeneratorDelegate = Expression.Lambda<Func<TType>>(Expression.New(typeof(TType))).Compile();
-			}
+			//Due to differences in static initialization timing between .NET and Mono we have to safeguard against invalid interface type lambda new being compiled
+			//HAVE to use a static ctor. Can't just prop initialize
+			instanceGeneratorDelegate = !typeof(TType).IsInterface ? Expression.Lambda<Func<TType>>(Expression.New(typeof(TType))).Compile() : null;
 		}
 
 		public TType Create()
 		{
-			//We use runtime checks for Mono to prevent something that fails on Mono but doesn't on .NET
-			//Mono doesn't like creating lambdas for interface types. .NET will do it, but will probably throw if you invoke it.
-			//However, Mono will throw if you try to compile the lambda
-			if (MonoExtensions.isRunningMono())
-			{
-				if (instanceGeneratorDelegate != null)
-					return instanceGeneratorDelegate();
-				else
-					throw new InvalidOperationException($"Tried to create an instance of Type: {typeof(TType)} but Type was an interface. Cannot create an interface type.");
-			}
-			else
-			{
+			//Due to differences in static initialization timing between .NET and Mono we have to safeguard against invalid interface type lambda new being compiled
+			//HAVE to use a static ctor. Can't just prop initialize
+			if (instanceGeneratorDelegate != null)
 				return instanceGeneratorDelegate();
-			}
+			else
+				throw new InvalidOperationException($"Tried to create an instance of Type: {typeof(TType)} but Type was an interface. Cannot create an interface type.");
 		}
 	}
 }
