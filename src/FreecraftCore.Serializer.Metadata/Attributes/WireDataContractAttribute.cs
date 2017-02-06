@@ -15,7 +15,8 @@ namespace FreecraftCore.Serializer
 		{
 			None = 0,
 			Byte = 1,
-			Int32 = 2
+			UShort = 2,
+			Int32 = 3
 		}
 
 		/// <summary>

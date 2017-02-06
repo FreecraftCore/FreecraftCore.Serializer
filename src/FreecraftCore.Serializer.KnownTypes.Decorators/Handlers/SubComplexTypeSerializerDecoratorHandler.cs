@@ -60,6 +60,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 				case WireDataContractAttribute.KeyType.Int32:
 					keyStrategy = new Int32ChildKeyStrategy(this.serializerProviderService.Get<int>(), contractAttribute.TypeHandling);
 					break;
+				case WireDataContractAttribute.KeyType.UShort:
+					keyStrategy = new UShortChildKeyStrategy(serializerProviderService.Get<ushort>(), contractAttribute.TypeHandling);
+					break;
 				case WireDataContractAttribute.KeyType.None:
 				default:
 					throw new InvalidOperationException($"Encountered Type: {typeof(TType).FullName} that requires child type mapping but has provided {nameof(WireDataContractAttribute.KeyType)} Value: {contractAttribute.OptionalChildTypeKeySize} which is invalid.");
