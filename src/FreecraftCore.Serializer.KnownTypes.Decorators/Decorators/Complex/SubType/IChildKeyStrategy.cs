@@ -16,7 +16,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <param name="source"></param>
 		/// <exception cref="ArgumentNullException">Throws if the <see cref="source"/> provided was null.</exception>
 		/// <returns>Integer casted child key.</returns>
-		int Read([NotNull] IWireMemberReaderStrategy source);
+		int Read([NotNull] IWireStreamReaderStrategy source);
 
 		/// <summary>
 		/// Writes the key to the stream using the size implemented by the strategy.
@@ -24,6 +24,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <param name="value"></param>
 		/// <param name="dest"></param>
 		/// <exception cref="ArgumentNullException">Throws if the <see cref="dest"/> provided was null.</exception>
-		void Write(int value, [NotNull] IWireMemberWriterStrategy dest);
+		void Write(int value, [NotNull] IWireStreamWriterStrategy dest);
 	}
 }

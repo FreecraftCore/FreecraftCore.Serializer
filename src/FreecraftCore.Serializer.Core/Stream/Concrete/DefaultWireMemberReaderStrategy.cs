@@ -9,10 +9,10 @@ using JetBrains.Annotations;
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
-	/// Default implementation of the <see cref="IWireMemberReaderStrategy"/> that reads bytes from
+	/// Default implementation of the <see cref="IWireStreamReaderStrategy"/> that reads bytes from
 	/// an internally managed stream.
 	/// </summary>
-	public class DefaultWireMemberReaderStrategy : IWireMemberReaderStrategy
+	public class DefaultWireMemberReaderStrategy : IWireStreamReaderStrategy
 	{
 		/// <summary>
 		/// Allocated stream with the byte buffer.

@@ -5,12 +5,12 @@ using JetBrains.Annotations;
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
-	/// WireMember writer strategy contract.
+	/// Contract for objects that provide wire stream writing.
 	/// </summary>
-	public interface IWireMemberWriterStrategy : IDisposable
+	public interface IWireStreamWriterStrategy : IDisposable
 	{
 		/*/// <summary>
-		/// The <see cref="Stream"/> object the <see cref="IWireMemberWriterStrategy"/> is writing to.
+		/// The <see cref="Stream"/> object the <see cref="IWireStreamWriterStrategy"/> is writing to.
 		/// </summary>
 		Stream WriterStream { get; }*/
 		

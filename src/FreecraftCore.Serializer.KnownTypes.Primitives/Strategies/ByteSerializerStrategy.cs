@@ -13,7 +13,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
 		/// <inheritdoc />
-		public override void Write(byte value, IWireMemberWriterStrategy dest)
+		public override void Write(byte value, IWireStreamWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
@@ -22,7 +22,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override byte Read(IWireMemberReaderStrategy source)
+		public override byte Read(IWireStreamReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 

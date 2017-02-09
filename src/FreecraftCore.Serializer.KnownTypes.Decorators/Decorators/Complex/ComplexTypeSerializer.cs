@@ -41,24 +41,24 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public abstract TType Read(IWireMemberReaderStrategy source);
+		public abstract TType Read(IWireStreamReaderStrategy source);
 
 		/// <inheritdoc />
-		public abstract void Write(TType value, IWireMemberWriterStrategy dest);
+		public abstract void Write(TType value, IWireStreamWriterStrategy dest);
 
 		/// <inheritdoc />
-		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
+		void ITypeSerializerStrategy.Write(object value, IWireStreamWriterStrategy dest)
 		{
 			Write((TType)value, dest);
 		}
 
 		/// <inheritdoc />
-		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
+		object ITypeSerializerStrategy.Read(IWireStreamReaderStrategy source)
 		{
 			return Read(source);
 		}
 
-		protected void SetMembersFromReaderData(TType obj, [NotNull] IWireMemberReaderStrategy source)
+		protected void SetMembersFromReaderData(TType obj, [NotNull] IWireStreamReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
@@ -71,7 +71,7 @@ namespace FreecraftCore.Serializer
 				orderedMemberInfos[i].SetMember(obj, source);
 		}
 
-		protected void WriteMemberData(TType obj, [NotNull] IWireMemberWriterStrategy dest)
+		protected void WriteMemberData(TType obj, [NotNull] IWireStreamWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
@@ -84,7 +84,7 @@ namespace FreecraftCore.Serializer
 				orderedMemberInfos[i].WriteMember(obj, dest);
 		}
 
-		public object ReadIntoObject(ref object obj, IWireMemberReaderStrategy source)
+		public object ReadIntoObject(ref object obj, IWireStreamReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
@@ -94,7 +94,7 @@ namespace FreecraftCore.Serializer
 		}
 
 				/// <inheritdoc />
-		public TType ReadIntoObject(ref TType obj, IWireMemberReaderStrategy source)
+		public TType ReadIntoObject(ref TType obj, IWireStreamReaderStrategy source)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (source == null) throw new ArgumentNullException(nameof(source));
@@ -105,14 +105,14 @@ namespace FreecraftCore.Serializer
 			return obj;
 		}
 
-		public void ObjectIntoWriter(object obj, IWireMemberWriterStrategy dest)
+		public void ObjectIntoWriter(object obj, IWireStreamWriterStrategy dest)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 
 			ObjectIntoWriter((TType)obj, dest);
 		}
 
-		public void ObjectIntoWriter(TType obj, IWireMemberWriterStrategy dest)
+		public void ObjectIntoWriter(TType obj, IWireStreamWriterStrategy dest)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (dest == null) throw new ArgumentNullException(nameof(dest));

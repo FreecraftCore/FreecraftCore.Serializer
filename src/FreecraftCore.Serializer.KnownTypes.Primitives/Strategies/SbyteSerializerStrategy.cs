@@ -15,7 +15,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
 		/// <inheritdoc />
-		public unsafe override void Write(sbyte value, IWireMemberWriterStrategy dest)
+		public unsafe override void Write(sbyte value, IWireStreamWriterStrategy dest)
 		{
 			//Must lock to prevent issues with shared buffer.
 			lock(syncObj)
@@ -31,7 +31,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public unsafe override sbyte Read(IWireMemberReaderStrategy source)
+		public unsafe override sbyte Read(IWireStreamReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 

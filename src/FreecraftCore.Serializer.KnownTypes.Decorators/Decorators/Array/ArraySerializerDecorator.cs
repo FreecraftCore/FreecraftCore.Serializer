@@ -58,7 +58,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override TObjectType[] Read(IWireMemberReaderStrategy source)
+		public override TObjectType[] Read(IWireStreamReaderStrategy source)
 		{
 			TObjectType[] objectArray = new TObjectType[sizeStrategyService.Size(source)];
 
@@ -71,7 +71,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override void Write(TObjectType[] value, IWireMemberWriterStrategy dest)
+		public override void Write(TObjectType[] value, IWireStreamWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 

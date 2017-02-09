@@ -34,7 +34,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override string Read(IWireMemberReaderStrategy source)
+		public override string Read(IWireStreamReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
@@ -52,7 +52,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override void Write([NotNull] string value, IWireMemberWriterStrategy dest)
+		public override void Write([NotNull] string value, IWireStreamWriterStrategy dest)
 		{
 			if (value == null) throw new ArgumentNullException(nameof(value));
 			if (dest == null) throw new ArgumentNullException(nameof(dest));

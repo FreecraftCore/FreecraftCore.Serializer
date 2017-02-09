@@ -37,7 +37,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		}
 
-		public unsafe override void Write(int[] value, IWireMemberWriterStrategy dest)
+		public unsafe override void Write(int[] value, IWireStreamWriterStrategy dest)
 		{
 			//Write byte as size
 			dest.Write((byte)value.Length);
@@ -47,7 +47,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			FastArraySerializer.AsByteArray(value, bs => dest.Write(bs));
 		}
 
-		public unsafe override int[] Read(IWireMemberReaderStrategy source)
+		public unsafe override int[] Read(IWireStreamReaderStrategy source)
 		{
 			byte size = source.ReadByte();
 

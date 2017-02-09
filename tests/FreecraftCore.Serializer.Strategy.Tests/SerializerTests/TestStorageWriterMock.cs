@@ -7,7 +7,7 @@ using System.Text;
 
 namespace FreecraftCore.Serializer.Tests
 {
-	public class TestStorageWriterMock : IWireMemberWriterStrategy
+	public class TestStorageWriterMock : IWireStreamWriterStrategy
 	{
 		public bool isDisposed { get; private set; } = false;
 

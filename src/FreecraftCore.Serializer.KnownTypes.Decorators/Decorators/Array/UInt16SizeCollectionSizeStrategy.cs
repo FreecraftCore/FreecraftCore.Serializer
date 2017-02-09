@@ -26,7 +26,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <summary>
 		/// Determines the size of the collection from the stream.
 		/// </summary>
-		public int Size(IWireMemberReaderStrategy reader)
+		public int Size(IWireStreamReaderStrategy reader)
 		{
 			if (reader == null) throw new ArgumentNullException(nameof(reader));
 
@@ -37,7 +37,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <summary>
 		/// The size to consider the collection.
 		/// </summary>
-		public int Size<TCollectionType, TElementType>(TCollectionType collection, IWireMemberWriterStrategy writer)
+		public int Size<TCollectionType, TElementType>(TCollectionType collection, IWireStreamWriterStrategy writer)
 			where TCollectionType : IEnumerable, IEnumerable<TElementType>
 		{
 			if (collection == null) throw new ArgumentNullException(nameof(collection));

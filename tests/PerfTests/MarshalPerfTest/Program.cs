@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace MarshalPerfTest
@@ -13,7 +14,8 @@ namespace MarshalPerfTest
 			Stopwatch marshalCopy = new Stopwatch();
 			Stopwatch bitConverterWatch = new Stopwatch();
 			Stopwatch pointerMagicWatch = new Stopwatch();
-			
+			Stopwatch binaryWriterWatch = new Stopwatch();
+
 			int intTestVar = 5;
 			byte[] testByteArray = new byte[sizeof(int)];
 			
@@ -138,9 +140,22 @@ namespace MarshalPerfTest
 			}
 			
 			pointerMagicWatch.Stop();
-			
+			GC.Collect();
 			Console.WriteLine("Pointer magic read: " + pointerMagicWatch.ElapsedMilliseconds);
-			
+
+			binaryWriterWatch.Start();
+
+			MemoryStream newMemoryStream = new MemoryStream();
+			BinaryWriter writer = new BinaryWriter(newMemoryStream);
+			for (int i = 0; i < testIterations; i++)
+			{
+				writer.Write(5);
+				newMemoryStream.Position = 0;
+			}
+			binaryWriterWatch.Stop();
+
+			Console.WriteLine("Binary writer: " + binaryWriterWatch.ElapsedMilliseconds);
+
 			Console.ReadKey();
 		}
 	}

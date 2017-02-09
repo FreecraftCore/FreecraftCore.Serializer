@@ -67,9 +67,9 @@ namespace FreecraftCore.Serializer
 			//TODO: Handle for net35. Profile fasterflect vs reflection emit
 		}
 
-		public abstract void WriteMember(TContainingType obj, IWireMemberWriterStrategy dest);
+		public abstract void WriteMember(TContainingType obj, IWireStreamWriterStrategy dest);
 
-		public abstract void SetMember(TContainingType obj, IWireMemberReaderStrategy source);
+		public abstract void SetMember(TContainingType obj, IWireStreamReaderStrategy source);
 	}
 
 	/// <summary>
@@ -102,8 +102,8 @@ namespace FreecraftCore.Serializer
 			TypeSerializer = serializer;
 		}
 
-		public abstract void SetMember(object obj, [NotNull] IWireMemberReaderStrategy source);
+		public abstract void SetMember(object obj, [NotNull] IWireStreamReaderStrategy source);
 
-		public abstract void WriteMember(object obj, [NotNull] IWireMemberWriterStrategy dest);
+		public abstract void WriteMember(object obj, [NotNull] IWireStreamWriterStrategy dest);
 	}
 }

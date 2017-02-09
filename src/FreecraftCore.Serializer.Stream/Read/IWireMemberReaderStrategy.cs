@@ -6,9 +6,9 @@ using JetBrains.Annotations;
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
-	/// Description of IWireMemberReader.
+	/// Contract for objects that provide wire stream reading.
 	/// </summary>
-	public interface IWireMemberReaderStrategy : IDisposable
+	public interface IWireStreamReaderStrategy : IDisposable
 	{	
 		/// <summary>
 		/// Reads a byte from the stream.

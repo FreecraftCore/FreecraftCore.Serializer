@@ -15,10 +15,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
 		/// <inheritdoc />
-		public Type SerializerType { get; } = typeof(string);
-
-		/// <inheritdoc />
-		public override void Write(string value, IWireMemberWriterStrategy dest)
+		public override void Write(string value, IWireStreamWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
@@ -42,7 +39,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// </summary>
 		/// <param name="source">The reader providing the input data.</param>
 		/// <returns>A string value from the reader.</returns>
-		public override string Read(IWireMemberReaderStrategy source)
+		public override string Read(IWireStreamReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 

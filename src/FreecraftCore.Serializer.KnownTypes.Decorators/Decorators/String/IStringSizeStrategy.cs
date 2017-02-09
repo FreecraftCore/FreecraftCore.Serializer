@@ -16,11 +16,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// Determines the size of the string
 		/// <exception cref="ArgumentNullException">Throws if any parameter provided is null.</exception>
 		/// </summary>
-		int Size([NotNull] string stringValue, [NotNull] IWireMemberWriterStrategy writer);
+		int Size([NotNull] string stringValue, [NotNull] IWireStreamWriterStrategy writer);
 
 		/// <summary>
 		/// Determines the size of the string fromt he stream.
 		/// </summary>
-		int Size([NotNull] IWireMemberReaderStrategy reader);
+		int Size([NotNull] IWireStreamReaderStrategy reader);
 	}
 }

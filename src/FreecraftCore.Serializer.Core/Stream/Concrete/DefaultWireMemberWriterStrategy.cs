@@ -9,10 +9,10 @@ using JetBrains.Annotations;
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
-	/// Default implementation of the <see cref="IWireMemberWriterStrategy"/> that writes bytes into
+	/// Default implementation of the <see cref="IWireStreamWriterStrategy"/> that writes bytes into
 	/// an internally managed stream.
 	/// </summary>
-	public class DefaultWireMemberWriterStrategy : IWireMemberWriterStrategy
+	public class DefaultWireMemberWriterStrategy : IWireStreamWriterStrategy
 	{
 		[NotNull]
 		private MemoryStream WriterStream { get; } = new MemoryStream();

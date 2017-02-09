@@ -17,24 +17,24 @@ namespace FreecraftCore.Serializer.API.Reflection
 			this.decoratedMediator = decoratedMediator;
 		}
 
-		public void WriteMember(object obj, IWireMemberWriterStrategy dest)
+		public void WriteMember(object obj, IWireStreamWriterStrategy dest)
 		{
 			//We ignore reading the member since we're not writing it
 			return;
 		}
 
-		public void WriteMember(TContainingType obj, IWireMemberWriterStrategy dest)
+		public void WriteMember(TContainingType obj, IWireStreamWriterStrategy dest)
 		{
 			//We ignore reading the member since we're not writing it
 			return;
 		}
 
-		public void SetMember(TContainingType obj, IWireMemberReaderStrategy source)
+		public void SetMember(TContainingType obj, IWireStreamReaderStrategy source)
 		{
 			decoratedMediator.SetMember(obj, source);
 		}
 
-		public void SetMember(object obj, IWireMemberReaderStrategy source)
+		public void SetMember(object obj, IWireStreamReaderStrategy source)
 		{
 			decoratedMediator.SetMember(obj, source);
 		}

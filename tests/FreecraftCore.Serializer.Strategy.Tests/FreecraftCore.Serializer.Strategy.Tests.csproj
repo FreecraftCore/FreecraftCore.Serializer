@@ -49,6 +49,9 @@
     <Reference Include="FreecraftCore.Serializer.Metadata">
       <HintPath>..\..\src\FreecraftCore.Serializer.Metadata\bin\Debug\net35\FreecraftCore.Serializer.Metadata.dll</HintPath>
     </Reference>
+    <Reference Include="FreecraftCore.Serializer.Stream">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Debug\net35\FreecraftCore.Serializer.Stream.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=3.0.5813.39031, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.3.0.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>

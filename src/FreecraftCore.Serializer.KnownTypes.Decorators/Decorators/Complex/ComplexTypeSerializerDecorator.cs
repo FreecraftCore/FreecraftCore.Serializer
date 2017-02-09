@@ -59,14 +59,14 @@ namespace FreecraftCore.Serializer
 
 		//TODO: Error handling
 		/// <inheritdoc />
-		public override TComplexType Read(IWireMemberReaderStrategy source)
+		public override TComplexType Read(IWireStreamReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			return Read(prototypeGeneratorService.Create(), source);
 		}
 
-		private TComplexType Read(TComplexType obj, IWireMemberReaderStrategy source)
+		private TComplexType Read(TComplexType obj, IWireStreamReaderStrategy source)
 		{
 			object castedObj = obj;
 
@@ -85,7 +85,7 @@ namespace FreecraftCore.Serializer
 
 		//TODO: Error handling
 		/// <inheritdoc />
-		public override void Write(TComplexType value, IWireMemberWriterStrategy dest)
+		public override void Write(TComplexType value, IWireStreamWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 

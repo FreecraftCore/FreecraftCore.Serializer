@@ -17,13 +17,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// Determines the size of the collection.
 		/// <exception cref="ArgumentNullException">Throws if any of the provided parameters are null.</exception>
 		/// </summary>
-		int Size<TCollectionType, TElementType>([NotNull] TCollectionType collection, [NotNull] IWireMemberWriterStrategy writer)
+		int Size<TCollectionType, TElementType>([NotNull] TCollectionType collection, [NotNull] IWireStreamWriterStrategy writer)
 			where TCollectionType : IEnumerable, IEnumerable<TElementType>;
 
 		/// <summary>
 		/// Determines the size of the collection from the stream.
 		/// <exception cref="ArgumentNullException">Throws if any of the provided parameters are null.</exception>
 		/// </summary>
-		int Size([NotNull] IWireMemberReaderStrategy reader);
+		int Size([NotNull] IWireStreamReaderStrategy reader);
 	}
 }

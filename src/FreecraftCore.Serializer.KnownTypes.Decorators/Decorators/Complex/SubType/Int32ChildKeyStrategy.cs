@@ -32,7 +32,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			typeHandlingFlags = typeHandling;
 		}
 
-		public int Read(IWireMemberReaderStrategy source)
+		public int Read(IWireStreamReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
@@ -41,7 +41,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 				: managedIntegerSerializer.Read(source);
 		}
 
-		public void Write(int value, IWireMemberWriterStrategy dest)
+		public void Write(int value, IWireStreamWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 

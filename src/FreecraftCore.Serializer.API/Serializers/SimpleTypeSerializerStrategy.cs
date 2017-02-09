@@ -11,44 +11,44 @@ namespace FreecraftCore.Serializer
 
 		public abstract SerializationContextRequirement ContextRequirement { get; }
 
-		public abstract TType Read(IWireMemberReaderStrategy source);
+		public abstract TType Read(IWireStreamReaderStrategy source);
 
-		public abstract void Write(TType value, IWireMemberWriterStrategy dest);
+		public abstract void Write(TType value, IWireStreamWriterStrategy dest);
 
 		/// <inheritdoc />
-		void ITypeSerializerStrategy.Write(object value, IWireMemberWriterStrategy dest)
+		void ITypeSerializerStrategy.Write(object value, IWireStreamWriterStrategy dest)
 		{
 			Write((TType)value, dest);
 		}
 
 		/// <inheritdoc />
-		object ITypeSerializerStrategy.Read(IWireMemberReaderStrategy source)
+		object ITypeSerializerStrategy.Read(IWireStreamReaderStrategy source)
 		{
 			return Read(source);
 		}
 
-		public TType ReadIntoObject(ref TType obj, IWireMemberReaderStrategy source)
+		public TType ReadIntoObject(ref TType obj, IWireStreamReaderStrategy source)
 		{
 			obj = Read(source);
 
 			return obj;
 		}
 
-		public object ReadIntoObject(ref object obj, IWireMemberReaderStrategy source)
+		public object ReadIntoObject(ref object obj, IWireStreamReaderStrategy source)
 		{
 			TType castedObj = (TType)obj;
 
 			return ReadIntoObject(ref castedObj, source);
 		}
 
-		public void ObjectIntoWriter(object obj, IWireMemberWriterStrategy dest)
+		public void ObjectIntoWriter(object obj, IWireStreamWriterStrategy dest)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 
 			ObjectIntoWriter((TType)obj, dest);
 		}
 
-		public void ObjectIntoWriter(TType obj, IWireMemberWriterStrategy dest)
+		public void ObjectIntoWriter(TType obj, IWireStreamWriterStrategy dest)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (dest == null) throw new ArgumentNullException(nameof(dest));

@@ -19,7 +19,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
 		/// <inheritdoc />
-		public unsafe override void Write(float value, [NotNull] IWireMemberWriterStrategy dest)
+		public unsafe override void Write(float value, [NotNull] IWireStreamWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
@@ -37,7 +37,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public unsafe override float Read([NotNull] IWireMemberReaderStrategy source)
+		public unsafe override float Read([NotNull] IWireStreamReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 

@@ -26,7 +26,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public int Size(IWireMemberReaderStrategy reader)
+		public int Size(IWireStreamReaderStrategy reader)
 		{
 			if (reader == null) throw new ArgumentNullException(nameof(reader));
 
@@ -37,7 +37,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public int Size(string stringValue, IWireMemberWriterStrategy writer)
+		public int Size(string stringValue, IWireStreamWriterStrategy writer)
 		{
 			if (stringValue == null) throw new ArgumentNullException(nameof(stringValue));
 			if (writer == null) throw new ArgumentNullException(nameof(writer));

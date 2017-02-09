@@ -83,44 +83,18 @@ namespace FreecraftCore.Serializer
 		{
 			if (data == null) throw new ArgumentNullException(nameof(data));
 
-			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
-#if DEBUG || DEBUGBUILD
-			if (!serializerStorageService.HasSerializerFor<TTypeToDeserializeTo>())
-				throw new InvalidOperationException($"Serializer cannot deserialize to Type: {typeof(TTypeToDeserializeTo).FullName} because it's not registered.");
-#endif
-
-			if (!isCompiled)
-				throw new InvalidOperationException($"You cannot deserialize before compiling the serializer.");
-
-			TTypeToDeserializeTo deserializeObject = (TTypeToDeserializeTo)GetLeastDerivedSerializer<TTypeToDeserializeTo>().Read(new DefaultWireMemberReaderStrategy(data));
-
-			//invoke after deserialization if it's available
-			(deserializeObject as ISerializationEventListener)?.OnAfterDeserialization();
-
-			return deserializeObject;
+			using (DefaultWireMemberReaderStrategy reader = new DefaultWireMemberReaderStrategy(data))
+			{
+				return Deserialize<TTypeToDeserializeTo>(reader);
+			}
 		}
 
 		public byte[] Serialize<TTypeToSerialize>([NotNull] TTypeToSerialize data)
 		{
-			if (data == null) throw new ArgumentNullException(nameof(data));
-
-			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
-#if DEBUG || DEBUGBUILD
-			if (!serializerStorageService.HasSerializerFor<TTypeToSerialize>())
-				throw new InvalidOperationException($"Serializer cannot serialize Type: {typeof(TTypeToSerialize).FullName} because it's not registered.");
-#endif
-
-			if (!isCompiled)
-				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
-
-			//invoke after deserialization if it's available
-			(data as ISerializationEventListener)?.OnBeforeSerialization();
-
+			//Pass it to overload for custom writer
 			using (DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy())
 			{
-				GetLeastDerivedSerializer<TTypeToSerialize>().Write(data, writer);
-
-				return writer.GetBytes();
+				return Serialize(data, writer);
 			}
 		}
 
@@ -177,6 +151,51 @@ namespace FreecraftCore.Serializer
 			}
 
 			return strategy;
+		}
+
+		/// <inheritdoc />
+		public byte[] Serialize<TTypeToSerialize>(TTypeToSerialize data, IWireStreamWriterStrategy writer)
+		{
+			if (data == null) throw new ArgumentNullException(nameof(data));
+			if (writer == null) throw new ArgumentNullException(nameof(writer));
+
+			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
+#if DEBUG || DEBUGBUILD
+			if (!serializerStorageService.HasSerializerFor<TTypeToSerialize>())
+				throw new InvalidOperationException($"Serializer cannot serialize Type: {typeof(TTypeToSerialize).FullName} because it's not registered.");
+#endif
+
+			if (!isCompiled)
+				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
+
+			//invoke after deserialization if it's available
+			(data as ISerializationEventListener)?.OnBeforeSerialization();
+
+			GetLeastDerivedSerializer<TTypeToSerialize>().Write(data, writer);
+
+			return writer.GetBytes();
+		}
+
+		/// <inheritdoc />
+		public TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>(IWireStreamReaderStrategy source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
+#if DEBUG || DEBUGBUILD
+			if (!serializerStorageService.HasSerializerFor<TTypeToDeserializeTo>())
+				throw new InvalidOperationException($"Serializer cannot deserialize to Type: {typeof(TTypeToDeserializeTo).FullName} because it's not registered.");
+#endif
+
+			if (!isCompiled)
+				throw new InvalidOperationException($"You cannot deserialize before compiling the serializer.");
+
+			TTypeToDeserializeTo deserializeObject = (TTypeToDeserializeTo)GetLeastDerivedSerializer<TTypeToDeserializeTo>().Read(source);
+
+			//invoke after deserialization if it's available
+			(deserializeObject as ISerializationEventListener)?.OnAfterDeserialization();
+
+			return deserializeObject;
 		}
 	}
 }
