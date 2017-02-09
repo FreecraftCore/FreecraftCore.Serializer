@@ -1,3 +1,4 @@
+dotnet pack src/FreecraftCore.Serializer.Stream/ -c Release
 dotnet pack src/FreecraftCore.Serializer.API/ -c Release
 dotnet pack src/FreecraftCore.Serializer.Core/ -c Release
 dotnet pack src/FreecraftCore.Serializer.KnownTypes.Decorators/ -c Release
