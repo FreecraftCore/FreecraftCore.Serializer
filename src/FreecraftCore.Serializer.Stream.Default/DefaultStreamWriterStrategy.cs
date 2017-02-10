@@ -12,7 +12,7 @@ namespace FreecraftCore.Serializer
 	/// Default implementation of the <see cref="IWireStreamWriterStrategy"/> that writes bytes into
 	/// an internally managed stream.
 	/// </summary>
-	public class DefaultWireMemberWriterStrategy : IWireStreamWriterStrategy
+	public class DefaultStreamWriterStrategy : IWireStreamWriterStrategy
 	{
 		[NotNull]
 		private MemoryStream WriterStream { get; } = new MemoryStream();

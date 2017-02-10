@@ -12,7 +12,7 @@ namespace FreecraftCore.Serializer
 	/// Default implementation of the <see cref="IWireStreamReaderStrategy"/> that reads bytes from
 	/// an internally managed stream.
 	/// </summary>
-	public class DefaultWireMemberReaderStrategy : IWireStreamReaderStrategy
+	public class DefaultStreamReaderStrategy : IWireStreamReaderStrategy
 	{
 		/// <summary>
 		/// Allocated stream with the byte buffer.
@@ -21,7 +21,7 @@ namespace FreecraftCore.Serializer
 		private Stream ReaderStream { get; }
 
 		//TODO: Overloads that take the byte buffer instead
-		public DefaultWireMemberReaderStrategy([NotNull] byte[] bytes)
+		public DefaultStreamReaderStrategy([NotNull] byte[] bytes)
 		{
 			if (bytes == null)
 				throw new ArgumentNullException(nameof(bytes), $"Provided argument {nameof(bytes)} must not be null.");

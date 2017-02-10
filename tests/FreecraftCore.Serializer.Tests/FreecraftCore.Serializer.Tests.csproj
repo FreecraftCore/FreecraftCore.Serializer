@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FreecraftCore.Serializer">
@@ -55,6 +57,9 @@
     <Reference Include="FreecraftCore.Serializer.Stream">
       <HintPath>..\..\src\FreecraftCore.Serializer\bin\Debug\net35\FreecraftCore.Serializer.Stream.dll</HintPath>
     </Reference>
+    <Reference Include="FreecraftCore.Serializer.Stream.Default">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Debug\net35\FreecraftCore.Serializer.Stream.Default.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=3.0.5813.39031, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.3.0.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
@@ -69,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Hacks\ArrayHacks.cs" />
     <Compile Include="RealWorld\AuthRealmListPacketTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\EnumTests.cs" />

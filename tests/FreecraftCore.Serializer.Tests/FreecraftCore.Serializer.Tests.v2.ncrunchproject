@@ -24,4 +24,9 @@
   <UseCPUArchitecture>AutoDetect</UseCPUArchitecture>
   <MSTestThreadApartmentState>STA</MSTestThreadApartmentState>
   <BuildProcessArchitecture>x86</BuildProcessArchitecture>
+  <IgnoredTests>
+    <NamedTestSelector>
+      <TestName>FreecraftCore.Serializer.Tests.ArrayHacks.Test_Header_Change_Size_Hack(5)</TestName>
+    </NamedTestSelector>
+  </IgnoredTests>
 </ProjectConfiguration>

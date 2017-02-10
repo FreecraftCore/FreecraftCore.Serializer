@@ -1,0 +1,24 @@
+﻿{
+    "version": "1.0.0-*",
+
+  "dependencies": {
+    "FreecraftCore.Serializer.Stream": "1.0.0-*",
+    "JetBrains.Annotations": "10.2.1"
+  },
+
+  "frameworks": {
+    "net35": {
+    },
+    "net45": {
+
+    },
+    "net46": {
+
+    }
+  },
+
+    "buildOptions": {
+        "allowUnsafe": true,
+        "optimize": true
+    }
+}

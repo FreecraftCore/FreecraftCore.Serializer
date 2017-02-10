@@ -83,7 +83,7 @@ namespace FreecraftCore.Serializer
 		{
 			if (data == null) throw new ArgumentNullException(nameof(data));
 
-			using (DefaultWireMemberReaderStrategy reader = new DefaultWireMemberReaderStrategy(data))
+			using (DefaultStreamReaderStrategy reader = new DefaultStreamReaderStrategy(data))
 			{
 				return Deserialize<TTypeToDeserializeTo>(reader);
 			}
@@ -92,7 +92,7 @@ namespace FreecraftCore.Serializer
 		public byte[] Serialize<TTypeToSerialize>([NotNull] TTypeToSerialize data)
 		{
 			//Pass it to overload for custom writer
-			using (DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy())
+			using (DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy())
 			{
 				return Serialize(data, writer);
 			}

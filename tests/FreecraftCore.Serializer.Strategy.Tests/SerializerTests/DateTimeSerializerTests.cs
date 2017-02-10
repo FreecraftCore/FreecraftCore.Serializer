@@ -17,7 +17,7 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 		{
 			//arrange
 			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new Int32SerializerStrategy());
-			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 			DateTime testValue = DateTime.Now;
 
 			//act
@@ -35,13 +35,13 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 		{
 			//arrange
 			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new Int32SerializerStrategy());
-			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 			DateTime testValue = DateTime.Now;
 
 			//act
 			serializer.Write(testValue, writer);
 			byte[] bytes = writer.GetBytes();
-			DateTime deserializedInstance = serializer.Read(new DefaultWireMemberReaderStrategy(bytes));
+			DateTime deserializedInstance = serializer.Read(new DefaultStreamReaderStrategy(bytes));
 
 			//assert
 			Assert.NotNull(bytes);
@@ -52,14 +52,14 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 		{
 			//arrange
 			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new Int32SerializerStrategy());
-			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 			DateTime testValue = DateTime.Now;
 
 
 			//act
 			serializer.Write(testValue, writer);
 			byte[] bytes = writer.GetBytes();
-			DateTime deserializedInstance = serializer.Read(new DefaultWireMemberReaderStrategy(bytes));
+			DateTime deserializedInstance = serializer.Read(new DefaultStreamReaderStrategy(bytes));
 
 			//assert
 			Assert.NotNull(bytes);
@@ -78,11 +78,11 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 		{
 			//arrange
 			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new Int32SerializerStrategy());
-			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 
 			new Int32SerializerStrategy().Write(168938967, writer);
 
-			DateTime dateTime = serializer.Read(new DefaultWireMemberReaderStrategy(writer.GetBytes()));
+			DateTime dateTime = serializer.Read(new DefaultStreamReaderStrategy(writer.GetBytes()));
 
 
 			//Assert

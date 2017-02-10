@@ -54,7 +54,7 @@ namespace FreecraftCore.Serializer.Tests
 			//arrange
 			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy());
 
-			stringSerializer.Write("hello", new DefaultWireMemberWriterStrategy());
+			stringSerializer.Write("hello", new DefaultStreamWriterStrategy());
 		}
 
 		[Test]
@@ -62,7 +62,7 @@ namespace FreecraftCore.Serializer.Tests
 		{
 			//arrange
 			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy());
-			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 
 			//act
 			stringSerializer.Write("hello", writer);
@@ -76,11 +76,11 @@ namespace FreecraftCore.Serializer.Tests
 		{
 			//arrange
 			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy());
-			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 
 			//act
 			stringSerializer.Write("hello", writer);
-			string value = stringSerializer.Read(new DefaultWireMemberReaderStrategy(writer.GetBytes()));
+			string value = stringSerializer.Read(new DefaultStreamReaderStrategy(writer.GetBytes()));
 
 			//assert
 			Assert.NotNull(value);
@@ -93,7 +93,7 @@ namespace FreecraftCore.Serializer.Tests
 		{
 			//arrange
 			ReverseStringSerializerDecorator serializer = new ReverseStringSerializerDecorator(new StringSerializerStrategy());
-			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 
 			//act
 			serializer.Write("Hello", writer);
@@ -106,11 +106,11 @@ namespace FreecraftCore.Serializer.Tests
 		{
 			//arrange
 			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(new ByteSerializerStrategy(), true), new StringSerializerStrategy());
-			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 
 			//act
 			stringSerializer.Write("Hello", writer);
-			string value = stringSerializer.Read(new DefaultWireMemberReaderStrategy(writer.GetBytes()));
+			string value = stringSerializer.Read(new DefaultStreamReaderStrategy(writer.GetBytes()));
 
 			//assert
 			Assert.NotNull(value);
@@ -123,7 +123,7 @@ namespace FreecraftCore.Serializer.Tests
 		{
 			//arrange
 			DontTerminateStringSerializerDecorator serializer = new DontTerminateStringSerializerDecorator(new StringSerializerStrategy());
-			DefaultWireMemberWriterStrategy writer = new DefaultWireMemberWriterStrategy();
+			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 
 			//act
 			serializer.Write("Hello", writer);
