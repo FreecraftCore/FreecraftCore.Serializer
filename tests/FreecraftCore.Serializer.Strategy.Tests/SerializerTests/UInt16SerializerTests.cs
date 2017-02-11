@@ -59,6 +59,30 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.AreEqual(data, Int16value);
 		}
 
+		[Test]
+		public static void Test_UShort_Serializer_Produces_Same_Values_As_BitConverter()
+		{
+			//arrange
+			short data = 5625;
+			UInt16SerializerStrategy strategy = new UInt16SerializerStrategy();
+			TestStorageWriterMock writer = new TestStorageWriterMock();
+			TestStorageReaderMock reader = new TestStorageReaderMock(writer.WriterStream);
+
+			//act
+			strategy.Write((ushort)data, writer);
+			byte[] stratBytes = writer.GetBytes();
+			byte[] bitConverted = BitConverter.GetBytes(data);
+			byte[] bitConvertedFromInt = BitConverter.GetBytes((uint) data);
+
+			//assert
+			Assert.True(BitConverter.IsLittleEndian);
+			for (int i = 0; i < stratBytes.Length; i++)
+			{
+				Assert.AreEqual(stratBytes[i], bitConverted[i]);
+				Assert.AreEqual(stratBytes[i], bitConvertedFromInt[i]);
+			}
+		}
+
 		/*[Test]
 		[TestCase(0,1,2,3)]
 		[TestCase(255,0,255,0)]

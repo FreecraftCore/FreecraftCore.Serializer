@@ -87,6 +87,7 @@ namespace FreecraftCore.Serializer
 		[NotNull]
 		TType ReadIntoObject([CanBeNull] ref TType obj, [NotNull] IWireStreamReaderStrategy source);
 
+		//TODO: Fix doc
 		/// <summary>
 		/// Preform the steps necessary to deserialize the data into the provided <paramref name="obj"/>.
 		/// </summary>

@@ -109,7 +109,7 @@ namespace FreecraftCore.Serializer
 			}
 
 			if (factory == null)
-				throw new InvalidOperationException($"Couldn't generate a strategy for Type: {context.TargetType}.");
+				throw new InvalidOperationException($"Couldn't generate a strategy for Type: {context.TargetType} with Context: {context.BuiltContextKey?.ToString()}.");
 
 			return factory.Create<TType>(context);
 		}

@@ -21,7 +21,7 @@ namespace FreecraftCore.Serializer.Tests
 
 		public byte[] GetBytes()
 		{
-			throw new NotImplementedException();
+			return ((MemoryStream) WriterStream).ToArray();
 		}
 
 		public void Write(byte data)

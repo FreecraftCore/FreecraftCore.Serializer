@@ -16,6 +16,8 @@ namespace MarshalPerfTest
 			Stopwatch pointerMagicWatch = new Stopwatch();
 			Stopwatch binaryWriterWatch = new Stopwatch();
 
+
+
 			int intTestVar = 5;
 			byte[] testByteArray = new byte[sizeof(int)];
 			
