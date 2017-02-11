@@ -18,21 +18,12 @@ namespace FreecraftCore.Serializer
 		[Pure]
 		[NotNull]
 		byte[] GetBytes([NotNull]object obj);
-
-		/// <summary>
-		/// Coverts the <see cref="byte[]"/> preresentation of an object to the object.
-		/// </summary>
-		/// <param name="bytes">Bytes to use for conversion.</param>
-		/// <returns>A non-null object from the byte representation.</returns>
-		[Pure]
-		[NotNull]
-		object FromBytes([NotNull]byte[] bytes);
 	}
 
 	/// <summary>
 	/// Contract for types that can convert <see cref="TObjectType"/> to and from bytes.
 	/// </summary>
-	public interface IObjectByteConverter<TObjectType> : IObjectByteConverter
+	public interface IObjectByteConverter<in TObjectType> : IObjectByteConverter
 	{
 		/// <summary>
 		/// Coverts the <see cref="TObjectType"/> to byte representation.
@@ -42,14 +33,5 @@ namespace FreecraftCore.Serializer
 		[Pure]
 		[NotNull]
 		byte[] GetBytes([NotNull]TObjectType obj);
-
-		/// <summary>
-		/// Coverts the <see cref="byte[]"/> preresentation of an object to the object.
-		/// </summary>
-		/// <param name="bytes">Bytes to use for conversion.</param>
-		/// <returns>A non-null object from the byte representation.</returns>
-		[Pure]
-		[NotNull]
-		new TObjectType FromBytes([NotNull]byte[] bytes);
 	}
 }
