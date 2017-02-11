@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
@@ -28,6 +30,18 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//This is a pretty simple request; just read a byte
 			return source.ReadByte();
+		}
+
+		public override byte[] GetBytes(byte obj)
+		{
+			return new byte[] { obj };
+		}
+
+		public override byte FromBytes([NotNull] byte[] bytes)
+		{
+			if (bytes == null) throw new ArgumentNullException(nameof(bytes));
+
+			return bytes.First();
 		}
 	}
 }

@@ -5,14 +5,19 @@ using System.Runtime.Serialization;
 
 namespace FreecraftCore.Serializer
 {
-	public abstract class SimpleTypeSerializerStrategy<TType> : ITypeSerializerStrategy<TType>
+	//TODO: Doc
+	public abstract class SimpleTypeSerializerStrategy<TType> : ITypeSerializerStrategy<TType>, IObjectByteConverter<TType>, IObjectByteReader<TType>
 	{
+		/// <inheritdoc />
 		public virtual Type SerializerType { get; } = typeof(TType);
 
+		/// <inheritdoc />
 		public abstract SerializationContextRequirement ContextRequirement { get; }
 
+		/// <inheritdoc />
 		public abstract TType Read(IWireStreamReaderStrategy source);
 
+		/// <inheritdoc />
 		public abstract void Write(TType value, IWireStreamWriterStrategy dest);
 
 		/// <inheritdoc />
@@ -27,6 +32,7 @@ namespace FreecraftCore.Serializer
 			return Read(source);
 		}
 
+		/// <inheritdoc />
 		public TType ReadIntoObject(ref TType obj, IWireStreamReaderStrategy source)
 		{
 			obj = Read(source);
@@ -34,6 +40,7 @@ namespace FreecraftCore.Serializer
 			return obj;
 		}
 
+		/// <inheritdoc />
 		public object ReadIntoObject(ref object obj, IWireStreamReaderStrategy source)
 		{
 			TType castedObj = (TType)obj;
@@ -41,6 +48,7 @@ namespace FreecraftCore.Serializer
 			return ReadIntoObject(ref castedObj, source);
 		}
 
+		/// <inheritdoc />
 		public void ObjectIntoWriter(object obj, IWireStreamWriterStrategy dest)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
@@ -48,6 +56,7 @@ namespace FreecraftCore.Serializer
 			ObjectIntoWriter((TType)obj, dest);
 		}
 
+		/// <inheritdoc />
 		public void ObjectIntoWriter(TType obj, IWireStreamWriterStrategy dest)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
@@ -55,6 +64,33 @@ namespace FreecraftCore.Serializer
 
 			//This is a simple type so the only way to write it is to just write the value
 			this.Write(obj, dest);
+		}
+
+		/// <inheritdoc />
+		public byte[] GetBytes(object obj)
+		{
+			return GetBytes((TType) obj);
+		}
+
+		/// <inheritdoc />
+		public virtual byte[] GetBytes(TType obj)
+		{
+			DefaultStreamWriterStrategy dest = new DefaultStreamWriterStrategy();
+			Write(obj, dest);
+			return dest.GetBytes();
+		}
+
+		/// <inheritdoc />
+		object IObjectByteReader.FromBytes(byte[] bytes)
+		{
+			return FromBytes(bytes);
+		}
+
+		/// <inheritdoc />
+		public virtual TType FromBytes(byte[] bytes)
+		{
+			DefaultStreamReaderStrategy source = new DefaultStreamReaderStrategy(bytes);
+			return Read(source);
 		}
 	}
 }

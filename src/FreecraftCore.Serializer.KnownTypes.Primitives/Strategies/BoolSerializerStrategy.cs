@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -40,6 +41,18 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			dest.Write((byte)(value ? 1 : 0));
+		}
+
+		public override byte[] GetBytes(bool obj)
+		{
+			return new byte[] { (byte)(obj ? 1 : 0) };
+		}
+
+		public override bool FromBytes([NotNull] byte[] bytes)
+		{
+			if (bytes == null) throw new ArgumentNullException(nameof(bytes));
+
+			return bytes.First() > 0;
 		}
 	}
 }

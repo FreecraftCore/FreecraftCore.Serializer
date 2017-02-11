@@ -5,7 +5,8 @@
     "FreecraftCore.Serializer.Metadata": "1.0.0-*",
     "fasterflect": "2.1.3",
     "JetBrains.Annotations": "10.2.1",
-    "FreecraftCore.Serializer.Stream": "1.0.0-*"
+    "FreecraftCore.Serializer.Stream": "1.0.0-*",
+    "FreecraftCore.Serializer.Stream.Default": "1.0.0-*"
   },
 
     "frameworks": {
