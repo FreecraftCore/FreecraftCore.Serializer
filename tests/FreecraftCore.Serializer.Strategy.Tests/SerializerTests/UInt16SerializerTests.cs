@@ -60,10 +60,13 @@ namespace FreecraftCore.Serializer.Tests
 		}
 
 		[Test]
-		public static void Test_UShort_Serializer_Produces_Same_Values_As_Other_Methods()
+		[TestCase((ushort)0)]
+		[TestCase((ushort)5456)]
+		[TestCase((ushort)23523)]
+		[TestCase((ushort)562)]
+		public static void Test_UShort_Serializer_Produces_Same_Values_As_Other_Methods(ushort data)
 		{
 			//arrange
-			ushort data = 5625;
 			UInt16SerializerStrategy strategy = new UInt16SerializerStrategy();
 			TestStorageWriterMock writer = new TestStorageWriterMock();
 			TestStorageReaderMock reader = new TestStorageReaderMock(writer.WriterStream);
@@ -74,6 +77,7 @@ namespace FreecraftCore.Serializer.Tests
 			byte[] bitConverted = BitConverter.GetBytes(data);
 			byte[] bitConvertedFromInt = BitConverter.GetBytes((uint) data);
 			byte[] typeStratConverter = strategy.GetBytes((ushort)data);
+			byte[] reversedData = (new EndianReverseDecorator<ushort>(strategy)).GetBytes(data);
 
 			//assert
 			Assert.True(BitConverter.IsLittleEndian);
@@ -83,6 +87,9 @@ namespace FreecraftCore.Serializer.Tests
 				Assert.AreEqual(stratBytes[i], bitConvertedFromInt[i]);
 				Assert.AreEqual(stratBytes[i], typeStratConverter[i]);
 			}
+
+			Assert.AreEqual(stratBytes.First(), reversedData.Last());
+			Assert.AreEqual(stratBytes.Last(), reversedData.First());
 		}
 
 		/*[Test]

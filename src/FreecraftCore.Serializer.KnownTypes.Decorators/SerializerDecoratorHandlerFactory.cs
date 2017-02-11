@@ -23,6 +23,7 @@ namespace FreecraftCore.Serializer.API
 			//Order matters. The last handler act as the essentially a default handler except it does still have some requirements but not much
 			return new List<DecoratorHandler>
 			{
+				new PrimitiveTypeSerializerDecoratorHandler(serializerProvider),
 				new ArraySerializerDecoratorHandler(serializerProvider),
 				new EnumSerializerDecoratorHandler(serializerProvider, fallbackFactory),
 				new StringSerializerDecoratorHandler(serializerProvider),

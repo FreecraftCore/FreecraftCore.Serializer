@@ -114,6 +114,7 @@ namespace FreecraftCore.Serializer.Tests
 		[WireDataContract]
 		public class VeryComplexType
 		{
+			[ReverseData]
 			[WireMember(1)]
 			public int a;
 

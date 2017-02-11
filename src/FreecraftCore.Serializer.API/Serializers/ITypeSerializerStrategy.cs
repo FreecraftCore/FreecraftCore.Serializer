@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
-	public interface ITypeSerializerStrategy
+	public interface ITypeSerializerStrategy : IObjectByteConverter, IObjectByteReader
 	{
 		/// <summary>
 		/// Indicates the <see cref="TType"/> of the serializer.
@@ -59,7 +59,7 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Contract for type that providing serialization strategy for the provided TType.
 	/// </summary>
-	public interface ITypeSerializerStrategy<TType> : ITypeSerializerStrategy
+	public interface ITypeSerializerStrategy<TType> : ITypeSerializerStrategy, IObjectByteConverter<TType>, IObjectByteReader<TType>
 	{
 		/// <summary>
 		/// Perform the steps necessary to serialize this data.

@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace FreecraftCore.Serializer
 {
 	//TODO: Doc
-	public abstract class SimpleTypeSerializerStrategy<TType> : ITypeSerializerStrategy<TType>, IObjectByteConverter<TType>, IObjectByteReader<TType>
+	public abstract class SimpleTypeSerializerStrategy<TType> : ITypeSerializerStrategy<TType>
 	{
 		/// <inheritdoc />
 		public virtual Type SerializerType { get; } = typeof(TType);
@@ -33,7 +33,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public TType ReadIntoObject(ref TType obj, IWireStreamReaderStrategy source)
+		public virtual TType ReadIntoObject(ref TType obj, IWireStreamReaderStrategy source)
 		{
 			obj = Read(source);
 
@@ -57,7 +57,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public void ObjectIntoWriter(TType obj, IWireStreamWriterStrategy dest)
+		public virtual void ObjectIntoWriter(TType obj, IWireStreamWriterStrategy dest)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
