@@ -20,6 +20,11 @@ namespace FreecraftCore.Serializer
 		[NotNull]
 		private Stream ReaderStream { get; }
 
+		/// <summary>
+		/// Indicates if the stream should be disposed when the reader is disposed.
+		/// </summary>
+		private bool shouldDisposeStream { get; }
+
 		//TODO: Overloads that take the byte buffer instead
 		public DefaultStreamReaderStrategy([NotNull] byte[] bytes)
 		{
@@ -27,6 +32,16 @@ namespace FreecraftCore.Serializer
 				throw new ArgumentNullException(nameof(bytes), $"Provided argument {nameof(bytes)} must not be null.");
 
 			ReaderStream = new MemoryStream(bytes);
+			shouldDisposeStream = true;
+		}
+
+		public DefaultStreamReaderStrategy([NotNull] Stream stream)
+		{
+			if (stream == null)
+				throw new ArgumentNullException(nameof(stream), $"Provided argument {nameof(stream)} must not be null.");
+
+			ReaderStream = stream;
+			shouldDisposeStream = false;
 		}
 
 		public byte[] ReadAllBytes()
@@ -77,7 +92,8 @@ namespace FreecraftCore.Serializer
 
 		public void Dispose()
 		{
-			ReaderStream?.Dispose();
+			if(shouldDisposeStream)
+				ReaderStream?.Dispose();
 		}
 	}
 }
