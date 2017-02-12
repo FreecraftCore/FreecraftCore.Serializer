@@ -27,5 +27,17 @@ namespace FreecraftCore.Serializer
 		{
 			return new ReverseEndianReadReaderStrategy(reader);
 		}
+
+		/// <summary>
+		/// Decorates the stream with byte order reversal.
+		/// Whenever chunks of the stream are read their byte order's will be reversed.
+		/// </summary>
+		/// <param name="reader">The reader to decorate.</param>
+		/// <param name="bytes">The bytes to prepend.</param>
+		/// <returns>Decorated stream.</returns>
+		public static IWireStreamReaderStrategy PreprendWithBytes(this IWireStreamReaderStrategy reader, byte[] bytes)
+		{
+			return new PrependBytesStreamReaderStrategy(reader, bytes);
+		}
 	}
 }
