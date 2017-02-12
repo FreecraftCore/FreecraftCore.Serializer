@@ -32,9 +32,20 @@ namespace FreecraftCore.Serializer
 		public InformationHandlingFlags TypeHandling { get; }
 
 		/// <summary>
+		/// Indicates if the type should expect to be linked to at runtime.
+		/// </summary>
+		public bool ExpectRuntimeLink { get; }
+
+		public WireDataContractAttribute(KeyType keyType, bool expectRuntimeLink)
+			: this(keyType, InformationHandlingFlags.Default, expectRuntimeLink)
+		{
+			
+		}
+
+		/// <summary>
 		/// Creates a new Meta-data attribute indicating the type is a WireDataContract.
 		/// </summary>
-		public WireDataContractAttribute(KeyType keyType = KeyType.None, InformationHandlingFlags typeHandling = InformationHandlingFlags.Default)
+		public WireDataContractAttribute(KeyType keyType = KeyType.None, InformationHandlingFlags typeHandling = InformationHandlingFlags.Default, bool expectRuntimeLink = false)
 		{
 			if (!Enum.IsDefined(typeof(KeyType), keyType))
 				throw new InvalidEnumArgumentException(nameof(keyType), (int) keyType, typeof(KeyType));
@@ -51,6 +62,7 @@ namespace FreecraftCore.Serializer
 
 			OptionalChildTypeKeySize = keyType;
 			TypeHandling = typeHandling;
+			ExpectRuntimeLink = expectRuntimeLink;
 		}
 	}
 }

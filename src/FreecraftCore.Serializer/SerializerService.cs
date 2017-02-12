@@ -201,5 +201,36 @@ namespace FreecraftCore.Serializer
 
 			return deserializeObject;
 		}
+
+		/// <inheritdoc />
+		public bool Link<TChildType, TBaseType>() 
+			where TChildType : TBaseType
+		{
+			WireDataContractBaseTypeRuntimeLinkAttribute linkAttribute =
+				typeof(TChildType).GetCustomAttribute<WireDataContractBaseTypeRuntimeLinkAttribute>(false);
+
+			//Have to make sure link is valid
+			//Without link attribute we can't know how to register it.
+			if(linkAttribute == null)
+				throw new InvalidOperationException($"Tried to link Child: {typeof(TChildType).FullName} with Base: {typeof(TBaseType).FullName} but no {nameof(WireDataContractBaseTypeRuntimeLinkAttribute)} attribute is marked on child.");
+
+			//Ensure both are registered
+			RegisterType<TBaseType>();
+			RegisterType<TChildType>();
+
+			ITypeSerializerStrategy<TBaseType> baseTypeSerializerStrategy = serializerStorageService.Get<TBaseType>();
+
+			//This is bad design but we just try to see if it's a polymorphic runtime linker
+			//If not we can't register the type.
+			IRuntimePolymorphicRegisterable<TBaseType> strategy = baseTypeSerializerStrategy as IRuntimePolymorphicRegisterable<TBaseType>;
+			if (strategy != null)
+			{
+				IRuntimePolymorphicRegisterable<TBaseType> linker = strategy;
+				strategy.TryLink<TChildType>(linkAttribute.Index);
+				return true;
+			}
+
+			return false;
+		}
 	}
 }

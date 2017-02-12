@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
-	public class SubComplexTypeSerializerDecorator<TBaseType> : SubComplexTypeSerializer<TBaseType>
+	public class SubComplexTypeSerializerDecorator<TBaseType> : SubComplexTypeSerializer<TBaseType>, IRuntimePolymorphicRegisterable<TBaseType>
 	{
 		/// <summary>
 		/// The lookup table that maps ints to the Type.
@@ -54,17 +54,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//TODO: Add support for basetype serialization metadata marking.
 			foreach (WireDataContractBaseTypeAttribute wa in typeof(TBaseType).Attributes<WireDataContractBaseTypeAttribute>())
 			{
-				try
-				{
-					keyToTypeLookup.Add(wa.Index, wa.ChildType);
-					typeToKeyLookup.Add(wa.ChildType, wa.Index);
-				}
-				catch (ArgumentException e)
-				{
-					throw new InvalidOperationException(
-						$"Failed to register child Type: {wa.ChildType} for BaseType: {typeof(TBaseType).FullName} due to likely duplicate key index for {wa.Index}. Index must be unique per Type.",
-						e);
-				}
+				RegisterPair(wa.ChildType, wa.Index);
 			}
 		}
 
@@ -130,6 +120,22 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//the end of the inheritance graph tree should end up. The complextype serializer, which is the true type serializer, should handle deserialization
 			//include going up the base heriachiry.
 			return (TBaseType)serializerProviderService.Get(childTypeRequest).Read(source);
+		}
+
+		private void RegisterPair(Type child, int key)
+		{
+			keyToTypeLookup[key] = child;
+			typeToKeyLookup[child] = key;
+		}
+
+		/// <inheritdoc />
+		public bool TryLink<TChildType>(int key) 
+			where TChildType : TBaseType
+		{
+			//Just try to register it
+			RegisterPair(typeof(TChildType), key);
+
+			return true;
 		}
 	}
 }

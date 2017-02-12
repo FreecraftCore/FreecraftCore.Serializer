@@ -36,7 +36,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//Check if the type has wirebase type attributes.
 			//If it does then the type is complex and can have subtypes coming across the wire
-			return context.TargetType.GetCustomAttributes<WireDataContractBaseTypeAttribute>(false).Any() || context.TargetType.GetCustomAttribute<WireDataContractBaseTypeByFlagsAttribute>(false) != null;
+			//Include checking for runtime link information
+			return (context.TargetType.GetCustomAttributes<WireDataContractAttribute>(false).Any() && context.TargetType.GetCustomAttribute<WireDataContractAttribute>(false).ExpectRuntimeLink) 
+				|| context.TargetType.GetCustomAttributes<WireDataContractBaseTypeAttribute>(false).Any() 
+				|| context.TargetType.GetCustomAttribute<WireDataContractBaseTypeByFlagsAttribute>(false) != null;
 		}
 
 		//TODO: Refactor
