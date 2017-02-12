@@ -78,9 +78,11 @@ namespace FreecraftCore.Serializer.Tests
 			byte[] bitConvertedFromInt = BitConverter.GetBytes((uint) data);
 			byte[] typeStratConverter = strategy.GetBytes((ushort)data);
 			byte[] reversedData = (new EndianReverseDecorator<ushort>(strategy)).GetBytes(data);
+			ushort data2 = (new EndianReverseDecorator<ushort>(strategy)).FromBytes(reversedData);
 
 			//assert
 			Assert.True(BitConverter.IsLittleEndian);
+			Assert.AreEqual(data, data2);
 			for (int i = 0; i < stratBytes.Length; i++)
 			{
 				Assert.AreEqual(stratBytes[i], bitConverted[i]);

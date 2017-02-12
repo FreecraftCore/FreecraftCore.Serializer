@@ -100,6 +100,10 @@ namespace FreecraftCore.Serializer
 
 		private ITypeSerializerStrategy GetLeastDerivedSerializer<TType>()
 		{
+			//If it's a primitive or an enum it doesn't have a derived serializer
+			if(typeof(TType).IsPrimitive || typeof(TType).IsEnum)
+				return serializerStorageService.Get<TType>();
+
 			Type t = typeof(TType).BaseType;
 
 			//If t isn't null it has at least one base type, we need to move up the object graph if so.
