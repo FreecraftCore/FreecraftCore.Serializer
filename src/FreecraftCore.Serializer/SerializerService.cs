@@ -172,9 +172,6 @@ namespace FreecraftCore.Serializer
 			if (!isCompiled)
 				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
 
-			//invoke after deserialization if it's available
-			(data as ISerializationEventListener)?.OnBeforeSerialization();
-
 			GetLeastDerivedSerializer<TTypeToSerialize>().Write(data, writer);
 
 			return writer.GetBytes();
@@ -195,9 +192,6 @@ namespace FreecraftCore.Serializer
 				throw new InvalidOperationException($"You cannot deserialize before compiling the serializer.");
 
 			TTypeToDeserializeTo deserializeObject = (TTypeToDeserializeTo)GetLeastDerivedSerializer<TTypeToDeserializeTo>().Read(source);
-
-			//invoke after deserialization if it's available
-			(deserializeObject as ISerializationEventListener)?.OnAfterDeserialization();
 
 			return deserializeObject;
 		}

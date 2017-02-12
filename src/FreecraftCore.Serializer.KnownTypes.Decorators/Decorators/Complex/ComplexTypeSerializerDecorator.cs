@@ -63,11 +63,19 @@ namespace FreecraftCore.Serializer
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
-			return Read(prototypeGeneratorService.Create(), source);
+			TComplexType obj = Read(prototypeGeneratorService.Create(), source);
+
+			//invoke after deserialization if it's available
+			(obj as ISerializationEventListener)?.OnAfterDeserialization();
+
+			return obj;
 		}
 
 		private TComplexType Read(TComplexType obj, IWireStreamReaderStrategy source)
 		{
+			//invoke before serialization if it's available
+			(obj as ISerializationEventListener)?.OnBeforeSerialization();
+
 			object castedObj = obj;
 
 			//read all base type members first
