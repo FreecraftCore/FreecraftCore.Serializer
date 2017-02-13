@@ -39,6 +39,9 @@
     <Reference Include="FreecraftCore.Serializer.API">
       <HintPath>..\..\src\FreecraftCore.Serializer.API\bin\Debug\net35\FreecraftCore.Serializer.API.dll</HintPath>
     </Reference>
+    <Reference Include="FreecraftCore.Serializer.API.Service">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Debug\net35\FreecraftCore.Serializer.API.Service.dll</HintPath>
+    </Reference>
     <Reference Include="FreecraftCore.Serializer.Core">
       <HintPath>..\..\src\FreecraftCore.Serializer.Core\bin\Debug\net35\FreecraftCore.Serializer.Core.dll</HintPath>
     </Reference>

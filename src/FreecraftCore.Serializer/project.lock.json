@@ -56,6 +56,20 @@
           "net35/FreecraftCore.Serializer.API.dll": {}
         }
       },
+      "FreecraftCore.Serializer.API.Service/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v3.5",
+        "dependencies": {
+          "FreecraftCore.Serializer.Stream": "1.0.0",
+          "JetBrains.Annotations": "10.2.1"
+        },
+        "compile": {
+          "net35/FreecraftCore.Serializer.API.Service.dll": {}
+        },
+        "runtime": {
+          "net35/FreecraftCore.Serializer.API.Service.dll": {}
+        }
+      },
       "FreecraftCore.Serializer.Core/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v3.5",
@@ -200,6 +214,20 @@
           "net45/FreecraftCore.Serializer.API.dll": {}
         }
       },
+      "FreecraftCore.Serializer.API.Service/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "FreecraftCore.Serializer.Stream": "1.0.0",
+          "JetBrains.Annotations": "10.2.1"
+        },
+        "compile": {
+          "net45/FreecraftCore.Serializer.API.Service.dll": {}
+        },
+        "runtime": {
+          "net45/FreecraftCore.Serializer.API.Service.dll": {}
+        }
+      },
       "FreecraftCore.Serializer.Core/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5",
@@ -341,6 +369,20 @@
         },
         "runtime": {
           "net46/FreecraftCore.Serializer.API.dll": {}
+        }
+      },
+      "FreecraftCore.Serializer.API.Service/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.6",
+        "dependencies": {
+          "FreecraftCore.Serializer.Stream": "1.0.0",
+          "JetBrains.Annotations": "10.2.1"
+        },
+        "compile": {
+          "net46/FreecraftCore.Serializer.API.Service.dll": {}
+        },
+        "runtime": {
+          "net46/FreecraftCore.Serializer.API.Service.dll": {}
         }
       },
       "FreecraftCore.Serializer.Core/1.0.0": {
@@ -500,6 +542,11 @@
       "path": "../FreecraftCore.Serializer.API/project.json",
       "msbuildProject": "../FreecraftCore.Serializer.API/FreecraftCore.Serializer.API.xproj"
     },
+    "FreecraftCore.Serializer.API.Service/1.0.0": {
+      "type": "project",
+      "path": "../FreecraftCore.Serializer.API.Service/project.json",
+      "msbuildProject": "../FreecraftCore.Serializer.API.Service/FreecraftCore.Serializer.API.Service.xproj"
+    },
     "FreecraftCore.Serializer.Core/1.0.0": {
       "type": "project",
       "path": "../FreecraftCore.Serializer.Core/project.json",
@@ -538,6 +585,7 @@
   },
   "projectFileDependencyGroups": {
     "": [
+      "FreecraftCore.Serializer.API.Service >= 1.0.0-*",
       "FreecraftCore.Serializer.Core >= 1.0.0-*",
       "FreecraftCore.Serializer.KnownTypes.Decorators >= 1.0.0-*",
       "FreecraftCore.Serializer.KnownTypes.Primitives >= 1.0.0-*",

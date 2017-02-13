@@ -42,6 +42,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "FreecraftCore.Serializer.St
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "FreecraftCore.Serializer.Stream.Default", "src\FreecraftCore.Serializer.Stream.Default\FreecraftCore.Serializer.Stream.Default.xproj", "{C4BF70BC-1161-4B69-AB28-2BEDE2765EB0}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "FreecraftCore.Serializer.API.Service", "src\FreecraftCore.Serializer.API.Service\FreecraftCore.Serializer.API.Service.xproj", "{C40130C8-6BFE-4D1F-B27F-EB2DB34BA9B0}"
+EndProject
 Global
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
@@ -111,6 +113,10 @@ Global
 		{C4BF70BC-1161-4B69-AB28-2BEDE2765EB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4BF70BC-1161-4B69-AB28-2BEDE2765EB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4BF70BC-1161-4B69-AB28-2BEDE2765EB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C40130C8-6BFE-4D1F-B27F-EB2DB34BA9B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C40130C8-6BFE-4D1F-B27F-EB2DB34BA9B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C40130C8-6BFE-4D1F-B27F-EB2DB34BA9B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C40130C8-6BFE-4D1F-B27F-EB2DB34BA9B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -131,5 +137,6 @@ Global
 		{E664A738-BFD1-4B89-AAC8-09C030996922} = {2E903AB5-E882-49A7-A612-FCCB9F11D540}
 		{15169F7F-B3DA-469D-AF1E-E37BFB4D7987} = {C69D878A-A37C-4DBD-8D90-8AF30074E3C0}
 		{C4BF70BC-1161-4B69-AB28-2BEDE2765EB0} = {C69D878A-A37C-4DBD-8D90-8AF30074E3C0}
+		{C40130C8-6BFE-4D1F-B27F-EB2DB34BA9B0} = {C69D878A-A37C-4DBD-8D90-8AF30074E3C0}
 	EndGlobalSection
 EndGlobal

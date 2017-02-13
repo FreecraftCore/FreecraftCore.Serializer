@@ -62,7 +62,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public ITypeSerializerStrategy<TTypeToRegister> RegisterType<TTypeToRegister>()
+		public bool RegisterType<TTypeToRegister>()
 		{
 			//Ingoring all but wiretypes makes this a lot easier.
 			if (typeof(TTypeToRegister).GetCustomAttribute<WireDataContractAttribute>(true) == null)
@@ -75,7 +75,7 @@ namespace FreecraftCore.Serializer
 			serializerStorageService.RegisterType(typeof(TTypeToRegister), serializer);
 
 			//Return the serializer; callers shouldn't need it though
-			return serializer;
+			return serializer != null;
 		}
 
 		/// <inheritdoc />

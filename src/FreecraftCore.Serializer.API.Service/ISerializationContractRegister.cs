@@ -12,9 +12,8 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Attempts to register a contract for the provided <typeparam name="TTypeToRegister"></typeparam>.
 		/// </summary>
-		/// <returns>The <see cref="ITypeSerializerStrategy{TType}"/> for the requested <typeparamref name="TTypeToRegister"/>.</returns>
 		[NotNull]
-		ITypeSerializerStrategy<TTypeToRegister> RegisterType<TTypeToRegister>();
+		bool RegisterType<TTypeToRegister>();
 
 		/// <summary>
 		/// Indicates if the provided <see cref="Type"/> is registered.
