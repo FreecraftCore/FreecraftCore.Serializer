@@ -71,7 +71,7 @@ namespace FreecraftCore.Serializer
 			if (instanceGeneratorDelegate != null)
 				return instanceGeneratorDelegate();
 			else
-				throw new InvalidOperationException($"Tried to create an instance of Type: {typeof(TType)} but Type was an interface. Cannot create an interface type.");
+				throw new InvalidOperationException($"Tried to create an instance of Type: {typeof(TType)} but Type was either an interface or abstract with no defined subtypes.");
 		}
 	}
 }
