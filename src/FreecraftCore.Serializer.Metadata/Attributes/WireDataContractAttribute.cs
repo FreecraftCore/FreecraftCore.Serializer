@@ -8,7 +8,7 @@ namespace FreecraftCore.Serializer
 	/// Marking a class with this attribute will prepare it for the wire. (Refer to the concept of Protobuf-net or
 	/// Blizzard's JAM for information on the concept).
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Interface)] //classes or structs can be WireDataContracts. Inteffaces now can be too.
+	[AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Enum)] //classes or structs can be WireDataContracts. Inteffaces now can be too.
 	public class WireDataContractAttribute : Attribute
 	{
 		public enum KeyType
