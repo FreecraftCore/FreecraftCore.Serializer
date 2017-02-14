@@ -92,6 +92,14 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if(strat == null)
 				throw new InvalidOperationException($"Failed to construct an {nameof(ArraySerializerDecorator<TType>)} for the Type: {typeof(TType).FullName} in final creation step.");
 
+			//Now check if it should be decorated with compression
+			//TODO: Support multiple sizetypes for compression
+			//TODO: Add support for compression as not the final member if WoW ever needs it
+			if (context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Compressed))
+			{
+				strat = new CompressionTypeSerializerStrategyDecorator<TType>(strat, serializerProviderService.Get<uint>());
+			}
+
 			return strat;
 		}
 

@@ -35,6 +35,9 @@ namespace FreecraftCore.Serializer
 			if (context.HasMemberAttribute<DontTerminateAttribute>())
 				flags |= ContextTypeFlags.DontTerminate;
 
+			if(context.HasMemberAttribute<CompressAttribute>())
+				flags |= ContextTypeFlags.Compressed;
+
 			if (context.HasMemberAttribute<SendSizeAttribute>())
 				return new ContextualSerializerLookupKey(flags | ContextTypeFlags.SendSize, new SendSizeContextKey(context.GetMemberAttribute<SendSizeAttribute>().TypeOfSize), context.TargetType);
 

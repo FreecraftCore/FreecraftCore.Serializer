@@ -40,7 +40,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (writer == null) throw new ArgumentNullException(nameof(writer));
 
 			//Write an int size to the stream
-			intSerializer.Write((ushort)collection.Count(), writer);
+			intSerializer.Write(collection.Count(), writer);
 
 			//We don't know the size so just provide the size of the collection
 			return collection.Count();

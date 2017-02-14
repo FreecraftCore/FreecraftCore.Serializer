@@ -61,7 +61,7 @@ namespace FreecraftCore.Serializer
 			//TODO: Why does this class decide what is contextual? This is bad.
 			//We don't check WireDataContractBaseType because that isn't part of the context of the member. That's context on the Type.
 			//When registering a complex type a decorator may be available to handle that case but it's not relevant to the serialization context.
-			return attri.GetType() == typeof(PackedAttribute) || attri.GetType() == typeof(KnownSizeAttribute) || attri.GetType() == typeof(EnumStringAttribute)
+			return attri.GetType() == typeof(CompressAttribute) || attri.GetType() == typeof(KnownSizeAttribute) || attri.GetType() == typeof(EnumStringAttribute)
 				|| attri.GetType() == typeof(SendSizeAttribute) || attri.GetType() == typeof(ReverseDataAttribute) //decided to add reverse data. It does require context because it decorates other serializers
 				|| attri.GetType() == typeof(DontTerminateAttribute); //Dont terminate really shouldn't need to be contextual but at this point I'm abusing the system. We forgo purity for ease of implementation. We pay a slight memory penalty though.
 		}

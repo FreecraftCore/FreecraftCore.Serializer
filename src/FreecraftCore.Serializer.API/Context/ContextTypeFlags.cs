@@ -12,7 +12,7 @@ namespace FreecraftCore.Serializer
 	public enum ContextTypeFlags : int
 	{
 		None = 0,
-		Packed = 1 << 0,
+		Compressed = 1 << 0,
 		FixedSize = 1 << 1,
 		EnumString = 1 << 2,
 		SendSize = 1 << 3,
