@@ -34,7 +34,7 @@ namespace FreecraftCore.Serializer.Tests
 
 			//assert
 			Assert.NotNull(bytes);
-			Assert.IsTrue(bytes.Length < (values.Length * sizeof(int)));
+			Assert.IsTrue(bytes.Length < ((values.Length - 1) * sizeof(int)));
 		}
 
 		[Test]
@@ -56,6 +56,58 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.AreEqual(values.Length, obj.Integers.Length);
 			for(int i = 0; i < values.Length; i++)
 				Assert.AreEqual(values[i], obj.Integers[i]);
+		}
+
+		[Test]
+		public static void Test_Can_Deserialize_Complex_Compressed_Class()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType<TestComplexTypeWithCompressedComplex>();
+			serializer.Compile();
+
+			//act
+			byte[] bytes = serializer.Serialize(new TestComplexTypeWithCompressedComplex(new TestComplexType(5)));
+			TestComplexTypeWithCompressedComplex obj = serializer.Deserialize<TestComplexTypeWithCompressedComplex>(bytes);
+
+			//assert
+			Assert.True(bytes.Length != 4); //might be longer with header/footer
+			Assert.AreEqual(5, obj.CompressedComplex.i);
+		}
+
+		[WireDataContract]
+		public class TestComplexType
+		{
+			[WireMember(1)]
+			public int i;
+
+			public TestComplexType(int iValue)
+			{
+				i = iValue;
+			}
+
+			public TestComplexType()
+			{
+				
+			}
+		}
+
+		[WireDataContract]
+		public class TestComplexTypeWithCompressedComplex
+		{
+			[Compress]
+			[WireMember(1)]
+			public TestComplexType CompressedComplex;
+
+			public TestComplexTypeWithCompressedComplex(TestComplexType compressedComplex)
+			{
+				CompressedComplex = compressedComplex;
+			}
+
+			public TestComplexTypeWithCompressedComplex()
+			{
+				
+			}
 		}
 
 		[WireDataContract]

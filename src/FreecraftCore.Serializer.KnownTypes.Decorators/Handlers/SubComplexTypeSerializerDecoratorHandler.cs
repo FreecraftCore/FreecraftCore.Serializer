@@ -71,12 +71,20 @@ namespace FreecraftCore.Serializer.KnownTypes
 					throw new InvalidOperationException($"Encountered Type: {typeof(TType).FullName} that requires child type mapping but has provided {nameof(WireDataContractAttribute.KeyType)} Value: {contractAttribute.OptionalChildTypeKeySize} which is invalid.");
 			}
 
+			ITypeSerializerStrategy<TType> strat = null;
+
 			//Depending on if we're flags or key return the right serializer decorator.
 			if (typeof(TType).Attribute<WireDataContractBaseTypeByFlagsAttribute>() == null)
 				//Won't be null at this point. Should be a valid strategy. We also don't need to deal with context since there is only EVER 1 serializer of this type per type.
-				return new SubComplexTypeSerializerDecorator<TType>(new LambdabasedDeserializationPrototyeFactory<TType>(), new MemberSerializationMediatorCollection<TType>(mediatorFactoryService),  serializerProviderService, keyStrategy);
+				strat = new SubComplexTypeSerializerDecorator<TType>(new LambdabasedDeserializationPrototyeFactory<TType>(), new MemberSerializationMediatorCollection<TType>(mediatorFactoryService),  serializerProviderService, keyStrategy);
 			else
-				return new SubComplexTypeWithFlagsSerializerDecorator<TType>(new LambdabasedDeserializationPrototyeFactory<TType>(), new MemberSerializationMediatorCollection<TType>(mediatorFactoryService), serializerProviderService, keyStrategy);
+				strat = new SubComplexTypeWithFlagsSerializerDecorator<TType>(new LambdabasedDeserializationPrototyeFactory<TType>(), new MemberSerializationMediatorCollection<TType>(mediatorFactoryService), serializerProviderService, keyStrategy);
+
+			//Check for compression flags
+			if (context.HasContextualMemberMetadata() && context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Compressed))
+				strat = new CompressionTypeSerializerStrategyDecorator<TType>(strat, serializerProviderService.Get<uint>());
+
+			return strat;
 		}
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)

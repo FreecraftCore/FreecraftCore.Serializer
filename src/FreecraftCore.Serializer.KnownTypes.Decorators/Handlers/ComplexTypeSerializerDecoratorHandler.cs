@@ -29,7 +29,8 @@ namespace FreecraftCore.Serializer
 		{
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return !context.HasContextualMemberMetadata() && context.ContextRequirement == SerializationContextRequirement.Contextless;
+			//We can handle any type technically
+			return true;
 		}
 
 		/// <inheritdoc />
@@ -37,7 +38,13 @@ namespace FreecraftCore.Serializer
 		{
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
-			return new ComplexTypeSerializerDecorator<TType>(new MemberSerializationMediatorCollection<TType>(SerializationMediatorFactory), new LambdabasedDeserializationPrototyeFactory<TType>(), serializerProviderService);
+			ITypeSerializerStrategy<TType> complexTypeSerializerDecorator = new ComplexTypeSerializerDecorator<TType>(new MemberSerializationMediatorCollection<TType>(SerializationMediatorFactory), new LambdabasedDeserializationPrototyeFactory<TType>(), serializerProviderService);
+
+			//Check for compression flags
+			if(context.HasContextualMemberMetadata() && context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Compressed))
+				complexTypeSerializerDecorator = new CompressionTypeSerializerStrategyDecorator<TType>(complexTypeSerializerDecorator, serializerProviderService.Get<uint>());
+
+			return complexTypeSerializerDecorator;
 		}
 
 		/// <inheritdoc />
