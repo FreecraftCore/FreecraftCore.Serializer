@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
+using Ionic.Zlib;
 using JetBrains.Annotations;
+using CompressionMode = System.IO.Compression.CompressionMode;
+using DeflateStream = System.IO.Compression.DeflateStream;
 
 namespace FreecraftCore.Serializer
 {
@@ -51,7 +53,7 @@ namespace FreecraftCore.Serializer
 			//The header is not need to deflate
 			//but we still need to read it
 			uint sizeValue = SizeSerializer.Read(source);
-			byte[] compressionQualityHeaderBytes = source.ReadBytes(2);
+			//byte[] compressionQualityHeaderBytes = source.ReadBytes(2);
 
 			//We do not know how many bytes were compressed
 			//So right now we can only support compression on the final field
@@ -59,7 +61,7 @@ namespace FreecraftCore.Serializer
 			{
 				using (MemoryStream decompressedStream = new MemoryStream())
 				{
-					using (DeflateStream decompressionStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
+					using (ZlibStream decompressionStream = new ZlibStream(compressedStream, Ionic.Zlib.CompressionMode.Decompress, CompressionLevel.BestSpeed))
 					{
 						decompressionStream.CopyTo(decompressedStream);
 						decompressionStream.Close();
@@ -74,6 +76,7 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public override void Write(TType value, IWireStreamWriterStrategy dest)
 		{
+			
 			//Expected format header
 			//[ssss]: Size (assuming the default size is used)
 			//[cc]: Compression quality 78 DA for max
@@ -95,14 +98,14 @@ namespace FreecraftCore.Serializer
 			//The ZLib library on the other side will expect 78 DA as the first type bytes
 			//this denotes compression type which is max compression
 			SizeSerializer.Write((uint)decoratedSerializerBytes.Length, dest);
-			dest.Write(CompressionTypeSerializerStrategyDecorator.MaxCompressionByteHeader);
+			//dest.Write(CompressionTypeSerializerStrategyDecorator.MaxCompressionByteHeader);
 
 			using (MemoryStream contentStream = new MemoryStream(decoratedSerializerBytes))
 			{
 				//Now we can write the actual content
 				using (MemoryStream compressedStream = new MemoryStream())
 				{
-					using (DeflateStream compressionStream = new DeflateStream(compressedStream, CompressionMode.Compress))
+					using (ZlibStream compressionStream = new ZlibStream(compressedStream, Ionic.Zlib.CompressionMode.Compress, CompressionLevel.BestSpeed))
 					{
 						contentStream.CopyTo(compressionStream);
 						compressionStream.Close();

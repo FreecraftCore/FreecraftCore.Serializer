@@ -128,6 +128,9 @@ namespace FreecraftCore.Serializer.Tests
 			[WireMember(8)]
 			public TestEnum[] testEnumsAnother { get; private set; }
 
+			[WireMember(9)]
+			public DateTime Time { get; private set; }
+
 			public VeryComplexType(int aVal, BasicWireDataContract nestedMessage, TestEnum[] enumsOne, TestEnum[] enumsTwo)
 			{
 				a = aVal;
@@ -135,6 +138,7 @@ namespace FreecraftCore.Serializer.Tests
 
 				testEnumsAnother = enumsTwo;
 				testEnums = enumsOne;
+				Time = DateTime.UtcNow;
 			}
 
 			public VeryComplexType()

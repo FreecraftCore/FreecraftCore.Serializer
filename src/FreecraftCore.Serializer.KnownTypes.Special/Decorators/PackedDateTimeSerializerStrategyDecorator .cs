@@ -12,8 +12,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// </summary>
 	public class PackedDateTimeSerializerStrategyDecorator : SimpleTypeSerializerStrategy<DateTime>
 	{
+		//A DateTime is contextless since it only serializes a type not special semantics on a member.
 		/// <inheritdoc />
-		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
+		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
 		[NotNull]
 		private ITypeSerializerStrategy<int> decoratedSerializer { get; }

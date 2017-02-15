@@ -3,6 +3,15 @@
   "version": 2,
   "targets": {
     ".NETFramework,Version=v4.5": {
+      "DotNetZip/1.10.1": {
+        "type": "package",
+        "compile": {
+          "lib/net20/DotNetZip.dll": {}
+        },
+        "runtime": {
+          "lib/net20/DotNetZip.dll": {}
+        }
+      },
       "fasterflect/2.1.3": {
         "type": "package",
         "compile": {
@@ -97,6 +106,7 @@
         "type": "project",
         "framework": ".NETFramework,Version=v4.5",
         "dependencies": {
+          "DotNetZip": "1.10.1",
           "FreecraftCore.Serializer.API": "1.0.0",
           "FreecraftCore.Serializer.Metadata": "1.0.0",
           "JetBrains.Annotations": "10.2.1"
@@ -128,6 +138,7 @@
           "FreecraftCore.Serializer.API": "1.0.0",
           "FreecraftCore.Serializer.Compression": "1.0.0",
           "FreecraftCore.Serializer.KnownTypes.Primitives": "1.0.0",
+          "FreecraftCore.Serializer.KnownTypes.Special": "1.0.0",
           "FreecraftCore.Serializer.Metadata": "1.0.0",
           "FreecraftCore.Serializer.Metadata.Internal": "1.0.0",
           "JonSkeet.MiscUtil": "0.1.0",
@@ -224,6 +235,17 @@
     }
   },
   "libraries": {
+    "DotNetZip/1.10.1": {
+      "sha512": "7+Mgl5AOgrimLuxmVuFzK8za55togTKIaIWPdC4INjT1FxbygGYKXzSIW7zt+Dx0Hjz7xE1ruxa03jRzXxAL0A==",
+      "type": "package",
+      "path": "DotNetZip/1.10.1",
+      "files": [
+        "DotNetZip.1.10.1.nupkg.sha512",
+        "DotNetZip.nuspec",
+        "lib/net20/DotNetZip.dll",
+        "lib/net20/DotNetZip.xml"
+      ]
+    },
     "fasterflect/2.1.3": {
       "sha512": "DCYneTQ/fY3HieKSJdcA/Z9hCg/5maAZpoqySqO4+XC3BgUasHOrTZY4BEf76WZPZwIU5SNUhrPuxKSHyyg+mg==",
       "type": "package",
