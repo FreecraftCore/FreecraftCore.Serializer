@@ -12,7 +12,7 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Contract for objects that provide wire stream writing.
 	/// </summary>
-	public interface IWireStreamWriterStrategyAsync : IWireStreamReaderStrategy
+	public interface IWireStreamWriterStrategyAsync : IWireStreamWriterStrategy
 	{
 		/// <summary>
 		/// Writes the byte array.
