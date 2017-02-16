@@ -8,15 +8,16 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
-	public abstract class WireMemberReaderStrategyDecorator : IWireStreamReaderStrategy
+	public abstract class WireMemberReaderStrategyDecorator<TReaderType> : IWireStreamReaderStrategy
+		where TReaderType : IWireStreamReaderStrategy
 	{
 		/// <summary>
 		/// Decorated reader.
 		/// </summary>
 		[NotNull]
-		protected IWireStreamReaderStrategy DecoratedReader { get; }
+		protected TReaderType DecoratedReader { get; }
 
-		protected WireMemberReaderStrategyDecorator([NotNull] IWireStreamReaderStrategy decoratedReader)
+		protected WireMemberReaderStrategyDecorator([NotNull] TReaderType decoratedReader)
 		{
 			if (decoratedReader == null) throw new ArgumentNullException(nameof(decoratedReader));
 
@@ -43,24 +44,5 @@ namespace FreecraftCore.Serializer
 
 		/// <inheritdoc />
 		public abstract byte[] PeakBytes(int count);
-
-		//Async task methods
-#if !NET35
-		/// <inheritdoc />
-		public abstract Task<byte> ReadByteAsync();
-
-		/// <inheritdoc />
-		public abstract Task<byte> PeekByteAsync();
-
-		/// <inheritdoc />
-		public abstract Task<byte[]> ReadAllBytesAsync();
-
-		/// <inheritdoc />
-		public abstract Task<byte[]> ReadBytesAsync(int count);
-
-		/// <inheritdoc />
-		public abstract Task<byte[]> PeakBytesAsync(int count);
-
-#endif
 	}
 }

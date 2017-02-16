@@ -12,9 +12,10 @@ namespace FreecraftCore.Serializer
 	/// Decorator that reverses byte-order of the read byte chunks.
 	/// Has no affect on single bytes. Doesn't reorder stream. Only reverses read chunks.
 	/// </summary>
-	public class ReverseEndianReadReaderStrategy : WireMemberReaderStrategyDecorator
+	public class ReverseEndianReadReaderStrategy<TReaderType> : WireMemberReaderStrategyDecorator<TReaderType>
+		where TReaderType : IWireStreamReaderStrategy
 	{
-		public ReverseEndianReadReaderStrategy([NotNull] IWireStreamReaderStrategy decoratedReader) 
+		public ReverseEndianReadReaderStrategy([NotNull] TReaderType decoratedReader) 
 			: base(decoratedReader)
 		{
 
@@ -58,62 +59,5 @@ namespace FreecraftCore.Serializer
 
 			return bytes;
 		}
-
-#if !NET35
-
-		/// <inheritdoc />
-		public override Task<byte> ReadByteAsync()
-		{
-			return DecoratedReader.ReadByteAsync();
-		}
-
-		/// <inheritdoc />
-		public override Task<byte> PeekByteAsync()
-		{
-			return DecoratedReader.PeekByteAsync();
-		}
-
-		/// <inheritdoc />
-		public override Task<byte[]> ReadAllBytesAsync()
-		{
-			return new Task<byte[]>(() =>
-			{
-				//Blocks until the bytes are loaded
-				byte[] bytes = DecoratedReader.ReadAllBytesAsync().Result;
-
-				Array.Reverse(bytes);
-
-				return bytes;
-			});	
-		}
-
-		/// <inheritdoc />
-		public override Task<byte[]> ReadBytesAsync(int count)
-		{
-			return new Task<byte[]>(() =>
-			{
-				//Blocks until the bytes are loaded
-				byte[] bytes = DecoratedReader.ReadBytesAsync(count).Result;
-
-				Array.Reverse(bytes);
-
-				return bytes;
-			});
-		}
-
-		/// <inheritdoc />
-		public override Task<byte[]> PeakBytesAsync(int count)
-		{
-			return new Task<byte[]>(() =>
-			{
-				//Blocks until the bytes are loaded
-				byte[] bytes = DecoratedReader.PeakBytesAsync(count).Result;
-
-				Array.Reverse(bytes);
-
-				return bytes;
-			});
-		}
-#endif
 	}
 }

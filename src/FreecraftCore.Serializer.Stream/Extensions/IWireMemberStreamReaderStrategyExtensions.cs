@@ -12,9 +12,10 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="reader">The reader to decorate.</param>
 		/// <returns>Decorated stream.</returns>
-		public static IWireStreamReaderStrategy WithOneTimeReading(this IWireStreamReaderStrategy reader)
+		public static IWireStreamReaderStrategy WithOneTimeReading<TReaderType>(this TReaderType reader)
+			where TReaderType : IWireStreamReaderStrategy
 		{
-			return new OneTimeReadReaderStrategy(reader);
+			return new OneTimeReadReaderStrategy<TReaderType>(reader);
 		}
 
 		/// <summary>
@@ -23,9 +24,10 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="reader">The reader to decorate.</param>
 		/// <returns>Decorated stream.</returns>
-		public static IWireStreamReaderStrategy WithByteReversal(this IWireStreamReaderStrategy reader)
+		public static IWireStreamReaderStrategy WithByteReversal<TReaderType>(this TReaderType reader)
+			where TReaderType : IWireStreamReaderStrategy
 		{
-			return new ReverseEndianReadReaderStrategy(reader);
+			return new ReverseEndianReadReaderStrategy<TReaderType>(reader);
 		}
 
 		/// <summary>
@@ -35,9 +37,10 @@ namespace FreecraftCore.Serializer
 		/// <param name="reader">The reader to decorate.</param>
 		/// <param name="bytes">The bytes to prepend.</param>
 		/// <returns>Decorated stream.</returns>
-		public static IWireStreamReaderStrategy PreprendWithBytes(this IWireStreamReaderStrategy reader, byte[] bytes)
+		public static IWireStreamReaderStrategy PreprendWithBytes<TReaderType>(this TReaderType reader, byte[] bytes)
+			where TReaderType : IWireStreamReaderStrategy
 		{
-			return new PrependBytesStreamReaderStrategy(reader, bytes);
+			return new PrependBytesStreamReaderStrategy<TReaderType>(reader, bytes);
 		}
 
 		/// <summary>
@@ -46,9 +49,10 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="reader"></param>
 		/// <returns></returns>
-		public static IWireStreamReaderStrategy PeekWithBuffering(this IWireStreamReaderStrategy reader)
+		public static IWireStreamReaderStrategy PeekWithBuffering<TReaderType>(this TReaderType reader)
+			where TReaderType : IWireStreamReaderStrategy
 		{
-			return new BufferedPeekWireStreamReaderStrategyDecorator(reader);
+			return new BufferedPeekWireStreamReaderStrategyDecorator<TReaderType>(reader);
 		}
 	}
 }

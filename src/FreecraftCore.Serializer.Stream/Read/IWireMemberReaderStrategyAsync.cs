@@ -1,9 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
-
-#if !NET35
 using System.Threading.Tasks;
-#endif
 
 namespace FreecraftCore.Serializer
 {
@@ -11,9 +8,8 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Contract for objects that provide wire stream async reading.
 	/// </summary>
-	public interface IWireStreamReaderStrategyAsync : IDisposable
+	public interface IWireStreamReaderStrategyAsync : IWireStreamReaderStrategy
 	{
-#if !NET35
 		/// <summary>
 		/// Reads a byte from the stream.
 		/// </summary>
@@ -50,7 +46,6 @@ namespace FreecraftCore.Serializer
 		/// <returns>A byte array of the peeked bytes.</returns>
 		[NotNull]
 		Task<byte[]> PeakBytesAsync(int count);
-#endif
 	}
 }
 
