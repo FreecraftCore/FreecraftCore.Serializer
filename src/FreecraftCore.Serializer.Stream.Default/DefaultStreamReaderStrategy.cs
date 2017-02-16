@@ -5,6 +5,10 @@ using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 
+#if !NET35
+using System.Threading.Tasks;
+#endif
+
 
 namespace FreecraftCore.Serializer
 {
@@ -95,5 +99,81 @@ namespace FreecraftCore.Serializer
 			if(shouldDisposeStream)
 				ReaderStream?.Dispose();
 		}
+
+
+#if !NET35
+		/// <inheritdoc />
+		public Task<byte> ReadByteAsync()
+		{
+			byte[] singleByteBuffer = new byte[1];
+
+			//would be -1 if it's invalid
+			Task<int> readResult = ReaderStream.ReadAsync(singleByteBuffer, 0, 1);
+
+			return new Task<byte>(() =>
+			{
+				int resultCount = readResult.Result;
+
+				if(resultCount == 0)
+					throw new InvalidOperationException($"Failed to read byte in {nameof(ReadByteAsync)}.");
+
+				return singleByteBuffer[0];
+			});
+		}
+
+		/// <inheritdoc />
+		public Task<byte> PeekByteAsync()
+		{
+			Task<byte> b = ReadByteAsync();
+
+			return new Task<byte>(() =>
+			{
+				byte resultByte = b.Result;
+
+				//Move it back one
+				ReaderStream.Position = ReaderStream.Position - 1;
+				return resultByte;
+			});
+		}
+
+		/// <inheritdoc />
+		public Task<byte[]> ReadAllBytesAsync()
+		{
+			return ReadBytesAsync((int)(ReaderStream.Length - ReaderStream.Position));
+		}
+
+		/// <inheritdoc />
+		public Task<byte[]> ReadBytesAsync(int count)
+		{
+			
+			byte[] bytes = new byte[count];
+
+			Task<int> readTask = ReaderStream.ReadAsync(bytes, 0, count);
+
+			return new Task<byte[]>(() =>
+			{
+				int resultCount = readTask.Result;
+
+				if (resultCount != count)
+					throw new InvalidOperationException($"Failed to read {count} bytes from the stream.");
+
+				return bytes;
+			});
+		}
+
+		/// <inheritdoc />
+		public Task<byte[]> PeakBytesAsync(int count)
+		{
+			Task<byte[]> bytes = ReadBytesAsync(count);
+
+			return new Task<byte[]>(() =>
+			{
+				//Now move the stream back
+				ReaderStream.Position = ReaderStream.Position - count;
+
+				return bytes.Result;
+			});
+		}
+#endif
 	}
 }

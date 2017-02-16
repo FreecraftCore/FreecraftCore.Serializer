@@ -5,6 +5,10 @@ using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 
+#if !NET35
+using System.Threading.Tasks;
+#endif
+
 
 namespace FreecraftCore.Serializer
 {
@@ -47,5 +51,32 @@ namespace FreecraftCore.Serializer
 		{
 			WriterStream?.Dispose();
 		}
+
+#if !NET35
+		/// <inheritdoc />
+		public Task WriteAsync(byte[] data)
+		{
+			return WriteAsync(data, 0, data.Length);
+		}
+
+		/// <inheritdoc />
+		public Task WriteAsync(byte[] data, int offset, int count)
+		{
+			return WriterStream.WriteAsync(data, offset, count);
+		}
+
+		/// <inheritdoc />
+		public Task WriteAsync(byte data)
+		{
+			//TODO: Can we do this more efficiently?
+			return WriteAsync(new byte[1] {data}, 0, 1);
+		}
+
+		/// <inheritdoc />
+		public Task<byte[]> GetBytesAsync()
+		{
+			return Task.FromResult(WriterStream.ToArray());
+		}
+#endif
 	}
 }
