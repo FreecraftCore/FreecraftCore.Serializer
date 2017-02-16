@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+#if !NET35
+using System.Threading.Tasks;
+#endif
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
@@ -40,5 +43,24 @@ namespace FreecraftCore.Serializer
 
 		/// <inheritdoc />
 		public abstract byte[] PeakBytes(int count);
+
+		//Async task methods
+#if !NET35
+		/// <inheritdoc />
+		public abstract Task<byte> ReadByteAsync();
+
+		/// <inheritdoc />
+		public abstract Task<byte> PeekByteAsync();
+
+		/// <inheritdoc />
+		public abstract Task<byte[]> ReadAllBytesAsync();
+
+		/// <inheritdoc />
+		public abstract Task<byte[]> ReadBytesAsync(int count);
+
+		/// <inheritdoc />
+		public abstract Task<byte[]> PeakBytesAsync(int count);
+
+#endif
 	}
 }

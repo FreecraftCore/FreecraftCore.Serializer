@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+#if !NET35
+using System.Threading.Tasks;
+#endif
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
@@ -112,5 +115,89 @@ namespace FreecraftCore.Serializer
 				return bytes;
 			}
 		}
+
+		//Async task methods
+#if !NET35
+		/// <inheritdoc />
+		public override Task<byte> ReadByteAsync()
+		{
+			if (isPrendedBytesFinished)
+				return DecoratedReader.PeekByteAsync();
+			else
+				return Task.FromResult(PrependedBytes[ByteCount++]); //always available because we check length
+		}
+
+		/// <inheritdoc />
+		public override Task<byte> PeekByteAsync()
+		{
+			if (isPrendedBytesFinished)
+				return DecoratedReader.PeekByteAsync();
+			else
+			{
+				return Task.FromResult(PrependedBytes[ByteCount]);
+			}
+		}
+
+		/// <inheritdoc />
+		public override Task<byte[]> ReadAllBytesAsync()
+		{
+			if (isPrendedBytesFinished)
+				return DecoratedReader.ReadAllBytesAsync();
+			else
+			{
+				return new Task<byte[]>(() => PrependedBytes.Skip(ByteCount)
+					.Concat(new EnumerableAsyncBytes(DecoratedReader.ReadAllBytesAsync()))
+					.ToArray());
+			}
+		}
+
+		/// <inheritdoc />
+		public override Task<byte[]> ReadBytesAsync(int count)
+		{
+			if (isPrendedBytesFinished)
+				return DecoratedReader.ReadBytesAsync(count);
+			else
+			{
+				Task<byte[]> bytes = null;
+
+				if (count <= PrependedBytes.Length - ByteCount)
+					bytes = Task.FromResult(PrependedBytes.Skip(ByteCount)
+						.Take(count)
+						.ToArray());
+				else //We need to combine
+					bytes = new Task<byte[]>(() => PrependedBytes.Skip(ByteCount)
+						.Concat(new EnumerableAsyncBytes(DecoratedReader.ReadBytesAsync(count - (PrependedBytes.Length - ByteCount))))
+						.ToArray());
+
+				//Set the byte count as finished or forward as many as possible
+				ByteCount = Math.Min(count + ByteCount, PrependedBytes.Length);
+
+				return bytes;
+			}
+		}
+
+		/// <inheritdoc />
+		public override Task<byte[]> PeakBytesAsync(int count)
+		{
+			if (isPrendedBytesFinished)
+				return Task.FromResult(DecoratedReader.PeakBytes(count));
+			else
+			{
+				Task<byte[]> bytes = null;
+
+				if (count <= PrependedBytes.Length - ByteCount)
+					bytes = Task.FromResult(PrependedBytes.Skip(ByteCount)
+						.Take(count)
+						.ToArray());
+				else //We need to combine
+					bytes = new Task<byte[]>(() => PrependedBytes.Skip(ByteCount)
+						.Concat(new EnumerableAsyncBytes(DecoratedReader.PeakBytesAsync(count - (PrependedBytes.Length - ByteCount))))
+						.ToArray());
+
+				//Peaking so don't move the bytecount forward
+				return bytes;
+			}
+		}
+#endif
 	}
 }

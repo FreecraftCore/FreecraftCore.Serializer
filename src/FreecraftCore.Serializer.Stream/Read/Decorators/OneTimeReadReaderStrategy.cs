@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+#if !NET35
+using System.Threading.Tasks;
+#endif
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
@@ -66,5 +69,53 @@ namespace FreecraftCore.Serializer
 			if(!CanRead)
 				throw new InvalidOperationException($"Cannot read multiple times with {nameof(OneTimeReadReaderStrategy)}.");
 		}
+
+		//Async task methods
+#if !NET35
+		/// <inheritdoc />
+		public override Task<byte> ReadByteAsync()
+		{
+			ThrowIfCantRead();
+			CanRead = false;
+
+			return DecoratedReader.ReadByteAsync();
+		}
+
+		/// <inheritdoc />
+		public override Task<byte> PeekByteAsync()
+		{
+			ThrowIfCantRead();
+			CanRead = false;
+
+			return DecoratedReader.PeekByteAsync();
+		}
+
+		/// <inheritdoc />
+		public override Task<byte[]> ReadAllBytesAsync()
+		{
+			ThrowIfCantRead();
+			CanRead = false;
+
+			return DecoratedReader.ReadAllBytesAsync();
+		}
+
+		/// <inheritdoc />
+		public override Task<byte[]> ReadBytesAsync(int count)
+		{
+			ThrowIfCantRead();
+			CanRead = false;
+
+			return DecoratedReader.ReadBytesAsync(count);
+		}
+
+		/// <inheritdoc />
+		public override Task<byte[]> PeakBytesAsync(int count)
+		{
+			ThrowIfCantRead();
+			CanRead = false;
+
+			return DecoratedReader.PeakBytesAsync(count);
+		}
+#endif
 	}
 }

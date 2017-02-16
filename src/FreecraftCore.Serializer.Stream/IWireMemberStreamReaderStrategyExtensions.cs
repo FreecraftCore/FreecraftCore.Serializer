@@ -39,5 +39,16 @@ namespace FreecraftCore.Serializer
 		{
 			return new PrependBytesStreamReaderStrategy(reader, bytes);
 		}
+
+		/// <summary>
+		/// Decorates the stream with buffering functionality
+		/// around readers that cannot seek or buffer themselves.
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <returns></returns>
+		public static IWireStreamReaderStrategy PeekWithBuffering(this IWireStreamReaderStrategy reader)
+		{
+			return new BufferedPeekWireStreamReaderStrategyDecorator(reader);
+		}
 	}
 }

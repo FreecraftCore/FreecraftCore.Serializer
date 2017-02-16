@@ -64,11 +64,13 @@ namespace FreecraftCore.Serializer.Tests
 			//arrange
 			SerializerService serializer = new SerializerService();
 			serializer.RegisterType<TestComplexTypeWithCompressedComplex>();
+			serializer.RegisterType<TestComplexType>();
 			serializer.Compile();
 
 			//act
 			byte[] bytes = serializer.Serialize(new TestComplexTypeWithCompressedComplex(new TestComplexType(5)));
 			TestComplexTypeWithCompressedComplex obj = serializer.Deserialize<TestComplexTypeWithCompressedComplex>(bytes);
+			byte[] justTestComplexBytes = serializer.Serialize(new TestComplexType(65));
 
 			//assert
 			Assert.True(bytes.Length != 4); //might be longer with header/footer
