@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using Ionic.Zlib;
 using JetBrains.Annotations;
-using CompressionMode = System.IO.Compression.CompressionMode;
-using DeflateStream = System.IO.Compression.DeflateStream;
 
 namespace FreecraftCore.Serializer
 {
@@ -61,7 +59,7 @@ namespace FreecraftCore.Serializer
 			{
 				using (MemoryStream decompressedStream = new MemoryStream())
 				{
-					using (ZlibStream decompressionStream = new ZlibStream(compressedStream, Ionic.Zlib.CompressionMode.Decompress, CompressionLevel.BestSpeed))
+					using (ZlibStream decompressionStream = new ZlibStream(compressedStream, Ionic.Zlib.CompressionMode.Decompress, CompressionLevel.BestCompression))
 					{
 						decompressionStream.CopyTo(decompressedStream);
 						decompressionStream.Close();
@@ -105,7 +103,8 @@ namespace FreecraftCore.Serializer
 				//Now we can write the actual content
 				using (MemoryStream compressedStream = new MemoryStream())
 				{
-					using (ZlibStream compressionStream = new ZlibStream(compressedStream, Ionic.Zlib.CompressionMode.Compress, CompressionLevel.BestSpeed))
+					using (ZlibStream compressionStream = new ZlibStream(compressedStream, Ionic.Zlib.CompressionMode.Compress, CompressionLevel.BestCompression))
+					//using (DeflateStream compressionStream = new DeflateStream(compressedStream, CompressionMode.Compress))
 					{
 						contentStream.CopyTo(compressionStream);
 						compressionStream.Close();
