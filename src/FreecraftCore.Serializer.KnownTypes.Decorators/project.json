@@ -13,11 +13,6 @@
   },
 
     "frameworks": {
-        "net35": {
-            "dependencies": {
-                "Net35Essentials": "1.0.3"
-            }
-        },
         "net45": {
 
         },

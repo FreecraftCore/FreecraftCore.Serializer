@@ -13,7 +13,8 @@ namespace FreecraftCore.Serializer
 	/// Decorates a <see cref="IWireStreamReaderStrategy"/> and provides the ability to peek
 	/// and seek through a reader that doesn't support peeking by default.
 	/// </summary>
-	public class BufferedPeekWireStreamReaderStrategyDecorator : IWireStreamReaderStrategy
+	public class BufferedPeekWireStreamReaderStrategyDecorator<TReaderType> : IWireStreamReaderStrategy
+		where TReaderType : IWireStreamReaderStrategy
 	{
 		/// <summary>
 		/// Enumeration of reader states.
@@ -35,7 +36,7 @@ namespace FreecraftCore.Serializer
 		/// The decorated reading strategy.
 		/// </summary>
 		[NotNull]
-		private IWireStreamReaderStrategy DecoratedReader { get; }
+		private TReaderType DecoratedReader { get; }
 
 		/// <summary>
 		/// Lazy collection of the buffered bytes.
@@ -48,7 +49,7 @@ namespace FreecraftCore.Serializer
 
 		private State ReaderState { get; set; }
 
-		public BufferedPeekWireStreamReaderStrategyDecorator([NotNull] IWireStreamReaderStrategy decoratedReader)
+		public BufferedPeekWireStreamReaderStrategyDecorator([NotNull] TReaderType decoratedReader)
 		{
 			if (decoratedReader == null) throw new ArgumentNullException(nameof(decoratedReader));
 

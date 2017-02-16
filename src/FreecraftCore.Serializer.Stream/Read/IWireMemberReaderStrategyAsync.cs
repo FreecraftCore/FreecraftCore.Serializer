@@ -1,33 +1,37 @@
 ﻿using System;
-using System.CodeDom;
-using System.IO;
 using JetBrains.Annotations;
+
+#if !NET35
+using System.Threading.Tasks;
+#endif
 
 namespace FreecraftCore.Serializer
 {
+
 	/// <summary>
-	/// Contract for objects that provide wire stream reading.
+	/// Contract for objects that provide wire stream async reading.
 	/// </summary>
-	public interface IWireStreamReaderStrategy : IDisposable
-	{	
+	public interface IWireStreamReaderStrategyAsync : IDisposable
+	{
+#if !NET35
 		/// <summary>
 		/// Reads a byte from the stream.
 		/// </summary>
-		byte ReadByte();
+		Task<byte> ReadByteAsync();
 
 		/// <summary>
 		/// Reads a byte from the stream.
 		/// Doesn't remove it from the stream or move it forward.
 		/// </summary>
 		/// <returns>The byte peeked.</returns>
-		byte PeekByte();
-		
+		Task<byte> PeekByteAsync();
+
 		/// <summary>
 		/// Reads all bytes from the stream.
 		/// </summary>
 		/// <returns>Returns all bytes left in the stream. If there are no bytes left it returns an empty non-null array.</returns>
 		[NotNull]
-		byte[] ReadAllBytes();
+		Task<byte[]> ReadAllBytesAsync();
 
 		/// <summary>
 		/// Reads <paramref name="count"/> many bytes from the stream.
@@ -36,7 +40,7 @@ namespace FreecraftCore.Serializer
 		/// <exception cref="ArgumentOutOfRangeException">If the provided <see cref="count"/> is negative or exceeds the length of the underlying data.</exception>
 		/// <returns>A byte array of the read bytes.</returns>
 		[NotNull]
-		byte[] ReadBytes(int count);
+		Task<byte[]> ReadBytesAsync(int count);
 
 		/// <summary>
 		/// Peeks <paramref name="count"/> many bytes from the stream.
@@ -45,6 +49,8 @@ namespace FreecraftCore.Serializer
 		/// <exception cref="ArgumentOutOfRangeException">If the provided <see cref="count"/> is negative or exceeds the length of the underlying data.</exception>
 		/// <returns>A byte array of the peeked bytes.</returns>
 		[NotNull]
-		byte[] PeakBytes(int count);
+		Task<byte[]> PeakBytesAsync(int count);
+#endif
 	}
 }
+

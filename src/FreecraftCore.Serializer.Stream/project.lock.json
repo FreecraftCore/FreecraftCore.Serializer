@@ -2,17 +2,6 @@
   "locked": false,
   "version": 2,
   "targets": {
-    ".NETFramework,Version=v3.5": {
-      "JetBrains.Annotations/10.2.1": {
-        "type": "package",
-        "compile": {
-          "lib/net/JetBrains.Annotations.dll": {}
-        },
-        "runtime": {
-          "lib/net/JetBrains.Annotations.dll": {}
-        }
-      }
-    },
     ".NETFramework,Version=v4.5": {
       "JetBrains.Annotations/10.2.1": {
         "type": "package",
@@ -59,7 +48,6 @@
     "": [
       "JetBrains.Annotations >= 10.2.1"
     ],
-    ".NETFramework,Version=v3.5": [],
     ".NETFramework,Version=v4.5": [],
     ".NETFramework,Version=v4.6": []
   },

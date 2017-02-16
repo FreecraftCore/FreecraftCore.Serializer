@@ -6,21 +6,17 @@
     "FreecraftCore.Serializer.KnownTypes.Primitives": "1.0.0-*",
     "FreecraftCore.Serializer.KnownTypes.Decorators": "1.0.0-*",
     "FreecraftCore.Serializer.Core": "1.0.0-*",
-    "FreecraftCore.Serializer.Stream.Default": "1.0.0-*",
     "fasterflect": "2.1.3",
     "JetBrains.Annotations": "10.2.1",
-    "FreecraftCore.Serializer.API.Service": "1.0.0-*"
+    "FreecraftCore.Serializer.API.Service": "1.0.0-*",
+    "FreecraftCore.Serializer.Stream.Default": "1.0.0-*"
   },
 
     "frameworks": {
-        "net35": {
-        },
-        "net45": {
-
-        },
-        "net46": {
-
-        }
+      "net45": {
+      },
+      "net46": {
+      }
     },
 
     "buildOptions": {

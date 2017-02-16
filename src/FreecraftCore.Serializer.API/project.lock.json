@@ -2,66 +2,6 @@
   "locked": false,
   "version": 2,
   "targets": {
-    ".NETFramework,Version=v3.5": {
-      "fasterflect/2.1.3": {
-        "type": "package",
-        "compile": {
-          "lib/net35/Fasterflect.dll": {}
-        },
-        "runtime": {
-          "lib/net35/Fasterflect.dll": {}
-        }
-      },
-      "JetBrains.Annotations/10.2.1": {
-        "type": "package",
-        "compile": {
-          "lib/net/JetBrains.Annotations.dll": {}
-        },
-        "runtime": {
-          "lib/net/JetBrains.Annotations.dll": {}
-        }
-      },
-      "FreecraftCore.Serializer.Metadata/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v3.5",
-        "dependencies": {
-          "JetBrains.Annotations": "10.2.1"
-        },
-        "compile": {
-          "net35/FreecraftCore.Serializer.Metadata.dll": {}
-        },
-        "runtime": {
-          "net35/FreecraftCore.Serializer.Metadata.dll": {}
-        }
-      },
-      "FreecraftCore.Serializer.Stream/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v3.5",
-        "dependencies": {
-          "JetBrains.Annotations": "10.2.1"
-        },
-        "compile": {
-          "net35/FreecraftCore.Serializer.Stream.dll": {}
-        },
-        "runtime": {
-          "net35/FreecraftCore.Serializer.Stream.dll": {}
-        }
-      },
-      "FreecraftCore.Serializer.Stream.Default/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v3.5",
-        "dependencies": {
-          "FreecraftCore.Serializer.Stream": "1.0.0",
-          "JetBrains.Annotations": "10.2.1"
-        },
-        "compile": {
-          "net35/FreecraftCore.Serializer.Stream.Default.dll": {}
-        },
-        "runtime": {
-          "net35/FreecraftCore.Serializer.Stream.Default.dll": {}
-        }
-      }
-    },
     ".NETFramework,Version=v4.5": {
       "fasterflect/2.1.3": {
         "type": "package",
@@ -238,7 +178,6 @@
       "JetBrains.Annotations >= 10.2.1",
       "fasterflect >= 2.1.3"
     ],
-    ".NETFramework,Version=v3.5": [],
     ".NETFramework,Version=v4.5": [],
     ".NETFramework,Version=v4.6": []
   },

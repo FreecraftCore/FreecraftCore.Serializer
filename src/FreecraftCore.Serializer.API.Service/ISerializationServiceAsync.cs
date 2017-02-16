@@ -1,16 +1,15 @@
-﻿using System;
+﻿#if !NET35
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer
 {
-	public interface ISerializationService
-#if !NET35
-		: ISerializationServiceAsync
-#endif
+	public interface ISerializationServiceAsync
 	{
 		/// <summary>
 		/// Attempts to serialize the provided <paramref name="data"/>.
@@ -20,7 +19,7 @@ namespace FreecraftCore.Serializer
 		/// <returns>Byte array representation of the object.</returns>
 		[Pure]
 		[NotNull]
-		byte[] Serialize<TTypeToSerialize>(TTypeToSerialize data);
+		Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data);
 
 		/// <summary>
 		/// Attempts to serialize the provided <paramref name="data"/> with a custom writer strategy.
@@ -31,7 +30,7 @@ namespace FreecraftCore.Serializer
 		/// <returns>Byte array representation of the object.</returns>
 		[Pure]
 		[NotNull]
-		byte[] Serialize<TTypeToSerialize>(TTypeToSerialize data, [NotNull] IWireStreamWriterStrategy writer);
+		Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data, [NotNull] IWireStreamWriterStrategy writer);
 
 		//We shouldn't expect the deserialize to provide always non-null values.
 		//That is a serialization implementation detail.
@@ -42,7 +41,7 @@ namespace FreecraftCore.Serializer
 		/// <param name="data">Byte repsentation of <typeparamref name="TTypeToDeserializeTo"/>.</param>
 		/// <returns>An instance of <typeparamref name="TTypeToDeserializeTo"/> or null if failed.</returns>
 		[Pure]
-		TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>([NotNull] byte[] data);
+		Task<TTypeToDeserializeTo> DeserializeAsync<TTypeToDeserializeTo>([NotNull] byte[] data);
 
 		//We shouldn't expect the deserialize to provide always non-null values.
 		//That is a serialization implementation detail.
@@ -54,6 +53,7 @@ namespace FreecraftCore.Serializer
 		/// <param name="source">Custom reader strategy source.</param>
 		/// <returns>An instance of <typeparamref name="TTypeToDeserializeTo"/> or null if failed.</returns>
 		[Pure]
-		TTypeToDeserializeTo Deserialize<TTypeToDeserializeTo>([NotNull] IWireStreamReaderStrategy source);
+		Task<TTypeToDeserializeTo> DeserializeAsync<TTypeToDeserializeTo>([NotNull] IWireStreamReaderStrategy source);
 	}
 }
+#endif

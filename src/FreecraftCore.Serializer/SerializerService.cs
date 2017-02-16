@@ -8,6 +8,10 @@ using Fasterflect;
 using FreecraftCore.Serializer.API;
 using JetBrains.Annotations;
 
+#if !NET35
+using System.Threading.Tasks;
+#endif
+
 namespace FreecraftCore.Serializer
 {
 	public class SerializerService : ISerializerService, ISerializerStrategyFactory
@@ -226,5 +230,32 @@ namespace FreecraftCore.Serializer
 
 			return false;
 		}
+
+#if !NET35
+		/// <inheritdoc />
+		public Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <inheritdoc />
+		public Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data, IWireStreamWriterStrategy writer)
+		{
+			return writer.GetBytesAsync();
+		}
+
+		/// <inheritdoc />
+		public Task<TTypeToDeserializeTo> DeserializeAsync<TTypeToDeserializeTo>(byte[] data)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <inheritdoc />
+		public Task<TTypeToDeserializeTo> DeserializeAsync<TTypeToDeserializeTo>(IWireStreamReaderStrategy source)
+		{
+			throw new NotImplementedException();
+		}
+
+#endif
 	}
 }
