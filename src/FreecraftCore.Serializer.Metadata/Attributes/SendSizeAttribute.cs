@@ -27,7 +27,11 @@ namespace FreecraftCore.Serializer
 		public SendSizeAttribute(SizeType sizeType)
 		{
 			if (!Enum.IsDefined(typeof(SizeType), sizeType))
-				throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(SizeType));
+#if !NETSTANDARD1_6
+				throw new InvalidEnumArgumentException(nameof(sizeType), (int)sizeType, typeof(SizeType));
+#else
+				throw new ArgumentException($"Provided enum argument {nameof(sizeType)} of Type {typeof(SizeType)} with value {sizeType} was not in valid range.", nameof(sizeType));
+#endif
 
 			TypeOfSize = sizeType;
 		}

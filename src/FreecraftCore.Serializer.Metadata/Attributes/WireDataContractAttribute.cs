@@ -48,13 +48,21 @@ namespace FreecraftCore.Serializer
 		public WireDataContractAttribute(KeyType keyType = KeyType.None, InformationHandlingFlags typeHandling = InformationHandlingFlags.Default, bool expectRuntimeLink = false)
 		{
 			if (!Enum.IsDefined(typeof(KeyType), keyType))
-				throw new InvalidEnumArgumentException(nameof(keyType), (int) keyType, typeof(KeyType));
+#if !NETSTANDARD1_6
+				throw new InvalidEnumArgumentException(nameof(keyType), (int)keyType, typeof(KeyType));
+#else
+				throw new ArgumentException($"Provided enum argument {nameof(keyType)} of Type {typeof(KeyType)} with value {keyType} was not in valid range.", nameof(keyType));
+#endif
 
 			int i;
 
 			if (!Enum.IsDefined(typeof(InformationHandlingFlags), typeHandling) && Int32.TryParse(typeHandling.ToString(), out i))
+#if !NETSTANDARD1_6
 				throw new InvalidEnumArgumentException(nameof(typeHandling), (int) typeHandling,
 					typeof(InformationHandlingFlags));
+#else
+				throw new ArgumentException($"Provided enum argument {nameof(typeHandling)} of Type {typeof(InformationHandlingFlags)} with value {typeHandling} was not in valid range.", nameof(typeHandling));
+#endif
 
 			//The keytype provided is optional to be none.
 			//If you want to wire up children to this for polymorphic serialization then

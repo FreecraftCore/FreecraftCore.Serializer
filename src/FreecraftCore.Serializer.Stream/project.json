@@ -7,10 +7,19 @@
 
   "frameworks": {
     "net45": {
-
+      "dependencies": {
+      }
     },
     "net46": {
+      "dependencies": {
 
+      }
+    },
+    "netstandard1.6": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      }
     }
   },
 
@@ -19,3 +28,6 @@
         "optimize": true
     }
 }
+
+
+
