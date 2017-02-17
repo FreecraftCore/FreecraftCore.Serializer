@@ -51,9 +51,7 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public object ReadIntoObject(object obj, IWireStreamReaderStrategy source)
 		{
-			TType castedObj = (TType)obj;
-
-			return ReadIntoObject(castedObj, source);
+			return ReadIntoObject((TType)obj, source);
 		}
 
 		/// <inheritdoc />
@@ -104,48 +102,48 @@ namespace FreecraftCore.Serializer
 		//Async implementation
 
 		/// <inheritdoc />
-		public virtual Task<TType> ReadIntoObjectAsync(TType obj, IWireStreamReaderStrategyAsync source)
+		public virtual async Task<TType> ReadIntoObjectAsync(TType obj, IWireStreamReaderStrategyAsync source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//We can't really write or read into an object on a simple type.
 			
 			//Default implementation is to just read the object from the source.
-			return ReadAsync(source);
+			return await ReadAsync(source);
 		}
 
 		/// <inheritdoc />
-		public virtual Task ObjectIntoWriterAsync(TType obj, IWireStreamWriterStrategyAsync dest)
+		public virtual async Task ObjectIntoWriterAsync(TType obj, IWireStreamWriterStrategyAsync dest)
 		{
-			throw new NotImplementedException();
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//We can't really write or read into an object on a simple type.
+
+			await WriteAsync(obj, dest);
 		}
 
 		/// <inheritdoc />
-		public Task WriteAsync(object value, IWireStreamWriterStrategyAsync dest)
+		public async Task WriteAsync(object value, IWireStreamWriterStrategyAsync dest)
 		{
-			return WriteAsync((TType)value, dest);
+			await WriteAsync((TType)value, dest);
 		}
 
 		/// <inheritdoc />
-		Task<object> ITypeSerializerStrategyAsync.ReadAsync(IWireStreamReaderStrategyAsync source)
+		async Task<object> ITypeSerializerStrategyAsync.ReadAsync(IWireStreamReaderStrategyAsync source)
 		{	
-			Task<TType> resultTask = ReadAsync(source);
-
-			//Wrap around the task to cast it.
-			return new Task<object>(() => resultTask.Result);
+			return await ReadAsync(source);
 		}
 
 		/// <inheritdoc />
-		public Task<object> ReadIntoObjectAsync(object obj, IWireStreamReaderStrategyAsync source)
+		public async Task<object> ReadIntoObjectAsync(object obj, IWireStreamReaderStrategyAsync source)
 		{
-			Task<TType> strongTask = ReadIntoObjectAsync((TType)obj, source);
-
-			//wrap around the task to cast it.
-			return new Task<object>(() => strongTask.Result);
+			return await ReadIntoObjectAsync((TType) obj, source);
 		}
 
 		/// <inheritdoc />
-		public Task ObjectIntoWriterAsync(object obj, IWireStreamWriterStrategyAsync dest)
+		public async Task ObjectIntoWriterAsync(object obj, IWireStreamWriterStrategyAsync dest)
 		{
-			return ObjectIntoWriterAsync((TType)obj, dest);
+			await ObjectIntoWriterAsync((TType)obj, dest);
 		}
 	}
 }

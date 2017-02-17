@@ -41,19 +41,13 @@
       },
       "FreecraftCore.Serializer.API/1.0.0": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5",
+        "framework": "Unsupported,Version=v0.0",
         "dependencies": {
           "Fasterflect.Netstandard": "1.0.4",
           "FreecraftCore.Serializer.Metadata": "1.0.0",
           "FreecraftCore.Serializer.Stream": "1.0.0",
           "FreecraftCore.Serializer.Stream.Default": "1.0.0",
           "JetBrains.Annotations": "10.2.1"
-        },
-        "compile": {
-          "net45/FreecraftCore.Serializer.API.dll": {}
-        },
-        "runtime": {
-          "net45/FreecraftCore.Serializer.API.dll": {}
         }
       },
       "FreecraftCore.Serializer.Compression/1.0.0": {

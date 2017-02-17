@@ -67,21 +67,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 					default:
 						throw new InvalidOperationException($"Encountered unsupported {nameof(SendSizeAttribute.SizeType)} Value: {context.BuiltContextKey.Value.ContextSpecificKey.Key}");
 				}
-				/*switch ((SendSizeAttribute.SizeType)context.BuiltContextKey.Value.ContextSpecificKey.Key)
-				{
-					case SendSizeAttribute.SizeType.Byte:
-						collectionSizeStrategy = new ByteSizeCollectionSizeStrategy();
-						break;
-					case SendSizeAttribute.SizeType.Int32:
-						collectionSizeStrategy = new Int32SizeCollectionSizeStrategy(this.serializerProviderService.Get<int>());
-						break;
-					case SendSizeAttribute.SizeType.UShort:
-						collectionSizeStrategy = new UInt16SizeCollectionSizeStrategy(this.serializerProviderService.Get<ushort>());
-						break;
-
-					default:
-						throw new InvalidOperationException($"Encountered unsupported {nameof(SendSizeAttribute.SizeType)} Value: {context.BuiltContextKey.Value.ContextSpecificKey.Key}");
-				}*/
 			}
 
 			//TODO: Should we really have a default?

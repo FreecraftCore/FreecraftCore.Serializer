@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
@@ -63,7 +64,45 @@ namespace FreecraftCore.Serializer.KnownTypes
 			
 			//TODO: Invesitgate expected WoW/TC behavior for strings of length 0. Currently violates contract for return type.
 			//Serializer design decision: Return null instead of String.Empty for no strings
-			return stringBytes.Count == 0 ? null : System.Text.Encoding.ASCII.GetString(stringBytes.ToArray());
+			return stringBytes.Count == 0 ? null : Encoding.ASCII.GetString(stringBytes.ToArray());
+		}
+
+		/// <inheritdoc />
+		public override async Task WriteAsync(string value, IWireStreamWriterStrategyAsync dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//See sync method for doc
+			byte[] stringBytes = Encoding.ASCII.GetBytes(value);
+
+			await dest.WriteAsync(stringBytes);
+
+			//Write the null terminator; Client expects it.
+			await dest.WriteAsync(0);
+		}
+
+		/// <inheritdoc />
+		public override async Task<string> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+			//See sync method for doc
+
+			//TODO: Find an average size for WoW strings
+			List<byte> stringBytes = new List<byte>();
+
+			byte currentByte = await source.ReadByteAsync();
+
+			//TODO: Security/prevent spoofs causing exceptions
+			while (currentByte != 0)
+			{
+				stringBytes.Add(currentByte);
+
+				currentByte = await source.ReadByteAsync();
+			}
+
+			//TODO: Invesitgate expected WoW/TC behavior for strings of length 0. Currently violates contract for return type.
+			//Serializer design decision: Return null instead of String.Empty for no strings
+			return stringBytes.Count == 0 ? null : Encoding.ASCII.GetString(stringBytes.ToArray());
 		}
 	}
 }

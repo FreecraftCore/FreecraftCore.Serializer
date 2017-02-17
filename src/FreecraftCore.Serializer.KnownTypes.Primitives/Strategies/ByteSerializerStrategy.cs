@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -42,6 +43,22 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (bytes == null) throw new ArgumentNullException(nameof(bytes));
 
 			return bytes.First();
+		}
+
+		/// <inheritdoc />
+		public override async Task WriteAsync(byte value, [NotNull] IWireStreamWriterStrategyAsync dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			await dest.WriteAsync(value);
+		}
+
+		/// <inheritdoc />
+		public override async Task<byte> ReadAsync([NotNull] IWireStreamReaderStrategyAsync source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			return await source.ReadByteAsync();
 		}
 	}
 }
