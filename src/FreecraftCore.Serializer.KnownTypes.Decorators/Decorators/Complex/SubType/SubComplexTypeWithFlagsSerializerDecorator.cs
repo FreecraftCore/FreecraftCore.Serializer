@@ -128,15 +128,51 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override Task WriteAsync(TBaseType value, IWireStreamWriterStrategyAsync dest)
+		public override async Task WriteAsync(TBaseType value, IWireStreamWriterStrategyAsync dest)
 		{
-			throw new NotImplementedException();
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//TODO: Test perf
+			//Defer key writing to the key writing strategy
+			foreach (ChildKeyPair childKey in serializers)
+				if (childKey.Serializer.SerializerType == value.GetType())
+				{
+
+					//Well, what do we do? Do we just write the flag?
+					//It's the best we can do I think. Otherwise they should use NoConsume
+					//to better define the flag written themselves
+					await keyStrategy.WriteAsync(childKey.Flags, dest);
+
+					//Now write
+					await childKey.Serializer.WriteAsync(value, dest);
+					return;
+				}
+
+			//We can't write default types.
+			throw new InvalidOperationException($"Failed to serialize Type: {value.GetType().FullName}. No prepared serializer could be found. Make sure to properly setup child mapping.");
 		}
 
 		/// <inheritdoc />
-		public override Task<TBaseType> ReadAsync(IWireStreamReaderStrategyAsync source)
+		public override async Task<TBaseType> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
-			throw new NotImplementedException();
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//TODO: Handle 0 flags
+			//Ask the key strategy for what flags are present
+			int flags = await keyStrategy.ReadAsync(source); //defer to key reader (could be int, byte or something else)
+
+			//TODO: Test perf
+			foreach (ChildKeyPair childKey in serializers)
+			{
+				if ((childKey.Flags & flags) != 0)
+					return (TBaseType)await childKey.Serializer.ReadAsync(source);
+			}
+
+			//If we didn't find a flags for it then try the default
+			if (DefaultSerializer != null)
+				return (TBaseType)await DefaultSerializer.ReadAsync(source);
+			else
+				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Flags: {flags} but no valid type matches and there is no default type.");
 		}
 	}
 }
