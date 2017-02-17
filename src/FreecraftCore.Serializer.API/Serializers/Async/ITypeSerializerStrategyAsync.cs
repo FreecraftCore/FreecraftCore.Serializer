@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
-	public interface ITypeSerializerStrategyAsync : ITypeSerializerStrategy
+	public interface ITypeSerializerStrategyAsync
 	{
 		/// <summary>
 		/// Perform the steps necessary to serialize this data.
@@ -48,7 +48,7 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Contract for type that providing serialization strategy for the provided TType.
 	/// </summary>
-	public interface ITypeSerializerStrategyAsync<TType> : ITypeSerializerStrategy<TType>, ITypeSerializerStrategyAsync
+	public interface ITypeSerializerStrategyAsync<TType>
 	{
 		/// <summary>
 		/// Perform the steps necessary to serialize this data.
