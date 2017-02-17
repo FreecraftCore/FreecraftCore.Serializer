@@ -41,7 +41,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 				throw new ArgumentNullException(nameof(sizeStrategy), $"Provided {nameof(ICollectionSizeStrategy)} to needed to decorate was null.");
 
 			if (!Enum.IsDefined(typeof(SerializationContextRequirement), contextReq))
-				throw new InvalidEnumArgumentException(nameof(contextReq), (int) contextReq, typeof(SerializationContextRequirement));
+				throw new ArgumentOutOfRangeException(nameof(contextReq), "Value should be defined in the SerializationContextRequirement enum.");
+
+			/*if (!Enum.IsDefined(typeof(SerializationContextRequirement), contextReq))
+				throw new InvalidEnumArgumentException(nameof(contextReq), (int) contextReq, typeof(SerializationContextRequirement));*/
 
 			ContextRequirement = contextReq;
 

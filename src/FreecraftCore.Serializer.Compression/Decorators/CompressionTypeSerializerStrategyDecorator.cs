@@ -62,11 +62,10 @@ namespace FreecraftCore.Serializer
 					using (ZlibStream decompressionStream = new ZlibStream(compressedStream, Ionic.Zlib.CompressionMode.Decompress, CompressionLevel.BestCompression))
 					{
 						decompressionStream.CopyTo(decompressedStream);
-						decompressionStream.Close();
-
-						//Return the interpted bytes from the decompressed buffer
-						return DecoratedStrategy.Read(new DefaultStreamReaderStrategy(decompressedStream.ToArray()));
 					}
+
+					//Return the interpted bytes from the decompressed buffer
+					return DecoratedStrategy.Read(new DefaultStreamReaderStrategy(decompressedStream.ToArray()));
 				}
 			}
 		}
@@ -107,11 +106,10 @@ namespace FreecraftCore.Serializer
 					//using (DeflateStream compressionStream = new DeflateStream(compressedStream, CompressionMode.Compress))
 					{
 						contentStream.CopyTo(compressionStream);
-						compressionStream.Close();
-
-						//Writes the compressed buffer
-						dest.Write(compressedStream.ToArray());
 					}
+
+					//Writes the compressed buffer
+					dest.Write(compressedStream.ToArray());
 				}
 			}
 		}

@@ -1,4 +1,4 @@
-﻿{
+{
     "version": "1.0.0-*",
 
   "dependencies": {
@@ -7,6 +7,12 @@
   },
 
   "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      }
+    },
     "net45": {
 
     },
@@ -16,7 +22,7 @@
   },
 
     "buildOptions": {
-        "allowUnsafe": true,
-        "optimize": true
+      "allowUnsafe": true,
+      "optimize": true
     }
-}
+  }

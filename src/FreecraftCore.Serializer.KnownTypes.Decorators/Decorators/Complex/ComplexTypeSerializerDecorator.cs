@@ -27,7 +27,7 @@ namespace FreecraftCore.Serializer
 		{
 			if (prototypeGenerator == null) throw new ArgumentNullException(nameof(prototypeGenerator));
 
-			if(!typeof(TComplexType).IsClass)
+			if(!typeof(TComplexType).GetTypeInfo().IsClass)
 				throw new ArgumentException($"Provided generic Type: {typeof(TComplexType).FullName} must be a reference type.", nameof(TComplexType));
 
 			prototypeGeneratorService = prototypeGenerator;
@@ -37,18 +37,18 @@ namespace FreecraftCore.Serializer
 			//to do so efficiently we must cache an array of the Type that represents the linear class hierarchy reversed
 			List<Type> typeHierarchy = new List<Type>();
 
-			if (typeof(TComplexType).BaseType == null || typeof(TComplexType).BaseType == typeof(object))
+			if (typeof(TComplexType).GetTypeInfo().BaseType == null || typeof(TComplexType).GetTypeInfo().BaseType == typeof(object))
 				reversedInheritanceHierarchy = Enumerable.Empty<Type>(); //make it an empty collection if there are no base types
 			else
 			{
 				//add every Type to the collection (not all may have serializers or be involved in deserialization)
-				Type baseType = typeof(TComplexType).BaseType;
+				Type baseType = typeof(TComplexType).GetTypeInfo().BaseType;
 
-				while (baseType != null && typeof(TComplexType).BaseType != typeof(object))
+				while (baseType != null && typeof(TComplexType).GetTypeInfo().BaseType != typeof(object))
 				{
 					typeHierarchy.Add(baseType);
 
-					baseType = baseType.BaseType;
+					baseType = baseType.GetTypeInfo().BaseType;
 				}
 			}
 

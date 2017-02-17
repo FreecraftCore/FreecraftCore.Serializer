@@ -28,7 +28,9 @@ namespace FreecraftCore.Serializer.API.Extensions
 			if (key == null) throw new ArgumentNullException(nameof(key));
 			if (type == null) throw new ArgumentNullException(nameof(type));
 			if (!Enum.IsDefined(typeof(ContextTypeFlags), contextFlags))
-				throw new InvalidEnumArgumentException(nameof(contextFlags), (int) contextFlags, typeof(ContextTypeFlags));
+				throw new ArgumentOutOfRangeException(nameof(contextFlags), "Value should be defined in the ContextTypeFlags enum.");
+			/*if (!Enum.IsDefined(typeof(ContextTypeFlags), contextFlags))
+				throw new InvalidEnumArgumentException(nameof(contextFlags), (int) contextFlags, typeof(ContextTypeFlags));*/
 
 			return provider.Get(new ContextualSerializerLookupKey(contextFlags, key, type));
 		}
@@ -51,7 +53,9 @@ namespace FreecraftCore.Serializer.API.Extensions
 			if (key == null) throw new ArgumentNullException(nameof(key));
 			if (type == null) throw new ArgumentNullException(nameof(type));
 			if (!Enum.IsDefined(typeof(ContextTypeFlags), contextFlags))
-				throw new InvalidEnumArgumentException(nameof(contextFlags), (int) contextFlags, typeof(ContextTypeFlags));
+				throw new ArgumentOutOfRangeException(nameof(contextFlags), "Value should be defined in the ContextTypeFlags enum.");
+			/*if (!Enum.IsDefined(typeof(ContextTypeFlags), contextFlags))
+				throw new InvalidEnumArgumentException(nameof(contextFlags), (int) contextFlags, typeof(ContextTypeFlags));*/
 
 			return provider.HasSerializerFor(new ContextualSerializerLookupKey(contextFlags, key, type));
 		}

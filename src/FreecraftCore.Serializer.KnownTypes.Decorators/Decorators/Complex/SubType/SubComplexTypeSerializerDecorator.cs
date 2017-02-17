@@ -46,13 +46,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 			typeToKeyLookup = new Dictionary<Type, int>();
 			keyToTypeLookup = new Dictionary<int, Type>();
 
-			DefaultSerializer = typeof(TBaseType).Attribute<DefaultChildAttribute>() != null
-				? serializerProviderService.Get(typeof(TBaseType).Attribute<DefaultChildAttribute>().ChildType)
+			DefaultSerializer = typeof(TBaseType).GetTypeInfo().Attribute<DefaultChildAttribute>() != null
+				? serializerProviderService.Get(typeof(TBaseType).GetTypeInfo().Attribute<DefaultChildAttribute>().ChildType)
 				: null;
 
 			//We no longer reserve 0. Sometimes type information of a child is sent as a 0 in WoW protocol. We can opt for mostly metadata marker style interfaces.
 			//TODO: Add support for basetype serialization metadata marking.
-			foreach (WireDataContractBaseTypeAttribute wa in typeof(TBaseType).Attributes<WireDataContractBaseTypeAttribute>())
+			foreach (WireDataContractBaseTypeAttribute wa in typeof(TBaseType).GetTypeInfo().Attributes<WireDataContractBaseTypeAttribute>())
 			{
 				RegisterPair(wa.ChildType, wa.Index);
 			}

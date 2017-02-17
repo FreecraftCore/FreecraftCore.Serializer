@@ -39,8 +39,11 @@ namespace FreecraftCore.Serializer
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
 			if (!Enum.IsDefined(typeof(SerializationContextRequirement), requirement))
+				throw new ArgumentOutOfRangeException(nameof(requirement), "Value should be defined in the SerializationContextRequirement enum.");
+
+			/*if (!Enum.IsDefined(typeof(SerializationContextRequirement), requirement))
 				throw new InvalidEnumArgumentException(nameof(requirement), (int) requirement,
-					typeof(SerializationContextRequirement));
+					typeof(SerializationContextRequirement));*/
 
 			managedContext = context;
 			ContextRequirement = requirement;

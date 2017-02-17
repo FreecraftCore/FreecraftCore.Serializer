@@ -58,13 +58,73 @@ namespace FreecraftCore.Serializer
 			ParameterExpression valueExp = Expression.Parameter(typeof(TMemberType), "value");
 
 			// Expression.Property can be used here as well
-			MemberExpression memberExp = Expression.PropertyOrField(targetExp, memberInfo.Name);
+			MemberExpression memberExp = GetPropertyOrField(targetExp, memberInfo.Name);
 			BinaryExpression assignExp = Expression.Assign(memberExp, valueExp);
 
 			MemberAccessor = Expression.Lambda<Action<TContainingType, TMemberType>>(assignExp, targetExp, valueExp)
 				.Compile();
 #endif
 			//TODO: Handle for net35. Profile fasterflect vs reflection emit
+		}
+
+		//TODO: Find out why netcore/netstandard requires this hack to get the proper property/field expression
+		//Solution for failed property location here: http://stackoverflow.com/a/8042602
+		private static MemberExpression GetPropertyOrField(Expression baseExpr, string name)
+		{
+			if (baseExpr == null)
+			{
+				throw new ArgumentNullException("baseExpr");
+			}
+			if (string.IsNullOrWhiteSpace(name))
+			{
+				throw new ArgumentException("name");
+			}
+			var type = baseExpr.Type;
+			var properties = type
+				.GetTypeInfo().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+				.Where(p => p.Name.Equals(name))
+				.ToArray();
+			if (properties.Length == 1)
+			{
+				var res = properties[0];
+				if (res.DeclaringType != type)
+				{
+					// Here is the core of the fix:
+					var tmp = res
+						.DeclaringType
+						.GetTypeInfo().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+						.Where(p => p.Name.Equals(name))
+						.ToArray();
+					if (tmp.Length == 1)
+					{
+						return Expression.Property(baseExpr, tmp[0]);
+					}
+				}
+				return Expression.Property(baseExpr, res);
+			}
+			if (properties.Length != 0)
+			{
+				throw new NotSupportedException(name);
+			}
+			var fields = type
+				.GetTypeInfo().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+				.Where(p => p.Name.Equals(name))
+				.ToArray();
+			if (fields.Length == 1)
+			{
+				return Expression.Field(baseExpr, fields[0]);
+			}
+			if (fields.Length != 0)
+			{
+				throw new NotSupportedException(name);
+			}
+			throw new ArgumentException(
+				string.Format(
+					"Type [{0}] does not define property/field called [{1}]"
+				, type
+				, name
+				)
+			);
 		}
 
 		public abstract void WriteMember(TContainingType obj, IWireStreamWriterStrategy dest);

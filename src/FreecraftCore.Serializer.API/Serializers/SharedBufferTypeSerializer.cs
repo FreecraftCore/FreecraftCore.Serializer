@@ -25,6 +25,7 @@ namespace FreecraftCore.Serializer
 		protected SharedBufferTypeSerializer()
 		{
 			//Cant use sizeof
+			//TODO: SizeOf is obsolete here we need to replace it soon
 			sharedByteBuffer = new byte[Marshal.SizeOf(typeof(TType))];
 		}
 

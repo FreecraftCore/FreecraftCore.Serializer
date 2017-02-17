@@ -1,24 +1,34 @@
 {
-    "version": "1.0.0-*",
+  "version": "1.0.0-*",
 
   "dependencies": {
-    "DotNetZip": "1.10.1",
     "FreecraftCore.Serializer.API": "1.0.0-*",
     "FreecraftCore.Serializer.Metadata": "1.0.0-*",
     "JetBrains.Annotations": "10.2.1"
   },
 
   "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "DotNetZip.Zlib.vNextUnofficial": "1.9.8.3"
+      }
+    },
     "net45": {
-
+      "dependencies": {
+        "DotNetZip":  "1.10.1"  
+      }
     },
     "net46": {
-
+      "dependencies": {
+        "DotNetZip": "1.10.1"
+      }
     }
   },
 
-    "buildOptions": {
-        "allowUnsafe": true,
-        "optimize": true
-    }
+  "buildOptions": {
+    "allowUnsafe": true,
+    "optimize": true
+  }
 }

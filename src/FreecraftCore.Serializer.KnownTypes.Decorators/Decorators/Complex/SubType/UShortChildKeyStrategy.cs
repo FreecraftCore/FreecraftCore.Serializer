@@ -21,11 +21,14 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (ushortSerializer == null)
 				throw new ArgumentNullException(nameof(ushortSerializer), $"Provided {nameof(ITypeSerializerStrategy<int>)} was null.");
 
-			int i;
+			if (!Enum.IsDefined(typeof(InformationHandlingFlags), typeHandling))
+				throw new ArgumentOutOfRangeException(nameof(typeHandling), "Value should be defined in the InformationHandlingFlags enum.");
+
+			/*int i;
 
 			if (!Enum.IsDefined(typeof(InformationHandlingFlags), typeHandling) && Int32.TryParse(typeHandling.ToString(), out i))
 				throw new InvalidEnumArgumentException(nameof(typeHandling), (int)typeHandling,
-					typeof(InformationHandlingFlags));
+					typeof(InformationHandlingFlags));*/
 
 			//We need an ushort serializer to know how to write the int sized key.
 			managedShortSerializer = ushortSerializer;

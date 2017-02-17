@@ -29,7 +29,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		dest.Write(bytes);
 	}*/
 
-	/*public class Int32ArraySerializerDecorator : ArraySerializerDecorator<int>
+	public class Int32ArraySerializerDecorator : ArraySerializerDecorator<int>
 	{
 		public Int32ArraySerializerDecorator(IGeneralSerializerProvider serializerProvider, ICollectionSizeStrategy sizeStrategy, SerializationContextRequirement requirement) 
 			: base(serializerProvider, sizeStrategy, requirement)
@@ -158,5 +158,5 @@ namespace FreecraftCore.Serializer.KnownTypes
 				pHeader->length = (UIntPtr)(intArray.Length * sizeof(int));
 			}
 		}
-	}*/
+	}
 }

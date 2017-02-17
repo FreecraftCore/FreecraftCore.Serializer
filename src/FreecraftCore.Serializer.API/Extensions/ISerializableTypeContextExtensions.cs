@@ -115,10 +115,12 @@ namespace FreecraftCore.Serializer
 		public static ISerializableTypeContext Override([NotNull] this ISerializableTypeContext context, SerializationContextRequirement requirement)
 		{
 			if (context == null) throw new ArgumentNullException(nameof(context));
-
 			if (!Enum.IsDefined(typeof(SerializationContextRequirement), requirement))
+				throw new ArgumentOutOfRangeException(nameof(requirement), "Value should be defined in the SerializationContextRequirement enum.");
+
+			/*if (!Enum.IsDefined(typeof(SerializationContextRequirement), requirement))
 				throw new InvalidEnumArgumentException(nameof(requirement), (int) requirement,
-					typeof(SerializationContextRequirement));
+					typeof(SerializationContextRequirement));*/
 
 			//Deocrate the context to set the provided key
 			return new ContextRequirementOverrideDecorator(context, requirement);

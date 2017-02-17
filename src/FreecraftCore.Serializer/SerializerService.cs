@@ -7,10 +7,7 @@ using System.Text;
 using Fasterflect;
 using FreecraftCore.Serializer.API;
 using JetBrains.Annotations;
-
-#if !NET35
 using System.Threading.Tasks;
-#endif
 
 namespace FreecraftCore.Serializer
 {
@@ -44,7 +41,7 @@ namespace FreecraftCore.Serializer
 			serializerStrategyFactoryService = new DefaultSerializerStrategyFactory(SerializerDecoratorHandlerFactory.Create(serializerStorageService, lookupKeyFactoryService, this), serializerStorageService, this, lookupKeyFactoryService);
 
 			FreecraftCoreSerializerKnownTypesPrimitivesMetadata.Assembly.GetTypes()
-				.Where(t => t.HasAttribute<KnownTypeSerializerAttribute>())
+				.Where(t => t.GetTypeInfo().HasAttribute<KnownTypeSerializerAttribute>())
 				.Select(t => t.CreateInstance() as ITypeSerializerStrategy)
 				.ToList()
 				.ForEach(s => serializerStorageService.RegisterType(s.SerializerType, s));
@@ -69,7 +66,7 @@ namespace FreecraftCore.Serializer
 		public bool RegisterType<TTypeToRegister>()
 		{
 			//Ingoring all but wiretypes makes this a lot easier.
-			if (typeof(TTypeToRegister).GetCustomAttribute<WireDataContractAttribute>(true) == null)
+			if (typeof(TTypeToRegister).GetTypeInfo().GetCustomAttribute<WireDataContractAttribute>(true) == null)
 				throw new InvalidOperationException($"Do not register any type that isn't marked with {nameof(WireDataContractAttribute)}. Only register WireDataContracts too; contained types will be registered automatically.");
 
 			//At this point this is a class marked with [WireDataContract] so we should assume and treat it as a complex type
@@ -105,18 +102,18 @@ namespace FreecraftCore.Serializer
 		private ITypeSerializerStrategy GetLeastDerivedSerializer<TType>()
 		{
 			//If it's a primitive or an enum it doesn't have a derived serializer
-			if(typeof(TType).IsPrimitive || typeof(TType).IsEnum)
+			if(typeof(TType).GetTypeInfo().IsPrimitive || typeof(TType).GetTypeInfo().IsEnum)
 				return serializerStorageService.Get<TType>();
 
-			Type t = typeof(TType).BaseType;
+			Type t = typeof(TType).GetTypeInfo().BaseType;
 
 			//If t isn't null it has at least one base type, we need to move up the object graph if so.
 			if (t != null && t != typeof(object))
 			{
 				//Find the root type
-				while (t.BaseType != null && t.BaseType != typeof(object))
+				while (t.GetTypeInfo().BaseType != null && t.GetTypeInfo().BaseType != typeof(object))
 				{
-					t = t.BaseType;
+					t = t.GetTypeInfo().BaseType;
 				}
 
 				return serializerStorageService.Get(t);
@@ -205,7 +202,7 @@ namespace FreecraftCore.Serializer
 			where TChildType : TBaseType
 		{
 			WireDataContractBaseTypeRuntimeLinkAttribute linkAttribute =
-				typeof(TChildType).GetCustomAttribute<WireDataContractBaseTypeRuntimeLinkAttribute>(false);
+				typeof(TChildType).GetTypeInfo().GetCustomAttribute<WireDataContractBaseTypeRuntimeLinkAttribute>(false);
 
 			//Have to make sure link is valid
 			//Without link attribute we can't know how to register it.
@@ -231,7 +228,6 @@ namespace FreecraftCore.Serializer
 			return false;
 		}
 
-#if !NET35
 		/// <inheritdoc />
 		public Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data)
 		{
@@ -241,7 +237,7 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data, IWireStreamWriterStrategy writer)
 		{
-			return writer.GetBytesAsync();
+			throw new NotImplementedException();
 		}
 
 		/// <inheritdoc />
@@ -255,7 +251,5 @@ namespace FreecraftCore.Serializer
 		{
 			throw new NotImplementedException();
 		}
-
-#endif
 	}
 }

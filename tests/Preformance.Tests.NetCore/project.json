@@ -1,10 +1,10 @@
-﻿{
+{
   "version": "1.0.0-*",
   "buildOptions": {
-    "emitEntryPoint": true
   },
 
   "dependencies": {
+    "Fasterflect.Netstandard": "1.0.4",
     "FreecraftCore.Serializer": "1.0.0-*",
     "FreecraftCore.Serializer.API": "1.0.0-*",
     "FreecraftCore.Serializer.Core": "1.0.0-*",
@@ -17,10 +17,13 @@
   },
 
   "frameworks": {
-    "net45":
-    {
-      
-    } 
+    "netstandard1.6": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "Fasterflect.Netstandard": "1.0.1"
+      }
+    }
   }
 }
 

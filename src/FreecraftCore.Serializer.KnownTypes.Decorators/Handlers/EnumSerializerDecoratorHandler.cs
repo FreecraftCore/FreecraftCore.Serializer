@@ -35,7 +35,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (context == null)
 				throw new ArgumentNullException(nameof(context), $"Provided argument {nameof(context)} was null.");
 
-			return context.TargetType.IsEnum;
+			return context.TargetType.GetTypeInfo().IsEnum;
 		}
 
 		protected override ITypeSerializerStrategy<TType> TryCreateSerializer<TType>(ISerializableTypeContext context)
@@ -62,7 +62,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//error handling in base
 #if !NET35
-			return typeof(EnumSerializerDecorator<,>).MakeGenericType(context.TargetType, context.TargetType.GetEnumUnderlyingType())
+			return typeof(EnumSerializerDecorator<,>).MakeGenericType(context.TargetType, context.TargetType.GetTypeInfo().GetEnumUnderlyingType())
 						.CreateInstance(serializerProviderService) as ITypeSerializerStrategy<TType>;
 #else
 			return typeof(EnumSerializerDecorator<,>).MakeGenericType(context.TargetType, Enum.GetUnderlyingType(context.TargetType))
@@ -77,7 +77,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//An enum only requires its base underlying type to be registered therefore no context is required
 #if !NET35
 			//An enum only requires its base underlying type to be registered therefore no context is required
-			return new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetEnumUnderlyingType()) };
+			return new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetTypeInfo().GetEnumUnderlyingType()) };
 #else
 			return new ISerializableTypeContext[] { new TypeBasedSerializationContext(Enum.GetUnderlyingType(context.TargetType)) };
 #endif

@@ -80,10 +80,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 				throw new InvalidOperationException($"Element type null.");
 
 			//TODO: This is an expirmental high preformance array serializer. It could have buffer overflows or other faults. It's not safe
-			/*if (typeof(TType) == typeof(int[]))
+			if (typeof(TType) == typeof(int[]))
 			{
 				return new Int32ArraySerializerDecorator(serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
-			}*/
+			}
 
 			//If we know about the size then we should create a knownsize array decorator
 			ITypeSerializerStrategy<TType> strat = typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType())

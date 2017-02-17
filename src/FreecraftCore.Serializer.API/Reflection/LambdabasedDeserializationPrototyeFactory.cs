@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -61,7 +62,7 @@ namespace FreecraftCore.Serializer
 		{
 			//Due to differences in static initialization timing between .NET and Mono we have to safeguard against invalid interface type lambda new being compiled
 			//HAVE to use a static ctor. Can't just prop initialize
-			instanceGeneratorDelegate = !typeof(TType).IsInterface && !typeof(TType).IsAbstract ? Expression.Lambda<Func<TType>>(Expression.New(typeof(TType))).Compile() : null;
+			instanceGeneratorDelegate = !typeof(TType).GetTypeInfo().IsInterface && !typeof(TType).GetTypeInfo().IsAbstract ? Expression.Lambda<Func<TType>>(Expression.New(typeof(TType))).Compile() : null;
 		}
 
 		public TType Create()
