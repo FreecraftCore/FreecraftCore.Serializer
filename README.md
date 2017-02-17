@@ -1,6 +1,6 @@
 # FreecraftCore.Serializer
-
-FreecraftCore is an open-source C#-based 3.3.5 World of Warcraft emulation project. It is derived from the work of Mangos and Trinitycore.
+### *Now with Netstandard1.6 and Async/Await support!*
+FreecraftCore is an open-source C#/.NET World of Warcraft emulation project. It is derived from the reverse engineering work done by Mangos and Trinitycore.
 
 The FreecraftCore.Payload.Serializer is a metadata based serializer for WoW packets based on [JAM](https://www.youtube.com/watch?v=hCsEHYwjqVE) and inspired by the design of [Protobuf-net](https://github.com/mgravell/protobuf-net) by Marc.
 
@@ -59,25 +59,11 @@ SomeType[][] //Multidimensional arrays are partially supported but not fixed siz
 [WireMember(1)]
 IEnumerable<SomeType> //Any collection except arrays are currently unsupported but planned for future support
 ```
-
-```
-[WireDataContract(WireDataContractAttribute.KeySize.Int32)] //sends the type information encoded as an Int32
-[WireBaseType(1, typeof(ChildType)]
-class BaseType { [WireMember(1)] int a; }
-
-[WireDataContract]
-class ChildType : BaseType { [WireMember(1] int b; }
-
-//This serializer doesn't support multiple level serialization (it could but the WoW protocol doesn't lend itself to the idea)
-//So marking members in a base type for serialization and then members in a childtype will yield unknown behavior
-
-//On top of this sub-wire messages are NOT supported. You can subtype seriaizable types that are in fields or props but
-//subtyping wiremessage types yields unknown behavior. The serializer won't know how to read it.
-```
+### Polymorphic Serialization is now supported!
 
 ## Builds
 
-Available on a Nuget Feed: https://www.myget.org/F/freecraftcore/api/v2 [![freecraftcore MyGet Build Status](https://www.myget.org/BuildSource/Badge/freecraftcore?identifier=c8b700be-7ec4-4a5b-87a0-f663ab446ad0)](https://www.myget.org/)
+Available on a Nuget Feed: https://www.myget.org/F/freecraftcore/api/v2 [![freecraftcore MyGet Build Status](https://www.myget.org/BuildSource/Badge/freecraftcore?identifier=c9b72800-10c2-49c7-a779-feda4e1da5af)](https://www.myget.org/)
 
 ##Tests
 
