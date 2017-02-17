@@ -48,15 +48,24 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override Task WriteAsync(TEnumType value, IWireStreamWriterStrategyAsync dest)
+		public override async Task WriteAsync(TEnumType value, IWireStreamWriterStrategyAsync dest)
 		{
-			throw new NotImplementedException();
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//Just write the string to the stream
+			await decoratedSerializer.WriteAsync(value.ToString(), dest);
 		}
 
 		/// <inheritdoc />
-		public override Task<TEnumType> ReadAsync(IWireStreamReaderStrategyAsync source)
+		public override async Task<TEnumType> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
-			throw new NotImplementedException();
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//Read the string serialized version of the enum value
+			string readString = await decoratedSerializer.ReadAsync(source);
+
+			//TODO: What should we do if it's empty or null?
+			return (TEnumType)Enum.Parse(typeof(TEnumType), readString);
 		}
 	}
 }
