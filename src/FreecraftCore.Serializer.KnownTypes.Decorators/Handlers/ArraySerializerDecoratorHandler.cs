@@ -72,7 +72,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//TODO: Should we really have a default?
 			//if they marked it with nothing then use a the byte
 			if (collectionSizeStrategy == null)
-				collectionSizeStrategy = new ByteSizeCollectionSizeStrategy();
+				collectionSizeStrategy = new GenericCollectionSizeStrategy<byte>(serializerProviderService.Get<byte>());
 
 			if (context.TargetType == null)
 				throw new InvalidOperationException($"Provided target type null.");
