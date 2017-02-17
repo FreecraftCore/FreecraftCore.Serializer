@@ -33,76 +33,57 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public Task<byte> ReadByteAsync()
+		public async Task<byte> ReadByteAsync()
 		{
 			byte[] singleByteBuffer = new byte[1];
 
 			//would be -1 if it's invalid
-			Task<int> readResult = ManagedStream.ReadAsync(singleByteBuffer, 0, 1);
+			int readResult = await ManagedStream.ReadAsync(singleByteBuffer, 0, 1);
 
-			return new Task<byte>(() =>
-			{
-				int resultCount = readResult.Result;
+			if(readResult == 0)
+				throw new InvalidOperationException($"Failed to read byte in {nameof(ReadByteAsync)}.");
 
-				if(resultCount == 0)
-					throw new InvalidOperationException($"Failed to read byte in {nameof(ReadByteAsync)}.");
-
-				return singleByteBuffer[0];
-			});
+			return singleByteBuffer[0];
 		}
 
 		/// <inheritdoc />
-		public Task<byte> PeekByteAsync()
+		public async Task<byte> PeekByteAsync()
 		{
-			Task<byte> b = ReadByteAsync();
+			byte resultByte = await ReadByteAsync();
 
-			return new Task<byte>(() =>
-			{
-				byte resultByte = b.Result;
-
-				//Move it back one
-				ManagedStream.Position = ManagedStream.Position - 1;
-				return resultByte;
-			});
+			//Move it back one
+			ManagedStream.Position = ManagedStream.Position - 1;
+			return resultByte;
 		}
 
 		/// <inheritdoc />
-		public Task<byte[]> ReadAllBytesAsync()
+		public async Task<byte[]> ReadAllBytesAsync()
 		{
-			return ReadBytesAsync((int)(ManagedStream.Length - ManagedStream.Position));
+			return await ReadBytesAsync((int)(ManagedStream.Length - ManagedStream.Position));
 		}
 
 		/// <inheritdoc />
-		public Task<byte[]> ReadBytesAsync(int count)
+		public async Task<byte[]> ReadBytesAsync(int count)
 		{
-			
 			byte[] bytes = new byte[count];
 
-			Task<int> readTask = ManagedStream.ReadAsync(bytes, 0, count);
+			int readCount = await ManagedStream.ReadAsync(bytes, 0, count);
 
-			return new Task<byte[]>(() =>
-			{
-				int resultCount = readTask.Result;
+			if (readCount != count)
+				throw new InvalidOperationException($"Failed to read {count} bytes from the stream.");
 
-				if (resultCount != count)
-					throw new InvalidOperationException($"Failed to read {count} bytes from the stream.");
-
-				return bytes;
-			});
+			return bytes;
 		}
 
 		/// <inheritdoc />
-		public Task<byte[]> PeakBytesAsync(int count)
+		public async Task<byte[]> PeakBytesAsync(int count)
 		{
-			Task<byte[]> bytes = ReadBytesAsync(count);
+			byte[] bytes = await ReadBytesAsync(count);
 
-			return new Task<byte[]>(() =>
-			{
-				//Now move the stream back
-				ManagedStream.Position = ManagedStream.Position - count;
+			//Now move the stream back
+			ManagedStream.Position = ManagedStream.Position - count;
 
-				return bytes.Result;
-			});
+			return bytes;
 		}
 	}
 }
