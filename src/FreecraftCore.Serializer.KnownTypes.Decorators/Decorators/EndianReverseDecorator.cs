@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
@@ -38,6 +39,21 @@ namespace FreecraftCore.Serializer
 			byte[] bytes = SerializerStrategy.GetBytes(value);
 			Array.Reverse(bytes);
 			dest.Write(bytes);
+		}
+
+		/// <inheritdoc />
+		public override async Task WriteAsync(TType value, IWireStreamWriterStrategyAsync dest)
+		{
+			byte[] bytes = SerializerStrategy.GetBytes(value);
+			Array.Reverse(bytes);
+
+			await dest.WriteAsync(bytes);
+		}
+
+		/// <inheritdoc />
+		public override async Task<TType> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			return await SerializerStrategy.ReadAsync(source.WithOneTimeReadingAsync().WithByteReversalAsync());
 		}
 	}
 }
