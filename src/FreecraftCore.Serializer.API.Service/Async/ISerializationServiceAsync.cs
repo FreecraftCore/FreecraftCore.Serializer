@@ -1,5 +1,4 @@
-﻿#if !NET35
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +29,7 @@ namespace FreecraftCore.Serializer
 		/// <returns>Byte array representation of the object.</returns>
 		[Pure]
 		[NotNull]
-		Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data, [NotNull] IWireStreamWriterStrategy writer);
+		Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data, [NotNull] IWireStreamWriterStrategyAsync writer);
 
 		//We shouldn't expect the deserialize to provide always non-null values.
 		//That is a serialization implementation detail.
@@ -53,7 +52,6 @@ namespace FreecraftCore.Serializer
 		/// <param name="source">Custom reader strategy source.</param>
 		/// <returns>An instance of <typeparamref name="TTypeToDeserializeTo"/> or null if failed.</returns>
 		[Pure]
-		Task<TTypeToDeserializeTo> DeserializeAsync<TTypeToDeserializeTo>([NotNull] IWireStreamReaderStrategy source);
+		Task<TTypeToDeserializeTo> DeserializeAsync<TTypeToDeserializeTo>([NotNull] IWireStreamReaderStrategyAsync source);
 	}
 }
-#endif

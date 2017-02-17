@@ -28,7 +28,7 @@ namespace FreecraftCore.Serializer
 		/// Service responsible for handling decoratable semi-complex types.
 		/// </summary>
 		[NotNull]
-		DefaultSerializerStrategyFactory serializerStrategyFactoryService { get; }
+		private DefaultSerializerStrategyFactory serializerStrategyFactoryService { get; }
 
 		public SerializerService()
 		{
@@ -229,27 +229,57 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data)
+		public async Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data)
 		{
-			throw new NotImplementedException();
+			using (DefaultStreamWriterStrategyAsync asyncWriter = new DefaultStreamWriterStrategyAsync())
+			{
+				return await SerializeAsync(data, asyncWriter);
+			}
 		}
 
 		/// <inheritdoc />
-		public Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data, IWireStreamWriterStrategy writer)
+		public async Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data, IWireStreamWriterStrategyAsync writer)
 		{
-			throw new NotImplementedException();
+			if (data == null) throw new ArgumentNullException(nameof(data));
+			if (writer == null) throw new ArgumentNullException(nameof(writer));
+
+			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
+#if DEBUG || DEBUGBUILD
+			if (!serializerStorageService.HasSerializerFor<TTypeToSerialize>())
+				throw new InvalidOperationException($"Serializer cannot serialize Type: {typeof(TTypeToSerialize).FullName} because it's not registered.");
+#endif
+
+			if (!isCompiled)
+				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
+
+			await GetLeastDerivedSerializer<TTypeToSerialize>().WriteAsync(data, writer);
+
+			return await writer.GetBytesAsync();
 		}
 
 		/// <inheritdoc />
-		public Task<TTypeToDeserializeTo> DeserializeAsync<TTypeToDeserializeTo>(byte[] data)
+		public async Task<TTypeToDeserializeTo> DeserializeAsync<TTypeToDeserializeTo>(byte[] data)
 		{
-			throw new NotImplementedException();
+			using (DefaultStreamReaderStrategyAsync asyncReader = new DefaultStreamReaderStrategyAsync(data))
+			{
+				return await DeserializeAsync<TTypeToDeserializeTo>(asyncReader);
+			}
 		}
 
 		/// <inheritdoc />
-		public Task<TTypeToDeserializeTo> DeserializeAsync<TTypeToDeserializeTo>(IWireStreamReaderStrategy source)
+		public async Task<TTypeToDeserializeTo> DeserializeAsync<TTypeToDeserializeTo>(IWireStreamReaderStrategyAsync source)
 		{
-			throw new NotImplementedException();
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
+#if DEBUG || DEBUGBUILD
+			if (!serializerStorageService.HasSerializerFor<TTypeToDeserializeTo>())
+				throw new InvalidOperationException($"Serializer cannot deserialize to Type: {typeof(TTypeToDeserializeTo).FullName} because it's not registered.");
+#endif
+			if (!isCompiled)
+				throw new InvalidOperationException($"You cannot deserialize before compiling the serializer.");
+
+			return (TTypeToDeserializeTo)await GetLeastDerivedSerializer<TTypeToDeserializeTo>().ReadAsync(source);
 		}
 	}
 }

@@ -7,10 +7,7 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
-	public interface ISerializationService
-#if !NET35
-		: ISerializationServiceAsync
-#endif
+	public interface ISerializationService : ISerializationServiceAsync
 	{
 		/// <summary>
 		/// Attempts to serialize the provided <paramref name="data"/>.
