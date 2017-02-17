@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using JetBrains.Annotations;
 
 
@@ -18,7 +19,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <inheritdoc />
 		public override bool CanHandle(ISerializableTypeContext context)
 		{
-			return context.TargetType.IsPrimitive && context.HasContextualMemberMetadata();
+			return context.TargetType.GetTypeInfo().IsPrimitive && context.HasContextualMemberMetadata();
 		}
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)

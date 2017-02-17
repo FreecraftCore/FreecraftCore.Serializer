@@ -7,6 +7,7 @@ using System.Text;
 using Fasterflect;
 using FreecraftCore.Serializer.API;
 using JetBrains.Annotations;
+using System.Threading.Tasks;
 
 namespace FreecraftCore.Serializer
 {
@@ -27,7 +28,7 @@ namespace FreecraftCore.Serializer
 		/// Service responsible for handling decoratable semi-complex types.
 		/// </summary>
 		[NotNull]
-		DefaultSerializerStrategyFactory serializerStrategyFactoryService { get; }
+		private DefaultSerializerStrategyFactory serializerStrategyFactoryService { get; }
 
 		public SerializerService()
 		{
@@ -40,7 +41,7 @@ namespace FreecraftCore.Serializer
 			serializerStrategyFactoryService = new DefaultSerializerStrategyFactory(SerializerDecoratorHandlerFactory.Create(serializerStorageService, lookupKeyFactoryService, this), serializerStorageService, this, lookupKeyFactoryService);
 
 			FreecraftCoreSerializerKnownTypesPrimitivesMetadata.Assembly.GetTypes()
-				.Where(t => t.HasAttribute<KnownTypeSerializerAttribute>())
+				.Where(t => t.GetTypeInfo().HasAttribute<KnownTypeSerializerAttribute>())
 				.Select(t => t.CreateInstance() as ITypeSerializerStrategy)
 				.ToList()
 				.ForEach(s => serializerStorageService.RegisterType(s.SerializerType, s));
@@ -65,7 +66,7 @@ namespace FreecraftCore.Serializer
 		public bool RegisterType<TTypeToRegister>()
 		{
 			//Ingoring all but wiretypes makes this a lot easier.
-			if (typeof(TTypeToRegister).GetCustomAttribute<WireDataContractAttribute>(true) == null)
+			if (typeof(TTypeToRegister).GetTypeInfo().GetCustomAttribute<WireDataContractAttribute>(true) == null)
 				throw new InvalidOperationException($"Do not register any type that isn't marked with {nameof(WireDataContractAttribute)}. Only register WireDataContracts too; contained types will be registered automatically.");
 
 			//At this point this is a class marked with [WireDataContract] so we should assume and treat it as a complex type
@@ -101,18 +102,18 @@ namespace FreecraftCore.Serializer
 		private ITypeSerializerStrategy GetLeastDerivedSerializer<TType>()
 		{
 			//If it's a primitive or an enum it doesn't have a derived serializer
-			if(typeof(TType).IsPrimitive || typeof(TType).IsEnum)
+			if(typeof(TType).GetTypeInfo().IsPrimitive || typeof(TType).GetTypeInfo().IsEnum)
 				return serializerStorageService.Get<TType>();
 
-			Type t = typeof(TType).BaseType;
+			Type t = typeof(TType).GetTypeInfo().BaseType;
 
 			//If t isn't null it has at least one base type, we need to move up the object graph if so.
 			if (t != null && t != typeof(object))
 			{
 				//Find the root type
-				while (t.BaseType != null && t.BaseType != typeof(object))
+				while (t.GetTypeInfo().BaseType != null && t.GetTypeInfo().BaseType != typeof(object))
 				{
-					t = t.BaseType;
+					t = t.GetTypeInfo().BaseType;
 				}
 
 				return serializerStorageService.Get(t);
@@ -201,7 +202,7 @@ namespace FreecraftCore.Serializer
 			where TChildType : TBaseType
 		{
 			WireDataContractBaseTypeRuntimeLinkAttribute linkAttribute =
-				typeof(TChildType).GetCustomAttribute<WireDataContractBaseTypeRuntimeLinkAttribute>(false);
+				typeof(TChildType).GetTypeInfo().GetCustomAttribute<WireDataContractBaseTypeRuntimeLinkAttribute>(false);
 
 			//Have to make sure link is valid
 			//Without link attribute we can't know how to register it.
@@ -225,6 +226,60 @@ namespace FreecraftCore.Serializer
 			}
 
 			return false;
+		}
+
+		/// <inheritdoc />
+		public async Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data)
+		{
+			using (DefaultStreamWriterStrategyAsync asyncWriter = new DefaultStreamWriterStrategyAsync())
+			{
+				return await SerializeAsync(data, asyncWriter);
+			}
+		}
+
+		/// <inheritdoc />
+		public async Task<byte[]> SerializeAsync<TTypeToSerialize>(TTypeToSerialize data, IWireStreamWriterStrategyAsync writer)
+		{
+			if (data == null) throw new ArgumentNullException(nameof(data));
+			if (writer == null) throw new ArgumentNullException(nameof(writer));
+
+			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
+#if DEBUG || DEBUGBUILD
+			if (!serializerStorageService.HasSerializerFor<TTypeToSerialize>())
+				throw new InvalidOperationException($"Serializer cannot serialize Type: {typeof(TTypeToSerialize).FullName} because it's not registered.");
+#endif
+
+			if (!isCompiled)
+				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
+
+			await GetLeastDerivedSerializer<TTypeToSerialize>().WriteAsync(data, writer);
+
+			return await writer.GetBytesAsync();
+		}
+
+		/// <inheritdoc />
+		public async Task<TTypeToDeserializeTo> DeserializeAsync<TTypeToDeserializeTo>(byte[] data)
+		{
+			using (DefaultStreamReaderStrategyAsync asyncReader = new DefaultStreamReaderStrategyAsync(data))
+			{
+				return await DeserializeAsync<TTypeToDeserializeTo>(asyncReader);
+			}
+		}
+
+		/// <inheritdoc />
+		public async Task<TTypeToDeserializeTo> DeserializeAsync<TTypeToDeserializeTo>(IWireStreamReaderStrategyAsync source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
+#if DEBUG || DEBUGBUILD
+			if (!serializerStorageService.HasSerializerFor<TTypeToDeserializeTo>())
+				throw new InvalidOperationException($"Serializer cannot deserialize to Type: {typeof(TTypeToDeserializeTo).FullName} because it's not registered.");
+#endif
+			if (!isCompiled)
+				throw new InvalidOperationException($"You cannot deserialize before compiling the serializer.");
+
+			return (TTypeToDeserializeTo)await GetLeastDerivedSerializer<TTypeToDeserializeTo>().ReadAsync(source);
 		}
 	}
 }

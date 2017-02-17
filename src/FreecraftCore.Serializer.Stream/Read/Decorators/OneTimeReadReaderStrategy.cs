@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+#if !NET35
+using System.Threading.Tasks;
+#endif
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
@@ -8,15 +11,16 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Decorates a stream the semantics of only being able to read from the stream a single time.
 	/// </summary>
-	public class OneTimeReadReaderStrategy : WireMemberReaderStrategyDecorator
+	public class OneTimeReadReaderStrategy<TReaderType> : WireMemberReaderStrategyDecorator<TReaderType>
+		where TReaderType : IWireStreamReaderStrategy
 	{
 		/// <summary>
 		/// Indicates if the strategy has read yet.
 		/// True if the strategy has yet to be read from.
 		/// </summary>
-		private bool CanRead { get; set; }
+		protected bool CanRead { get; set; }
 
-		public OneTimeReadReaderStrategy([NotNull] IWireStreamReaderStrategy decoratedReader)
+		public OneTimeReadReaderStrategy([NotNull] TReaderType decoratedReader)
 			: base(decoratedReader)
 		{
 			CanRead = true;
@@ -61,10 +65,10 @@ namespace FreecraftCore.Serializer
 			return DecoratedReader.PeakBytes(count);
 		}
 
-		private void ThrowIfCantRead()
+		protected void ThrowIfCantRead()
 		{
 			if(!CanRead)
-				throw new InvalidOperationException($"Cannot read multiple times with {nameof(OneTimeReadReaderStrategy)}.");
+				throw new InvalidOperationException($"Cannot read multiple times with {nameof(OneTimeReadReaderStrategy<TReaderType>)}.");
 		}
 	}
 }

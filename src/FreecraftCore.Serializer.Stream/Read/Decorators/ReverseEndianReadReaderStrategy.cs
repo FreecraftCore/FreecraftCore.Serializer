@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+#if !NET35
+using System.Threading.Tasks;
+#endif
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
@@ -9,9 +12,10 @@ namespace FreecraftCore.Serializer
 	/// Decorator that reverses byte-order of the read byte chunks.
 	/// Has no affect on single bytes. Doesn't reorder stream. Only reverses read chunks.
 	/// </summary>
-	public class ReverseEndianReadReaderStrategy : WireMemberReaderStrategyDecorator
+	public class ReverseEndianReadReaderStrategy<TReaderType> : WireMemberReaderStrategyDecorator<TReaderType>
+		where TReaderType : IWireStreamReaderStrategy
 	{
-		public ReverseEndianReadReaderStrategy([NotNull] IWireStreamReaderStrategy decoratedReader) 
+		public ReverseEndianReadReaderStrategy([NotNull] TReaderType decoratedReader) 
 			: base(decoratedReader)
 		{
 

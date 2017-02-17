@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
@@ -63,8 +64,8 @@ namespace FreecraftCore.Serializer
 				orderedMemberInfos[i].WriteMember(obj, dest);
 		}
 
-				/// <inheritdoc />
-		public override TType ReadIntoObject(ref TType obj, IWireStreamReaderStrategy source)
+		/// <inheritdoc />
+		public override TType ReadIntoObject(TType obj, IWireStreamReaderStrategy source)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (source == null) throw new ArgumentNullException(nameof(source));
@@ -84,6 +85,51 @@ namespace FreecraftCore.Serializer
 			//Even if we're suppose to write type data for this type we don't
 			//Just members
 			WriteMemberData(obj, dest);
+		}
+
+		//TODO: Implement once we have write and read async
+		/// <inheritdoc />
+		public override async Task ObjectIntoWriterAsync(TType obj, IWireStreamWriterStrategyAsync dest)
+		{
+			if (obj == null) throw new ArgumentNullException(nameof(obj));
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//This method is only responsible for writing the members
+			//Even if we're suppose to write type data for this type we don't
+			//Just members
+			await WriteMemberDataAsync(obj, dest);
+		}
+
+		/// <inheritdoc />
+		public override async Task<TType> ReadIntoObjectAsync(TType obj, IWireStreamReaderStrategyAsync source)
+		{
+			if (obj == null) throw new ArgumentNullException(nameof(obj));
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//Basically if someone calls this method they want us to set the members from the reader
+			await SetMembersFromReaderDataAsync(obj, source);
+
+			return obj;
+		}
+
+		protected async Task SetMembersFromReaderDataAsync(TType obj, [NotNull] IWireStreamReaderStrategyAsync source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			// Tested, does not yield better perf
+			// ReSharper disable once ForCanBeConvertedToForeach
+			for (int i = 0; i < orderedMemberInfos.Length; i++)
+				await orderedMemberInfos[i].SetMemberAsync(obj, source);
+		}
+
+		protected async Task WriteMemberDataAsync(TType obj, [NotNull] IWireStreamWriterStrategyAsync dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			// Tested, does not yield better perf
+			// ReSharper disable once ForCanBeConvertedToForeach
+			for (int i = 0; i < orderedMemberInfos.Length; i++)
+				await orderedMemberInfos[i].WriteMemberAsync(obj, dest);
 		}
 	}
 }

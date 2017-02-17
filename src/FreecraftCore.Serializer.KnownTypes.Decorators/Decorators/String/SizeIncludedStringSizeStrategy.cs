@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 
@@ -49,6 +50,32 @@ namespace FreecraftCore.Serializer.KnownTypes
 			sizeSerializer.Write(MiscUtil.Operator<int, TSizeType>.Convert(size + (includeNullTerminatorInSizeCalculation ? 1 : 0)), writer);
 
 			return size;
+		}
+
+		/// <inheritdoc />
+		public async Task<int> SizeAsync(string stringValue, IWireStreamWriterStrategyAsync writer)
+		{
+			if (stringValue == null) throw new ArgumentNullException(nameof(stringValue));
+			if (writer == null) throw new ArgumentNullException(nameof(writer));
+
+			int size = stringValue.Length;
+
+			//add one for null terminator
+			//Using JonSkeets MiscUtils we can convert objects efficently
+			await sizeSerializer.WriteAsync(MiscUtil.Operator<int, TSizeType>.Convert(size + (includeNullTerminatorInSizeCalculation ? 1 : 0)), writer);
+
+			return size;
+		}
+
+		/// <inheritdoc />
+		public async Task<int> SizeAsync(IWireStreamReaderStrategyAsync reader)
+		{
+			if (reader == null) throw new ArgumentNullException(nameof(reader));
+
+			TSizeType size = await sizeSerializer.ReadAsync(reader);
+
+			//Using JonSkeets MiscUtils we can convert objects efficently
+			return MiscUtil.Operator<TSizeType, int>.Convert(size);
 		}
 	}
 }

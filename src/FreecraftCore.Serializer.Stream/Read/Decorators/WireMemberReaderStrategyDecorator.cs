@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+#if !NET35
+using System.Threading.Tasks;
+#endif
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
-	public abstract class WireMemberReaderStrategyDecorator : IWireStreamReaderStrategy
+	public abstract class WireMemberReaderStrategyDecorator<TReaderType> : IWireStreamReaderStrategy
+		where TReaderType : IWireStreamReaderStrategy
 	{
 		/// <summary>
 		/// Decorated reader.
 		/// </summary>
 		[NotNull]
-		protected IWireStreamReaderStrategy DecoratedReader { get; }
+		protected TReaderType DecoratedReader { get; }
 
-		protected WireMemberReaderStrategyDecorator([NotNull] IWireStreamReaderStrategy decoratedReader)
+		protected WireMemberReaderStrategyDecorator([NotNull] TReaderType decoratedReader)
 		{
 			if (decoratedReader == null) throw new ArgumentNullException(nameof(decoratedReader));
 

@@ -5,6 +5,10 @@ using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 
+#if !NET35
+using System.Threading.Tasks;
+#endif
+
 
 namespace FreecraftCore.Serializer
 {
@@ -12,47 +16,32 @@ namespace FreecraftCore.Serializer
 	/// Default implementation of the <see cref="IWireStreamReaderStrategy"/> that reads bytes from
 	/// an internally managed stream.
 	/// </summary>
-	public class DefaultStreamReaderStrategy : IWireStreamReaderStrategy
+	public class DefaultStreamReaderStrategy : DefaultStreamManipulationStrategy<Stream>, IWireStreamReaderStrategy
 	{
-		/// <summary>
-		/// Allocated stream with the byte buffer.
-		/// </summary>
-		[NotNull]
-		private Stream ReaderStream { get; }
-
-		/// <summary>
-		/// Indicates if the stream should be disposed when the reader is disposed.
-		/// </summary>
-		private bool shouldDisposeStream { get; }
-
 		//TODO: Overloads that take the byte buffer instead
 		public DefaultStreamReaderStrategy([NotNull] byte[] bytes)
+			: base(new MemoryStream(bytes), true)
 		{
 			if (bytes == null)
 				throw new ArgumentNullException(nameof(bytes), $"Provided argument {nameof(bytes)} must not be null.");
-
-			ReaderStream = new MemoryStream(bytes);
-			shouldDisposeStream = true;
 		}
 
 		public DefaultStreamReaderStrategy([NotNull] Stream stream)
+			: base(stream, false)
 		{
 			if (stream == null)
 				throw new ArgumentNullException(nameof(stream), $"Provided argument {nameof(stream)} must not be null.");
-
-			ReaderStream = stream;
-			shouldDisposeStream = false;
 		}
 
 		public byte[] ReadAllBytes()
 		{
-			return ReadBytes((int)(ReaderStream.Length - ReaderStream.Position));
+			return ReadBytes((int)(ManagedStream.Length - ManagedStream.Position));
 		}
 
 		public byte ReadByte()
 		{
 			//would be -1 if it's invalid
-			int b = ReaderStream.ReadByte();
+			int b = ManagedStream.ReadByte();
 
 			//TODO: Contract interface doesn't mention throwing in this case. Should we throw?
 			if (b == -1)
@@ -65,7 +54,7 @@ namespace FreecraftCore.Serializer
 		{
 			byte[] bytes = new byte[count];
 
-			ReaderStream.Read(bytes, 0, count);
+			ManagedStream.Read(bytes, 0, count);
 
 			return bytes;
 		}
@@ -75,7 +64,7 @@ namespace FreecraftCore.Serializer
 			byte b = ReadByte();
 
 			//Move it back one
-			ReaderStream.Position = ReaderStream.Position - 1;
+			ManagedStream.Position = ManagedStream.Position - 1;
 
 			return b;
 		}
@@ -85,15 +74,9 @@ namespace FreecraftCore.Serializer
 			byte[] bytes = ReadBytes(count);
 
 			//Now move the stream back
-			ReaderStream.Position = ReaderStream.Position - count;
+			ManagedStream.Position = ManagedStream.Position - count;
 
 			return bytes;
-		}
-
-		public void Dispose()
-		{
-			if(shouldDisposeStream)
-				ReaderStream?.Dispose();
 		}
 	}
 }

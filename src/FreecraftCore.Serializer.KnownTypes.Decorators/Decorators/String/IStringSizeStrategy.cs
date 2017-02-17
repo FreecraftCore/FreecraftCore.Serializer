@@ -10,7 +10,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// <summary>
 	/// Strategy for determining the size of a string.
 	/// </summary>
-	public interface IStringSizeStrategy
+	public interface IStringSizeStrategy : IStringSizeStrategyAsync
 	{
 		/// <summary>
 		/// Determines the size of the string

@@ -11,7 +11,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// <summary>
 	/// Strategy for determining the size of an array.
 	/// </summary>
-	public interface ICollectionSizeStrategy
+	public interface ICollectionSizeStrategy : ICollectionSizeStrategyAsync
 	{
 		/// <summary>
 		/// Determines the size of the collection.

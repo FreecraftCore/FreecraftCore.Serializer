@@ -1,9 +1,9 @@
-﻿using Fasterflect;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Fasterflect;
 using JetBrains.Annotations;
 
 
@@ -36,12 +36,12 @@ namespace FreecraftCore.Serializer
 			TargetType = memberInfoContext.Type();
 
 			//we should search for known metadata; ignore stuff like WireMember. It doesn't affect serialization of the Type. Just order.
-			MemberMetadata = memberInfoContext.Attributes<Attribute>()
+			MemberMetadata = memberInfoContext.GetCustomAttributes<Attribute>()
 				.Where(IsContextualMemberAttribute);
 
 			//Now we build the metadata for the Type itself. This could be some additional serialization information or it could be
 			//Information about potential subtypes
-			TypeMetadata = memberInfoContext.Type().Attributes<Attribute>()
+			TypeMetadata = memberInfoContext.Type().GetTypeInfo().Attributes<Attribute>()
 				.Where(IsContextualTypeAttribute);
 
 			//If there is any metadata in the member metdata then this serialization will require context.

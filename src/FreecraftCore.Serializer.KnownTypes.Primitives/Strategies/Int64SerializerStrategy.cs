@@ -15,34 +15,28 @@ namespace FreecraftCore.Serializer.KnownTypes
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
 		/// <inheritdoc />
-		public unsafe override void Write(Int64 value, IWireStreamWriterStrategy dest)
+		protected override unsafe bool PopulateSharedBufferWith(long value)
 		{
-			if (dest == null) throw new ArgumentNullException(nameof(dest));
-
 			//Must lock to prevent issues with shared buffer.
-			lock(syncObj)
+			lock (syncObj)
 			{
 				//Must fix the position to get a byte*
 				//See example explaining this memory hack: http://stackoverflow.com/questions/2036718/fastest-way-of-reading-and-writing-binary
-				fixed(byte* bytePtr = &this.sharedByteBuffer[0])
-					*((Int64*)bytePtr) = value;
-				
-				//Stay locked when you write the byte[] to the stream
-				dest.Write(sharedByteBuffer);
+				fixed (byte* bytePtr = &this.SharedByteBuffer[0])
+					*((long*)bytePtr) = value;
+
+				return true;
 			}
 		}
 
 		/// <inheritdoc />
-		public unsafe override Int64 Read(IWireStreamReaderStrategy source)
+		protected override unsafe long DeserializeFromBuffer([NotNull] byte[] bytes)
 		{
-			if (source == null) throw new ArgumentNullException(nameof(source));
+			if (bytes == null) throw new ArgumentNullException(nameof(bytes));
 
-			//Read 4 bytes (Int64 size)
-			byte[] bytes = source.ReadBytes(sizeof(Int64));
-			
 			//fix address; See this link for information on this memory hack: http://stackoverflow.com/questions/2036718/fastest-way-of-reading-and-writing-binary
-			fixed(byte* bytePtr = &bytes[0])
-				return *((Int64*)bytePtr);
+			fixed (byte* bytePtr = &bytes[0])
+				return *((long*)bytePtr);
 		}
 	}
 }

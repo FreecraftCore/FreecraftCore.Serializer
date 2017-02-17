@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 
@@ -33,8 +34,35 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//Based on ByteBuffer.h from the Trinitycore Project, Jackpoz's 3.3.5 packet bot and WoWPacketParser
-			int packedDateTime = decoratedSerializer.Read(source); //reads the packed int value from the stream
+			//reads the packed int value from the stream
+			return ConvertIntegerToDateTimeRepresentation(decoratedSerializer.Read(source));
+		}
 
+		/// <inheritdoc />
+		public override void Write(DateTime value, IWireStreamWriterStrategy dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//Based on ByteBuffer.h from the Trinitycore Project as well as Jackpoz's 3.3.5 packet bot.
+			//Trinitycore: append<uint32>((lt.tm_year - 100) << 24 | lt.tm_mon << 20 | (lt.tm_mday - 1) << 14 | lt.tm_wday << 11 | lt.tm_hour << 6 | lt.tm_min);
+
+			//pass to decorated serializer
+			decoratedSerializer.Write(ConvertDateTimeToIntegerRepresentation(ref value), dest);
+		}
+
+		/// <summary>
+		/// Converts a <see cref="DateTime"/> to the WoW expected representation.
+		/// (Based on Jackpoz's bot's implementation)
+		/// </summary>
+		/// <param name="dateTime"></param>
+		/// <returns></returns>
+		private int ConvertDateTimeToIntegerRepresentation(ref DateTime dateTime)
+		{
+			return ((dateTime.Year - 2000) << 24 | (dateTime.Month - 1) << 20 | (dateTime.Day - 1) << 14 | (int)dateTime.DayOfWeek << 11 | dateTime.Hour << 6 | dateTime.Minute);
+		}
+
+		private DateTime ConvertIntegerToDateTimeRepresentation(int packedDateTime)
+		{
 			//Don't ask me about this; this is based on Jackpoz's bitmasking and shifting and WPP
 			int minute = packedDateTime & 0x3F;
 			int hour = (packedDateTime >> 6) & 0x1F;
@@ -49,17 +77,17 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override void Write(DateTime value, IWireStreamWriterStrategy dest)
+		public override async Task WriteAsync(DateTime value, IWireStreamWriterStrategyAsync dest)
 		{
-			if (dest == null) throw new ArgumentNullException(nameof(dest));
-
-			//Based on ByteBuffer.h from the Trinitycore Project as well as Jackpoz's 3.3.5 packet bot.
-			//Trinitycore: append<uint32>((lt.tm_year - 100) << 24 | lt.tm_mon << 20 | (lt.tm_mday - 1) << 14 | lt.tm_wday << 11 | lt.tm_hour << 6 | lt.tm_min);
-
-			int packedTime = ((value.Year - 2000) << 24 | (value.Month - 1) << 20 | (value.Day - 1) << 14 | (int)value.DayOfWeek << 11 | value.Hour << 6 | value.Minute);
-
 			//pass to decorated serializer
-			decoratedSerializer.Write(packedTime, dest);
+			await decoratedSerializer.WriteAsync(ConvertDateTimeToIntegerRepresentation(ref value), dest);
+		}
+
+		/// <inheritdoc />
+		public override async Task<DateTime> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			//reads the packed int value from the stream
+			return ConvertIntegerToDateTimeRepresentation(await decoratedSerializer.ReadAsync(source));
 		}
 	}
 }

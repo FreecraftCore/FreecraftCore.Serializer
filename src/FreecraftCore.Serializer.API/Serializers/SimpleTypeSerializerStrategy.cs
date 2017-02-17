@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Threading.Tasks;
 
 namespace FreecraftCore.Serializer
 {
@@ -21,6 +21,14 @@ namespace FreecraftCore.Serializer
 		public abstract void Write(TType value, IWireStreamWriterStrategy dest);
 
 		/// <inheritdoc />
+		public abstract Task WriteAsync(TType value, IWireStreamWriterStrategyAsync dest);
+		
+		/// <inheritdoc />
+		public abstract Task<TType> ReadAsync(IWireStreamReaderStrategyAsync source);
+
+		//******************************************** Implementers don't need to implement these
+
+		/// <inheritdoc />
 		void ITypeSerializerStrategy.Write(object value, IWireStreamWriterStrategy dest)
 		{
 			Write((TType)value, dest);
@@ -33,7 +41,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public virtual TType ReadIntoObject(ref TType obj, IWireStreamReaderStrategy source)
+		public virtual TType ReadIntoObject(TType obj, IWireStreamReaderStrategy source)
 		{
 			obj = Read(source);
 
@@ -41,11 +49,9 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public object ReadIntoObject(ref object obj, IWireStreamReaderStrategy source)
+		public object ReadIntoObject(object obj, IWireStreamReaderStrategy source)
 		{
-			TType castedObj = (TType)obj;
-
-			return ReadIntoObject(ref castedObj, source);
+			return ReadIntoObject((TType)obj, source);
 		}
 
 		/// <inheritdoc />
@@ -91,6 +97,53 @@ namespace FreecraftCore.Serializer
 		{
 			DefaultStreamReaderStrategy source = new DefaultStreamReaderStrategy(bytes);
 			return Read(source);
+		}
+
+		//Async implementation
+
+		/// <inheritdoc />
+		public virtual async Task<TType> ReadIntoObjectAsync(TType obj, IWireStreamReaderStrategyAsync source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//We can't really write or read into an object on a simple type.
+			
+			//Default implementation is to just read the object from the source.
+			return await ReadAsync(source);
+		}
+
+		/// <inheritdoc />
+		public virtual async Task ObjectIntoWriterAsync(TType obj, IWireStreamWriterStrategyAsync dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//We can't really write or read into an object on a simple type.
+
+			await WriteAsync(obj, dest);
+		}
+
+		/// <inheritdoc />
+		public async Task WriteAsync(object value, IWireStreamWriterStrategyAsync dest)
+		{
+			await WriteAsync((TType)value, dest);
+		}
+
+		/// <inheritdoc />
+		async Task<object> ITypeSerializerStrategyAsync.ReadAsync(IWireStreamReaderStrategyAsync source)
+		{	
+			return await ReadAsync(source);
+		}
+
+		/// <inheritdoc />
+		public async Task<object> ReadIntoObjectAsync(object obj, IWireStreamReaderStrategyAsync source)
+		{
+			return await ReadIntoObjectAsync((TType) obj, source);
+		}
+
+		/// <inheritdoc />
+		public async Task ObjectIntoWriterAsync(object obj, IWireStreamWriterStrategyAsync dest)
+		{
+			await ObjectIntoWriterAsync((TType)obj, dest);
 		}
 	}
 }

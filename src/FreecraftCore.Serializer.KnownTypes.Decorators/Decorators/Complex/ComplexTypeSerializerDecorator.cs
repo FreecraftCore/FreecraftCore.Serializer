@@ -6,6 +6,7 @@ using System.Text;
 using Fasterflect;
 using System.Reflection;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
@@ -27,7 +28,7 @@ namespace FreecraftCore.Serializer
 		{
 			if (prototypeGenerator == null) throw new ArgumentNullException(nameof(prototypeGenerator));
 
-			if(!typeof(TComplexType).IsClass)
+			if(!typeof(TComplexType).GetTypeInfo().IsClass)
 				throw new ArgumentException($"Provided generic Type: {typeof(TComplexType).FullName} must be a reference type.", nameof(TComplexType));
 
 			prototypeGeneratorService = prototypeGenerator;
@@ -37,18 +38,18 @@ namespace FreecraftCore.Serializer
 			//to do so efficiently we must cache an array of the Type that represents the linear class hierarchy reversed
 			List<Type> typeHierarchy = new List<Type>();
 
-			if (typeof(TComplexType).BaseType == null || typeof(TComplexType).BaseType == typeof(object))
+			if (typeof(TComplexType).GetTypeInfo().BaseType == null || typeof(TComplexType).GetTypeInfo().BaseType == typeof(object))
 				reversedInheritanceHierarchy = Enumerable.Empty<Type>(); //make it an empty collection if there are no base types
 			else
 			{
 				//add every Type to the collection (not all may have serializers or be involved in deserialization)
-				Type baseType = typeof(TComplexType).BaseType;
+				Type baseType = typeof(TComplexType).GetTypeInfo().BaseType;
 
-				while (baseType != null && typeof(TComplexType).BaseType != typeof(object))
+				while (baseType != null && typeof(TComplexType).GetTypeInfo().BaseType != typeof(object))
 				{
 					typeHierarchy.Add(baseType);
 
-					baseType = baseType.BaseType;
+					baseType = baseType.GetTypeInfo().BaseType;
 				}
 			}
 
@@ -73,20 +74,30 @@ namespace FreecraftCore.Serializer
 
 		private TComplexType Read(TComplexType obj, IWireStreamReaderStrategy source)
 		{
-			//invoke before serialization if it's available
-			(obj as ISerializationEventListener)?.OnBeforeSerialization();
-
-			object castedObj = obj;
-
 			//read all base type members first
 			//WARNING: This caused HUGE perf probleems. Several orders of magnitude slower than Protobuf
 			//We MUST not check if the serializer exists and we must precache the gets.
 			if(reversedInheritanceHierarchy.Count() != 0)
 				foreach(Type t in reversedInheritanceHierarchy)
 					if(serializerProviderService.HasSerializerFor(t))
-						serializerProviderService.Get(t).ReadIntoObject(ref castedObj, source);
+						serializerProviderService.Get(t).ReadIntoObject(obj, source);
 
 			SetMembersFromReaderData(obj, source);
+
+			return obj;
+		}
+
+		private async Task<TComplexType> ReadAsync(TComplexType obj, IWireStreamReaderStrategyAsync source)
+		{
+			//read all base type members first
+			//WARNING: This caused HUGE perf probleems. Several orders of magnitude slower than Protobuf
+			//We MUST not check if the serializer exists and we must precache the gets.
+			if (reversedInheritanceHierarchy.Count() != 0)
+				foreach (Type t in reversedInheritanceHierarchy)
+					if (serializerProviderService.HasSerializerFor(t))
+						await serializerProviderService.Get(t).ReadIntoObjectAsync(obj, source);
+
+			await SetMembersFromReaderDataAsync(obj, source);
 
 			return obj;
 		}
@@ -97,15 +108,51 @@ namespace FreecraftCore.Serializer
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
+			//invoke before serialization if it's available
+			(value as ISerializationEventListener)?.OnBeforeSerialization();
+
 			//Writes base members first and goes down the inheritance line
 			//WARNING: This caused HUGE perf probleems. Several orders of magnitude slower than Protobuf
 			//We MUST not check if the serializer exists and we must precache the gets.
 			if (reversedInheritanceHierarchy.Count() != 0)
 				foreach (Type t in reversedInheritanceHierarchy)
-					if (serializerProviderService.HasSerializerFor(t))
+					if (serializerProviderService.HasSerializerFor(t)) //TODO: Should we remove this check for perf?
 						serializerProviderService.Get(t).ObjectIntoWriter(value, dest);
 
 			WriteMemberData(value, dest);
+		}
+
+		/// <inheritdoc />
+		public override async Task WriteAsync(TComplexType value, IWireStreamWriterStrategyAsync dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//invoke before serialization if it's available
+			(value as ISerializationEventListener)?.OnBeforeSerialization();
+
+			//Writes base members first and goes down the inheritance line
+			//WARNING: This caused HUGE perf probleems. Several orders of magnitude slower than Protobuf
+			//We MUST not check if the serializer exists and we must precache the gets.
+			if (reversedInheritanceHierarchy.Count() != 0)
+				foreach (Type t in reversedInheritanceHierarchy)
+					if (serializerProviderService.HasSerializerFor(t)) //TODO: Should we remove this check for perf?
+						await serializerProviderService.Get(t).ObjectIntoWriterAsync(value, dest);
+
+			//Write our own members now.
+			await WriteMemberDataAsync(value, dest);
+		}
+
+		/// <inheritdoc />
+		public override async Task<TComplexType> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			TComplexType obj = await ReadAsync(prototypeGeneratorService.Create(), source);
+
+			//invoke after deserialization if it's available
+			(obj as ISerializationEventListener)?.OnAfterDeserialization();
+
+			return obj;
 		}
 	}
 }

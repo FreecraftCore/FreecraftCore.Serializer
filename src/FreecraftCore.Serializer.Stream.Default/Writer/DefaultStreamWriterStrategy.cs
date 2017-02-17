@@ -5,6 +5,10 @@ using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 
+#if !NET35
+using System.Threading.Tasks;
+#endif
+
 
 namespace FreecraftCore.Serializer
 {
@@ -12,40 +16,44 @@ namespace FreecraftCore.Serializer
 	/// Default implementation of the <see cref="IWireStreamWriterStrategy"/> that writes bytes into
 	/// an internally managed stream.
 	/// </summary>
-	public class DefaultStreamWriterStrategy : IWireStreamWriterStrategy
+	public class DefaultStreamWriterStrategy : DefaultStreamManipulationStrategy<MemoryStream>, IWireStreamWriterStrategy //we use MemoryStream for efficient ToArray
 	{
-		[NotNull]
-		private MemoryStream WriterStream { get; } = new MemoryStream();
+		public DefaultStreamWriterStrategy([NotNull] MemoryStream stream)
+			: base(stream, false)
+		{
+
+		}
+
+		public DefaultStreamWriterStrategy()
+			: base(new MemoryStream(), true)
+		{
+
+		}
 
 		/// <inheritdoc />
 		public byte[] GetBytes()
 		{
-			return WriterStream.ToArray();
+			return ManagedStream.ToArray();
 		}
 
 		/// <inheritdoc />
 		public void Write(byte data)
 		{
-			WriterStream.WriteByte(data);
+			ManagedStream.WriteByte(data);
 		}
 
 		/// <inheritdoc />
 		public void Write(byte[] data)
 		{
 			//Stream handles throwing. Don't need to validate or check.
-			WriterStream.Write(data, 0, data.Length);
+			ManagedStream.Write(data, 0, data.Length);
 		}
 
 		/// <inheritdoc />
 		public void Write(byte[] data, int offset, int count)
 		{
 			//Stream handles throwing. Don't need to validate or check.
-			WriterStream.Write(data, offset, count);
-		}
-
-		public void Dispose()
-		{
-			WriterStream?.Dispose();
+			ManagedStream.Write(data, offset, count);
 		}
 	}
 }

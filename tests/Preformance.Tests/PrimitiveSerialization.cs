@@ -75,7 +75,7 @@ namespace Preformance.Tests
 			serializerWatch.Reset();
 			serializerWatch.Start();
 
-			for (int i = 0; i < 10000; i++)
+			for (int i = 0; i < 100000; i++)
 			{
 				serializer.Serialize(complex);
 			}
@@ -87,7 +87,7 @@ namespace Preformance.Tests
 			serializerWatch.Reset();
 			serializerWatch.Start();
 
-			for (int i = 0; i < 10000; i++)
+			for (int i = 0; i < 100000; i++)
 			{
 				using (MemoryStream stream = new MemoryStream())
 				{

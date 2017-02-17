@@ -16,7 +16,7 @@ namespace FreecraftCore.Serializer.API
 #if MONO
 		public static Assembly Assembly { get; } = typeof(FreecraftCoreSerializerKnownTypesPrimitivesMetadata).Assembly;
 #else
-		internal static Assembly Assembly { get; } = typeof(FreecraftCoreSerializerKnownTypesPrimitivesMetadata).Assembly;
+		internal static Assembly Assembly { get; } = typeof(FreecraftCoreSerializerKnownTypesPrimitivesMetadata).GetTypeInfo().Assembly;
 #endif
 
 	}

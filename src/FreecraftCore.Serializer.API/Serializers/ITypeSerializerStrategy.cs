@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
-	public interface ITypeSerializerStrategy : IObjectByteConverter, IObjectByteReader
+	public interface ITypeSerializerStrategy : IObjectByteConverter, IObjectByteReader, ITypeSerializerStrategyAsync
 	{
 		/// <summary>
 		/// Indicates the <see cref="TType"/> of the serializer.
@@ -42,7 +42,7 @@ namespace FreecraftCore.Serializer
 		/// <param name="source">The reader providing the input data.</param>
 		/// <returns>A non-null instance of the <typeparamref name="TType"/> object.</returns>
 		[NotNull]
-		object ReadIntoObject([CanBeNull] ref object obj, [NotNull] IWireStreamReaderStrategy source);
+		object ReadIntoObject([CanBeNull] object obj, [NotNull] IWireStreamReaderStrategy source);
 
 		//TODO: Fix doc
 		/// <summary>
@@ -59,7 +59,7 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Contract for type that providing serialization strategy for the provided TType.
 	/// </summary>
-	public interface ITypeSerializerStrategy<TType> : ITypeSerializerStrategy, IObjectByteConverter<TType>, IObjectByteReader<TType>
+	public interface ITypeSerializerStrategy<TType> : ITypeSerializerStrategy, IObjectByteConverter<TType>, IObjectByteReader<TType>, ITypeSerializerStrategyAsync<TType>
 	{
 		/// <summary>
 		/// Perform the steps necessary to serialize this data.
@@ -85,7 +85,7 @@ namespace FreecraftCore.Serializer
 		/// <param name="source">The reader providing the input data.</param>
 		/// <returns>A non-null instance of the <typeparamref name="TType"/> object.</returns>
 		[NotNull]
-		TType ReadIntoObject([CanBeNull] ref TType obj, [NotNull] IWireStreamReaderStrategy source);
+		TType ReadIntoObject([CanBeNull]TType obj, [NotNull] IWireStreamReaderStrategy source);
 
 		//TODO: Fix doc
 		/// <summary>

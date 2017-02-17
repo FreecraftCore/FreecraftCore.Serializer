@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
+using MiscUtil;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -26,10 +29,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		public EnumSerializerDecorator([NotNull] IGeneralSerializerProvider serializerProvider)
 		{
-			if (!typeof(TEnumType).IsEnum)
+			if (!typeof(TEnumType).GetTypeInfo().IsEnum)
 				throw new InvalidOperationException($"Cannot create an enum decorator for type {typeof(TEnumType).FullName} because it is not an enum.");
 #if !NET35
-			if (typeof(TEnumType).GetEnumUnderlyingType() != typeof(TBaseType))
+			if (typeof(TEnumType).GetTypeInfo().GetEnumUnderlyingType() != typeof(TBaseType))
 				throw new InvalidOperationException($"Defining an Enum decorator requires {nameof(TEnumType)}'s base enum type to match {nameof(TBaseType)}.");
 #else
 			if (Enum.GetUnderlyingType(typeof(TEnumType)) != typeof(TBaseType))
@@ -55,7 +58,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//TODO: Should be handle exceptions?
-			return (TEnumType)Enum.ToObject(typeof(TEnumType), (TBaseType)serializerStrategy.Read(source));
+			return Operator.Convert<TBaseType, TEnumType>(serializerStrategy.Read(source));
 		}
 
 		/// <inheritdoc />
@@ -63,14 +66,24 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			//TODO: Increase perf
-			//Not great. It's slow conversion and box. Then casting the box to call.
-			object boxedBaseEnumValue = Convert.ChangeType(value, typeof(TBaseType));
+			serializerStrategy.Write(Operator.Convert<TEnumType, TBaseType>(value), dest);
+		}
 
-			if (boxedBaseEnumValue == null)
-				throw new Exception();
+		/// <inheritdoc />
+		public override async Task WriteAsync(TEnumType value, IWireStreamWriterStrategyAsync dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			serializerStrategy.Write((TBaseType)boxedBaseEnumValue, dest);
+			await serializerStrategy.WriteAsync(Operator.Convert<TEnumType, TBaseType>(value), dest);
+		}
+
+		/// <inheritdoc />
+		public override async Task<TEnumType> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//TODO: Should be handle exceptions?
+			return Operator.Convert<TBaseType, TEnumType>(await serializerStrategy.ReadAsync(source));
 		}
 	}
 }

@@ -19,30 +19,24 @@ namespace FreecraftCore.Serializer.KnownTypes
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
 		/// <inheritdoc />
-		public unsafe override void Write(double value, [NotNull] IWireStreamWriterStrategy dest)
+		protected override unsafe bool PopulateSharedBufferWith(double value)
 		{
-			if (dest == null) throw new ArgumentNullException(nameof(dest));
-
 			//Must lock to prevent issues with shared buffer.
 			lock (syncObj)
 			{
 				//Must fix the position to get a byte*
 				//See example explaining this memory hack: http://stackoverflow.com/questions/2036718/fastest-way-of-reading-and-writing-binary
-				fixed (byte* bytePtr = &this.sharedByteBuffer[0])
+				fixed (byte* bytePtr = &this.SharedByteBuffer[0])
 					*((double*)bytePtr) = value;
 
-				//Stay locked when you write the byte[] to the stream
-				dest.Write(sharedByteBuffer);
+				return true;
 			}
 		}
 
 		/// <inheritdoc />
-		public unsafe override double Read([NotNull] IWireStreamReaderStrategy source)
+		protected override unsafe double DeserializeFromBuffer([NotNull] byte[] bytes)
 		{
-			if (source == null) throw new ArgumentNullException(nameof(source));
-
-			//Read 4 bytes (double size)
-			byte[] bytes = source.ReadBytes(sizeof(double));
+			if (bytes == null) throw new ArgumentNullException(nameof(bytes));
 
 			//fix address; See this link for information on this memory hack: http://stackoverflow.com/questions/2036718/fastest-way-of-reading-and-writing-binary
 			fixed (byte* bytePtr = &bytes[0])

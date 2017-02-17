@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Threading.Tasks;
 using Ionic.Zlib;
 using JetBrains.Annotations;
+using CompressionLevel = Ionic.Zlib.CompressionLevel;
 
 namespace FreecraftCore.Serializer
 {
@@ -48,71 +51,82 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public override TType Read(IWireStreamReaderStrategy source)
 		{
-			//The header is not need to deflate
-			//but we still need to read it
+			//WoW sends a 4 byte uncompressed size. We can't use it for anything
+			//We could assert or throw on it though.
 			uint sizeValue = SizeSerializer.Read(source);
-			//byte[] compressionQualityHeaderBytes = source.ReadBytes(2);
 
-			//We do not know how many bytes were compressed
-			//So right now we can only support compression on the final field
-			using (MemoryStream compressedStream = new MemoryStream(source.ReadAllBytes()))
-			{
-				using (MemoryStream decompressedStream = new MemoryStream())
-				{
-					using (ZlibStream decompressionStream = new ZlibStream(compressedStream, Ionic.Zlib.CompressionMode.Decompress, CompressionLevel.BestCompression))
-					{
-						decompressionStream.CopyTo(decompressedStream);
-						decompressionStream.Close();
-
-						//Return the interpted bytes from the decompressed buffer
-						return DecoratedStrategy.Read(new DefaultStreamReaderStrategy(decompressedStream.ToArray()));
-					}
-				}
-			}
+			return DecoratedStrategy.Read(new DefaultStreamReaderStrategy(ZlibStream.UncompressBuffer(source.ReadAllBytes())));
 		}
 
 		/// <inheritdoc />
 		public override void Write(TType value, IWireStreamWriterStrategy dest)
 		{
-			
-			//Expected format header
-			//[ssss]: Size (assuming the default size is used)
-			//[cc]: Compression quality 78 DA for max
+			byte[] decoratedSerializerBytes = GetUncompressedRepresentation(value);
 
-			byte[] decoratedSerializerBytes = null;
+			if (decoratedSerializerBytes == null)
+				throw new InvalidOperationException($"{nameof(DecoratedStrategy)} produced null bytes in {GetType().FullName}.");
 
+			//Write the uncompressed length
+			//WoW expects to know the uncomrpessed length
+			SizeSerializer.Write((uint)decoratedSerializerBytes.Length, dest);
+
+			dest.Write(ZlibStream.CompressBuffer(decoratedSerializerBytes));
+		}
+
+		private byte[] GetUncompressedRepresentation(TType value)
+		{
 			//Create a new writer so we can read the bytes from the decorated serializer
 			using (DefaultStreamWriterStrategy defaultWriter = new DefaultStreamWriterStrategy())
 			{
 				DecoratedStrategy.Write(value, defaultWriter);
 
-				decoratedSerializerBytes = defaultWriter.GetBytes();
+				return defaultWriter.GetBytes();
 			}
+		}
 
-			if(decoratedSerializerBytes == null)
-				throw new InvalidOperationException($"{nameof(DecoratedStrategy)} produced null bytes in {GetType().FullName}.");
+		/// <inheritdoc />
+		public override async Task WriteAsync(TType value, IWireStreamWriterStrategyAsync dest)
+		{
+			byte[] decoratedSerializerBytes = GetUncompressedRepresentation(value);
 
 			//Write the uncompressed length
-			//The ZLib library on the other side will expect 78 DA as the first type bytes
-			//this denotes compression type which is max compression
-			SizeSerializer.Write((uint)decoratedSerializerBytes.Length, dest);
-			//dest.Write(CompressionTypeSerializerStrategyDecorator.MaxCompressionByteHeader);
+			//WoW expects to know the uncomrpessed length
+			await SizeSerializer.WriteAsync((uint)decoratedSerializerBytes.Length, dest);
 
 			using (MemoryStream contentStream = new MemoryStream(decoratedSerializerBytes))
 			{
 				//Now we can write the actual content
 				using (MemoryStream compressedStream = new MemoryStream())
 				{
-					using (ZlibStream compressionStream = new ZlibStream(compressedStream, Ionic.Zlib.CompressionMode.Compress, CompressionLevel.BestCompression))
-					//using (DeflateStream compressionStream = new DeflateStream(compressedStream, CompressionMode.Compress))
+					using (ZlibStream compressionStream = new ZlibStream(compressedStream, Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.BestCompression))
 					{
-						contentStream.CopyTo(compressionStream);
-						compressionStream.Close();
-
-						//Writes the compressed buffer
-						dest.Write(compressedStream.ToArray());
+						//Wait for compression to finish
+						await contentStream.CopyToAsync(compressionStream);
 					}
+
+					//Wait until the stream is written
+					await dest.WriteAsync(compressedStream.ToArray());
 				}
+			}
+		}
+
+		/// <inheritdoc />
+		public override async Task<TType> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			//WoW sends a 4 byte uncompressed size. We can't use it for anything
+			//We could assert or throw on it though.
+			uint size = await SizeSerializer.ReadAsync(source);
+
+			using (MemoryStream decompressedStream = new MemoryStream())
+			{
+				using (ZlibStream decompressionStream = new ZlibStream(decompressedStream, Ionic.Zlib.CompressionMode.Decompress, CompressionLevel.BestCompression))
+				{
+					//wait for the stream to decompress
+					await decompressionStream.CopyToAsync(decompressedStream);
+				}
+
+				//wait for the stream to be interpreted
+				return await DecoratedStrategy.ReadAsync(new DefaultStreamReaderStrategyAsync(decompressedStream.ToArray()));
 			}
 		}
 	}

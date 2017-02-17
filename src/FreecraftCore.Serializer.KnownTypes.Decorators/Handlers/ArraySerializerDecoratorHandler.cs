@@ -53,14 +53,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 			{
 				switch ((SendSizeAttribute.SizeType)context.BuiltContextKey.Value.ContextSpecificKey.Key)
 				{
+					//TODO: Refactor into factory
 					case SendSizeAttribute.SizeType.Byte:
-						collectionSizeStrategy = new ByteSizeCollectionSizeStrategy();
+						collectionSizeStrategy = new GenericCollectionSizeStrategy<byte>(serializerProviderService.Get<byte>());
 						break;
 					case SendSizeAttribute.SizeType.Int32:
-						collectionSizeStrategy = new Int32SizeCollectionSizeStrategy(this.serializerProviderService.Get<int>());
+						collectionSizeStrategy = new GenericCollectionSizeStrategy<int>(serializerProviderService.Get<int>());
 						break;
 					case SendSizeAttribute.SizeType.UShort:
-						collectionSizeStrategy = new UInt16SizeCollectionSizeStrategy(this.serializerProviderService.Get<ushort>());
+						collectionSizeStrategy = new GenericCollectionSizeStrategy<ushort>(serializerProviderService.Get<ushort>());
 						break;
 
 					default:
@@ -71,7 +72,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//TODO: Should we really have a default?
 			//if they marked it with nothing then use a the byte
 			if (collectionSizeStrategy == null)
-				collectionSizeStrategy = new ByteSizeCollectionSizeStrategy();
+				collectionSizeStrategy = new GenericCollectionSizeStrategy<byte>(serializerProviderService.Get<byte>());
 
 			if (context.TargetType == null)
 				throw new InvalidOperationException($"Provided target type null.");

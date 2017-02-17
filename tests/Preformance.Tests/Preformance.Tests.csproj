@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Preformance.Tests</RootNamespace>
     <AssemblyName>Preformance.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,48 +36,56 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fasterflect, Version=2.1.3.0, Culture=neutral, PublicKeyToken=38d18473284c1ca7, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\fasterflect.2.1.3\lib\net40\Fasterflect.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DotNetZip">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\DotNetZip.dll</HintPath>
     </Reference>
-    <Reference Include="FreecraftCore.Serializer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net45\FreecraftCore.Serializer.dll</HintPath>
+    <Reference Include="Fasterflect">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\Fasterflect.dll</HintPath>
     </Reference>
-    <Reference Include="FreecraftCore.Serializer.API, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net45\FreecraftCore.Serializer.API.dll</HintPath>
+    <Reference Include="Fasterflect.Netstandard">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\Fasterflect.Netstandard.dll</HintPath>
     </Reference>
-    <Reference Include="FreecraftCore.Serializer.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net45\FreecraftCore.Serializer.Core.dll</HintPath>
+    <Reference Include="FreecraftCore.Serializer">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.dll</HintPath>
     </Reference>
-    <Reference Include="FreecraftCore.Serializer.KnownTypes.Decorators, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net45\FreecraftCore.Serializer.KnownTypes.Decorators.dll</HintPath>
+    <Reference Include="FreecraftCore.Serializer.API">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.API.dll</HintPath>
     </Reference>
-    <Reference Include="FreecraftCore.Serializer.KnownTypes.Primitives, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net45\FreecraftCore.Serializer.KnownTypes.Primitives.dll</HintPath>
+    <Reference Include="FreecraftCore.Serializer.API.Service">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.API.Service.dll</HintPath>
     </Reference>
-    <Reference Include="FreecraftCore.Serializer.Metadata, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net45\FreecraftCore.Serializer.Metadata.dll</HintPath>
+    <Reference Include="FreecraftCore.Serializer.Compression">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.Compression.dll</HintPath>
     </Reference>
-    <Reference Include="FreecraftCore.Serializer.Metadata.Internal, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net45\FreecraftCore.Serializer.Metadata.Internal.dll</HintPath>
+    <Reference Include="FreecraftCore.Serializer.Core">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="FreecraftCore.Serializer.KnownTypes.Decorators">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.KnownTypes.Decorators.dll</HintPath>
+    </Reference>
+    <Reference Include="FreecraftCore.Serializer.KnownTypes.Primitives">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.KnownTypes.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="FreecraftCore.Serializer.KnownTypes.Special">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.KnownTypes.Special.dll</HintPath>
+    </Reference>
+    <Reference Include="FreecraftCore.Serializer.Metadata">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="FreecraftCore.Serializer.Metadata.Internal">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.Metadata.Internal.dll</HintPath>
     </Reference>
     <Reference Include="FreecraftCore.Serializer.Stream">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net45\FreecraftCore.Serializer.Stream.dll</HintPath>
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.Stream.dll</HintPath>
     </Reference>
-    <Reference Include="JetBrains.Annotations, Version=10.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\JetBrains.Annotations.10.2.1\lib\net\JetBrains.Annotations.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="FreecraftCore.Serializer.Stream.Default">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.Stream.Default.dll</HintPath>
     </Reference>
-    <Reference Include="MiscUtil, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3c42c4bfacf7596, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\JonSkeet.MiscUtil.0.1\lib\net35-Client\MiscUtil.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="JetBrains.Annotations">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="MiscUtil">
+      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\MiscUtil.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net, Version=2.1.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <HintPath>..\..\packages\protobuf-net.2.1.0\lib\net451\protobuf-net.dll</HintPath>
@@ -96,6 +105,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

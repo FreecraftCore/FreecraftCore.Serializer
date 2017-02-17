@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 
@@ -40,6 +41,24 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			decoratedSerializer.Write(new string(value.Reverse().ToArray()), dest);
+		}
+
+		/// <inheritdoc />
+		public override async Task WriteAsync(string value, IWireStreamWriterStrategyAsync dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			await decoratedSerializer.WriteAsync(new string(value.Reverse().ToArray()), dest);
+		}
+
+		/// <inheritdoc />
+		public override async Task<string> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			string value = await decoratedSerializer.ReadAsync(source);
+
+			return new string(value.Reverse().ToArray());
 		}
 	}
 }

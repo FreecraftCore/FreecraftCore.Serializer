@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Fasterflect;
 using JetBrains.Annotations;
 
@@ -58,7 +59,7 @@ namespace FreecraftCore.Serializer
 			ParameterExpression valueExp = Expression.Parameter(typeof(TMemberType), "value");
 
 			// Expression.Property can be used here as well
-			MemberExpression memberExp = Expression.PropertyOrField(targetExp, memberInfo.Name);
+			MemberExpression memberExp = GetPropertyOrField(targetExp, memberInfo.Name);
 			BinaryExpression assignExp = Expression.Assign(memberExp, valueExp);
 
 			MemberAccessor = Expression.Lambda<Action<TContainingType, TMemberType>>(assignExp, targetExp, valueExp)
@@ -67,9 +68,105 @@ namespace FreecraftCore.Serializer
 			//TODO: Handle for net35. Profile fasterflect vs reflection emit
 		}
 
+		//TODO: Find out why netcore/netstandard requires this hack to get the proper property/field expression
+		//Solution for failed property location here: http://stackoverflow.com/a/8042602
+		private static MemberExpression GetPropertyOrField(Expression baseExpr, string name)
+		{
+			if (baseExpr == null)
+			{
+				throw new ArgumentNullException("baseExpr");
+			}
+			if (string.IsNullOrWhiteSpace(name))
+			{
+				throw new ArgumentException("name");
+			}
+			var type = baseExpr.Type;
+			var properties = type
+				.GetTypeInfo().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+				.Where(p => p.Name.Equals(name))
+				.ToArray();
+			if (properties.Length == 1)
+			{
+				var res = properties[0];
+				if (res.DeclaringType != type)
+				{
+					// Here is the core of the fix:
+					var tmp = res
+						.DeclaringType
+						.GetTypeInfo().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+						.Where(p => p.Name.Equals(name))
+						.ToArray();
+					if (tmp.Length == 1)
+					{
+						return Expression.Property(baseExpr, tmp[0]);
+					}
+				}
+				return Expression.Property(baseExpr, res);
+			}
+			if (properties.Length != 0)
+			{
+				throw new NotSupportedException(name);
+			}
+			var fields = type
+				.GetTypeInfo().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+				.Where(p => p.Name.Equals(name))
+				.ToArray();
+			if (fields.Length == 1)
+			{
+				return Expression.Field(baseExpr, fields[0]);
+			}
+			if (fields.Length != 0)
+			{
+				throw new NotSupportedException(name);
+			}
+			throw new ArgumentException(
+				string.Format(
+					"Type [{0}] does not define property/field called [{1}]"
+				, type
+				, name
+				)
+			);
+		}
+
 		public abstract void WriteMember(TContainingType obj, IWireStreamWriterStrategy dest);
 
 		public abstract void SetMember(TContainingType obj, IWireStreamReaderStrategy source);
+
+		/// <inheritdoc />
+		public abstract Task WriteMemberAsync(TContainingType obj, IWireStreamWriterStrategyAsync dest);
+
+		/// <inheritdoc />
+		public abstract Task SetMemberAsync(TContainingType obj, IWireStreamReaderStrategyAsync source);
+
+		public override void WriteMember(object obj, [NotNull] IWireStreamWriterStrategy dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			WriteMember((TContainingType)obj, dest);
+		}
+
+		public override void SetMember(object obj, IWireStreamReaderStrategy source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			SetMember((TContainingType)obj, source);
+		}
+
+		/// <inheritdoc />
+		public override async Task WriteMemberAsync(object obj, IWireStreamWriterStrategyAsync dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			await WriteMemberAsync((TContainingType)obj, dest);
+		}
+
+		/// <inheritdoc />
+		public override async Task SetMemberAsync(object obj, IWireStreamReaderStrategyAsync source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			await SetMemberAsync((TContainingType)obj, source);
+		}
 	}
 
 	/// <summary>
@@ -105,5 +202,11 @@ namespace FreecraftCore.Serializer
 		public abstract void SetMember(object obj, [NotNull] IWireStreamReaderStrategy source);
 
 		public abstract void WriteMember(object obj, [NotNull] IWireStreamWriterStrategy dest);
+
+		/// <inheritdoc />
+		public abstract Task WriteMemberAsync(object obj, IWireStreamWriterStrategyAsync dest);
+
+		/// <inheritdoc />
+		public abstract Task SetMemberAsync(object obj, IWireStreamReaderStrategyAsync source);
 	}
 }

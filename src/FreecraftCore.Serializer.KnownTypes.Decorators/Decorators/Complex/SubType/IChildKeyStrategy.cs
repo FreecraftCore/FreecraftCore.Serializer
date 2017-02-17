@@ -8,7 +8,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// <summary>
 	/// Strategy for producing the proper key for the subtype child lookup
 	/// </summary>
-	public interface IChildKeyStrategy
+	public interface IChildKeyStrategy : IChildKeyStrategyAsync
 	{
 		/// <summary>
 		/// Attempts to the read the child key from the source.

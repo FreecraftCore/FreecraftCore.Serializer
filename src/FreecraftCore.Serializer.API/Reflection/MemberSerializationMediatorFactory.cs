@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
+	//TODO: Document
 	public class MemberSerializationMediatorFactory : IMemberSerializationMediatorFactory
 	{
 		[NotNull]
@@ -34,7 +35,7 @@ namespace FreecraftCore.Serializer
 				Activator.CreateInstance(typeof(DefaultMemberSerializationMediator<,>).MakeGenericType(new Type[] { typeof(TContainingType), info.Type()}),
 					info, typeSerializerProvider.Get(lookupKeyFactory.Create(info))) as IMemberSerializationMediator<TContainingType>;
 
-			//new DefaultMemberSerializationMediator<TContainingType>(info, typeSerializerProvider.Get(lookupKeyFactory.Create(info)));
+			//TODO: Do checking and exceptions for mediator failure
 
 			if (info.HasAttribute<DontWriteAttribute>())
 				mediator = new DisableWriteMemberSerializationMediatorDecorator<TContainingType>(mediator);

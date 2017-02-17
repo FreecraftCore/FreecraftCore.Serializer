@@ -2,6 +2,10 @@
 using System.IO;
 using JetBrains.Annotations;
 
+#if !NET35
+using System.Threading.Tasks;
+#endif
+
 namespace FreecraftCore.Serializer
 {
 	/// <summary>

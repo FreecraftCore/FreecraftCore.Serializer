@@ -1,30 +1,30 @@
 {
-    "version": "1.0.0-*",
+  "version": "1.0.0-*",
 
   "dependencies": {
     "FreecraftCore.Serializer.Metadata": "1.0.0-*",
     "FreecraftCore.Serializer.KnownTypes.Primitives": "1.0.0-*",
     "FreecraftCore.Serializer.KnownTypes.Decorators": "1.0.0-*",
     "FreecraftCore.Serializer.Core": "1.0.0-*",
-    "FreecraftCore.Serializer.Stream.Default": "1.0.0-*",
-    "fasterflect": "2.1.3",
     "JetBrains.Annotations": "10.2.1",
-    "FreecraftCore.Serializer.API.Service": "1.0.0-*"
+    "FreecraftCore.Serializer.API.Service": "1.0.0-*",
+    "FreecraftCore.Serializer.Stream.Default": "1.0.0-*"
   },
 
-    "frameworks": {
-        "net35": {
-        },
-        "net45": {
-
-        },
-        "net46": {
-
-        }
+  "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      }
     },
+    "net46": {
 
-    "buildOptions": {
-        "allowUnsafe": true,
-        "optimize": true
     }
+  },
+
+  "buildOptions": {
+    "allowUnsafe": true,
+    "optimize": true
+  }
 }

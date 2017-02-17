@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 
@@ -68,6 +69,33 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//However, DO NOT write another null terminator either way because we already have one.
 			if (value.Length < size)
 				dest.Write(new byte[(size - value.Length)]);
+		}
+
+		/// <inheritdoc />
+		public override async Task WriteAsync(string value, IWireStreamWriterStrategyAsync dest)
+		{
+			if (value == null) throw new ArgumentNullException(nameof(value));
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			int size = await sizeProvider.SizeAsync(value, dest);
+
+			await decoratedSerializer.WriteAsync(value, dest);
+
+			if (value.Length < size)
+				await dest.WriteAsync(new byte[(size - value.Length)]);
+		}
+
+		/// <inheritdoc />
+		public override async Task<string> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//The size must come from the strategy provided
+			int size = await sizeProvider.SizeAsync(source);
+
+			byte[] bytes = await source.ReadBytesAsync(size);
+
+			return Encoding.ASCII.GetString(bytes).TrimEnd('\0');
 		}
 	}
 }

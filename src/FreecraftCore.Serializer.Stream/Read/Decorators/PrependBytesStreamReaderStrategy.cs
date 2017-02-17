@@ -2,29 +2,33 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+#if !NET35
+using System.Threading.Tasks;
+#endif
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
-	public class PrependBytesStreamReaderStrategy : WireMemberReaderStrategyDecorator
+	public class PrependBytesStreamReaderStrategy<TReaderType> : WireMemberReaderStrategyDecorator<TReaderType>
+		where TReaderType : IWireStreamReaderStrategy
 	{
 		/// <summary>
 		/// The prended bytes.
 		/// </summary>
 		[NotNull]
-		private byte[] PrependedBytes { get; }
+		protected byte[] PrependedBytes { get; set; }
 
 		/// <summary>
 		/// The prepended counter.
 		/// </summary>
-		private int ByteCount { get; set; } = 0;
+		protected int ByteCount { get; set; } = 0;
 
 		/// <summary>
 		/// Indicates if the pretended portion is finished reading.
 		/// </summary>
-		private bool isPrendedBytesFinished => (PrependedBytes.Length == ByteCount);
+		protected bool isPrendedBytesFinished => (PrependedBytes.Length == ByteCount);
 
-		public PrependBytesStreamReaderStrategy([NotNull] IWireStreamReaderStrategy decoratedReader, [NotNull] byte[] bytes) 
+		public PrependBytesStreamReaderStrategy([NotNull] TReaderType decoratedReader, [NotNull] byte[] bytes) 
 			: base(decoratedReader)
 		{
 			if (bytes == null) throw new ArgumentNullException(nameof(bytes));

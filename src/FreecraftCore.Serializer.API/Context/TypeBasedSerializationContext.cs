@@ -35,8 +35,13 @@ namespace FreecraftCore.Serializer
 			ContextRequirement = SerializationContextRequirement.Contextless;
 			TargetType = type;
 
+#if NETSTANDARD1_6
+			TypeMetadata = type.GetTypeInfo().Attributes<Attribute>()
+				.Where(IsContextualTypeAttribute);
+#else
 			TypeMetadata = type.Attributes<Attribute>()
 				.Where(IsContextualTypeAttribute);
+#endif
 
 			//Provide an empty member context. There is none to provide
 			MemberMetadata = Enumerable.Empty<Attribute>();
