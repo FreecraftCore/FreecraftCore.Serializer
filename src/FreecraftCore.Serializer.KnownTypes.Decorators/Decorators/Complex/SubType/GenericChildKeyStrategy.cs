@@ -61,7 +61,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//It may be that the data is needed to be left in the stream to indicate
 			//something about the type later down the line.
 			if (!typeHandlingFlags.HasFlag(InformationHandlingFlags.DontWrite))
-				KeyTypeSerializerStrategy.Write(value, dest);
+				KeyTypeSerializerStrategy.Write(Operator.Convert<int, TKeyType>(value), dest);
 		}
 
 		/// <inheritdoc />
@@ -83,7 +83,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//It may be that the data is needed to be left in the stream to indicate
 			//something about the type later down the line.
 			if (!typeHandlingFlags.HasFlag(InformationHandlingFlags.DontWrite))
-				await KeyTypeSerializerStrategy.WriteAsync(value, dest);
+				await KeyTypeSerializerStrategy.WriteAsync(Operator.Convert<int, TKeyType>(value), dest);
 		}
 	}
 }

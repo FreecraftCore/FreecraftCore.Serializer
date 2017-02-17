@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using MiscUtil;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -36,7 +37,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (reader == null) throw new ArgumentNullException(nameof(reader));
 
 			//Read the byte size from the stream.
-			return (int)(object)SizeTypeSerializerStrategy.Read(reader);
+			return Operator.Convert<TSizeType, int>(SizeTypeSerializerStrategy.Read(reader));
 		}
 
 		/// <summary>
@@ -51,7 +52,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			int size = collection.Count();
 
 			//Since the size is unknown it's critical that we write the size to the stream.
-			SizeTypeSerializerStrategy.Write(size, writer);
+			SizeTypeSerializerStrategy.Write(Operator.Convert<int, TSizeType>(size), writer);
 
 			//We don't know the size so just provide the size of the collection
 			return size;
@@ -67,7 +68,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			int size = collection.Count();
 
 			//yield until we write (shouldn't take long and maybe syncronous is more efficient and performant but async API should be fully async) 
-			await SizeTypeSerializerStrategy.WriteAsync(size, writer);
+			await SizeTypeSerializerStrategy.WriteAsync(Operator.Convert<int, TSizeType>(size), writer);
 
 			//We don't know the size so just provide the size of the collection
 			return size;
@@ -81,7 +82,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//Read the byte size from the stream.
 			TSizeType result = await SizeTypeSerializerStrategy.ReadAsync(reader);
 
-			return (int)(object)result;
+			return Operator.Convert<TSizeType, int>(result);
 		}
 	}
 }
