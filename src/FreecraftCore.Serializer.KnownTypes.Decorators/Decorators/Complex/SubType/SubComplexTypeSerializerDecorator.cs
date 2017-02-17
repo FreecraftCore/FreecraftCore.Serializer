@@ -64,6 +64,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
+			if (value == null)
+				throw new InvalidOperationException($"Serializes a null {typeof(TBaseType).FullName} is not a supported serialization scenario. It is impossible to know which type to encode.");
+
+
 			//TODO: Clean up default serializer implementation
 			if (!typeToKeyLookup.ContainsKey(value.GetType()))
 			{
