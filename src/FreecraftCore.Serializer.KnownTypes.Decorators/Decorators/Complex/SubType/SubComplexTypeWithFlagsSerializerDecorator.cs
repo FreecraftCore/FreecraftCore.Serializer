@@ -100,8 +100,16 @@ namespace FreecraftCore.Serializer.KnownTypes
 					return;
 				}
 
+			//TODO: We can now write default types but this ONLY works if it uses DontConsumeRead semantics.
+			//TODO: Better default type handling so that it can be handle better
+			//This will NOT work if there is a value that must be written.
 			//We can't write default types.
-			throw new InvalidOperationException($"Failed to serialize Type: {value.GetType().FullName}. No prepared serializer could be found. Make sure to properly setup child mapping.");
+			if(DefaultSerializer == null)
+				throw new InvalidOperationException($"Failed to serialize Type: {value.GetType().FullName}. No prepared serializer could be found. Make sure to properly setup child mapping.");
+			else
+			{
+				DefaultSerializer.Write(value, dest);
+			}
 		}
 
 		/// <inheritdoc />
@@ -148,8 +156,16 @@ namespace FreecraftCore.Serializer.KnownTypes
 					return;
 				}
 
+			//TODO: We can now write default types but this ONLY works if it uses DontConsumeRead semantics.
+			//TODO: Better default type handling so that it can be handle better
+			//This will NOT work if there is a value that must be written.
 			//We can't write default types.
-			throw new InvalidOperationException($"Failed to serialize Type: {value.GetType().FullName}. No prepared serializer could be found. Make sure to properly setup child mapping.");
+			if (DefaultSerializer == null)
+				throw new InvalidOperationException($"Failed to serialize Type: {value.GetType().FullName}. No prepared serializer could be found. Make sure to properly setup child mapping.");
+			else
+			{
+				await DefaultSerializer.WriteAsync(value, dest);
+			}
 		}
 
 		/// <inheritdoc />

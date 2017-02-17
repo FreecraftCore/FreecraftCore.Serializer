@@ -113,6 +113,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aync\AsyncRandomlyBlockingStream.cs" />
     <Compile Include="Hacks\ArrayHacks.cs" />
     <Compile Include="RealWorld\AuthRealmListPacketTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -70,7 +70,7 @@ namespace FreecraftCore.Serializer.Tests
 		};
 
 		[Test]
-		public static void Test_Can_Deserialize_From_RealWorld_Bytes()
+		public async static Task Test_Can_Deserialize_From_RealWorld_Bytes()
 		{
 			//arrange
 			SerializerService service = new SerializerService();
@@ -78,7 +78,8 @@ namespace FreecraftCore.Serializer.Tests
 			service.Compile();
 
 			//act
-			AuthRealmListResponse response = service.DeserializeAsync<AuthRealmListResponse>(realworldBytes).Result;
+			AuthRealmListResponse response = await service.DeserializeAsync<AuthRealmListResponse>(new DefaultStreamReaderStrategyAsync(new AsyncRandomlyBlockingStream(realworldBytes)));
+			byte[] bytes = await service.SerializeAsync(response, new DefaultStreamWriterStrategyAsync(new AsyncRandomlyBlockingStream()));
 
 			//assert
 			Assert.True(response.Realms.Count() == 1);
