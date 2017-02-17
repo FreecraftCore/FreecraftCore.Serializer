@@ -78,7 +78,7 @@ namespace FreecraftCore.Serializer.Tests
 			service.Compile();
 
 			//act
-			AuthRealmListResponse response = service.Deserialize<AuthRealmListResponse>(realworldBytes);
+			AuthRealmListResponse response = service.DeserializeAsync<AuthRealmListResponse>(realworldBytes).Result;
 
 			//assert
 			Assert.True(response.Realms.Count() == 1);
