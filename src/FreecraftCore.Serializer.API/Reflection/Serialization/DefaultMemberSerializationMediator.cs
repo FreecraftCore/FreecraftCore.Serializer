@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Fasterflect;
 using JetBrains.Annotations;
 
@@ -28,26 +29,7 @@ namespace FreecraftCore.Serializer
 			//We used to do a null check here. It was kind of pointless to do and it was slightly expensive since they weren't all
 			//reference types. No reason to check nullness; it's just a perf issue
 
-			try
-			{
-				TypeSerializer.Write(memberValue, dest);
-			}
-			catch (NullReferenceException e)
-			{
-				throw new InvalidOperationException($"Serializer failed to find serializer for member name: {MemberInformation.Name} and type: {MemberInformation.Type()}.", e);
-			}
-		}
-
-		public override void WriteMember(object obj, [NotNull] IWireStreamWriterStrategy dest)
-		{
-			WriteMember((TContainingType)obj, dest);
-		}
-
-		public override void SetMember(object obj, IWireStreamReaderStrategy source)
-		{
-			if (source == null) throw new ArgumentNullException(nameof(source));
-
-			SetMember((TContainingType)obj, source);
+			TypeSerializer.Write(memberValue, dest);
 		}
 
 		public override void SetMember(TContainingType obj, [NotNull] IWireStreamReaderStrategy source)
@@ -59,6 +41,35 @@ namespace FreecraftCore.Serializer
 			obj.TrySetValue(MemberInformation.Name, TypeSerializer.Read(source));
 #else
 			MemberAccessor(obj, (TMemberType)TypeSerializer.Read(source));
+#endif
+		}
+
+		/// <inheritdoc />
+		public override async Task WriteMemberAsync(TContainingType obj, IWireStreamWriterStrategyAsync dest)
+		{
+			if (obj == null) throw new ArgumentNullException(nameof(obj));
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//TODO: Check how TC handles optionals or nulls.
+			//Do we write nothing? Do we write 0?
+			//object memberValue = value.TryGetValue(serializerInfo.MemberInformation.Name);
+			object memberValue = MemberGetter(obj); //instead of fasterflect we use delegate to getter
+
+			//We used to do a null check here. It was kind of pointless to do and it was slightly expensive since they weren't all
+			//reference types. No reason to check nullness; it's just a perf issue
+
+			await TypeSerializer.WriteAsync(memberValue, dest);
+		}
+
+		/// <inheritdoc />
+		public override async Task SetMemberAsync(TContainingType obj, IWireStreamReaderStrategyAsync source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+#if NET35
+			throw new NotImplementedException();
+#else
+			MemberAccessor(obj, (TMemberType)await TypeSerializer.ReadAsync(source));
 #endif
 		}
 	}

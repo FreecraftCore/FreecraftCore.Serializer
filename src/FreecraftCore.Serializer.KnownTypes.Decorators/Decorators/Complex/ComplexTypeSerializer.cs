@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
@@ -84,6 +85,35 @@ namespace FreecraftCore.Serializer
 			//Even if we're suppose to write type data for this type we don't
 			//Just members
 			WriteMemberData(obj, dest);
+		}
+
+		//TODO: Implement once we have write and read async
+		/// <inheritdoc />
+		public override Task ObjectIntoWriterAsync(TType obj, IWireStreamWriterStrategyAsync dest)
+		{
+			return base.ObjectIntoWriterAsync(obj, dest);
+		}
+
+		/// <inheritdoc />
+		public override Task<TType> ReadIntoObjectAsync(TType obj, IWireStreamReaderStrategyAsync source)
+		{
+			return base.ReadIntoObjectAsync(obj, source);
+		}
+
+		protected async Task SetMembersFromReaderDataAsync(TType obj, [NotNull] IWireStreamReaderStrategy source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			for (int i = 0; i < orderedMemberInfos.Length; i++)
+				orderedMemberInfos[i].SetMember(obj, source);
+		}
+
+		protected async Task WriteMemberDataAsync(TType obj, [NotNull] IWireStreamWriterStrategy dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			for (int i = 0; i < orderedMemberInfos.Length; i++)
+				orderedMemberInfos[i].WriteMember(obj, dest);
 		}
 	}
 }

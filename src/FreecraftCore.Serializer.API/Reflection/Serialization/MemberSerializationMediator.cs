@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Fasterflect;
 using JetBrains.Annotations;
 
@@ -130,6 +131,42 @@ namespace FreecraftCore.Serializer
 		public abstract void WriteMember(TContainingType obj, IWireStreamWriterStrategy dest);
 
 		public abstract void SetMember(TContainingType obj, IWireStreamReaderStrategy source);
+
+		/// <inheritdoc />
+		public abstract Task WriteMemberAsync(TContainingType obj, IWireStreamWriterStrategyAsync dest);
+
+		/// <inheritdoc />
+		public abstract Task SetMemberAsync(TContainingType obj, IWireStreamReaderStrategyAsync source);
+
+		public override void WriteMember(object obj, [NotNull] IWireStreamWriterStrategy dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			WriteMember((TContainingType)obj, dest);
+		}
+
+		public override void SetMember(object obj, IWireStreamReaderStrategy source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			SetMember((TContainingType)obj, source);
+		}
+
+		/// <inheritdoc />
+		public override async Task<Task> WriteMemberAsync(object obj, IWireStreamWriterStrategyAsync dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			await WriteMemberAsync((TContainingType)obj, dest);
+		}
+
+		/// <inheritdoc />
+		public override async Task SetMemberAsync(object obj, IWireStreamReaderStrategyAsync source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			await SetMemberAsync((TContainingType)obj, source);
+		}
 	}
 
 	/// <summary>
@@ -165,5 +202,11 @@ namespace FreecraftCore.Serializer
 		public abstract void SetMember(object obj, [NotNull] IWireStreamReaderStrategy source);
 
 		public abstract void WriteMember(object obj, [NotNull] IWireStreamWriterStrategy dest);
+
+		/// <inheritdoc />
+		public abstract Task WriteMemberAsync(object obj, IWireStreamWriterStrategyAsync dest);
+
+		/// <inheritdoc />
+		public abstract Task SetMemberAsync(object obj, IWireStreamReaderStrategyAsync source);
 	}
 }
