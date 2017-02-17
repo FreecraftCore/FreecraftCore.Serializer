@@ -24,7 +24,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Can_Serialize_Compression_Marked_Class()
 		{
 			//arrange
-			int[] values = new int[] { 1, 5, 7, 1, 1, 1, 1, 1, 1, 5, 1, 5, 6 };
+			int[] values = new int[] { 0,0,0,0,0,0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
 			SerializerService serializer = new SerializerService();
 			serializer.RegisterType<TestInt32ArrayCompression>();
 			serializer.Compile();
@@ -68,24 +68,24 @@ namespace FreecraftCore.Serializer.Tests
 			serializer.Compile();
 
 			//act
-			byte[] bytes = serializer.Serialize(new TestComplexTypeWithCompressedComplex(new TestComplexType(5)));
+			byte[] bytes = serializer.Serialize(new TestComplexTypeWithCompressedComplex(new TestComplexType(5, 50)));
 			TestComplexTypeWithCompressedComplex obj = serializer.Deserialize<TestComplexTypeWithCompressedComplex>(bytes);
-			byte[] justTestComplexBytes = serializer.Serialize(new TestComplexType(65));
+			byte[] justTestComplexBytes = serializer.Serialize(new TestComplexType(65, 50));
 
 			//assert
-			Assert.True(bytes.Length != 4); //might be longer with header/footer
-			Assert.AreEqual(5, obj.CompressedComplex.i);
+			Assert.True(bytes.Length < 40 * sizeof(int)); //might be longer with header/footer
+			Assert.AreEqual(50, obj.CompressedComplex.testValues.Length);
 		}
 
 		[WireDataContract]
 		public class TestComplexType
 		{
 			[WireMember(1)]
-			public int i;
+			public int[] testValues;
 
-			public TestComplexType(int iValue)
+			public TestComplexType(int iValue, int repeated)
 			{
-				i = iValue;
+				testValues = new List<int>(repeated).Concat(Enumerable.Repeat<int>(iValue, repeated)).ToArray();
 			}
 
 			public TestComplexType()

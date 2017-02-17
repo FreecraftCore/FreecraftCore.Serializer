@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 
@@ -72,6 +73,18 @@ namespace FreecraftCore.Serializer.KnownTypes
 				throw new Exception();
 
 			serializerStrategy.Write((TBaseType)boxedBaseEnumValue, dest);
+		}
+
+		/// <inheritdoc />
+		public override Task WriteAsync(TEnumType value, IWireStreamWriterStrategyAsync dest)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <inheritdoc />
+		public override Task<TEnumType> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

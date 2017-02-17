@@ -41,7 +41,7 @@ namespace FreecraftCore.Serializer
 			ITypeSerializerStrategy<TType> complexTypeSerializerDecorator = new ComplexTypeSerializerDecorator<TType>(new MemberSerializationMediatorCollection<TType>(SerializationMediatorFactory), new LambdabasedDeserializationPrototyeFactory<TType>(), serializerProviderService);
 
 			//Check for compression flags
-			if(context.HasContextualMemberMetadata() && context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Compressed))
+			if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Compressed))
 				complexTypeSerializerDecorator = new CompressionTypeSerializerStrategyDecorator<TType>(complexTypeSerializerDecorator, serializerProviderService.Get<uint>());
 
 			return complexTypeSerializerDecorator;

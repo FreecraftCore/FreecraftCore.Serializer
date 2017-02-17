@@ -54,5 +54,17 @@ namespace FreecraftCore.Serializer
 		{
 			return new BufferedPeekWireStreamReaderStrategyDecorator<TReaderType>(reader);
 		}
+
+		/// <summary>
+		/// Decorates the stream with peek only functionality.
+		/// This forces the decorated reader to peek for every peek or read.
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <returns></returns>
+		public static IWireStreamReaderStrategy WithOnlyPeeking<TReaderType>(this TReaderType reader)
+			where TReaderType : IWireStreamReaderStrategy
+		{
+			return new PeekOnlyWireStreamReaderStrategy<TReaderType>(reader);
+		}
 	}
 }

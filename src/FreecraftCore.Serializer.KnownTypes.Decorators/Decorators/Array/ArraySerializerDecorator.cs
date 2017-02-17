@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 
 using System.Reflection;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -88,6 +89,36 @@ namespace FreecraftCore.Serializer.KnownTypes
 				for (int i = 0; i < size; i++)
 					decoratedSerializer.Write(value[i], dest);
 			}
+		}
+
+		/// <inheritdoc />
+		public override async Task WriteAsync(TObjectType[] value, IWireStreamWriterStrategyAsync dest)
+		{
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			int size = await sizeStrategyService.SizeAsync<TObjectType[], TObjectType>(value, dest);
+
+			if (size != value.Length)
+				throw new InvalidOperationException($"Invalid size. Provided {nameof(TObjectType)}[] had a size mismatch with expected size: {size} and was: {value.Length}.");
+
+			unchecked
+			{
+				for (int i = 0; i < size; i++)
+					await decoratedSerializer.WriteAsync(value[i], dest);
+			}
+		}
+
+		/// <inheritdoc />
+		public override async Task<TObjectType[]> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			TObjectType[] objectArray = new TObjectType[await sizeStrategyService.SizeAsync(source)];
+
+			//TODO: Error handling
+			//read as many objects as in the message (this is safe for clients. Not so safe if the client sent a message of this type)
+			for (int i = 0; i < objectArray.Length; i++)
+				objectArray[i] = await decoratedSerializer.ReadAsync(source);
+
+			return objectArray;
 		}
 	}
 }

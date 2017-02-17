@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using System.Threading.Tasks;
 using Fasterflect;
 using JetBrains.Annotations;
 
@@ -124,6 +125,18 @@ namespace FreecraftCore.Serializer.KnownTypes
 				return (TBaseType)DefaultSerializer.Read(source);
 			else
 				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Flags: {flags} but no valid type matches and there is no default type.");
+		}
+
+		/// <inheritdoc />
+		public override Task WriteAsync(TBaseType value, IWireStreamWriterStrategyAsync dest)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <inheritdoc />
+		public override Task<TBaseType> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

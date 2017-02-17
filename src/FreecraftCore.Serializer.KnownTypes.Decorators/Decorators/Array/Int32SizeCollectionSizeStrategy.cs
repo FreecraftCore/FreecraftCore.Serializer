@@ -11,7 +11,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// <summary>
 	/// Size strategy for collections that send a <see cref="int"/> size.
 	/// </summary>
-	public class Int32SizeCollectionSizeStrategy : ICollectionSizeStrategy
+	/*public class Int32SizeCollectionSizeStrategy : ICollectionSizeStrategy
 	{
 		private ITypeSerializerStrategy<int> intSerializer { get; }
 
@@ -45,5 +45,5 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//We don't know the size so just provide the size of the collection
 			return collection.Count();
 		}
-	}
+	}*/
 }

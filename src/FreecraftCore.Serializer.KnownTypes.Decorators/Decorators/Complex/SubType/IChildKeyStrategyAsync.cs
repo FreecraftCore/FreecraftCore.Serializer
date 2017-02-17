@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using System.Threading.Tasks;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
 	/// <summary>
-	/// Strategy for producing the proper key for the subtype child lookup
+	/// Strategy for producing the proper key for the subtype child lookup using async reading and writing.
 	/// </summary>
-	public interface IChildKeyStrategy : IChildKeyStrategyAsync
+	public interface IChildKeyStrategyAsync
 	{
 		/// <summary>
 		/// Attempts to the read the child key from the source.
@@ -16,7 +17,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <param name="source"></param>
 		/// <exception cref="ArgumentNullException">Throws if the <see cref="source"/> provided was null.</exception>
 		/// <returns>Integer casted child key.</returns>
-		int Read([NotNull] IWireStreamReaderStrategy source);
+		Task<int> ReadAsync([NotNull] IWireStreamReaderStrategyAsync source);
 
 		/// <summary>
 		/// Writes the key to the stream using the size implemented by the strategy.
@@ -24,6 +25,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <param name="value"></param>
 		/// <param name="dest"></param>
 		/// <exception cref="ArgumentNullException">Throws if the <see cref="dest"/> provided was null.</exception>
-		void Write(int value, [NotNull] IWireStreamWriterStrategy dest);
+		Task WriteAsync(int value, [NotNull] IWireStreamWriterStrategyAsync dest);
 	}
 }

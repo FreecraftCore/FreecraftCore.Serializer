@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using System.Reflection;
+using System.Threading.Tasks;
 using Fasterflect;
 using JetBrains.Annotations;
 
@@ -136,6 +137,18 @@ namespace FreecraftCore.Serializer.KnownTypes
 			RegisterPair(typeof(TChildType), key);
 
 			return true;
+		}
+
+		/// <inheritdoc />
+		public override Task WriteAsync(TBaseType value, IWireStreamWriterStrategyAsync dest)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <inheritdoc />
+		public override Task<TBaseType> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

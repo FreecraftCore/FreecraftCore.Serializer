@@ -11,7 +11,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// <summary>
 	/// Size strategy for collections that send a <see cref="ushort"/> size.
 	/// </summary>
-	public class UInt16SizeCollectionSizeStrategy : ICollectionSizeStrategy
+	/*public class UInt16SizeCollectionSizeStrategy : ICollectionSizeStrategy
 	{
 		[NotNull]
 		private ITypeSerializerStrategy<ushort> shortSerializer { get; }
@@ -49,5 +49,5 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//We don't know the size so just provide the size of the collection
 			return collection.Count();
 		}
-	}
+	}*/
 }

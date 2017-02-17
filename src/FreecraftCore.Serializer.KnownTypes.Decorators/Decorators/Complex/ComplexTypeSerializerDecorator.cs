@@ -6,6 +6,7 @@ using System.Text;
 using Fasterflect;
 using System.Reflection;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
@@ -76,15 +77,13 @@ namespace FreecraftCore.Serializer
 			//invoke before serialization if it's available
 			(obj as ISerializationEventListener)?.OnBeforeSerialization();
 
-			object castedObj = obj;
-
 			//read all base type members first
 			//WARNING: This caused HUGE perf probleems. Several orders of magnitude slower than Protobuf
 			//We MUST not check if the serializer exists and we must precache the gets.
 			if(reversedInheritanceHierarchy.Count() != 0)
 				foreach(Type t in reversedInheritanceHierarchy)
 					if(serializerProviderService.HasSerializerFor(t))
-						serializerProviderService.Get(t).ReadIntoObject(ref castedObj, source);
+						serializerProviderService.Get(t).ReadIntoObject(obj, source);
 
 			SetMembersFromReaderData(obj, source);
 
@@ -106,6 +105,18 @@ namespace FreecraftCore.Serializer
 						serializerProviderService.Get(t).ObjectIntoWriter(value, dest);
 
 			WriteMemberData(value, dest);
+		}
+
+		/// <inheritdoc />
+		public override Task WriteAsync(TComplexType value, IWireStreamWriterStrategyAsync dest)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <inheritdoc />
+		public override Task<TComplexType> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

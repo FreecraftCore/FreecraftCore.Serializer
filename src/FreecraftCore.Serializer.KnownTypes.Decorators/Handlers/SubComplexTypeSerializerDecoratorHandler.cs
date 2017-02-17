@@ -81,7 +81,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 				strat = new SubComplexTypeWithFlagsSerializerDecorator<TType>(new LambdabasedDeserializationPrototyeFactory<TType>(), new MemberSerializationMediatorCollection<TType>(mediatorFactoryService), serializerProviderService, keyStrategy);
 
 			//Check for compression flags
-			if (context.HasContextualMemberMetadata() && context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Compressed))
+			if (context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Compressed))
 				strat = new CompressionTypeSerializerStrategyDecorator<TType>(strat, serializerProviderService.Get<uint>());
 
 			return strat;

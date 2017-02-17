@@ -53,6 +53,22 @@ namespace FreecraftCore.Serializer.KnownTypes
 			{
 				switch ((SendSizeAttribute.SizeType)context.BuiltContextKey.Value.ContextSpecificKey.Key)
 				{
+					//TODO: Refactor into factory
+					case SendSizeAttribute.SizeType.Byte:
+						collectionSizeStrategy = new GenericCollectionSizeStrategy<byte>(serializerProviderService.Get<byte>());
+						break;
+					case SendSizeAttribute.SizeType.Int32:
+						collectionSizeStrategy = new GenericCollectionSizeStrategy<int>(serializerProviderService.Get<int>());
+						break;
+					case SendSizeAttribute.SizeType.UShort:
+						collectionSizeStrategy = new GenericCollectionSizeStrategy<ushort>(serializerProviderService.Get<ushort>());
+						break;
+
+					default:
+						throw new InvalidOperationException($"Encountered unsupported {nameof(SendSizeAttribute.SizeType)} Value: {context.BuiltContextKey.Value.ContextSpecificKey.Key}");
+				}
+				/*switch ((SendSizeAttribute.SizeType)context.BuiltContextKey.Value.ContextSpecificKey.Key)
+				{
 					case SendSizeAttribute.SizeType.Byte:
 						collectionSizeStrategy = new ByteSizeCollectionSizeStrategy();
 						break;
@@ -65,7 +81,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 					default:
 						throw new InvalidOperationException($"Encountered unsupported {nameof(SendSizeAttribute.SizeType)} Value: {context.BuiltContextKey.Value.ContextSpecificKey.Key}");
-				}
+				}*/
 			}
 
 			//TODO: Should we really have a default?
@@ -80,10 +96,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 				throw new InvalidOperationException($"Element type null.");
 
 			//TODO: This is an expirmental high preformance array serializer. It could have buffer overflows or other faults. It's not safe
-			if (typeof(TType) == typeof(int[]))
+			/*if (typeof(TType) == typeof(int[]))
 			{
 				return new Int32ArraySerializerDecorator(serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
-			}
+			}*/
 
 			//If we know about the size then we should create a knownsize array decorator
 			ITypeSerializerStrategy<TType> strat = typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType())

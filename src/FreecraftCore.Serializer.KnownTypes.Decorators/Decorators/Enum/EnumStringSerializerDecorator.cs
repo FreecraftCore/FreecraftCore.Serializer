@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 
@@ -44,6 +45,18 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//Just write the string to the stream
 			decoratedSerializer.Write(value.ToString(), dest);
+		}
+
+		/// <inheritdoc />
+		public override Task WriteAsync(TEnumType value, IWireStreamWriterStrategyAsync dest)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <inheritdoc />
+		public override Task<TEnumType> ReadAsync(IWireStreamReaderStrategyAsync source)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

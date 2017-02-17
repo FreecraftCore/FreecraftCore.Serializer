@@ -64,7 +64,7 @@ namespace FreecraftCore.Serializer
 		}
 
 				/// <inheritdoc />
-		public override TType ReadIntoObject(ref TType obj, IWireStreamReaderStrategy source)
+		public override TType ReadIntoObject(TType obj, IWireStreamReaderStrategy source)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (source == null) throw new ArgumentNullException(nameof(source));

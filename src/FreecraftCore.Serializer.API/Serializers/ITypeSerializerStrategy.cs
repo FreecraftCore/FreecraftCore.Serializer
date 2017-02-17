@@ -42,7 +42,7 @@ namespace FreecraftCore.Serializer
 		/// <param name="source">The reader providing the input data.</param>
 		/// <returns>A non-null instance of the <typeparamref name="TType"/> object.</returns>
 		[NotNull]
-		object ReadIntoObject([CanBeNull] ref object obj, [NotNull] IWireStreamReaderStrategy source);
+		object ReadIntoObject([CanBeNull] object obj, [NotNull] IWireStreamReaderStrategy source);
 
 		//TODO: Fix doc
 		/// <summary>
@@ -85,7 +85,7 @@ namespace FreecraftCore.Serializer
 		/// <param name="source">The reader providing the input data.</param>
 		/// <returns>A non-null instance of the <typeparamref name="TType"/> object.</returns>
 		[NotNull]
-		TType ReadIntoObject([CanBeNull] ref TType obj, [NotNull] IWireStreamReaderStrategy source);
+		TType ReadIntoObject([CanBeNull]TType obj, [NotNull] IWireStreamReaderStrategy source);
 
 		//TODO: Fix doc
 		/// <summary>

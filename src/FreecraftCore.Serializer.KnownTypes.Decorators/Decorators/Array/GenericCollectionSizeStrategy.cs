@@ -4,16 +4,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
 	/// <summary>
-	/// Size strategy for dynamically sized collections.
+	/// Generic size strategy for dynamically sized collections.
 	/// </summary>
-	public class ByteSizeCollectionSizeStrategy : ICollectionSizeStrategy
+	public class GenericCollectionSizeStrategy<TSizeType> : ICollectionSizeStrategy
+		where TSizeType : struct
 	{
-		//TODO: Should use the byte strategy not direct read/write
+		/// <summary>
+		/// The managed serializer that reads and writes the size.
+		/// </summary>
+		[NotNull]
+		private ITypeSerializerStrategy<TSizeType> SizeTypeSerializerStrategy { get; }
+
+		public GenericCollectionSizeStrategy([NotNull] ITypeSerializerStrategy<TSizeType> sizeTypeSerializerStrategy)
+		{
+			if (sizeTypeSerializerStrategy == null) throw new ArgumentNullException(nameof(sizeTypeSerializerStrategy));
+
+			SizeTypeSerializerStrategy = sizeTypeSerializerStrategy;
+		}
 
 		/// <summary>
 		/// Determines the size of the collection from the stream.
@@ -23,7 +36,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (reader == null) throw new ArgumentNullException(nameof(reader));
 
 			//Read the byte size from the stream.
-			return reader.ReadByte();
+			return (int)(object)SizeTypeSerializerStrategy.Read(reader);
 		}
 
 		/// <summary>
@@ -35,26 +48,29 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (collection == null) throw new ArgumentNullException(nameof(collection));
 			if (writer == null) throw new ArgumentNullException(nameof(writer));
 
+			int size = collection.Count();
+
 			//Since the size is unknown it's critical that we write the size to the stream.
-			writer.Write((byte)collection.Count());
+			SizeTypeSerializerStrategy.Write(size, writer);
 
 			//We don't know the size so just provide the size of the collection
-			return collection.Count();
+			return size;
 		}
 
 		/// <inheritdoc />
-		public async Task<int> SizeAsync<TCollectionType, TElementType>(TCollectionType collection, IWireStreamWriterStrategyAsync writer) where TCollectionType : IEnumerable, IEnumerable<TElementType>
+		public async Task<int> SizeAsync<TCollectionType, TElementType>(TCollectionType collection, IWireStreamWriterStrategyAsync writer) 
+			where TCollectionType : IEnumerable, IEnumerable<TElementType>
 		{
 			if (collection == null) throw new ArgumentNullException(nameof(collection));
 			if (writer == null) throw new ArgumentNullException(nameof(writer));
 
-			byte count = (byte) collection.Count();
+			int size = collection.Count();
 
 			//yield until we write (shouldn't take long and maybe syncronous is more efficient and performant but async API should be fully async) 
-			await writer.WriteAsync(count);
+			await SizeTypeSerializerStrategy.WriteAsync(size, writer);
 
 			//We don't know the size so just provide the size of the collection
-			return count;
+			return size;
 		}
 
 		/// <inheritdoc />
@@ -63,7 +79,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (reader == null) throw new ArgumentNullException(nameof(reader));
 
 			//Read the byte size from the stream.
-			return await reader.ReadByteAsync();
+			TSizeType result = await SizeTypeSerializerStrategy.ReadAsync(reader);
+
+			return (int)(object)result;
 		}
 	}
 }

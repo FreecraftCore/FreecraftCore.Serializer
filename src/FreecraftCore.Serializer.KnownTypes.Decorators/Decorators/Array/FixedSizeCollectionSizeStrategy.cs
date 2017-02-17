@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -52,6 +53,27 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//It's always a fixed size. Just reutnr the size.
 			return FixedSize;
+		}
+
+		/// <inheritdoc />
+		public Task<int> SizeAsync<TCollectionType, TElementType>(TCollectionType collection, IWireStreamWriterStrategyAsync writer) where TCollectionType : IEnumerable, IEnumerable<TElementType>
+		{
+			if (collection == null) throw new ArgumentNullException(nameof(collection));
+			if (writer == null) throw new ArgumentNullException(nameof(writer));
+
+			//This is a fixed size stragey. Don't look at the collection
+			//Don't write anything to the stream either. Consumers know the size too
+
+			return Task.FromResult(FixedSize);
+		}
+
+		/// <inheritdoc />
+		public Task<int> SizeAsync(IWireStreamReaderStrategyAsync reader)
+		{
+			if (reader == null) throw new ArgumentNullException(nameof(reader));
+
+			//It's always a fixed size. Just reutnr the size.
+			return Task.FromResult(FixedSize);
 		}
 	}
 }
