@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 
@@ -41,6 +42,20 @@ namespace FreecraftCore.Serializer.KnownTypes
 				throw new InvalidOperationException($"Enountered string size larged than {FixedSize} declared.");
 
 			return FixedSize;
+		}
+
+		/// <inheritdoc />
+		public Task<int> SizeAsync(string stringValue, IWireStreamWriterStrategyAsync writer)
+		{
+			//Just wrap the fixed size
+			return Task.FromResult(FixedSize);
+		}
+
+		/// <inheritdoc />
+		public Task<int> SizeAsync(IWireStreamReaderStrategyAsync reader)
+		{
+			//Just wrap the fixed size
+			return Task.FromResult(FixedSize);
 		}
 	}
 }
