@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using MiscUtil;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -57,7 +58,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//TODO: Should be handle exceptions?
-			return (TEnumType)Enum.ToObject(typeof(TEnumType), (TBaseType)serializerStrategy.Read(source));
+			return Operator.Convert<TBaseType, TEnumType>(serializerStrategy.Read(source));
 		}
 
 		/// <inheritdoc />
@@ -65,26 +66,24 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			//TODO: Increase perf
-			//Not great. It's slow conversion and box. Then casting the box to call.
-			object boxedBaseEnumValue = Convert.ChangeType(value, typeof(TBaseType));
-
-			if (boxedBaseEnumValue == null)
-				throw new Exception();
-
-			serializerStrategy.Write((TBaseType)boxedBaseEnumValue, dest);
+			serializerStrategy.Write(Operator.Convert<TEnumType, TBaseType>(value), dest);
 		}
 
 		/// <inheritdoc />
-		public override Task WriteAsync(TEnumType value, IWireStreamWriterStrategyAsync dest)
+		public override async Task WriteAsync(TEnumType value, IWireStreamWriterStrategyAsync dest)
 		{
-			throw new NotImplementedException();
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			await serializerStrategy.WriteAsync(Operator.Convert<TEnumType, TBaseType>(value), dest);
 		}
 
 		/// <inheritdoc />
-		public override Task<TEnumType> ReadAsync(IWireStreamReaderStrategyAsync source)
+		public override async Task<TEnumType> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
-			throw new NotImplementedException();
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//TODO: Should be handle exceptions?
+			return Operator.Convert<TBaseType, TEnumType>(await serializerStrategy.ReadAsync(source));
 		}
 	}
 }
