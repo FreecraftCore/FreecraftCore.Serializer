@@ -17,57 +17,46 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public Task<byte> ReadByteAsync()
+		public async Task<byte> ReadByteAsync()
 		{
-			return DecoratedReader.ReadByteAsync();
+			return await DecoratedReader.ReadByteAsync();
 		}
 
 		/// <inheritdoc />
-		public Task<byte> PeekByteAsync()
+		public async Task<byte> PeekByteAsync()
 		{
-			return DecoratedReader.PeekByteAsync();
+			return await DecoratedReader.PeekByteAsync();
 		}
 
 		/// <inheritdoc />
-		public Task<byte[]> ReadAllBytesAsync()
+		public async Task<byte[]> ReadAllBytesAsync()
 		{
-			return new Task<byte[]>(() =>
-			{
-				//Blocks until the bytes are loaded
-				byte[] bytes = DecoratedReader.ReadAllBytesAsync().Result;
+			byte[] bytes = await DecoratedReader.ReadAllBytesAsync();
 
-				Array.Reverse(bytes);
+			Array.Reverse(bytes);
 
-				return bytes;
-			});
+			return bytes;
 		}
 
 		/// <inheritdoc />
-		public Task<byte[]> ReadBytesAsync(int count)
+		public async Task<byte[]> ReadBytesAsync(int count)
 		{
-			return new Task<byte[]>(() =>
-			{
-				//Blocks until the bytes are loaded
-				byte[] bytes = DecoratedReader.ReadBytesAsync(count).Result;
+			byte[] bytes = await DecoratedReader.ReadBytesAsync(count);
 
-				Array.Reverse(bytes);
+			Array.Reverse(bytes);
 
-				return bytes;
-			});
+			return bytes;
 		}
 
 		/// <inheritdoc />
-		public Task<byte[]> PeakBytesAsync(int count)
+		public async Task<byte[]> PeakBytesAsync(int count)
 		{
-			return new Task<byte[]>(() =>
-			{
-				//Blocks until the bytes are loaded
-				byte[] bytes = DecoratedReader.PeakBytesAsync(count).Result;
+			//Blocks until the bytes are loaded
+			byte[] bytes = await DecoratedReader.PeakBytesAsync(count);
 
-				Array.Reverse(bytes);
+			Array.Reverse(bytes);
 
-				return bytes;
-			});
+			return bytes;
 		}
 	}
 }
