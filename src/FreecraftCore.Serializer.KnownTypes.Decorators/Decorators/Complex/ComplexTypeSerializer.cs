@@ -63,7 +63,7 @@ namespace FreecraftCore.Serializer
 				orderedMemberInfos[i].WriteMember(obj, dest);
 		}
 
-				/// <inheritdoc />
+		/// <inheritdoc />
 		public override TType ReadIntoObject(TType obj, IWireStreamReaderStrategy source)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));

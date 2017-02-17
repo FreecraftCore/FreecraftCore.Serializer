@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using MiscUtil;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
-	public class GenericChildKeyStrategy<TSizeType> : IChildKeyStrategy
-		where TSizeType : struct
+	/// <summary>
+	/// Generic key reading and writing strategy.
+	/// </summary>
+	/// <typeparam name="TKeyType">The type of key.</typeparam>
+	public class GenericChildKeyStrategy<TKeyType> : IChildKeyStrategy
+		where TKeyType : struct
 	{
 		/// <summary>
 		/// Indicates if the key should be consumed from the stream.
@@ -15,11 +20,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 		private InformationHandlingFlags typeHandlingFlags { get; }
 
 		[NotNull]
-		private ITypeSerializerStrategy<TSizeType> SizTypeSerializerStrategy { get; }
+		private ITypeSerializerStrategy<TKeyType> KeyTypeSerializerStrategy { get; }
 
-		public GenericChildKeyStrategy(InformationHandlingFlags typeHandling, [NotNull] ITypeSerializerStrategy<TSizeType> sizTypeSerializerStrategy)
+		public GenericChildKeyStrategy(InformationHandlingFlags typeHandling, [NotNull] ITypeSerializerStrategy<TKeyType> keyTypeSerializerStrategy)
 		{
-			if (sizTypeSerializerStrategy == null) throw new ArgumentNullException(nameof(sizTypeSerializerStrategy));
+			if (keyTypeSerializerStrategy == null) throw new ArgumentNullException(nameof(keyTypeSerializerStrategy));
 
 			int i;
 
@@ -32,7 +37,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 					typeof(InformationHandlingFlags));*/
 
 			typeHandlingFlags = typeHandling;
-			SizTypeSerializerStrategy = sizTypeSerializerStrategy;
+			KeyTypeSerializerStrategy = keyTypeSerializerStrategy;
 		}
 
 		/// <inheritdoc />
@@ -40,10 +45,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
-			//Read a byte from the stream; should be the byte sized child key
-			return typeHandlingFlags.HasFlag(InformationHandlingFlags.DontConsumeRead)
-				? source.PeekByte()
-				: source.ReadByte();
+			//Read the key from the stream.
+			TKeyType key = KeyTypeSerializerStrategy
+				.Read(typeHandlingFlags.HasFlag(InformationHandlingFlags.DontConsumeRead) ? source.WithOnlyPeeking() : source);
+
+			return Operator.Convert<TKeyType, int>(key);
 		}
 
 		/// <inheritdoc />
@@ -51,23 +57,33 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			//If the key should be consumed then we should write one, to be consumed.
-			//Otherwise if it's not then something in the stream will be read and then left in
-			//meaning we need to write nothing
+			//If the key shouldn't be written then we avoid writing it
+			//It may be that the data is needed to be left in the stream to indicate
+			//something about the type later down the line.
 			if (!typeHandlingFlags.HasFlag(InformationHandlingFlags.DontWrite))
-				dest.Write((byte)value); //Write the byte sized key to the stream.
+				KeyTypeSerializerStrategy.Write(value, dest);
 		}
 
 		/// <inheritdoc />
-		public Task<int> ReadAsync(IWireStreamReaderStrategyAsync source)
+		public async Task<int> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
-			throw new NotImplementedException();
+			//Read the key from the stream.
+			TKeyType key = await KeyTypeSerializerStrategy
+				.ReadAsync(typeHandlingFlags.HasFlag(InformationHandlingFlags.DontConsumeRead) ? source.WithOnlyPeekingAsync() : source);
+
+			return Operator.Convert<TKeyType, int>(key);
 		}
 
 		/// <inheritdoc />
-		public Task WriteAsync(int value, IWireStreamWriterStrategyAsync dest)
+		public async Task WriteAsync(int value, IWireStreamWriterStrategyAsync dest)
 		{
-			throw new NotImplementedException();
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//If the key shouldn't be written then we avoid writing it
+			//It may be that the data is needed to be left in the stream to indicate
+			//something about the type later down the line.
+			if (!typeHandlingFlags.HasFlag(InformationHandlingFlags.DontWrite))
+				await KeyTypeSerializerStrategy.WriteAsync(value, dest);
 		}
 	}
 }

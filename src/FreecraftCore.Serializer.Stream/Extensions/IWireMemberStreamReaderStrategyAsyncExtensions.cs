@@ -61,7 +61,7 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="reader"></param>
 		/// <returns></returns>
-		public static IWireStreamReaderStrategyAsync WithOnlyPeeking<TReaderType>(this TReaderType reader)
+		public static IWireStreamReaderStrategyAsync WithOnlyPeekingAsync<TReaderType>(this TReaderType reader)
 			where TReaderType : IWireStreamReaderStrategy, IWireStreamReaderStrategyAsync
 		{
 			return new PeekOnlyWireStreamReaderStrategyAsync<TReaderType>(reader);
