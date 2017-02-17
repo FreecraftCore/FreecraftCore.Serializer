@@ -89,31 +89,47 @@ namespace FreecraftCore.Serializer
 
 		//TODO: Implement once we have write and read async
 		/// <inheritdoc />
-		public override Task ObjectIntoWriterAsync(TType obj, IWireStreamWriterStrategyAsync dest)
+		public override async Task ObjectIntoWriterAsync(TType obj, IWireStreamWriterStrategyAsync dest)
 		{
-			return base.ObjectIntoWriterAsync(obj, dest);
+			if (obj == null) throw new ArgumentNullException(nameof(obj));
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//This method is only responsible for writing the members
+			//Even if we're suppose to write type data for this type we don't
+			//Just members
+			await WriteMemberDataAsync(obj, dest);
 		}
 
 		/// <inheritdoc />
-		public override Task<TType> ReadIntoObjectAsync(TType obj, IWireStreamReaderStrategyAsync source)
+		public override async Task<TType> ReadIntoObjectAsync(TType obj, IWireStreamReaderStrategyAsync source)
 		{
-			return base.ReadIntoObjectAsync(obj, source);
+			if (obj == null) throw new ArgumentNullException(nameof(obj));
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//Basically if someone calls this method they want us to set the members from the reader
+			await SetMembersFromReaderDataAsync(obj, source);
+
+			return obj;
 		}
 
-		protected async Task SetMembersFromReaderDataAsync(TType obj, [NotNull] IWireStreamReaderStrategy source)
+		protected async Task SetMembersFromReaderDataAsync(TType obj, [NotNull] IWireStreamReaderStrategyAsync source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
+			// Tested, does not yield better perf
+			// ReSharper disable once ForCanBeConvertedToForeach
 			for (int i = 0; i < orderedMemberInfos.Length; i++)
-				orderedMemberInfos[i].SetMember(obj, source);
+				await orderedMemberInfos[i].SetMemberAsync(obj, source);
 		}
 
-		protected async Task WriteMemberDataAsync(TType obj, [NotNull] IWireStreamWriterStrategy dest)
+		protected async Task WriteMemberDataAsync(TType obj, [NotNull] IWireStreamWriterStrategyAsync dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
+			// Tested, does not yield better perf
+			// ReSharper disable once ForCanBeConvertedToForeach
 			for (int i = 0; i < orderedMemberInfos.Length; i++)
-				orderedMemberInfos[i].WriteMember(obj, dest);
+				await orderedMemberInfos[i].WriteMemberAsync(obj, dest);
 		}
 	}
 }

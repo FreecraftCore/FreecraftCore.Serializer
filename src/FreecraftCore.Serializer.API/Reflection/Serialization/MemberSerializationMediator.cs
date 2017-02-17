@@ -153,7 +153,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public override async Task<Task> WriteMemberAsync(object obj, IWireStreamWriterStrategyAsync dest)
+		public override async Task WriteMemberAsync(object obj, IWireStreamWriterStrategyAsync dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
