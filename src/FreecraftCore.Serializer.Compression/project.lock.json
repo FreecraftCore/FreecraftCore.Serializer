@@ -2,86 +2,6 @@
   "locked": false,
   "version": 2,
   "targets": {
-    ".NETFramework,Version=v4.5": {
-      "DotNetZip/1.10.1": {
-        "type": "package",
-        "compile": {
-          "lib/net20/DotNetZip.dll": {}
-        },
-        "runtime": {
-          "lib/net20/DotNetZip.dll": {}
-        }
-      },
-      "Fasterflect.Netstandard/1.0.4": {
-        "type": "package",
-        "compile": {
-          "lib/net45/Fasterflect.Netstandard.dll": {}
-        },
-        "runtime": {
-          "lib/net45/Fasterflect.Netstandard.dll": {}
-        }
-      },
-      "JetBrains.Annotations/10.2.1": {
-        "type": "package",
-        "compile": {
-          "lib/net/JetBrains.Annotations.dll": {}
-        },
-        "runtime": {
-          "lib/net/JetBrains.Annotations.dll": {}
-        }
-      },
-      "FreecraftCore.Serializer.API/1.0.0": {
-        "type": "project",
-        "framework": "Unsupported,Version=v0.0",
-        "dependencies": {
-          "Fasterflect.Netstandard": "1.0.4",
-          "FreecraftCore.Serializer.Metadata": "1.0.0",
-          "FreecraftCore.Serializer.Stream": "1.0.0",
-          "FreecraftCore.Serializer.Stream.Default": "1.0.0",
-          "JetBrains.Annotations": "10.2.1"
-        }
-      },
-      "FreecraftCore.Serializer.Metadata/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v4.5",
-        "dependencies": {
-          "JetBrains.Annotations": "10.2.1"
-        },
-        "compile": {
-          "net45/FreecraftCore.Serializer.Metadata.dll": {}
-        },
-        "runtime": {
-          "net45/FreecraftCore.Serializer.Metadata.dll": {}
-        }
-      },
-      "FreecraftCore.Serializer.Stream/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v4.5",
-        "dependencies": {
-          "JetBrains.Annotations": "10.2.1"
-        },
-        "compile": {
-          "net45/FreecraftCore.Serializer.Stream.dll": {}
-        },
-        "runtime": {
-          "net45/FreecraftCore.Serializer.Stream.dll": {}
-        }
-      },
-      "FreecraftCore.Serializer.Stream.Default/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v4.5",
-        "dependencies": {
-          "FreecraftCore.Serializer.Stream": "1.0.0",
-          "JetBrains.Annotations": "10.2.1"
-        },
-        "compile": {
-          "net45/FreecraftCore.Serializer.Stream.Default.dll": {}
-        },
-        "runtime": {
-          "net45/FreecraftCore.Serializer.Stream.Default.dll": {}
-        }
-      }
-    },
     ".NETFramework,Version=v4.6": {
       "DotNetZip/1.10.1": {
         "type": "package",
@@ -4612,9 +4532,6 @@
       "FreecraftCore.Serializer.API >= 1.0.0-*",
       "FreecraftCore.Serializer.Metadata >= 1.0.0-*",
       "JetBrains.Annotations >= 10.2.1"
-    ],
-    ".NETFramework,Version=v4.5": [
-      "DotNetZip >= 1.10.1"
     ],
     ".NETFramework,Version=v4.6": [
       "DotNetZip >= 1.10.1"

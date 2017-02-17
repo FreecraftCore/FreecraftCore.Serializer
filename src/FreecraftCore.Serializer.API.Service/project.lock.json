@@ -2,30 +2,6 @@
   "locked": false,
   "version": 2,
   "targets": {
-    ".NETFramework,Version=v4.5": {
-      "JetBrains.Annotations/10.2.1": {
-        "type": "package",
-        "compile": {
-          "lib/net/JetBrains.Annotations.dll": {}
-        },
-        "runtime": {
-          "lib/net/JetBrains.Annotations.dll": {}
-        }
-      },
-      "FreecraftCore.Serializer.Stream/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v4.5",
-        "dependencies": {
-          "JetBrains.Annotations": "10.2.1"
-        },
-        "compile": {
-          "net45/FreecraftCore.Serializer.Stream.dll": {}
-        },
-        "runtime": {
-          "net45/FreecraftCore.Serializer.Stream.dll": {}
-        }
-      }
-    },
     ".NETFramework,Version=v4.6": {
       "JetBrains.Annotations/10.2.1": {
         "type": "package",
@@ -4116,7 +4092,6 @@
       "FreecraftCore.Serializer.Stream >= 1.0.0-*",
       "JetBrains.Annotations >= 10.2.1"
     ],
-    ".NETFramework,Version=v4.5": [],
     ".NETFramework,Version=v4.6": [],
     ".NETStandard,Version=v1.6": [
       "NETStandard.Library >= 1.6.0"

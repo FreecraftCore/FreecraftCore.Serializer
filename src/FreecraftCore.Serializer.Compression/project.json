@@ -15,11 +15,6 @@
         "DotNetZip.Zlib.vNextUnofficial": "1.9.8.3"
       }
     },
-    "net45": {
-      "dependencies": {
-        "DotNetZip": "1.10.1"
-      }
-    },
     "net46": {
       "dependencies": {
         "DotNetZip": "1.10.1"

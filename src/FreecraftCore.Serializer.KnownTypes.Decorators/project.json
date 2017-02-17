@@ -19,11 +19,6 @@
         "JTForks.MiscUtil": "1.285.0"
       }
     },
-    "net45": {
-      "dependencies": {
-        "JonSkeet.MiscUtil": "0.1.0"
-      }
-    },
     "net46": {
       "dependencies": {
         "JonSkeet.MiscUtil": "0.1.0"
