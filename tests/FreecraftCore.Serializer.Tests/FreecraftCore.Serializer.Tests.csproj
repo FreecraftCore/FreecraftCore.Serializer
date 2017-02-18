@@ -117,6 +117,7 @@
     <Compile Include="Hacks\ArrayHacks.cs" />
     <Compile Include="RealWorld\AuthRealmListPacketTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RealWorld\TestMediatorExpressionFailureFault.cs" />
     <Compile Include="Tests\CompressionTests.cs" />
     <Compile Include="Tests\EnumTests.cs" />
     <Compile Include="Tests\GeneralTests.cs" />

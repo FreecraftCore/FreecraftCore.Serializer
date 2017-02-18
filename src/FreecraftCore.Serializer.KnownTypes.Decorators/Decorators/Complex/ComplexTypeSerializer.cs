@@ -34,7 +34,17 @@ namespace FreecraftCore.Serializer
 			if (serializerProvider == null)
 				throw new ArgumentNullException(nameof(serializerProvider), $"Provided {nameof(serializerProvider)} service was null.");
 
-			orderedMemberInfos = serializationDirections.ToArray();
+			//TODO: Extract enumerable into its own class an test there.
+			try
+			{
+				//Enumerating the medaitors can throw exceptions.
+				orderedMemberInfos = serializationDirections.ToArray();
+			}
+			catch (Exception e)
+			{
+				throw new Exception($"Failed to create serializer {GetType().FullName} for Type: {typeof(TType).FullName}.", e);
+			}
+			
 			serializerProviderService = serializerProvider;
 		}
 

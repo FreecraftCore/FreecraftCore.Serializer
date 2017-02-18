@@ -4,13 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 using Fasterflect;
 using JetBrains.Annotations;
-
-#if NET35
-using System.Reflection.Emit;
-#endif
 
 namespace FreecraftCore.Serializer
 {
@@ -39,93 +36,119 @@ namespace FreecraftCore.Serializer
 			//Due to perf problems fasterflect setting wasn't fast enough.
 			//Introducing a compiled lambda to delegate for get/set should provide the much needed preformance.
 
-			ParameterExpression instanceOfTypeToReadMemberOn = Expression.Parameter(memberInfo.DeclaringType, "instance");
-			MemberExpression member = Expression.PropertyOrField(instanceOfTypeToReadMemberOn, memberInfo.Name);
-			UnaryExpression castExpression = Expression.TypeAs(member, typeof(object)); //use object to box
+			try
+			{
+				ParameterExpression instanceOfTypeToReadMemberOn = Expression.Parameter(memberInfo.DeclaringType, "instance");
+				MemberExpression member = GetPropertyOrField(instanceOfTypeToReadMemberOn, memberInfo.Name, memberInfo.MemberType);
+				UnaryExpression castExpression = Expression.TypeAs(member, typeof(object)); //use object to box
 
-			//Build the getter lambda
-			MemberGetter = Expression.Lambda(castExpression, instanceOfTypeToReadMemberOn).Compile()
-				as Func<TContainingType, object>;
+				//Build the getter lambda
+				MemberGetter = Expression.Lambda(castExpression, instanceOfTypeToReadMemberOn).Compile()
+					as Func<TContainingType, object>;
 
-			if(MemberGetter == null)
-				throw new InvalidOperationException($"Failed to build {nameof(MemberSerializationMediator)} for Member: {memberInfo.Name} for Type: {typeof(TContainingType).FullName}.");;
+				if (MemberGetter == null)
+					throw new InvalidOperationException($"Failed to build {nameof(MemberSerializationMediator)} for Member: {memberInfo.Name} for Type: {typeof(TContainingType).FullName}."); ;
 
-			//The below may seem ridiculous, when we could use reflection or even fasterflect, but it makes the different
-			//of almost an order of magnitude.
-			//Based on: http://stackoverflow.com/questions/321650/how-do-i-set-a-field-value-in-an-c-sharp-expression-tree
-#if !NET35
-			//Now we need to do property setting
-			ParameterExpression targetExp = Expression.Parameter(memberInfo.DeclaringType, "target");
-			ParameterExpression valueExp = Expression.Parameter(typeof(TMemberType), "value");
+				//The below may seem ridiculous, when we could use reflection or even fasterflect, but it makes the different
+				//of almost an order of magnitude.
+				//Based on: http://stackoverflow.com/questions/321650/how-do-i-set-a-field-value-in-an-c-sharp-expression-tree
+				if (memberInfo.MemberType == MemberTypes.Field && !((FieldInfo)memberInfo).IsWritable())
+				{
+					//If it's a field and we can't write to it we need to emit
+					MemberAccessor = CreateSetterForReadonlyField((FieldInfo) memberInfo);
+				}
+				else
+				{
+					//Now we need to do property setting
+					ParameterExpression targetExp = Expression.Parameter(memberInfo.DeclaringType, "target");
+					ParameterExpression valueExp = Expression.Parameter(typeof(TMemberType), "value");
 
-			// Expression.Property can be used here as well
-			MemberExpression memberExp = GetPropertyOrField(targetExp, memberInfo.Name);
-			BinaryExpression assignExp = Expression.Assign(memberExp, valueExp);
+					// Expression.Property can be used here as well
+					MemberExpression memberExp = GetPropertyOrField(targetExp, memberInfo.Name, memberInfo.MemberType);//GetPropertyOrField(targetExp, memberInfo.Name);
+					BinaryExpression assignExp = Expression.Assign(memberExp, valueExp);
 
-			MemberAccessor = Expression.Lambda<Action<TContainingType, TMemberType>>(assignExp, targetExp, valueExp)
-				.Compile();
-#endif
+					MemberAccessor = Expression.Lambda<Action<TContainingType, TMemberType>>(assignExp, targetExp, valueExp)
+						.Compile();
+				}
+			}
+			catch (Exception e)
+			{
+				throw new InvalidOperationException($"Failed to prepare getter and setter for {typeof(TContainingType).FullName}'s {typeof(TMemberType).FullName} with member Name: {memberInfo.Name}.", e);
+			}
+			
 			//TODO: Handle for net35. Profile fasterflect vs reflection emit
 		}
 
-		//TODO: Find out why netcore/netstandard requires this hack to get the proper property/field expression
-		//Solution for failed property location here: http://stackoverflow.com/a/8042602
-		private static MemberExpression GetPropertyOrField(Expression baseExpr, string name)
+		//TODO: Modified source based on Marc Gravell's readonly Protoubf-net set explaination
+		//See: http://stackoverflow.com/a/17117548
+		static Action<TContainingType, TMemberType> CreateSetterForReadonlyField(FieldInfo field)
 		{
-			if (baseExpr == null)
+			//Must provide the the type to attach this method to and indicate that JIT should skip accessibility checks.
+			var method = new DynamicMethod($"set_readonly_{field.Name}", null,
+				new[] { typeof(TContainingType), typeof(TMemberType) }, field.DeclaringType, true);
+
+			var il = method.GetILGenerator();
+			il.Emit(OpCodes.Ldarg_0);
+			il.Emit(OpCodes.Castclass, typeof(TContainingType));
+			il.Emit(OpCodes.Ldarg_1);
+			il.Emit(OpCodes.Stfld, field);
+			il.Emit(OpCodes.Ret);
+			return (Action<TContainingType, TMemberType>)method.CreateDelegate(typeof(Action<TContainingType, TMemberType>));
+		}
+
+		//TODO: Figure out why we have to do this in later versions of .NET/netstandard
+		//We have to use this hack to handle properties from inherited classes
+		//See: http://stackoverflow.com/a/8042602
+		private static MemberExpression GetPropertyOrField(Expression baseExpr, string name, MemberTypes memberType)
+		{
+			if (baseExpr == null) throw new ArgumentNullException(nameof(baseExpr));
+			if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException(nameof(name));
+
+			Type type = baseExpr.Type;
+
+			//TODO: Refactor
+			if (memberType.HasFlag(MemberTypes.Property))
 			{
-				throw new ArgumentNullException("baseExpr");
-			}
-			if (string.IsNullOrWhiteSpace(name))
-			{
-				throw new ArgumentException("name");
-			}
-			var type = baseExpr.Type;
-			var properties = type
-				.GetTypeInfo().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+				PropertyInfo[] properties = type.GetTypeInfo()
+				.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
 				.Where(p => p.Name.Equals(name))
 				.ToArray();
-			if (properties.Length == 1)
-			{
-				var res = properties[0];
-				if (res.DeclaringType != type)
+
+				if (properties.Length == 1)
 				{
-					// Here is the core of the fix:
-					var tmp = res
-						.DeclaringType
-						.GetTypeInfo().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-						.Where(p => p.Name.Equals(name))
-						.ToArray();
-					if (tmp.Length == 1)
-					{
-						return Expression.Property(baseExpr, tmp[0]);
-					}
+					//Core of the fix: if the type is not the same as the type who declared the property we should look at the declaring type
+					return Expression.Property(baseExpr, properties[0].DeclaringType == type ? properties[0]
+						:
+						properties[0].DeclaringType.GetTypeInfo()
+							.GetProperties((BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+							.FirstOrDefault(p => p.Name.Equals(name)));
 				}
-				return Expression.Property(baseExpr, res);
+
+				if (properties.Length != 0)
+					throw new NotSupportedException(name);
 			}
-			if (properties.Length != 0)
+			else if (memberType.HasFlag(MemberTypes.Field))
 			{
-				throw new NotSupportedException(name);
-			}
-			var fields = type
-				.GetTypeInfo().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+				FieldInfo[] fields = type.GetTypeInfo()
+				.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
 				.Where(p => p.Name.Equals(name))
 				.ToArray();
-			if (fields.Length == 1)
-			{
-				return Expression.Field(baseExpr, fields[0]);
+
+				if (fields.Length == 1)
+				{
+					//Core of the fix: if the type is not the same as the type who declared the property we should look at the declaring type
+					return Expression.Field(baseExpr, fields[0].DeclaringType == type ? fields[0]
+						:
+						fields[0].DeclaringType.GetTypeInfo()
+							.GetFields((BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+							.FirstOrDefault(p => p.Name.Equals(name)));
+				}
+
+				if (fields.Length != 0)
+					throw new NotSupportedException(name);
 			}
-			if (fields.Length != 0)
-			{
-				throw new NotSupportedException(name);
-			}
-			throw new ArgumentException(
-				string.Format(
-					"Type [{0}] does not define property/field called [{1}]"
-				, type
-				, name
-				)
-			);
+
+			throw new NotSupportedException($"Provided member Name: {name} is neither a field nor a property.");
 		}
 
 		public abstract void WriteMember(TContainingType obj, IWireStreamWriterStrategy dest);
