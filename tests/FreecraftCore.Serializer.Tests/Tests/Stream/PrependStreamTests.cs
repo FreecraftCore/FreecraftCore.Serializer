@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace FreecraftCore.Serializer.Tests
 {
 	[TestFixture]
-	public static class StreamTests
+	public static class PrependStreamTests
 	{
 		[Test]
 		//[TestCase(new byte[] { 1, 100, 42, 53, 63, 56 })]
@@ -104,6 +104,11 @@ namespace FreecraftCore.Serializer.Tests
 
 			Assert.AreEqual(5, await bufferedReader.ReadByteAsync());
 			Assert.AreEqual(7, await bufferedReader.ReadByteAsync());
+
+			Assert.Throws<AggregateException>(() =>
+			{
+				byte b = bufferedReader.ReadByteAsync().Result;
+			});
 		}
 
 		[Test]
@@ -126,6 +131,8 @@ namespace FreecraftCore.Serializer.Tests
 
 			Assert.AreEqual(5, bufferedReader.ReadByte());
 			Assert.AreEqual(7, bufferedReader.ReadByte());
+
+			Assert.Throws<InvalidOperationException>(() => bufferedReader.ReadByte());
 		}
 	}
 }

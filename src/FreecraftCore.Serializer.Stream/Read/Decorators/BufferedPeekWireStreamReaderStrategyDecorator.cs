@@ -86,7 +86,7 @@ namespace FreecraftCore.Serializer
 			ReaderState = State.Peeked;
 
 			//When we peek we must buffer the results.
-			BufferedBytes = BufferedBytes.Concat(bytes);
+			BufferedBytes = bytes.Concat(BufferedBytes);
 
 			BufferedCount++;
 
@@ -102,9 +102,8 @@ namespace FreecraftCore.Serializer
 			//We avoid messing with the state until after the read.
 			ReaderState = State.Peeked;
 
-			BufferedBytes = BufferedBytes.Concat(bytes);
+			BufferedBytes = bytes.Concat(BufferedBytes);
 			BufferedCount += bytes.Length;
-
 
 			return bytes;
 		}
