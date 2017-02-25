@@ -43,6 +43,6 @@ namespace FreecraftCore.Serializer
 		public abstract byte[] ReadBytes(int count);
 
 		/// <inheritdoc />
-		public abstract byte[] PeakBytes(int count);
+		public abstract byte[] PeekBytes(int count);
 	}
 }

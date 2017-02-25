@@ -93,7 +93,7 @@ namespace FreecraftCore.Serializer
 			return bytes[0];
 		}
 
-		public override byte[] PeakBytes(int count)
+		public override byte[] PeekBytes(int count)
 		{
 			//When we peek we must buffer the results.
 			byte[] bytes = ReadBytes(count);

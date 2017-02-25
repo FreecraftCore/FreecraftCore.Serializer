@@ -49,7 +49,8 @@ namespace FreecraftCore.Serializer.Tests
 			throw new NotImplementedException();
 		}
 
-		public byte[] PeakBytes(int count)
+		/// <inheritdoc />
+		public byte[] PeekBytes(int count)
 		{
 			throw new NotImplementedException();
 		}

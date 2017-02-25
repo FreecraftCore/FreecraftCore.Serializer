@@ -49,10 +49,10 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public async Task<byte[]> PeakBytesAsync(int count)
+		public async Task<byte[]> PeekBytesAsync(int count)
 		{
 			//Blocks until the bytes are loaded
-			byte[] bytes = await DecoratedReader.PeakBytesAsync(count);
+			byte[] bytes = await DecoratedReader.PeekBytesAsync(count);
 
 			Array.Reverse(bytes);
 

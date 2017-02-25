@@ -69,7 +69,7 @@ namespace FreecraftCore.Serializer
 			return b;
 		}
 
-		public byte[] PeakBytes(int count)
+		public byte[] PeekBytes(int count)
 		{
 			byte[] bytes = ReadBytes(count);
 

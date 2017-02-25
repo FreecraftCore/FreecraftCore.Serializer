@@ -20,7 +20,7 @@ namespace FreecraftCore.Serializer
 		public async Task<byte> ReadByteAsync()
 		{
 			if (isPrendedBytesFinished)
-				return await DecoratedReader.PeekByteAsync();
+				return await DecoratedReader.ReadByteAsync();
 			else
 				return PrependedBytes[ByteCount++]; //always available because we check length
 		}
@@ -75,10 +75,10 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public async Task<byte[]> PeakBytesAsync(int count)
+		public async Task<byte[]> PeekBytesAsync(int count)
 		{
 			if (isPrendedBytesFinished)
-				return await DecoratedReader.PeakBytesAsync(count);
+				return await DecoratedReader.PeekBytesAsync(count);
 			else
 			{
 				byte[] bytes = null;
@@ -89,10 +89,10 @@ namespace FreecraftCore.Serializer
 						.ToArray();
 				else //We need to combine
 					bytes = PrependedBytes.Skip(ByteCount)
-						.Concat(await DecoratedReader.PeakBytesAsync(count - (PrependedBytes.Length - ByteCount)))
+						.Concat(await DecoratedReader.PeekBytesAsync(count - (PrependedBytes.Length - ByteCount)))
 						.ToArray();
 
-				//Peaking so don't move the bytecount forward
+				//Peeking so don't move the bytecount forward
 				return bytes;
 			}
 		}

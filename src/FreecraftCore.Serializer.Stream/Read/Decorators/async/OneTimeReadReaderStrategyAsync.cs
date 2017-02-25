@@ -53,12 +53,12 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public async Task<byte[]> PeakBytesAsync(int count)
+		public async Task<byte[]> PeekBytesAsync(int count)
 		{
 			ThrowIfCantRead();
 			CanRead = false;
 
-			return await DecoratedReader.PeakBytesAsync(count);
+			return await DecoratedReader.PeekBytesAsync(count);
 		}
 	}
 }

@@ -95,10 +95,10 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public override byte[] PeakBytes(int count)
+		public override byte[] PeekBytes(int count)
 		{
 			if (isPrendedBytesFinished)
-				return DecoratedReader.PeakBytes(count);
+				return DecoratedReader.PeekBytes(count);
 			else
 			{
 				byte[] bytes = null;
@@ -109,10 +109,10 @@ namespace FreecraftCore.Serializer
 						.ToArray();
 				else //We need to combine
 					bytes = PrependedBytes.Skip(ByteCount)
-						.Concat(DecoratedReader.PeakBytes(count - (PrependedBytes.Length - ByteCount)))
+						.Concat(DecoratedReader.PeekBytes(count - (PrependedBytes.Length - ByteCount)))
 						.ToArray();
 
-				//Peaking so don't move the bytecount forward
+				//Peeking so don't move the bytecount forward
 				return bytes;
 			}
 		}

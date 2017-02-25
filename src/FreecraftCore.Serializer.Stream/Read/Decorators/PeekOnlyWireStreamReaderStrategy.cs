@@ -43,13 +43,13 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public override byte[] ReadBytes(int count)
 		{
-			return DecoratedReader.PeakBytes(count);
+			return DecoratedReader.PeekBytes(count);
 		}
 
 		/// <inheritdoc />
-		public override byte[] PeakBytes(int count)
+		public override byte[] PeekBytes(int count)
 		{
-			return DecoratedReader.PeakBytes(count);
+			return DecoratedReader.PeekBytes(count);
 		}
 	}
 }

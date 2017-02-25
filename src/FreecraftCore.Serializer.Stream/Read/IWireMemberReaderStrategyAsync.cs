@@ -45,7 +45,7 @@ namespace FreecraftCore.Serializer
 		/// <exception cref="ArgumentOutOfRangeException">If the provided <see cref="count"/> is negative or exceeds the length of the underlying data.</exception>
 		/// <returns>A byte array of the peeked bytes.</returns>
 		[NotNull]
-		Task<byte[]> PeakBytesAsync(int count);
+		Task<byte[]> PeekBytesAsync(int count);
 	}
 }
 

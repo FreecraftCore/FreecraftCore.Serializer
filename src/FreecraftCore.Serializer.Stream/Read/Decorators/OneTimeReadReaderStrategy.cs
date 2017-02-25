@@ -58,11 +58,11 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public override byte[] PeakBytes(int count)
+		public override byte[] PeekBytes(int count)
 		{
 			ThrowIfCantRead();
 			CanRead = false;
-			return DecoratedReader.PeakBytes(count);
+			return DecoratedReader.PeekBytes(count);
 		}
 
 		protected void ThrowIfCantRead()

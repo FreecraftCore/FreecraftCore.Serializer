@@ -43,14 +43,14 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public async Task<byte[]> ReadBytesAsync(int count)
 		{
-			//force peaking
-			return await DecoratedReader.PeakBytesAsync(count);
+			//force peeking
+			return await DecoratedReader.PeekBytesAsync(count);
 		}
 
 		/// <inheritdoc />
-		public async Task<byte[]> PeakBytesAsync(int count)
+		public async Task<byte[]> PeekBytesAsync(int count)
 		{
-			return await DecoratedReader.PeakBytesAsync(count);
+			return await DecoratedReader.PeekBytesAsync(count);
 		}
 	}
 }

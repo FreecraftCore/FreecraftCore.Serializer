@@ -52,9 +52,9 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public override byte[] PeakBytes(int count)
+		public override byte[] PeekBytes(int count)
 		{
-			byte[] bytes = DecoratedReader.PeakBytes(count);
+			byte[] bytes = DecoratedReader.PeekBytes(count);
 			Array.Reverse(bytes);
 
 			return bytes;

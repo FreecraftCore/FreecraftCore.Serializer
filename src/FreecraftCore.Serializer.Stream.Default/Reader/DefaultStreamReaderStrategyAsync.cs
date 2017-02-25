@@ -76,7 +76,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public async Task<byte[]> PeakBytesAsync(int count)
+		public async Task<byte[]> PeekBytesAsync(int count)
 		{
 			byte[] bytes = await ReadBytesAsync(count);
 
