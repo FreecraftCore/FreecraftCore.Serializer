@@ -97,9 +97,36 @@ namespace FreecraftCore.Serializer.Tests
 
 
 			//assert
+			Assert.AreEqual(4, readBytes.Length);
 			for (int i = 0; i < peekedBytes.Length; i++)
 			{
 				Assert.AreEqual(peekedBytes[i], readBytes[i]);
+			}
+
+			for (int i = 0; i < peekedBytesAgain.Length; i++)
+				Assert.AreEqual(peekedBytes[i], peekedBytesAgain[i]);
+
+			Assert.Throws<InvalidOperationException>(() => peekedBufferReader.ReadByte());
+		}
+
+		[Test]
+		public static async Task Test_Buffered_Peeking_Can_Peek_Counted_Bytes_With_ReadAllAsync()
+		{
+			//arrange
+			DefaultStreamReaderStrategyAsync reader = new DefaultStreamReaderStrategyAsync(new byte[] { 5, 6, 7, 5 });
+
+			//act
+			IWireStreamReaderStrategyAsync peekedBufferReader = reader.PeekWithBufferingAsync();
+			byte[] peekedBytes = await peekedBufferReader.PeekBytesAsync(4);
+			byte[] peekedBytesAgain = await peekedBufferReader.PeekBytesAsync(2);
+			byte b = peekedBufferReader.ReadByte();
+			byte[] readBytes = await peekedBufferReader.ReadAllBytesAsync();
+
+			//assert
+			Assert.AreEqual(3, readBytes.Length);
+			for (int i = 0; i < readBytes.Length; i++)
+			{
+				Assert.AreEqual(peekedBytes[i + 1], readBytes[i]);
 			}
 
 			for (int i = 0; i < peekedBytesAgain.Length; i++)

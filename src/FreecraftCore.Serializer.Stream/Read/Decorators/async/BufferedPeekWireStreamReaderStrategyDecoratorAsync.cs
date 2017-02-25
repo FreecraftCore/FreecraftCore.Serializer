@@ -23,21 +23,7 @@ namespace FreecraftCore.Serializer
 				return await DecoratedReader.ReadByteAsync();
 			else
 			{
-				byte b = BufferedBytes.First();
-
-				BufferedCount--;
-
-				//Reset the LINQ filled enumerable if it's empty
-				//If it's not then we use a skip
-				if (BufferedCount == 0)
-				{
-					ReaderState = State.Default;
-					BufferedBytes = Enumerable.Empty<byte>();
-				}
-				else
-					BufferedBytes = BufferedBytes.Skip(1);
-
-				return b;
+				return (await ReadBytesAsync(1))[0];
 			}
 		}
 
@@ -90,7 +76,7 @@ namespace FreecraftCore.Serializer
 
 				if (count == BufferedCount)
 					bytes = BufferedBytes.ToArray();
-				else if (count < BufferedCount)
+				else if (count <= BufferedCount)
 				{
 					bytes = BufferedBytes.Take(count).ToArray();
 
