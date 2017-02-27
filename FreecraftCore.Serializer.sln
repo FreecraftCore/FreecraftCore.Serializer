@@ -16,9 +16,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Preformance.Tests", "tests\Preformance.Tests\Preformance.Tests.csproj", "{F1F44ABD-5A55-499A-9ECA-8C11EF5C53B7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DA31B81F-C2C8-4164-981A-C48381C3B6EF}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreecraftCore.Serializer", "src\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj", "{1120443D-3709-4CAF-AF9B-A2203671DBB2}"
 EndProject
