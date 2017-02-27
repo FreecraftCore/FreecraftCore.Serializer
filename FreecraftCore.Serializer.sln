@@ -42,6 +42,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreecraftCore.Serializer.St
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreecraftCore.Serializer.Stream.Default", "src\FreecraftCore.Serializer.Stream.Default\FreecraftCore.Serializer.Stream.Default.csproj", "{06F808AE-EF7B-437E-9FF2-67F62DB1AA7D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreecraftCore.Serializer.Metadata.Internal", "src\FreecraftCore.Serializer.Metadata.Internal\FreecraftCore.Serializer.Metadata.Internal.csproj", "{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -232,6 +234,18 @@ Global
 		{06F808AE-EF7B-437E-9FF2-67F62DB1AA7D}.Release|x64.Build.0 = Release|x64
 		{06F808AE-EF7B-437E-9FF2-67F62DB1AA7D}.Release|x86.ActiveCfg = Release|x86
 		{06F808AE-EF7B-437E-9FF2-67F62DB1AA7D}.Release|x86.Build.0 = Release|x86
+		{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C}.Debug|x64.ActiveCfg = Debug|x64
+		{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C}.Debug|x64.Build.0 = Debug|x64
+		{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C}.Debug|x86.ActiveCfg = Debug|x86
+		{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C}.Debug|x86.Build.0 = Debug|x86
+		{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C}.Release|x64.ActiveCfg = Release|x64
+		{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C}.Release|x64.Build.0 = Release|x64
+		{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C}.Release|x86.ActiveCfg = Release|x86
+		{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -252,5 +266,6 @@ Global
 		{891CC3D5-9D84-47FD-95CC-00FBBC730752} = {C69D878A-A37C-4DBD-8D90-8AF30074E3C0}
 		{7352FBF0-887C-451C-8937-68F1B50684CE} = {C69D878A-A37C-4DBD-8D90-8AF30074E3C0}
 		{06F808AE-EF7B-437E-9FF2-67F62DB1AA7D} = {C69D878A-A37C-4DBD-8D90-8AF30074E3C0}
+		{CCFE27A3-F371-43A5-8ECF-AB0BDF60DF0C} = {C69D878A-A37C-4DBD-8D90-8AF30074E3C0}
 	EndGlobalSection
 EndGlobal
