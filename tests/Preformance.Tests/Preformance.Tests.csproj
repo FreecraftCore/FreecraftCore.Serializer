@@ -39,9 +39,6 @@
     <Reference Include="DotNetZip">
       <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\DotNetZip.dll</HintPath>
     </Reference>
-    <Reference Include="Fasterflect">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\Fasterflect.dll</HintPath>
-    </Reference>
     <Reference Include="Fasterflect.Netstandard">
       <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\Fasterflect.Netstandard.dll</HintPath>
     </Reference>
