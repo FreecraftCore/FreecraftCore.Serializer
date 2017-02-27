@@ -22,8 +22,9 @@
     }
   },
 
-    "buildOptions": {
-        "allowUnsafe": true,
-        "optimize": true
-    }
+  "buildOptions": {
+    "allowUnsafe": true,
+    "optimize": true,
+    "warningsAsErrors": true
+  }
 }

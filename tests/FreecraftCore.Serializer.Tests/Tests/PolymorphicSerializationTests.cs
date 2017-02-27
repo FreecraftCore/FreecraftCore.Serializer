@@ -169,11 +169,11 @@ namespace FreecraftCore.Serializer.Tests
 			}
 		}
 
-		[WireDataContract(WireDataContractAttribute.KeyType.Int32)]
+		[WireDataContract(WireDataContractAttribute.KeyType.Byte)]
 		[WireDataContractBaseType(1, typeof(ChildTypeOne))]
 		[WireDataContractBaseType(2, typeof(ChildTypeTwo))]
 		[WireDataContractBaseType(3, typeof(ChildTypeThree))]
-		public class BaseTypeField
+		public interface BaseTypeField
 		{
 
 		}

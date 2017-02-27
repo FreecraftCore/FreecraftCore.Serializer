@@ -19,6 +19,7 @@
 
   "buildOptions": {
     "allowUnsafe": true,
-    "optimize": true
+    "optimize": true,
+    "warningsAsErrors": true
   }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+#pragma warning disable 618
 
 namespace FreecraftCore.Serializer
 {
