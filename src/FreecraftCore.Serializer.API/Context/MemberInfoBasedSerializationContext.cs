@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Fasterflect;
 using JetBrains.Annotations;
+using Reflect.Extent;
 
 
 namespace FreecraftCore.Serializer
@@ -41,7 +41,7 @@ namespace FreecraftCore.Serializer
 
 			//Now we build the metadata for the Type itself. This could be some additional serialization information or it could be
 			//Information about potential subtypes
-			TypeMetadata = memberInfoContext.Type().GetTypeInfo().Attributes<Attribute>()
+			TypeMetadata = memberInfoContext.GetCustomAttributes<Attribute>()
 				.Where(IsContextualTypeAttribute);
 
 			//If there is any metadata in the member metdata then this serialization will require context.

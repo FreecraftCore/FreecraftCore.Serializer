@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Threading.Tasks;
-using Fasterflect;
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -46,26 +45,27 @@ namespace FreecraftCore.Serializer.KnownTypes
 		[CanBeNull]
 		public ITypeSerializerStrategy DefaultSerializer { get; }
 
-		public SubComplexTypeWithFlagsSerializerDecorator([NotNull] IDeserializationPrototypeFactory<TBaseType> prototypeGenerator, [NotNull] IEnumerable<IMemberSerializationMediator<TBaseType>> serializationDirections, 
+		public SubComplexTypeWithFlagsSerializerDecorator([NotNull] IDeserializationPrototypeFactory<TBaseType> prototypeGenerator, [NotNull] IEnumerable<IMemberSerializationMediator<TBaseType>> serializationDirections,
 			[NotNull] IGeneralSerializerProvider serializerProvider, [NotNull] IChildKeyStrategy childKeyStrategy)
 			: base(prototypeGenerator, serializationDirections, serializerProvider)
 		{
-
-			if (childKeyStrategy == null)
-				throw new ArgumentNullException(nameof(childKeyStrategy), $"Provided {nameof(IChildKeyStrategy)} used for key read and write is null.");
+			if (prototypeGenerator == null) throw new ArgumentNullException(nameof(prototypeGenerator));
+			if (serializationDirections == null) throw new ArgumentNullException(nameof(serializationDirections));
+			if (serializerProvider == null) throw new ArgumentNullException(nameof(serializerProvider));
+			if (childKeyStrategy == null) throw new ArgumentNullException(nameof(childKeyStrategy));
 
 			keyStrategy = childKeyStrategy;
 
-			DefaultSerializer = typeof(TBaseType).GetTypeInfo().Attribute<DefaultChildAttribute>() != null
-				? serializerProviderService.Get(typeof(TBaseType).GetTypeInfo().Attribute<DefaultChildAttribute>().ChildType) : null;
+			DefaultSerializer = typeof(TBaseType).GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>() != null
+				? serializerProviderService.Get(typeof(TBaseType).GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>().ChildType) : null;
 
 			//We no longer reserve 0. Sometimes type information of a child is sent as a 0 in WoW protocol. We can opt for mostly metadata market style interfaces.
 
 			List<ChildKeyPair> pairs = new List<ChildKeyPair>();
 
-			foreach (WireDataContractBaseTypeByFlagsAttribute waf in typeof(TBaseType).GetTypeInfo().Attributes<WireDataContractBaseTypeByFlagsAttribute>())
+			foreach (WireDataContractBaseTypeByFlagsAttribute waf in typeof(TBaseType).GetTypeInfo().GetCustomAttributes<WireDataContractBaseTypeByFlagsAttribute>())
 			{
-				if (!typeof(TBaseType).IsAssignableFrom(waf.ChildType))
+				if (!typeof(TBaseType).GetTypeInfo().IsAssignableFrom(waf.ChildType.GetTypeInfo()))
 					throw new InvalidOperationException($"Failed to register Type: {typeof(TBaseType).GetType().FullName} because a provided ChildType: {waf.ChildType.FullName} was not actually a child.");
 
 				//TODO: Maybe add a priority system for flags that may override others?

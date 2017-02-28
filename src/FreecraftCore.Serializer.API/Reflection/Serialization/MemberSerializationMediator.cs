@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading.Tasks;
-using Fasterflect;
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
@@ -39,7 +36,7 @@ namespace FreecraftCore.Serializer
 			try
 			{
 				ParameterExpression instanceOfTypeToReadMemberOn = Expression.Parameter(memberInfo.DeclaringType, "instance");
-				MemberExpression member = GetPropertyOrField(instanceOfTypeToReadMemberOn, memberInfo.Name, memberInfo.MemberType);
+				MemberExpression member = GetPropertyOrField(instanceOfTypeToReadMemberOn, memberInfo.Name, memberInfo);
 				UnaryExpression castExpression = Expression.TypeAs(member, typeof(object)); //use object to box
 
 				//Build the getter lambda
@@ -52,7 +49,7 @@ namespace FreecraftCore.Serializer
 				//The below may seem ridiculous, when we could use reflection or even fasterflect, but it makes the different
 				//of almost an order of magnitude.
 				//Based on: http://stackoverflow.com/questions/321650/how-do-i-set-a-field-value-in-an-c-sharp-expression-tree
-				if (memberInfo.MemberType == MemberTypes.Field && !((FieldInfo)memberInfo).IsWritable())
+				if (memberInfo is FieldInfo && ((FieldInfo)memberInfo).IsInitOnly)
 				{
 					//If it's a field and we can't write to it we need to emit
 					MemberAccessor = CreateSetterForReadonlyField((FieldInfo) memberInfo);
@@ -64,7 +61,7 @@ namespace FreecraftCore.Serializer
 					ParameterExpression valueExp = Expression.Parameter(typeof(TMemberType), "value");
 
 					// Expression.Property can be used here as well
-					MemberExpression memberExp = GetPropertyOrField(targetExp, memberInfo.Name, memberInfo.MemberType);//GetPropertyOrField(targetExp, memberInfo.Name);
+					MemberExpression memberExp = GetPropertyOrField(targetExp, memberInfo.Name, memberInfo);//GetPropertyOrField(targetExp, memberInfo.Name);
 					BinaryExpression assignExp = Expression.Assign(memberExp, valueExp);
 
 					MemberAccessor = Expression.Lambda<Action<TContainingType, TMemberType>>(assignExp, targetExp, valueExp)
@@ -99,7 +96,7 @@ namespace FreecraftCore.Serializer
 		//TODO: Figure out why we have to do this in later versions of .NET/netstandard
 		//We have to use this hack to handle properties from inherited classes
 		//See: http://stackoverflow.com/a/8042602
-		private static MemberExpression GetPropertyOrField(Expression baseExpr, string name, MemberTypes memberType)
+		private static MemberExpression GetPropertyOrField(Expression baseExpr, string name, MemberInfo info)
 		{
 			if (baseExpr == null) throw new ArgumentNullException(nameof(baseExpr));
 			if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException(nameof(name));
@@ -107,10 +104,9 @@ namespace FreecraftCore.Serializer
 			Type type = baseExpr.Type;
 
 			//TODO: Refactor
-			if (memberType.HasFlag(MemberTypes.Property))
+			if (info is PropertyInfo)
 			{
-				PropertyInfo[] properties = type.GetTypeInfo()
-				.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+				PropertyInfo[] properties = type.GetRuntimeProperties()
 				.Where(p => p.Name.Equals(name))
 				.ToArray();
 
@@ -119,18 +115,16 @@ namespace FreecraftCore.Serializer
 					//Core of the fix: if the type is not the same as the type who declared the property we should look at the declaring type
 					return Expression.Property(baseExpr, properties[0].DeclaringType == type ? properties[0]
 						:
-						properties[0].DeclaringType.GetTypeInfo()
-							.GetProperties((BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+						properties[0].DeclaringType.GetRuntimeProperties()
 							.FirstOrDefault(p => p.Name.Equals(name)));
 				}
 
 				if (properties.Length != 0)
 					throw new NotSupportedException(name);
 			}
-			else if (memberType.HasFlag(MemberTypes.Field))
+			else if (info is FieldInfo)
 			{
-				FieldInfo[] fields = type.GetTypeInfo()
-				.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+				FieldInfo[] fields = type.GetRuntimeFields()
 				.Where(p => p.Name.Equals(name))
 				.ToArray();
 
@@ -139,8 +133,7 @@ namespace FreecraftCore.Serializer
 					//Core of the fix: if the type is not the same as the type who declared the property we should look at the declaring type
 					return Expression.Field(baseExpr, fields[0].DeclaringType == type ? fields[0]
 						:
-						fields[0].DeclaringType.GetTypeInfo()
-							.GetFields((BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+						fields[0].DeclaringType.GetRuntimeFields()
 							.FirstOrDefault(p => p.Name.Equals(name)));
 				}
 

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Generic.Math;
 using JetBrains.Annotations;
-using MiscUtil;
 
 
 namespace FreecraftCore.Serializer.KnownTypes
@@ -31,13 +31,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (!typeof(TEnumType).GetTypeInfo().IsEnum)
 				throw new InvalidOperationException($"Cannot create an enum decorator for type {typeof(TEnumType).FullName} because it is not an enum.");
-#if !NET35
+
 			if (typeof(TEnumType).GetTypeInfo().GetEnumUnderlyingType() != typeof(TBaseType))
 				throw new InvalidOperationException($"Defining an Enum decorator requires {nameof(TEnumType)}'s base enum type to match {nameof(TBaseType)}.");
-#else
-			if (Enum.GetUnderlyingType(typeof(TEnumType)) != typeof(TBaseType))
-				throw new InvalidOperationException($"Defining an Enum decorator requires {nameof(TEnumType)}'s base enum type to match {nameof(TBaseType)}.");
-#endif
 
 			if (serializerProvider == null)
 				throw new ArgumentNullException(nameof(serializerProvider), $"Provided service {nameof(IGeneralSerializerProvider)} was null.");
@@ -58,7 +54,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//TODO: Should be handle exceptions?
-			return Operator.Convert<TBaseType, TEnumType>(serializerStrategy.Read(source));
+			return GenericMath.Convert<TBaseType, TEnumType>(serializerStrategy.Read(source));
 		}
 
 		/// <inheritdoc />
@@ -66,7 +62,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			serializerStrategy.Write(Operator.Convert<TEnumType, TBaseType>(value), dest);
+			serializerStrategy.Write(GenericMath.Convert<TEnumType, TBaseType>(value), dest);
 		}
 
 		/// <inheritdoc />
@@ -74,7 +70,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			await serializerStrategy.WriteAsync(Operator.Convert<TEnumType, TBaseType>(value), dest);
+			await serializerStrategy.WriteAsync(GenericMath.Convert<TEnumType, TBaseType>(value), dest);
 		}
 
 		/// <inheritdoc />
@@ -83,7 +79,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//TODO: Should be handle exceptions?
-			return Operator.Convert<TBaseType, TEnumType>(await serializerStrategy.ReadAsync(source));
+			return GenericMath.Convert<TBaseType, TEnumType>(await serializerStrategy.ReadAsync(source));
 		}
 	}
 }

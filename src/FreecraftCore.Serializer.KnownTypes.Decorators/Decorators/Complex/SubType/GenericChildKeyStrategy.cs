@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Generic.Math;
 using JetBrains.Annotations;
-using MiscUtil;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
@@ -49,7 +49,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			TKeyType key = KeyTypeSerializerStrategy
 				.Read(typeHandlingFlags.HasFlag(InformationHandlingFlags.DontConsumeRead) ? source.WithOnlyPeeking() : source);
 
-			return Operator.Convert<TKeyType, int>(key);
+			return GenericMath.Convert<TKeyType, int>(key);
 		}
 
 		/// <inheritdoc />
@@ -61,7 +61,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//It may be that the data is needed to be left in the stream to indicate
 			//something about the type later down the line.
 			if (!typeHandlingFlags.HasFlag(InformationHandlingFlags.DontWrite))
-				KeyTypeSerializerStrategy.Write(Operator.Convert<int, TKeyType>(value), dest);
+				KeyTypeSerializerStrategy.Write(GenericMath.Convert<int, TKeyType>(value), dest);
 		}
 
 		/// <inheritdoc />
@@ -71,7 +71,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			TKeyType key = await KeyTypeSerializerStrategy
 				.ReadAsync(typeHandlingFlags.HasFlag(InformationHandlingFlags.DontConsumeRead) ? source.WithOnlyPeekingAsync() : source);
 
-			return Operator.Convert<TKeyType, int>(key);
+			return GenericMath.Convert<TKeyType, int>(key);
 		}
 
 		/// <inheritdoc />
@@ -83,7 +83,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//It may be that the data is needed to be left in the stream to indicate
 			//something about the type later down the line.
 			if (!typeHandlingFlags.HasFlag(InformationHandlingFlags.DontWrite))
-				await KeyTypeSerializerStrategy.WriteAsync(Operator.Convert<int, TKeyType>(value), dest);
+				await KeyTypeSerializerStrategy.WriteAsync(GenericMath.Convert<int, TKeyType>(value), dest);
 		}
 	}
 }

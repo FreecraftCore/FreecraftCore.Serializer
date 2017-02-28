@@ -5,16 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
 	public class AsyncRandomlyBlockingStream : MemoryStream
 	{
-		[NotNull]
 		public Stream DecoratedStream { get; }
 
-		public AsyncRandomlyBlockingStream([NotNull] Stream decoratedStream)
+		public AsyncRandomlyBlockingStream(Stream decoratedStream)
 		{
 			if (decoratedStream == null) throw new ArgumentNullException(nameof(decoratedStream));
 

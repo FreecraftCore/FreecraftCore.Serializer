@@ -1,5 +1,4 @@
-﻿using Fasterflect;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,10 +96,13 @@ namespace FreecraftCore.Serializer
 					if (subContext.BuiltContextKey.HasValue && this.serializerProviderService.HasSerializerFor(subContext.BuiltContextKey.Value))
 						continue;
 
-					//TODO: Maybe figure out how to get type context inside here to call generic
-					//Maybe visitor?
-					//Call the create on the fallback handler
-					fallbackFactoryService.CallMethod(new Type[] { subContext.TargetType }, nameof(Create), subContext);
+						//This is ugly because we dropped Fasterflect AND .NETStandard1.3 is kinda ugly with reflection
+						//TODO: Maybe figure out how to get type context inside here to call generic
+						//Maybe visitor?
+						//Call the create on the fallback handler
+						fallbackFactoryService.GetType().GetTypeInfo().GetMethod(nameof(Create))
+							.MakeGenericMethod(subContext.TargetType)
+							.Invoke(fallbackFactoryService, new object[] { subContext });		
 				}
 
 				//TODO: If we ever have mutliple decoration then this factory set will break things

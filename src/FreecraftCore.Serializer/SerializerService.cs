@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Fasterflect;
 using FreecraftCore.Serializer.API;
 using JetBrains.Annotations;
 using System.Threading.Tasks;
+using Reflect.Extent;
 
 namespace FreecraftCore.Serializer
 {
@@ -42,7 +42,7 @@ namespace FreecraftCore.Serializer
 
 			FreecraftCoreSerializerKnownTypesPrimitivesMetadata.Assembly.GetTypes()
 				.Where(t => t.GetTypeInfo().HasAttribute<KnownTypeSerializerAttribute>())
-				.Select(t => t.CreateInstance() as ITypeSerializerStrategy)
+				.Select(t => Activator.CreateInstance(t) as ITypeSerializerStrategy)
 				.ToList()
 				.ForEach(s => serializerStorageService.RegisterType(s.SerializerType, s));
 		}

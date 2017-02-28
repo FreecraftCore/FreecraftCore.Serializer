@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Generic.Math;
 using JetBrains.Annotations;
 
 
@@ -34,7 +35,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			TSizeType size = sizeSerializer.Read(reader);
 
 			//Using JonSkeets MiscUtils we can convert objects efficently
-			return MiscUtil.Operator<TSizeType, int>.Convert(size);
+			return GenericMath<TSizeType, int>.Convert(size);
 		}
 
 		/// <inheritdoc />
@@ -47,7 +48,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//add one for null terminator
 			//Using JonSkeets MiscUtils we can convert objects efficently
-			sizeSerializer.Write(MiscUtil.Operator<int, TSizeType>.Convert(size + (includeNullTerminatorInSizeCalculation ? 1 : 0)), writer);
+			sizeSerializer.Write(GenericMath<int, TSizeType>.Convert(size + (includeNullTerminatorInSizeCalculation ? 1 : 0)), writer);
 
 			return size;
 		}
@@ -62,7 +63,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//add one for null terminator
 			//Using JonSkeets MiscUtils we can convert objects efficently
-			await sizeSerializer.WriteAsync(MiscUtil.Operator<int, TSizeType>.Convert(size + (includeNullTerminatorInSizeCalculation ? 1 : 0)), writer);
+			await sizeSerializer.WriteAsync(GenericMath<int, TSizeType>.Convert(size + (includeNullTerminatorInSizeCalculation ? 1 : 0)), writer);
 
 			return size;
 		}
@@ -75,7 +76,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			TSizeType size = await sizeSerializer.ReadAsync(reader);
 
 			//Using JonSkeets MiscUtils we can convert objects efficently
-			return MiscUtil.Operator<TSizeType, int>.Convert(size);
+			return GenericMath<TSizeType, int>.Convert(size);
 		}
 	}
 }

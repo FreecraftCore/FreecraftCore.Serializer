@@ -7,16 +7,17 @@ using System.Text;
 
 namespace FreecraftCore.Serializer.API
 {
+	//TODO: Covert back to internal once I find VS2017 internalsvisibleto
 #if MONO
 	public static class FreecraftCoreSerializerKnownTypesPrimitivesMetadata
 #else
-	internal static class FreecraftCoreSerializerKnownTypesPrimitivesMetadata
+	public static class FreecraftCoreSerializerKnownTypesPrimitivesMetadata
 #endif
 	{
 #if MONO
 		public static Assembly Assembly { get; } = typeof(FreecraftCoreSerializerKnownTypesPrimitivesMetadata).Assembly;
 #else
-		internal static Assembly Assembly { get; } = typeof(FreecraftCoreSerializerKnownTypesPrimitivesMetadata).GetTypeInfo().Assembly;
+		public static Assembly Assembly { get; } = typeof(FreecraftCoreSerializerKnownTypesPrimitivesMetadata).GetTypeInfo().Assembly;
 #endif
 
 	}

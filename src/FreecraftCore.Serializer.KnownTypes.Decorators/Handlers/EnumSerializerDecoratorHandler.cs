@@ -1,5 +1,4 @@
-﻿using Fasterflect;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -56,18 +55,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 					serializer = fallbackFactoryService.Create<string>(context.Override(typeof(string)).Override(stringKey)); //override the type and key
 
 				//Now we can decorate
-				return typeof(EnumStringSerializerDecorator<>).MakeGenericType(context.TargetType).CreateInstance(serializer)
+				return Activator.CreateInstance(typeof(EnumStringSerializerDecorator<>).MakeGenericType(context.TargetType), serializer)
 					as ITypeSerializerStrategy<TType>;
 			}
 
 			//error handling in base
-#if !NET35
-			return typeof(EnumSerializerDecorator<,>).MakeGenericType(context.TargetType, context.TargetType.GetTypeInfo().GetEnumUnderlyingType())
-						.CreateInstance(serializerProviderService) as ITypeSerializerStrategy<TType>;
-#else
-			return typeof(EnumSerializerDecorator<,>).MakeGenericType(context.TargetType, Enum.GetUnderlyingType(context.TargetType))
-						.CreateInstance(serializerProviderService) as ITypeSerializerStrategy<TType>;
-#endif
+			return Activator.CreateInstance(typeof(EnumSerializerDecorator<,>).MakeGenericType(context.TargetType, context.TargetType.GetTypeInfo().GetEnumUnderlyingType()),serializerProviderService) 
+				as ITypeSerializerStrategy<TType>;
 		}
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)
@@ -75,12 +69,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//error handling and checking is done in base
 
 			//An enum only requires its base underlying type to be registered therefore no context is required
-#if !NET35
-			//An enum only requires its base underlying type to be registered therefore no context is required
-			return new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetTypeInfo().GetEnumUnderlyingType()) };
-#else
-			return new ISerializableTypeContext[] { new TypeBasedSerializationContext(Enum.GetUnderlyingType(context.TargetType)) };
-#endif
+			return new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetTypeInfo().BaseType) };
 		}
 	}
 }

@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Fasterflect;
 using JetBrains.Annotations;
+using Reflect.Extent;
 
 namespace FreecraftCore.Serializer
 {
@@ -44,8 +44,10 @@ namespace FreecraftCore.Serializer
 		{
 			//TODO: Cleaner/better way to provide instuctions
 			//Build the instructions for serializion with mediators
-			return typeof(TTargetType).MembersWith<WireMemberAttribute>(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyDeclaredOnly)
-				.OrderBy(x => x.Attribute<WireMemberAttribute>().MemberOrder)
+			return typeof(TTargetType).GetTypeInfo().DeclaredMembers
+				.Where(mi => mi is FieldInfo || mi is PropertyInfo)
+				.Where(mi => mi.HasAttribute<WireMemberAttribute>())
+				.OrderBy(x => x.GetCustomAttribute<WireMemberAttribute>().MemberOrder)
 				.Select(x => mediatorFactory.Create<TTargetType>(x))
 				.ToArray();
 		}

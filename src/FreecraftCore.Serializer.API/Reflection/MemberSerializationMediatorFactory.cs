@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
-using Fasterflect;
 using FreecraftCore.Serializer.API.Reflection;
 using JetBrains.Annotations;
+using Reflect.Extent;
 
 namespace FreecraftCore.Serializer
 {

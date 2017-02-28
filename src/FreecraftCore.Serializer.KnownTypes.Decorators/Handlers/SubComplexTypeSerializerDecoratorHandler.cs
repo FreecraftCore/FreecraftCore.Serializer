@@ -1,5 +1,4 @@
-﻿using Fasterflect;
-using FreecraftCore.Serializer;
+﻿using FreecraftCore.Serializer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,7 +74,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			ITypeSerializerStrategy<TType> strat = null;
 
 			//Depending on if we're flags or key return the right serializer decorator.
-			if (typeof(TType).GetTypeInfo().Attribute<WireDataContractBaseTypeByFlagsAttribute>() == null)
+			if (typeof(TType).GetTypeInfo().GetCustomAttribute<WireDataContractBaseTypeByFlagsAttribute>() == null)
 				//Won't be null at this point. Should be a valid strategy. We also don't need to deal with context since there is only EVER 1 serializer of this type per type.
 				strat = new SubComplexTypeSerializerDecorator<TType>(new LambdabasedDeserializationPrototyeFactory<TType>(), new MemberSerializationMediatorCollection<TType>(mediatorFactoryService),  serializerProviderService, keyStrategy);
 			else
@@ -93,8 +92,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
 			//We need to include the potential default child type now
-			IEnumerable<ISerializableTypeContext> contexts = context.TargetType.GetTypeInfo().Attribute<DefaultChildAttribute>() != null ?
-				new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetTypeInfo().Attribute<DefaultChildAttribute>().ChildType) } : Enumerable.Empty<ISerializableTypeContext>();
+			IEnumerable<ISerializableTypeContext> contexts = context.TargetType.GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>() != null ?
+				new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>().ChildType) } : Enumerable.Empty<ISerializableTypeContext>();
 
 
 			contexts.Concat(new TypeMemberParsedTypeContextCollection(context.TargetType));
@@ -112,9 +111,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (type == null) throw new ArgumentNullException(nameof(type));
 
-			IEnumerable<Type> baseTypesByKey = type.GetTypeInfo().Attributes<WireDataContractBaseTypeAttribute>().Select(x => x.ChildType);
+			IEnumerable<Type> baseTypesByKey = type.GetTypeInfo().GetCustomAttributes<WireDataContractBaseTypeAttribute>().Select(x => x.ChildType);
 
-			IEnumerable<Type> baseTypesByFlags = type.GetTypeInfo().Attributes<WireDataContractBaseTypeByFlagsAttribute>().Select(x => x.ChildType);
+			IEnumerable<Type> baseTypesByFlags = type.GetTypeInfo().GetCustomAttributes<WireDataContractBaseTypeByFlagsAttribute>().Select(x => x.ChildType);
 
 			return baseTypesByKey.Concat(baseTypesByFlags);
 		}

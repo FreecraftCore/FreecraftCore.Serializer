@@ -37,7 +37,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 				throw new ArgumentException($"Provided context {nameof(context)} did not contain a valid {nameof(context.BuiltContextKey)}.");
 
 			if (context.ContextRequirement == SerializationContextRequirement.Contextless)
-				return (ITypeSerializerStrategy<TType>) new StringSerializerStrategy(); //The caller should know what he's doing.
+				return (ITypeSerializerStrategy<TType>) serializerProviderService.Get<string>(); //The caller should know what he's doing.
 
 			//TODO: Throw on invalid metadata combinations
 

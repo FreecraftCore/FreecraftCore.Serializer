@@ -21,8 +21,9 @@ namespace FreecraftCore.Serializer.Tests
 			public UIntPtr length;
 		}
 
-		[Test]
-		[TestCase(5)]
+		//TODO: This crashes the test runner. Does this also crash the runtime?
+		//[Test]
+		//[TestCase(5)]
 		public static unsafe void Test_Header_Change_Size_Hack(int n)
 		{
 			//arrange

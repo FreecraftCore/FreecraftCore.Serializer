@@ -1,5 +1,4 @@
-﻿using Fasterflect;
-using FreecraftCore.Serializer;
+﻿using FreecraftCore.Serializer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -87,8 +86,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			}*/
 
 			//If we know about the size then we should create a knownsize array decorator
-			ITypeSerializerStrategy<TType> strat = typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType())
-				.CreateInstance(serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
+			ITypeSerializerStrategy<TType> strat = Activator.CreateInstance(typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType()),
+				serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
 
 			if(strat == null)
 				throw new InvalidOperationException($"Failed to construct an {nameof(ArraySerializerDecorator<TType>)} for the Type: {typeof(TType).FullName} in final creation step.");

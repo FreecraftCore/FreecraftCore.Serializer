@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Fasterflect;
 using JetBrains.Annotations;
+using Reflect.Extent;
 
 namespace FreecraftCore.Serializer
 {
@@ -26,19 +26,11 @@ namespace FreecraftCore.Serializer
 
 		protected IEnumerable<ISerializableTypeContext> CreateContextCollection()
 		{
-#if !NET35
-			return TypeToInspect.Members(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyVisibility)
+			return TypeToInspect.GetTypeInfo().DeclaredMembers
+				.Where(mi => mi is FieldInfo || mi is PropertyInfo)
 				.Where(mi => mi.HasAttribute<WireMemberAttribute>())
 				.Select(mi => new MemberInfoBasedSerializationContext(mi)) //provide memberinfo context; context is important for complex type members
 				.ToArray();
-
-#else
-			//net35 doesn't have co/contra-variance. Unity3D does though because it's psuedo-net35. Just cast on net35
-			return TypeToInspect.Members(MemberTypes.Field | MemberTypes.Property, Flags.InstanceAnyVisibility)
-				.Where(mi => mi.HasAttribute<WireMemberAttribute>())
-				.Select(mi => new MemberInfoBasedSerializationContext(mi) as ISerializableTypeContext) //provide memberinfo context; context is important for complex type members
-				.ToArray();
-#endif
 		}
 
 		public IEnumerator<ISerializableTypeContext> GetEnumerator()
