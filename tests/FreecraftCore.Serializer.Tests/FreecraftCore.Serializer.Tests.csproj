@@ -156,51 +156,51 @@
     <Compile Include="Tests\SubtypeTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\FreecraftCore.Serializer.API.Service\FreecraftCore.Serializer.API.Service.csproj">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.API.Service\FreecraftCore.Serializer.API.Service.csproj">
       <Project>{bd840c5d-ed3d-46ed-bbbd-eb7122596078}</Project>
       <Name>FreecraftCore.Serializer.API.Service</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\FreecraftCore.Serializer.API\FreecraftCore.Serializer.API.csproj">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.API\FreecraftCore.Serializer.API.csproj">
       <Project>{3924a659-7c76-40be-a1be-d90d6798475c}</Project>
       <Name>FreecraftCore.Serializer.API</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\FreecraftCore.Serializer.Compression\FreecraftCore.Serializer.Compression.csproj">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Compression\FreecraftCore.Serializer.Compression.csproj">
       <Project>{1109e773-b0c0-4bbe-8706-a56a79836b3e}</Project>
       <Name>FreecraftCore.Serializer.Compression</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\FreecraftCore.Serializer.Core\FreecraftCore.Serializer.Core.csproj">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Core\FreecraftCore.Serializer.Core.csproj">
       <Project>{04bcee49-2da4-4853-9590-d45142834951}</Project>
       <Name>FreecraftCore.Serializer.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\FreecraftCore.Serializer.KnownTypes.Decorators\FreecraftCore.Serializer.KnownTypes.Decorators.csproj">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.KnownTypes.Decorators\FreecraftCore.Serializer.KnownTypes.Decorators.csproj">
       <Project>{498489c0-30b7-4575-83ae-3ee6db690c6c}</Project>
       <Name>FreecraftCore.Serializer.KnownTypes.Decorators</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\FreecraftCore.Serializer.KnownTypes.Primitives\FreecraftCore.Serializer.KnownTypes.Primitives.csproj">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.KnownTypes.Primitives\FreecraftCore.Serializer.KnownTypes.Primitives.csproj">
       <Project>{7f698e21-82f1-498c-a51c-2a748127ead9}</Project>
       <Name>FreecraftCore.Serializer.KnownTypes.Primitives</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\FreecraftCore.Serializer.KnownTypes.Special\FreecraftCore.Serializer.KnownTypes.Special.csproj">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.KnownTypes.Special\FreecraftCore.Serializer.KnownTypes.Special.csproj">
       <Project>{6f7775aa-ce2e-463c-9549-d5f855a8d0c0}</Project>
       <Name>FreecraftCore.Serializer.KnownTypes.Special</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\FreecraftCore.Serializer.Metadata.Internal\FreecraftCore.Serializer.Metadata.Internal.csproj">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Metadata.Internal\FreecraftCore.Serializer.Metadata.Internal.csproj">
       <Project>{ccfe27a3-f371-43a5-8ecf-ab0bdf60df0c}</Project>
       <Name>FreecraftCore.Serializer.Metadata.Internal</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj">
       <Project>{891cc3d5-9d84-47fd-95cc-00fbbc730752}</Project>
       <Name>FreecraftCore.Serializer.Metadata</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\FreecraftCore.Serializer.Stream.Default\FreecraftCore.Serializer.Stream.Default.csproj">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Stream.Default\FreecraftCore.Serializer.Stream.Default.csproj">
       <Project>{06f808ae-ef7b-437e-9ff2-67f62db1aa7d}</Project>
       <Name>FreecraftCore.Serializer.Stream.Default</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\FreecraftCore.Serializer.Stream\FreecraftCore.Serializer.Stream.csproj">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Stream\FreecraftCore.Serializer.Stream.csproj">
       <Project>{7352fbf0-887c-451c-8937-68f1b50684ce}</Project>
       <Name>FreecraftCore.Serializer.Stream</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj">
       <Project>{1120443d-3709-4caf-af9b-a2203671dbb2}</Project>
       <Name>FreecraftCore.Serializer</Name>
     </ProjectReference>
