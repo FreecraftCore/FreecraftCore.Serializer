@@ -1,0 +1,8 @@
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\tests\PerfTests\MarshalPerfTest\bin\Debug\MarshalPerfTest.exe.config
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\tests\PerfTests\MarshalPerfTest\bin\Debug\MarshalPerfTest.exe
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\tests\PerfTests\MarshalPerfTest\bin\Debug\MarshalPerfTest.pdb
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\tests\PerfTests\MarshalPerfTest\bin\Debug\JetBrains.Annotations.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\tests\PerfTests\MarshalPerfTest\bin\Debug\JetBrains.Annotations.xml
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\tests\PerfTests\MarshalPerfTest\obj\Debug\MarshalPerfTest.csprojResolveAssemblyReference.cache
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\tests\PerfTests\MarshalPerfTest\obj\Debug\MarshalPerfTest.exe
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\tests\PerfTests\MarshalPerfTest\obj\Debug\MarshalPerfTest.pdb

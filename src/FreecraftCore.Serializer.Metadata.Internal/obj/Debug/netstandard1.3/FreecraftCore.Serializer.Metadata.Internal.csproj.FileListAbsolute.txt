@@ -1,0 +1,6 @@
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Metadata.Internal\bin\Debug\netstandard1.3\FreecraftCore.Serializer.Metadata.Internal.deps.json
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Metadata.Internal\bin\Debug\netstandard1.3\FreecraftCore.Serializer.Metadata.Internal.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Metadata.Internal\bin\Debug\netstandard1.3\FreecraftCore.Serializer.Metadata.Internal.pdb
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Metadata.Internal\obj\Debug\netstandard1.3\FreecraftCore.Serializer.Metadata.Internal.AssemblyInfo.cs
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Metadata.Internal\obj\Debug\netstandard1.3\FreecraftCore.Serializer.Metadata.Internal.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Metadata.Internal\obj\Debug\netstandard1.3\FreecraftCore.Serializer.Metadata.Internal.pdb

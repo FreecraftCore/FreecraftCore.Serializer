@@ -1,0 +1,36 @@
+﻿-d:DEBUG
+-d:TRACE
+-d:NET45
+-nowarn:CS1701
+-nowarn:CS1702
+-nowarn:CS1705
+-platform:x64
+-debug:full
+-nostdlib
+-nologo
+"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\Tests\Preformance.Tests.NetCore\obj\Debug\net45\dotnet-compile.assemblyinfo.cs"
+-out:"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\Tests\Preformance.Tests.NetCore\bin\Debug\net45\Preformance.Tests.NetCore.exe"
+-r:"C:\Users\Glader\.nuget\packages\DotNetZip\1.10.1\lib\net20\DotNetZip.dll"
+-r:"C:\Users\Glader\.nuget\packages\fasterflect\2.1.3\lib\net40\Fasterflect.dll"
+-r:"C:\Users\Glader\.nuget\packages\JetBrains.Annotations\10.2.1\lib\net\JetBrains.Annotations.dll"
+-r:"C:\Users\Glader\.nuget\packages\JonSkeet.MiscUtil\0.1.0\lib\net35-Client\MiscUtil.dll"
+-r:"C:\Users\Glader\.nuget\packages\protobuf-net\2.1.0\lib\net45\protobuf-net.dll"
+-r:"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer\bin\Debug\net45\FreecraftCore.Serializer.dll"
+-r:"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\bin\Debug\net45\FreecraftCore.Serializer.API.dll"
+-r:"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API.Service\bin\Debug\net45\FreecraftCore.Serializer.API.Service.dll"
+-r:"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Compression\bin\Debug\net45\FreecraftCore.Serializer.Compression.dll"
+-r:"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Core\bin\Debug\net45\FreecraftCore.Serializer.Core.dll"
+-r:"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Decorators\bin\Debug\net45\FreecraftCore.Serializer.KnownTypes.Decorators.dll"
+-r:"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Primitives\bin\Debug\net45\FreecraftCore.Serializer.KnownTypes.Primitives.dll"
+-r:"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\net45\FreecraftCore.Serializer.KnownTypes.Special.dll"
+-r:"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Metadata\bin\Debug\net45\FreecraftCore.Serializer.Metadata.dll"
+-r:"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Metadata.Internal\bin\Debug\net45\FreecraftCore.Serializer.Metadata.Internal.dll"
+-r:"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Stream\bin\Debug\net45\FreecraftCore.Serializer.Stream.dll"
+-r:"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Stream.Default\bin\Debug\net45\FreecraftCore.Serializer.Stream.Default.dll"
+-r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\mscorlib.dll"
+-r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll"
+-r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Core.dll"
+-r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\Microsoft.CSharp.dll"
+-r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Xml.dll"
+"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\Tests\Preformance.Tests.NetCore\Program.cs"
+"C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\Tests\Preformance.Tests.NetCore\Properties\AssemblyInfo.cs"

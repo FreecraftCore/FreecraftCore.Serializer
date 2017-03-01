@@ -1,0 +1,16 @@
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\netstandard1.5\FreecraftCore.Serializer.KnownTypes.Special.deps.json
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\obj\Debug\netstandard1.5\FreecraftCore.Serializer.KnownTypes.Special.csprojResolveAssemblyReference.cache
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\obj\Debug\netstandard1.5\FreecraftCore.Serializer.KnownTypes.Special.AssemblyInfo.cs
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\netstandard1.5\FreecraftCore.Serializer.KnownTypes.Special.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\netstandard1.5\FreecraftCore.Serializer.KnownTypes.Special.pdb
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\netstandard1.5\FreecraftCore.Serializer.API.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\netstandard1.5\FreecraftCore.Serializer.Metadata.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\netstandard1.5\FreecraftCore.Serializer.Stream.Default.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\netstandard1.5\FreecraftCore.Serializer.Stream.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\netstandard1.5\FreecraftCore.Serializer.API.pdb
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\netstandard1.5\FreecraftCore.Serializer.Metadata.pdb
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\netstandard1.5\FreecraftCore.Serializer.Stream.pdb
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\netstandard1.5\FreecraftCore.Serializer.Stream.Default.pdb
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\obj\Debug\netstandard1.5\FreecraftCore.Serializer.KnownTypes.Special.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\obj\Debug\netstandard1.5\FreecraftCore.Serializer.KnownTypes.Special.pdb
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.KnownTypes.Special\bin\Debug\netstandard1.5\FreecraftCore.Serializer.API.xml

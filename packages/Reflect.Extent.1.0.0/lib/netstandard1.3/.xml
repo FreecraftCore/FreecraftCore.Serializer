@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Reflect.Extent</name>
+    </assembly>
+    <members>
+        <member name="T:Reflect.Extent.AttributeExtensions">
+            <summary>
+            Extension methods for attribute reading and parsing.
+            </summary>
+        </member>
+        <member name="M:Reflect.Extent.AttributeExtensions.HasAttribute``1(System.Reflection.MemberInfo)">
+            <summary>
+            Checks if the provided <see cref="T:System.Reflection.MemberInfo"/> <paramref name="provider"/> contains
+            the specified <typeparamref name="TAttributeType"/>.
+            </summary>
+            <typeparam name="TAttributeType">The attribute type to check for.</typeparam>
+            <param name="provider">The <see cref="T:System.Reflection.MemberInfo"/> provider.</param>
+            <returns>True if the <see cref="T:System.Reflection.MemberInfo"/> is marked with the <typeparamref name="TAttributeType"/> attribute.</returns>
+        </member>
+        <member name="T:Reflect.Extent.MemberInfoExtensions">
+            <summary>
+            Extension methods for the <see cref="T:System.Reflection.MemberInfo"/> type.
+            </summary>
+        </member>
+        <member name="M:Reflect.Extent.MemberInfoExtensions.Type(System.Reflection.MemberInfo)">
+            <summary>
+            Gets the type of the actual member.
+            </summary>
+            <param name="memberInfo">The member info to get the type from.</param>
+            <exception cref="T:System.ArgumentNullException">If <see cref="T:System.Reflection.MemberInfo"/> is null.</exception>
+            <exception cref="T:System.NotSupportedException">If the member type is unsupported.</exception>
+            <returns>Returns the type of the actual member.</returns>
+        </member>
+    </members>
+</doc>

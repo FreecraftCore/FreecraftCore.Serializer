@@ -1,0 +1,14 @@
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\bin\Debug\netstandard1.6\FreecraftCore.Serializer.API.deps.json
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\bin\Debug\netstandard1.6\FreecraftCore.Serializer.API.xml
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\bin\Debug\netstandard1.6\FreecraftCore.Serializer.API.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\bin\Debug\netstandard1.6\FreecraftCore.Serializer.API.pdb
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\bin\Debug\netstandard1.6\FreecraftCore.Serializer.Metadata.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\bin\Debug\netstandard1.6\FreecraftCore.Serializer.Stream.Default.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\bin\Debug\netstandard1.6\FreecraftCore.Serializer.Stream.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\bin\Debug\netstandard1.6\FreecraftCore.Serializer.Metadata.pdb
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\bin\Debug\netstandard1.6\FreecraftCore.Serializer.Stream.Default.pdb
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\bin\Debug\netstandard1.6\FreecraftCore.Serializer.Stream.pdb
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\obj\Debug\netstandard1.6\FreecraftCore.Serializer.API.csprojResolveAssemblyReference.cache
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\obj\Debug\netstandard1.6\FreecraftCore.Serializer.API.AssemblyInfo.cs
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\obj\Debug\netstandard1.6\FreecraftCore.Serializer.API.dll
+C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API\obj\Debug\netstandard1.6\FreecraftCore.Serializer.API.pdb
