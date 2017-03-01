@@ -1,6 +1,0 @@
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Stream\bin\Debug\netstandard1.5\FreecraftCore.Serializer.Stream.deps.json
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Stream\bin\Debug\netstandard1.5\FreecraftCore.Serializer.Stream.dll
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Stream\bin\Debug\netstandard1.5\FreecraftCore.Serializer.Stream.pdb
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Stream\obj\Debug\netstandard1.5\FreecraftCore.Serializer.Stream.AssemblyInfo.cs
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Stream\obj\Debug\netstandard1.5\FreecraftCore.Serializer.Stream.dll
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Stream\obj\Debug\netstandard1.5\FreecraftCore.Serializer.Stream.pdb

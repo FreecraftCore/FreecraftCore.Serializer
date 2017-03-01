@@ -1,4 +1,0 @@
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\tests\PerfTests\MarshalPerfTest\bin\Release\MarshalPerfTest.exe.config
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\tests\PerfTests\MarshalPerfTest\bin\Release\MarshalPerfTest.exe
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\tests\PerfTests\MarshalPerfTest\obj\Release\MarshalPerfTest.exe
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\tests\PerfTests\MarshalPerfTest\obj\Release\MarshalPerfTest.csprojResolveAssemblyReference.cache

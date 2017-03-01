@@ -1,9 +1,0 @@
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API.Service\bin\Debug\netstandard1.5\FreecraftCore.Serializer.API.Service.deps.json
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API.Service\bin\Debug\netstandard1.5\FreecraftCore.Serializer.API.Service.dll
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API.Service\bin\Debug\netstandard1.5\FreecraftCore.Serializer.API.Service.pdb
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API.Service\bin\Debug\netstandard1.5\FreecraftCore.Serializer.Stream.dll
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API.Service\bin\Debug\netstandard1.5\FreecraftCore.Serializer.Stream.pdb
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API.Service\obj\Debug\netstandard1.5\FreecraftCore.Serializer.API.Service.csprojResolveAssemblyReference.cache
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API.Service\obj\Debug\netstandard1.5\FreecraftCore.Serializer.API.Service.AssemblyInfo.cs
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API.Service\obj\Debug\netstandard1.5\FreecraftCore.Serializer.API.Service.dll
-C:\Users\Glader\Documents\GitHub\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.API.Service\obj\Debug\netstandard1.5\FreecraftCore.Serializer.API.Service.pdb
