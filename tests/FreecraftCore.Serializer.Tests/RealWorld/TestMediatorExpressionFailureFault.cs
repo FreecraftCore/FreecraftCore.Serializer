@@ -20,9 +20,9 @@ namespace FreecraftCore.Serializer.Tests.RealWorld
 		}
 
 		[WireDataContract]
-		public enum ClientBuild
+		public enum ClientBuild : ushort
 		{
-			
+			Test = 1,
 		}
 
 		public enum GameType

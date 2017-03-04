@@ -99,7 +99,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			int size = await sizeStrategyService.SizeAsync<TObjectType[], TObjectType>(value, dest);
 
 			if (size != value.Length)
-				throw new InvalidOperationException($"Invalid size. Provided {nameof(TObjectType)}[] had a size mismatch with expected size: {size} and was: {value.Length}.");
+				throw new InvalidOperationException($"Invalid size. Provided {typeof(TObjectType).FullName}[] had a size mismatch with expected size: {size} and was: {value.Length}.");
 
 			unchecked
 			{

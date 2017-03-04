@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -202,6 +203,13 @@ namespace FreecraftCore.Serializer.Tests
 
 			[WireMember(3)]
 			public IRealmInformation Information { get; private set; }
+
+			public RealmInfo(byte realmType, bool locked, IRealmInformation info)
+			{
+				RealmType = realmType;
+				isLocked = locked;
+				Information = info;
+			}
 
 			public RealmInfo()
 			{

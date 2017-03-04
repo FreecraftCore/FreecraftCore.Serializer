@@ -132,6 +132,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RealWorld\AuthLogonPacketTests.cs" />
     <Compile Include="RealWorld\AuthRealmListPacketTest.cs" />
+    <Compile Include="RealWorld\AuthTokenTests.cs" />
     <Compile Include="RealWorld\TestMediatorExpressionFailureFault.cs" />
     <Compile Include="SerializerTests\ByteSerializerTests.cs" />
     <Compile Include="SerializerTests\DateTimeSerializerTests.cs" />
@@ -145,7 +146,6 @@
     <Compile Include="Tests\CompressionTests.cs" />
     <Compile Include="Tests\EnumTests.cs" />
     <Compile Include="Tests\GeneralTests.cs" />
-    <Compile Include="Tests\InterfacePolymorphicMultilevelSerializationTests.cs" />
     <Compile Include="Tests\PolymorphicMultilevelSerializationTests.cs" />
     <Compile Include="Tests\PolymorphicRuntimeLinkTests.cs" />
     <Compile Include="Tests\PolymorphicSerializationTests.cs" />

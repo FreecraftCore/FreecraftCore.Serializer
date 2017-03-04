@@ -35,12 +35,14 @@ namespace FreecraftCore.Serializer
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
-#if NET35
-			//TODO: Can we do this more efficiently without reading string name?
-			obj.TrySetValue(MemberInformation.Name, TypeSerializer.Read(source));
-#else
-			MemberAccessor(obj, (TMemberType)TypeSerializer.Read(source));
-#endif
+			try
+			{
+				MemberAccessor(obj, (TMemberType) TypeSerializer.Read(source));
+			}
+			catch (Exception e)
+			{
+				throw new InvalidOperationException($"Failed to set member {MemberInformation.Name} on Type: {MemberInformation.DeclaringType} for Type: {obj.GetType().Name}.", e);
+			}
 		}
 
 		/// <inheritdoc />
