@@ -59,7 +59,7 @@ SomeType[][] //Multidimensional arrays are partially supported but not fixed siz
 [WireMember(1)]
 IEnumerable<SomeType> //Any collection except arrays are currently unsupported but planned for future support
 ```
-### Polymorphic Serialization is now supported!
+### Polymorphic Serialization is now supported for classes! Interfaces in the future.
 
 ## Builds
 
