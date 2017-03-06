@@ -1,5 +1,5 @@
 # FreecraftCore.Serializer
-### *Now with Netstandard1.6 and Async/Await support!*
+### *Now with Netstandard1.5 and Async/Await support!*
 FreecraftCore is an open-source C#/.NET World of Warcraft emulation project. It is derived from the reverse engineering work done by Mangos and Trinitycore.
 
 The FreecraftCore.Payload.Serializer is a metadata based serializer for WoW packets based on [JAM](https://www.youtube.com/watch?v=hCsEHYwjqVE) and inspired by the design of [Protobuf-net](https://github.com/mgravell/protobuf-net) by Marc.
