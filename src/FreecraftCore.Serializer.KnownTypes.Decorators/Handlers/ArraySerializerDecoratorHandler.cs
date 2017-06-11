@@ -85,9 +85,25 @@ namespace FreecraftCore.Serializer.KnownTypes
 				return new Int32ArraySerializerDecorator(serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
 			}*/
 
-			//If we know about the size then we should create a knownsize array decorator
-			ITypeSerializerStrategy<TType> strat = Activator.CreateInstance(typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType()),
-				serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
+			ITypeSerializerStrategy<TType> strat = null;
+
+			if (context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Reverse) && context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.FixedSize))
+			{
+				//Check if it's a byte array. If it's not then we need to throw
+				if(typeof(TType) == typeof(byte[]))
+					strat = new FixedSizeReversedByteArraySerializerDecorator(collectionSizeStrategy) as ITypeSerializerStrategy<TType>;
+				else
+				{
+					throw new InvalidOperationException($"Cannot have a {typeof(TType).FullName} serialized with Reverse and Fixed attributes.");
+				}
+			}
+			else
+			{
+				//If we know about the size then we should create a knownsize array decorator
+				strat = Activator.CreateInstance(typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType()),
+					serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
+			}
+			
 
 			if(strat == null)
 				throw new InvalidOperationException($"Failed to construct an {nameof(ArraySerializerDecorator<TType>)} for the Type: {typeof(TType).FullName} in final creation step.");

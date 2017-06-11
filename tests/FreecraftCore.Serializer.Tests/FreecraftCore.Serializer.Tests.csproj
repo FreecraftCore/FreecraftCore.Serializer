@@ -145,6 +145,7 @@
     <Compile Include="SubComplexTypeTests.cs" />
     <Compile Include="Tests\CompressionTests.cs" />
     <Compile Include="Tests\EnumTests.cs" />
+    <Compile Include="Tests\FixedReverseByteSerializerTests.cs" />
     <Compile Include="Tests\GeneralTests.cs" />
     <Compile Include="Tests\PolymorphicMultilevelSerializationTests.cs" />
     <Compile Include="Tests\PolymorphicRuntimeLinkTests.cs" />
