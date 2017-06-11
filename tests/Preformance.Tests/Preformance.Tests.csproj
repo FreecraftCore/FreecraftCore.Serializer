@@ -1,115 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F1F44ABD-5A55-499A-9ECA-8C11EF5C53B7}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Preformance.Tests</RootNamespace>
-    <AssemblyName>Preformance.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="DotNetZip">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\DotNetZip.dll</HintPath>
-    </Reference>
-    <Reference Include="Fasterflect.Netstandard">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\Fasterflect.Netstandard.dll</HintPath>
-    </Reference>
-    <Reference Include="FreecraftCore.Serializer">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.dll</HintPath>
-    </Reference>
-    <Reference Include="FreecraftCore.Serializer.API">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.API.dll</HintPath>
-    </Reference>
-    <Reference Include="FreecraftCore.Serializer.API.Service">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.API.Service.dll</HintPath>
-    </Reference>
-    <Reference Include="FreecraftCore.Serializer.Compression">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.Compression.dll</HintPath>
-    </Reference>
-    <Reference Include="FreecraftCore.Serializer.Core">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="FreecraftCore.Serializer.KnownTypes.Decorators">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.KnownTypes.Decorators.dll</HintPath>
-    </Reference>
-    <Reference Include="FreecraftCore.Serializer.KnownTypes.Primitives">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.KnownTypes.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="FreecraftCore.Serializer.KnownTypes.Special">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.KnownTypes.Special.dll</HintPath>
-    </Reference>
-    <Reference Include="FreecraftCore.Serializer.Metadata">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.Metadata.dll</HintPath>
-    </Reference>
-    <Reference Include="FreecraftCore.Serializer.Metadata.Internal">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.Metadata.Internal.dll</HintPath>
-    </Reference>
-    <Reference Include="FreecraftCore.Serializer.Stream">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.Stream.dll</HintPath>
-    </Reference>
-    <Reference Include="FreecraftCore.Serializer.Stream.Default">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\FreecraftCore.Serializer.Stream.Default.dll</HintPath>
-    </Reference>
-    <Reference Include="JetBrains.Annotations, Version=10.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\JetBrains.Annotations.10.2.1\lib\net\JetBrains.Annotations.dll</HintPath>
-    </Reference>
-    <Reference Include="MiscUtil">
-      <HintPath>..\..\src\FreecraftCore.Serializer\bin\Release\net46\MiscUtil.dll</HintPath>
-    </Reference>
-    <Reference Include="protobuf-net, Version=2.1.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\protobuf-net.2.1.0\lib\net451\protobuf-net.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="protobuf-net" Version="2.2.1" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="PrimitiveSerialization.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

@@ -105,23 +105,27 @@ namespace FreecraftCore.Serializer
 			if(typeof(TType).GetTypeInfo().IsPrimitive || typeof(TType).GetTypeInfo().IsEnum)
 				return serializerStorageService.Get<TType>();
 
-			Type t = typeof(TType).GetTypeInfo().BaseType;
+			Type t = typeof(TType);
 
+			//We need to switch between object and ValueType to support struct serialization
+			t = GetLeastDerivedType(t, t.GetTypeInfo().IsValueType ? typeof(System.ValueType) : typeof(object));
+
+			return serializerStorageService.Get(t);
+		}
+
+		private Type GetLeastDerivedType(Type t, Type defaultDerivedType)
+		{
 			//If t isn't null it has at least one base type, we need to move up the object graph if so.
-			if (t != null && t != typeof(object))
+			if (t != null && t != defaultDerivedType)
 			{
 				//Find the root type
-				while (t.GetTypeInfo().BaseType != null && t.GetTypeInfo().BaseType != typeof(object))
+				while (t.GetTypeInfo().BaseType != null && t.GetTypeInfo().BaseType != defaultDerivedType)
 				{
 					t = t.GetTypeInfo().BaseType;
 				}
+			}
 
-				return serializerStorageService.Get(t);
-			}
-			else
-			{
-				return serializerStorageService.Get<TType>();
-			}
+			return t;
 		}
 
 		//Called as the fallback factory.
@@ -173,7 +177,8 @@ namespace FreecraftCore.Serializer
 			if (!isCompiled)
 				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
 
-			GetLeastDerivedSerializer<TTypeToSerialize>().Write(data, writer);
+			object boxedObject = data;
+			GetLeastDerivedSerializer<TTypeToSerialize>().Write(ref boxedObject, writer);
 
 			return writer.GetBytes();
 		}

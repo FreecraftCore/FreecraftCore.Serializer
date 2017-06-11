@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Reflection;
+using System.lection;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 
@@ -26,34 +27,42 @@ namespace FreecraftCore.Serializer
 		{
 			if (prototypeGenerator == null) throw new ArgumentNullException(nameof(prototypeGenerator));
 
-			if(!typeof(TComplexType).GetTypeInfo().IsClass)
-				throw new ArgumentException($"Provided generic Type: {typeof(TComplexType).FullName} must be a reference type.", nameof(TComplexType));
+			//We no longer require registered types to be classes
+			//if(!typeof(TComplexType).GetTypeInfo().IsClass)
+			//	throw new ArgumentException($"Provided generic Type: {typeof(TComplexType).FullName} must be a erence type.", nameof(TComplexType));
 
 			prototypeGeneratorService = prototypeGenerator;
 
 			//This serializer is the finally link the chain when it comes to polymorphic serialization
-			//Therefore it must deal with deserialization of all members by dispatching from top to bottom (this serializer) to read the members
+			//Theore it must deal with deserialization of all members by dispatching from top to bottom (this serializer) to read the members
 			//to do so efficiently we must cache an array of the Type that represents the linear class hierarchy reversed
-			List<Type> typeHierarchy = new List<Type>();
-
-			if (typeof(TComplexType).GetTypeInfo().BaseType == null || typeof(TComplexType).GetTypeInfo().BaseType == typeof(object))
-				reversedInheritanceHierarchy = Enumerable.Empty<Type>(); //make it an empty collection if there are no base types
-			else
-			{
-				//add every Type to the collection (not all may have serializers or be involved in deserialization)
-				Type baseType = typeof(TComplexType).GetTypeInfo().BaseType;
-
-				while (baseType != null && typeof(TComplexType).GetTypeInfo().BaseType != typeof(object))
-				{
-					typeHierarchy.Add(baseType);
-
-					baseType = baseType.GetTypeInfo().BaseType;
-				}
-			}
+			List<Type> typeHierarchy = ComputeTypeHierarchy(typeof(TComplexType).GetTypeInfo(), typeof(object));
 
 			//reverse the collection to the proper order
 			typeHierarchy.Reverse();
 			reversedInheritanceHierarchy = typeHierarchy;
+		}
+
+		public List<Type> ComputeTypeHierarchy(TypeInfo info, Type finalBaseType)
+		{
+			if (typeof(TComplexType).GetTypeInfo().BaseType == null || typeof(TComplexType).GetTypeInfo().BaseType == finalBaseType)
+				return Enumerable.Empty<Type>().ToList(); //make it an empty collection if there are no base types
+			else
+			{
+				List<Type> tempTypeList = new List<Type>(2);
+
+				//add every Type to the collection (not all may have serializers or be involved in deserialization)
+				Type baseType = typeof(TComplexType).GetTypeInfo().BaseType;
+
+				while (baseType != null && typeof(TComplexType).GetTypeInfo().BaseType != finalBaseType)
+				{
+					tempTypeList.Add(baseType);
+
+					baseType = baseType.GetTypeInfo().BaseType;
+				}
+
+				return tempTypeList;
+			}
 		}
 
 		//TODO: Error handling
@@ -62,6 +71,7 @@ namespace FreecraftCore.Serializer
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
+			//We need to do this oddity for structs
 			TComplexType obj = Read(prototypeGeneratorService.Create(), source);
 
 			//invoke after deserialization if it's available

@@ -22,7 +22,13 @@
     <ProjectReference Include="..\FreecraftCore.Serializer.Core\FreecraftCore.Serializer.Core.csproj" />
     <ProjectReference Include="..\FreecraftCore.Serializer.KnownTypes.Decorators\FreecraftCore.Serializer.KnownTypes.Decorators.csproj" />
     <ProjectReference Include="..\FreecraftCore.Serializer.KnownTypes.Primitives\FreecraftCore.Serializer.KnownTypes.Primitives.csproj" />
+    <ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" />
     <ProjectReference Include="..\FreecraftCore.Serializer.Stream\FreecraftCore.Serializer.Stream.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FreecraftCore.Serializer.Metadata">
+    </Reference>
   </ItemGroup>
 
 </Project>
