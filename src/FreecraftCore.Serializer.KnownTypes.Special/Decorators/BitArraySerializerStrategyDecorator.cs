@@ -39,7 +39,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override void Write(ref BitArray value, IWireStreamWriterStrategy dest)
+		public override void Write(BitArray value, IWireStreamWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 		}

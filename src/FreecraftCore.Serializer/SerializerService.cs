@@ -177,8 +177,7 @@ namespace FreecraftCore.Serializer
 			if (!isCompiled)
 				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
 
-			object boxedObject = data;
-			GetLeastDerivedSerializer<TTypeToSerialize>().Write(ref boxedObject, writer);
+			GetLeastDerivedSerializer<TTypeToSerialize>().Write(data, writer);
 
 			return writer.GetBytes();
 		}
