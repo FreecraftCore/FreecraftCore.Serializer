@@ -71,10 +71,13 @@ namespace Preformance.Tests
 			#endregion
 			*/
 
+			//so the cache is built
+			serializer.Serialize(complex);
+
 			GC.Collect();
 			serializerWatch.Reset();
 			serializerWatch.Start();
-
+			
 			for (int i = 0; i < 100000; i++)
 			{
 				serializer.Serialize(complex);

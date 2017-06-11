@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
-	public class SerializerStrategyProvider : IContextualSerializerProvider, ISerializerStrategyRegistry
+	public class SerializerStrategyProvider : IContextualSerializerProvider, ISerializerStrategyRegistry, IEnumerable<Type>
 	{
 		[NotNull]
 		private IDictionary<Type, ITypeSerializerStrategy> contextlessSerializerLookupTable { get; }
@@ -106,6 +107,20 @@ namespace FreecraftCore.Serializer
 			strategyLookupTable.Add(new ContextualSerializerLookupKey(contextFlags, key, type), strategy);
 
 			return true;
+		}
+
+		/// <inheritdoc />
+		public IEnumerator<Type> GetEnumerator()
+		{
+			return contextlessSerializerLookupTable.Keys
+				.Concat(strategyLookupTable.Values.Select(c => c.SerializerType))
+				.GetEnumerator();
+		}
+
+		/// <inheritdoc />
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
 		}
 	}
 }

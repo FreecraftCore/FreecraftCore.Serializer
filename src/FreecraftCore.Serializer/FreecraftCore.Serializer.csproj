@@ -26,9 +26,4 @@
     <ProjectReference Include="..\FreecraftCore.Serializer.Stream\FreecraftCore.Serializer.Stream.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="FreecraftCore.Serializer.Metadata">
-    </Reference>
-  </ItemGroup>
-
 </Project>

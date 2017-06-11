@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -30,11 +31,18 @@ namespace FreecraftCore.Serializer
 		[NotNull]
 		private DefaultSerializerStrategyFactory serializerStrategyFactoryService { get; }
 
+		//TODO: Abstract this away into a caching service
+		//This was profiled and it was a major perf problem. We need to cache the least derived serializer.
+		private Dictionary<Type, Type> LeastDerivedTypeCache { get; }
+
+		private object SyncObj { get; } = new object();
+
 		public SerializerService()
 		{
 			//We don't inject anything because we want end-users of the serializer to be able to easily instantiate an instance
 			//of this service
 			serializerStorageService = new SerializerStrategyProvider();
+			LeastDerivedTypeCache = new Dictionary<Type, Type>();
 
 			ContextLookupKeyFactoryService lookupKeyFactoryService = new ContextLookupKeyFactoryService();
 			//Create the decoration service
@@ -49,6 +57,19 @@ namespace FreecraftCore.Serializer
 
 		public void Compile()
 		{
+			lock (SyncObj)
+			{
+				//Build the least derived cache
+				foreach (Type t in serializerStorageService)
+				{
+					Type leastDerived = GetLeastDerivedType(t, typeof(object));
+
+					//This was profiled as a perf problem. 40% of the time spent deserializing was spent looking up
+					//the least derived type
+					LeastDerivedTypeCache[t] = leastDerived;
+				}	
+			}
+
 			isCompiled = true;
 		}
 
@@ -108,7 +129,8 @@ namespace FreecraftCore.Serializer
 			Type t = typeof(TType);
 
 			//We need to switch between object and ValueType to support struct serialization
-			t = GetLeastDerivedType(t, t.GetTypeInfo().IsValueType ? typeof(System.ValueType) : typeof(object));
+			//If it's in the cache we don't need to compute the least derived type
+			t = LeastDerivedTypeCache.ContainsKey(t) ? LeastDerivedTypeCache[t] : GetLeastDerivedType(t, typeof(object));
 
 			return serializerStorageService.Get(t);
 		}
