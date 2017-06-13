@@ -133,6 +133,7 @@
     <Compile Include="RealWorld\AuthLogonPacketTests.cs" />
     <Compile Include="RealWorld\AuthRealmListPacketTest.cs" />
     <Compile Include="RealWorld\AuthTokenTests.cs" />
+    <Compile Include="Tests\BitArraySerializationTests.cs" />
     <Compile Include="RealWorld\TestMediatorExpressionFailureFault.cs" />
     <Compile Include="SerializerTests\ByteSerializerTests.cs" />
     <Compile Include="SerializerTests\DateTimeSerializerTests.cs" />

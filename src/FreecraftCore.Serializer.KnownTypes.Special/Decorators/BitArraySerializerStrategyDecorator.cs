@@ -18,44 +18,73 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <inheritdoc />
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
 
-		[NotNull]
-		private ITypeSerializerStrategy<int[]> decoratedSerializer { get; }
-
-		public BitArraySerializerStrategyDecorator([NotNull] ITypeSerializerStrategy<int[]> intArraySerializer)
+		public BitArraySerializerStrategyDecorator()
 		{
-			if (intArraySerializer == null)
-				throw new ArgumentNullException(nameof(intArraySerializer), $"Provided arg {intArraySerializer} is null.");
 
-			decoratedSerializer = intArraySerializer;
 		}
 
 		/// <inheritdoc />
 		public override BitArray Read(IWireStreamReaderStrategy source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
-			
+
+			//TODO: We should handle multiple types of sizes
+			//WoW sends a byte for the block count and an int array. We use a surrogate to deserialize it
+			byte size = source.ReadByte();
+
 			//Load the data for the bitmask
-			return new BitArray(decoratedSerializer.Read(source));
+			//WoW sends the size as an int array but we can more efficiently read a byte array so we pretend
+			//It is the same
+			return new BitArray(source.ReadBytes(size * sizeof(int)));
 		}
 
 		/// <inheritdoc />
 		public override void Write(BitArray value, IWireStreamWriterStrategy dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//The size must be equal to the length divided by 8 bits (1 byte) but we do not include the
+			//remainder from a modular division. The reason for this is it's always sent as 4 byte chunks from
+			//Trinitycore and the size is always in terms of an int array
+			byte[] bitmask = new byte[(value.Length / 8)];
+
+			((ICollection) value).CopyTo(bitmask, 0);
+
+			//Write the size as if it were an int array first
+			dest.Write((byte)(bitmask.Length / 4));
+
+			dest.Write(bitmask);
 		}
 
 		/// <inheritdoc />
 		public override async Task WriteAsync(BitArray value, IWireStreamWriterStrategyAsync dest)
 		{
-			//pass to decorated serializer
-			await Task.CompletedTask;
+			if (dest == null) throw new ArgumentNullException(nameof(dest));
+
+			//The size must be equal to the length divided by 8 bits (1 byte) but we do not include the
+			//remainder from a modular division. The reason for this is it's always sent as 4 byte chunks from
+			//Trinitycore and the size is always in terms of an int array
+			byte[] bitmask = new byte[(value.Length / 8)];
+
+			((ICollection)value).CopyTo(bitmask, 0);
+
+			//Write the size as if it were an int array first
+			await dest.WriteAsync((byte)(bitmask.Length / 4));
+
+			await dest.WriteAsync(bitmask);
 		}
 
 		/// <inheritdoc />
 		public override async Task<BitArray> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
-			//reads the packed int value from the stream
-			return null;
+			//TODO: We should handle multiple types of sizes
+			//WoW sends a byte for the block count and an int array. We use a surrogate to deserialize it
+			byte size = await source.ReadByteAsync();
+
+			//Load the data for the bitmask
+			//WoW sends the size as an int array but we can more efficiently read a byte array so we pretend
+			//It is the same
+			return new BitArray(await source.ReadBytesAsync(size * sizeof(int)));
 		}
 	}
 }
