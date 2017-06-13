@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 namespace FreecraftCore.Serializer.KnownTypes
 {
 	/// <summary>
-	/// Serializer for the packed <see cref="DateTime"/> that is based on the packing implemented on Trinitycore.
+	/// Serializer for the <see cref="BitArray"/> that is used in the bitmask/updatemask from Trinitycore
 	/// </summary>
 	public class BitArraySerializerStrategyDecorator : SimpleTypeSerializerStrategy<BitArray>
 	{
@@ -39,26 +39,30 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override void Write(BitArray value, IWireStreamWriterStrategy dest)
+		public override void Write([NotNull] BitArray value, IWireStreamWriterStrategy dest)
 		{
+			if (value == null) throw new ArgumentNullException(nameof(value));
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			//The size must be equal to the length divided by 8 bits (1 byte) but we do not include the
 			//remainder from a modular division. The reason for this is it's always sent as 4 byte chunks from
 			//Trinitycore and the size is always in terms of an int array
-			byte[] bitmask = new byte[(value.Length / 8)];
+			byte[] bitmask = new byte[value.Length / 8];
 
 			((ICollection) value).CopyTo(bitmask, 0);
 
+			byte size = (byte)(bitmask.Length / sizeof(int));
+
 			//Write the size as if it were an int array first
-			dest.Write((byte)(bitmask.Length / 4));
+			dest.Write(size);
 
 			dest.Write(bitmask);
 		}
 
 		/// <inheritdoc />
-		public override async Task WriteAsync(BitArray value, IWireStreamWriterStrategyAsync dest)
+		public override async Task WriteAsync([NotNull] BitArray value, IWireStreamWriterStrategyAsync dest)
 		{
+			if (value == null) throw new ArgumentNullException(nameof(value));
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			//The size must be equal to the length divided by 8 bits (1 byte) but we do not include the
@@ -75,8 +79,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override async Task<BitArray> ReadAsync(IWireStreamReaderStrategyAsync source)
+		public override async Task<BitArray> ReadAsync([NotNull] IWireStreamReaderStrategyAsync source)
 		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
 			//TODO: We should handle multiple types of sizes
 			//WoW sends a byte for the block count and an int array. We use a surrogate to deserialize it
 			byte size = await source.ReadByteAsync();

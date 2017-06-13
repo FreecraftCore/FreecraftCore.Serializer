@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -17,7 +18,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		public override bool CanHandle(ISerializableTypeContext context)
 		{
 			//Right now we can handle only DateTimes as special complex types.
-			return context.TargetType == typeof(DateTime);
+			return context.TargetType == typeof(DateTime) || context.TargetType == typeof(BitArray);
 		}
 
 		/// <inheritdoc />
@@ -32,6 +33,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (context.TargetType == typeof(DateTime))
 				return new PackedDateTimeSerializerStrategyDecorator(serializerProviderService.Get<int>()) as ITypeSerializerStrategy<TType>;
+
+			if (context.TargetType == typeof(BitArray))
+				return new BitArraySerializerStrategyDecorator() as ITypeSerializerStrategy<TType>;
 
 			throw new InvalidOperationException($"Special decorator cannot handle {typeof(TType).FullName}.");
 		}
