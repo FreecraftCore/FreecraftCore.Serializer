@@ -80,12 +80,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (context.TargetType.GetElementType() == null)
 				throw new InvalidOperationException($"Element type null.");
 
-			//TODO: This is an expirmental high preformance array serializer. It could have buffer overflows or other faults. It's not safe
-			/*if (typeof(TType) == typeof(int[]))
-			{
-				return new Int32ArraySerializerDecorator(serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
-			}*/
-
 			ITypeSerializerStrategy<TType> strat = null;
 
 			if (context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Reverse) && context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.FixedSize))
@@ -104,9 +98,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 				strat = Activator.CreateInstance(typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType()),
 					serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
 			}
-			
 
-			if(strat == null)
+			//TODO: This is an expirmental high preformance array serializer. It could have buffer overflows or other faults. It's not safe
+			/*if (typeof(TType) == typeof(int[]))
+			{
+				return new Int32ArraySerializerDecorator(serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
+			}*/
+
+
+			if (strat == null)
 				throw new InvalidOperationException($"Failed to construct an {nameof(ArraySerializerDecorator<TType>)} for the Type: {typeof(TType).FullName} in final creation step.");
 
 			//Now check if it should be decorated with compression

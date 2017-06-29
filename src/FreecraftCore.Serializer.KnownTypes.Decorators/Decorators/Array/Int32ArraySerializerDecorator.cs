@@ -37,23 +37,24 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		}
 
-		public unsafe override void Write(int[] value, IWireStreamWriterStrategy dest)
+		public override void Write(int[] value, IWireStreamWriterStrategy dest)
 		{
-			//Write byte as size
-			dest.Write((byte)value.Length);
+			//Let the size strategy write or not write
+			sizeStrategyService.Size<int[], int>(value, dest);
 
 			//Believe or not this is an order of magnitude faster than the below pointer hacking
 			//Even the pointer hacking was like 300% faster than manual writing
-			FastArraySerializer.AsByteArray(value, bs => dest.Write(bs));
+			value.AsByteArray(dest.Write);
 		}
 
-		public unsafe override int[] Read(IWireStreamReaderStrategy source)
+		public override int[] Read(IWireStreamReaderStrategy source)
 		{
-			byte size = source.ReadByte();
+			//Let the size strategy write or not write
+			int size = sizeStrategyService.Size(source);
 
 			byte[] bytes = source.ReadBytes(size * sizeof(int));
 
-			return FastArraySerializer.AsIntArrayPerm(bytes);
+			return bytes.AsIntArrayPerm();
 		}
 	}
 
@@ -75,7 +76,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		private static readonly UIntPtr BYTE_ARRAY_TYPE;
-		private static readonly UIntPtr FLOAT_ARRAY_TYPE;
+		private static readonly UIntPtr INT_ARRAY_TYPE;
 
 		static FastArraySerializer()
 		{
@@ -83,7 +84,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			fixed (void* pInts = new int[1])
 			{
 				BYTE_ARRAY_TYPE = getHeader(pBytes)->type;
-				FLOAT_ARRAY_TYPE = getHeader(pInts)->type;
+				INT_ARRAY_TYPE = getHeader(pInts)->type;
 			}
 		}
 
@@ -143,7 +144,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			{
 				var pHeader = getHeader(pArray);
 
-				pHeader->type = FLOAT_ARRAY_TYPE;
+				pHeader->type = INT_ARRAY_TYPE;
 				pHeader->length = (UIntPtr)(bytes.Length / sizeof(int));
 			}
 		}
