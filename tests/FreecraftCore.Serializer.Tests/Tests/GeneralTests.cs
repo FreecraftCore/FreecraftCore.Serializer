@@ -27,6 +27,16 @@ namespace FreecraftCore.Serializer.Tests
 		}
 
 		[Test]
+		public static void Test_Serializer_Throws_On_Registering_Type_With_Duplicate_Wiremember_Numbers()
+		{
+			//arrange
+			SerializerService service = new SerializerService();
+
+			//assert
+			Assert.Throws<Exception>(() => service.RegisterType<TestCannotRegisterTypeWithMultipleSameFields>());
+		}
+
+		[Test]
 		public static void Test_Doesnt_Throw_On_Empty_Compile()
 		{
 			//arrange
@@ -151,6 +161,21 @@ namespace FreecraftCore.Serializer.Tests
 			//assert
 			Assert.IsNotNull(obj);
 			Assert.AreEqual(5, obj.i);
+		}
+
+		[WireDataContract]
+		public class TestCannotRegisterTypeWithMultipleSameFields
+		{
+			[WireMember(1)]
+			public int i;
+
+			[WireMember(1)]
+			public int j;
+
+			public TestCannotRegisterTypeWithMultipleSameFields()
+			{
+				
+			}
 		}
 
 		[WireDataContract]

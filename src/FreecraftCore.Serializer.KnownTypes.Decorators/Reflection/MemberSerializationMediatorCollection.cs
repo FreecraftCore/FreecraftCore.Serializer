@@ -44,12 +44,19 @@ namespace FreecraftCore.Serializer
 		{
 			//TODO: Cleaner/better way to provide instuctions
 			//Build the instructions for serializion with mediators
-			return typeof(TTargetType).GetTypeInfo().DeclaredMembers
+			MemberInfo[] infos = typeof(TTargetType).GetTypeInfo().DeclaredMembers
 				.Where(mi => mi is FieldInfo || mi is PropertyInfo)
 				.Where(mi => mi.HasAttribute<WireMemberAttribute>())
-				.OrderBy(x => x.GetCustomAttribute<WireMemberAttribute>().MemberOrder)
-				.Select(x => mediatorFactory.Create<TTargetType>(x))
-				.ToArray();
+				.OrderBy(x => x.GetCustomAttribute<WireMemberAttribute>().MemberOrder).ToArray();
+
+			//We need to check that there isn't any duplicate WireMember id.
+			if(infos.Length != infos
+								.GroupBy(wm => wm.GetCustomAttribute<WireMemberAttribute>().MemberOrder)
+								.Select(group => group.First())
+								.Count())
+			throw new InvalidOperationException($"Type: {typeof(TTargetType).FullName} contains some non-unique ID'd {nameof(WireMemberAttribute)}.");
+
+			return infos.Select(x => mediatorFactory.Create<TTargetType>(x)).ToArray();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()

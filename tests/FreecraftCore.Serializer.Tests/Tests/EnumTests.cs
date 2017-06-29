@@ -85,7 +85,7 @@ namespace FreecraftCore.Serializer.Tests
 			SerializerService service = new SerializerService();
 
 			service.RegisterType<ClassWithStringToMakeStringSerializerAvailable>();
-			Assert.DoesNotThrow(() => service.RegisterType<TestEnumStringFault>()); //this was causing problems when you tried to register multiple enumstrings due to fault with key lookup
+			Assert.Throws<Exception>(() => service.RegisterType<TestEnumStringFault>()); //this was causing problems when you tried to register multiple enumstrings due to fault with key lookup
 		}
 
 		[Test]
