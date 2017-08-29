@@ -6,7 +6,7 @@ dist: trusty
 dotnet: 1.0.3
 
 install:
-  - nuget install NUnit.Runners -Version 3.0.1 -OutputDirectory tests/testrunner
+  - nuget install NUnit.Runners -Version 3.6.1 -OutputDirectory tests/testrunner
   - nuget restore FreecraftCore.Serializer.sln -ConfigFile NuGet.config
 
 before_script:

@@ -1,2 +1,2 @@
-mono ./testrunner/NUnit.Console.3.0.1/tools/nunit3-console.exe ./FreecraftCore.Serializer.Strategy.Tests/bin/Debug/FreecraftCore.Serializer.Strategy.Tests.dll
-mono ./testrunner/NUnit.Console.3.0.1/tools/nunit3-console.exe ./FreecraftCore.Serializer.Tests/bin/Debug/FreecraftCore.Serializer.Tests.dll
+mono ./testrunner/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe ./FreecraftCore.Serializer.Strategy.Tests/bin/Debug/FreecraftCore.Serializer.Strategy.Tests.dll
+mono ./testrunner/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe ./FreecraftCore.Serializer.Tests/bin/Debug/FreecraftCore.Serializer.Tests.dll
