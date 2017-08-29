@@ -1,6 +1,6 @@
 language: csharp
 solution: ./FreecraftCore.Serializer.sln
-mono: none
+mono: latest
 sudo: required
 dist: trusty
 dotnet: 1.0.3
