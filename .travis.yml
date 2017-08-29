@@ -1,11 +1,11 @@
 language: csharp
 solution: ./FreecraftCore.Serializer.sln
+mono: none
 sudo: required
 dist: trusty
-dotnet: 1.0.0-preview2-003131
+dotnet: 1.0.3
 
 install:
-  - export DOTNET_CLI_TELEMETRY_OPTOUT=1
   - nuget install NUnit.Runners -Version 3.0.1 -OutputDirectory tests/testrunner
   - nuget restore FreecraftCore.Serializer.sln -ConfigFile NuGet.config
 
