@@ -48,11 +48,28 @@ namespace FreecraftCore.Serializer
 			//Create the decoration service
 			serializerStrategyFactoryService = new DefaultSerializerStrategyFactory(SerializerDecoratorHandlerFactory.Create(serializerStorageService, lookupKeyFactoryService, this), serializerStorageService, this, lookupKeyFactoryService);
 
-			FreecraftCoreSerializerKnownTypesPrimitivesMetadata.Assembly.GetTypes()
+			typeof(SerializerService).GetTypeInfo().Assembly.GetTypes()
 				.Where(t => t.GetTypeInfo().HasAttribute<KnownTypeSerializerAttribute>())
 				.Select(t => Activator.CreateInstance(t) as ITypeSerializerStrategy)
 				.ToList()
 				.ForEach(s => serializerStorageService.RegisterType(s.SerializerType, s));
+
+			RegisterPrimitiveGenericSerializer<short>();
+			RegisterPrimitiveGenericSerializer<ushort>();
+			RegisterPrimitiveGenericSerializer<int>();
+			RegisterPrimitiveGenericSerializer<uint>();
+			RegisterPrimitiveGenericSerializer<long>();
+			RegisterPrimitiveGenericSerializer<ulong>();
+			RegisterPrimitiveGenericSerializer<float>();
+			RegisterPrimitiveGenericSerializer<double>();
+			RegisterPrimitiveGenericSerializer<byte>();
+			RegisterPrimitiveGenericSerializer<sbyte>();
+		}
+
+		private void RegisterPrimitiveGenericSerializer<TType>()
+			where TType : struct
+		{
+			serializerStorageService.RegisterType(typeof(TType), new GenericTypePrimitiveSharedBufferSerializerStrategy<TType>());
 		}
 
 		public void Compile()

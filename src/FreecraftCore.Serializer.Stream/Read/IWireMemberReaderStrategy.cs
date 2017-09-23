@@ -9,7 +9,7 @@ namespace FreecraftCore.Serializer
 	/// Contract for objects that provide wire stream reading.
 	/// </summary>
 	public interface IWireStreamReaderStrategy : IDisposable
-	{	
+	{
 		/// <summary>
 		/// Reads a byte from the stream.
 		/// </summary>
