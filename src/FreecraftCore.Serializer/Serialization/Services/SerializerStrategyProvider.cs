@@ -42,10 +42,17 @@ namespace FreecraftCore.Serializer
 			if (key.ContextFlags == ContextTypeFlags.None)
 				return Get(key.ContextType);
 
-			ITypeSerializerStrategy strat = strategyLookupTable[key];
-				
-			if(strat == null)
-				throw new KeyNotFoundException($"Requested Type: {key.ToString()} was not found in the provider service {this.GetType().FullName}.");
+			ITypeSerializerStrategy strat = null;
+
+			//We don't runtime check the key because it's slow to hash
+			try
+			{
+				strat = strategyLookupTable[key];
+			}
+			catch(KeyNotFoundException e)
+			{
+				throw new KeyNotFoundException($"Requested Type: {key.ToString()} was not found in the provider service {this.GetType().FullName}.", e);
+			}
 
 			return strat;
 		}
