@@ -137,13 +137,13 @@ namespace FreecraftCore.Serializer
 			}
 		}
 
-		private ITypeSerializerStrategy GetLeastDerivedSerializer<TType>()
+		private ITypeSerializerStrategy GetLeastDerivedSerializer(Type typeToSerialize)
 		{
 			//If it's a primitive or an enum it doesn't have a derived serializer
-			if(typeof(TType).GetTypeInfo().IsPrimitive || typeof(TType).GetTypeInfo().IsEnum)
-				return serializerStorageService.Get<TType>();
+			if(typeToSerialize.GetTypeInfo().IsPrimitive || typeToSerialize.GetTypeInfo().IsEnum || typeToSerialize.GetTypeInfo().IsInterface)
+				return serializerStorageService.Get(typeToSerialize);
 
-			Type t = typeof(TType);
+			Type t = typeToSerialize;
 
 			//We need to switch between object and ValueType to support struct serialization
 			//If it's in the cache we don't need to compute the least derived type
@@ -209,14 +209,14 @@ namespace FreecraftCore.Serializer
 
 			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
 #if DEBUG || DEBUGBUILD
-			if (!serializerStorageService.HasSerializerFor<TTypeToSerialize>())
+			if (!serializerStorageService.HasSerializerFor(data.GetType()))
 				throw new InvalidOperationException($"Serializer cannot serialize Type: {typeof(TTypeToSerialize).FullName} because it's not registered.");
 #endif
 
-			if (!isCompiled)
+			if(!isCompiled)
 				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
 
-			GetLeastDerivedSerializer<TTypeToSerialize>().Write(data, writer);
+			GetLeastDerivedSerializer(typeof(TTypeToSerialize).GetTypeInfo().IsInterface ? typeof(TTypeToSerialize) : data.GetType()).Write(data, writer);
 
 			return writer.GetBytes();
 		}
@@ -235,7 +235,8 @@ namespace FreecraftCore.Serializer
 			if (!isCompiled)
 				throw new InvalidOperationException($"You cannot deserialize before compiling the serializer.");
 
-			TTypeToDeserializeTo deserializeObject = (TTypeToDeserializeTo)GetLeastDerivedSerializer<TTypeToDeserializeTo>().Read(source);
+			//TODO: Cache isInterface
+			TTypeToDeserializeTo deserializeObject = (TTypeToDeserializeTo)GetLeastDerivedSerializer(typeof(TTypeToDeserializeTo)).Read(source);
 
 			return deserializeObject;
 		}
@@ -288,14 +289,15 @@ namespace FreecraftCore.Serializer
 
 			//Conditional compile this because it's not really very efficient anymore to lookup if a type is serialized.
 #if DEBUG || DEBUGBUILD
-			if (!serializerStorageService.HasSerializerFor<TTypeToSerialize>())
+			if (!serializerStorageService.HasSerializerFor(data.GetType()))
 				throw new InvalidOperationException($"Serializer cannot serialize Type: {typeof(TTypeToSerialize).FullName} because it's not registered.");
 #endif
 
 			if (!isCompiled)
 				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
 
-			await GetLeastDerivedSerializer<TTypeToSerialize>().WriteAsync(data, writer);
+			//TODO: Cache IsInterface
+			await GetLeastDerivedSerializer(typeof(TTypeToSerialize).GetTypeInfo().IsInterface ? typeof(TTypeToSerialize) : data.GetType()).WriteAsync(data, writer);
 
 			return await writer.GetBytesAsync();
 		}
@@ -322,7 +324,7 @@ namespace FreecraftCore.Serializer
 			if (!isCompiled)
 				throw new InvalidOperationException($"You cannot deserialize before compiling the serializer.");
 
-			return (TTypeToDeserializeTo)await GetLeastDerivedSerializer<TTypeToDeserializeTo>().ReadAsync(source);
+			return (TTypeToDeserializeTo)await GetLeastDerivedSerializer(typeof(TTypeToDeserializeTo)).ReadAsync(source);
 		}
 	}
 }
