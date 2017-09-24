@@ -2,6 +2,19 @@
 
   <PropertyGroup>
     <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
+    <Authors>Andrew Blakely, HelloKitty</Authors>
+    <Company />
+    <Description>Metadata based serializer for World of Warcraft packets. Design inspired from Blizzard's JAM and Marc Gravell's Protobuf-Net. Uses attributes to annotate DTOs that are made serializable according to the Blizzard JAM packet protocol.
+
+Can be extended for use outside of World of Warcraft too!</Description>
+    <PackageProjectUrl>https://github.com/FreecraftCore/FreecraftCore.Serializer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/FreecraftCore/FreecraftCore.Serializer</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseUrl>https://github.com/FreecraftCore/FreecraftCore.Serializer/blob/master/LICENSE</PackageLicenseUrl>
+    <Copyright>Andrew Blakely, HelloKitty</Copyright>
+    <PackageTags>WorldofWarcraft WoW Blizzard JAM Packet Protocol Serialization Serializer Freecraft FreecraftCore</PackageTags>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Product>FreecraftCore.Serializer</Product>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -10,6 +23,10 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net46|AnyCPU'">
+    <DocumentationFile>bin\Release\net46\FreecraftCore.Serializer.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
