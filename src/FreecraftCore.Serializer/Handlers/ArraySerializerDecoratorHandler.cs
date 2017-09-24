@@ -69,11 +69,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 				}
 			}
 
-			//TODO: Should we really have a default?
-			//if they marked it with nothing then use a the byte
-			if (collectionSizeStrategy == null)
-				collectionSizeStrategy = new GenericCollectionSizeStrategy<byte>(serializerProviderService.Get<byte>());
-
 			if (context.TargetType == null)
 				throw new InvalidOperationException($"Provided target type null.");
 
@@ -92,10 +87,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 					throw new InvalidOperationException($"Cannot have a {typeof(TType).FullName} serialized with Reverse and Fixed attributes.");
 				}
 			}
-			else
+			else if(collectionSizeStrategy != null || typeof(TType) != typeof(byte[])) //if we have a size collection or the type isn't a byte array
 			{
+				//TODO: Should we really have a default?
+				//if they marked it with nothing then use a the byte
+				if(collectionSizeStrategy == null)
+					collectionSizeStrategy = new GenericCollectionSizeStrategy<byte>(serializerProviderService.Get<byte>());
+
 				//If it's a primitive array we should use the new generic primitive array serializer
-				if(typeof(TType).GetTypeInfo().IsPrimitive)
+				if(typeof(TType).GetTypeInfo().GetElementType().GetTypeInfo().IsPrimitive)
 					strat = Activator.CreateInstance(typeof(GenericPrimitiveArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType()),
 						serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
 				else
@@ -103,7 +103,14 @@ namespace FreecraftCore.Serializer.KnownTypes
 					strat = Activator.CreateInstance(typeof(ArraySerializerDecorator<>).MakeGenericType(context.TargetType.GetElementType()),
 						serializerProviderService, collectionSizeStrategy, context.ContextRequirement) as ITypeSerializerStrategy<TType>;
 			}
-
+			else
+			{
+				//If it's a byte array and we have no collection/size handling
+				//then really all we can do is read ALL and write ALL
+				//So there is a default strategy specifically for that
+				if(typeof(TType) == typeof(byte[]))
+					strat = new DefaultByteArraySerializerStrategy() as ITypeSerializerStrategy<TType>;
+			}
 
 			if (strat == null)
 				throw new InvalidOperationException($"Failed to construct an {nameof(ArraySerializerDecorator<TType>)} for the Type: {typeof(TType).FullName} in final creation step.");
