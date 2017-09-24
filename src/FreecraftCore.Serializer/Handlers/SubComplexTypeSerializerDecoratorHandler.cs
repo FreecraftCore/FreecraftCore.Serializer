@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
-
+using Reflect.Extent;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
@@ -96,14 +96,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 				new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>().ChildType) } : Enumerable.Empty<ISerializableTypeContext>();
 
 
-			contexts.Concat(new TypeMemberParsedTypeContextCollection(context.TargetType));
+			contexts = contexts.Concat(new TypeMemberParsedTypeContextCollection(context.TargetType));
 
 			//Grab the children from the metadata; return type contexts so the types can be handled (no context is required because the children are their own registerable type
-#if !NET35
-			return contexts.Concat(GetAssociatedChildren(context.TargetType).Select(t => new TypeBasedSerializationContext(t)));
-#else
 			return contexts.Concat(GetAssociatedChildren(context.TargetType).Select(t => new TypeBasedSerializationContext(t) as ISerializableTypeContext));
-#endif
 		}
 
 		[NotNull]

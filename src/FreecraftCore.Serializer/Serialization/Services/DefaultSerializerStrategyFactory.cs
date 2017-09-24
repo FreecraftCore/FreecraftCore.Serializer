@@ -86,6 +86,7 @@ namespace FreecraftCore.Serializer
 				//If it can handle then we should register the associated types
 				foreach (ISerializableTypeContext subContext in handler.GetAssociatedSerializationContexts(context))
 				{
+
 					//populate key first; we need to check if we already know about it
 					subContext.BuiltContextKey = lookupKeyFactoryService.Create(subContext);
 
