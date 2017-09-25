@@ -200,7 +200,17 @@ namespace FreecraftCore.Serializer.KnownTypes
 			where TChildType : TBaseType
 		{
 			//Just try to register it
-			RegisterPair(typeof(TChildType), key);
+			return TryLink(typeof(TChildType), key);
+		}
+
+		/// <inheritdoc />
+		public bool TryLink(Type childType, int key)
+		{
+			if(!typeof(TBaseType).GetTypeInfo().IsAssignableFrom(childType))
+				throw new InvalidOperationException($"Linked {typeof(TBaseType).Name} is not the base type of {childType.Name}.");
+
+			//Just try to register it
+			RegisterPair(childType, key);
 
 			return true;
 		}

@@ -110,8 +110,23 @@ namespace FreecraftCore.Serializer
 			//At this point this is a class marked with [WireDataContract] so we should assume and treat it as a complex type
 			ITypeSerializerStrategy<TTypeToRegister> serializer = serializerStrategyFactoryService.Create<TTypeToRegister>(new TypeBasedSerializationContext(typeof(TTypeToRegister))) as ITypeSerializerStrategy<TTypeToRegister>;
 
+			bool result = true;
+
+			//Check if it requires runtime linking
+			if(typeof(TTypeToRegister).GetTypeInfo().HasAttribute<WireDataContractBaseLinkAttribute>())
+			{
+				WireDataContractBaseLinkAttribute linkAttribute = typeof(TTypeToRegister).GetTypeInfo().GetCustomAttribute<WireDataContractBaseLinkAttribute>();
+
+				//Only link if they provided a basetype.
+				//Users may call RegisterType before linking so don't throw
+				if(linkAttribute.BaseType != null)
+				{
+					result = result && Link(linkAttribute, linkAttribute.BaseType, typeof(TTypeToRegister));
+				}
+			}
+
 			//Return the serializer; callers shouldn't need it though
-			return serializer != null;
+			return serializer != null && result;
 		}
 
 		/// <inheritdoc />
@@ -227,26 +242,34 @@ namespace FreecraftCore.Serializer
 		public bool Link<TChildType, TBaseType>() 
 			where TChildType : TBaseType
 		{
-			WireDataContractBaseTypeRuntimeLinkAttribute linkAttribute =
-				typeof(TChildType).GetTypeInfo().GetCustomAttribute<WireDataContractBaseTypeRuntimeLinkAttribute>(false);
+			WireDataContractBaseLinkAttribute linkAttribute =
+				typeof(TChildType).GetTypeInfo().GetCustomAttribute<WireDataContractBaseLinkAttribute>(false);
 
 			//Have to make sure link is valid
 			//Without link attribute we can't know how to register it.
 			if(linkAttribute == null)
-				throw new InvalidOperationException($"Tried to link Child: {typeof(TChildType).FullName} with Base: {typeof(TBaseType).FullName} but no {nameof(WireDataContractBaseTypeRuntimeLinkAttribute)} attribute is marked on child.");
+				throw new InvalidOperationException($"Tried to link Child: {typeof(TChildType).FullName} with Base: {typeof(TBaseType).FullName} but no {nameof(WireDataContractBaseLinkAttribute)} attribute is marked on child.");
 
-			//Ensure both are registered
 			RegisterType<TChildType>();
 
-			ITypeSerializerStrategy<TBaseType> baseTypeSerializerStrategy = serializerStorageService.Get<TBaseType>();
+			return Link(linkAttribute, typeof(TBaseType), typeof(TChildType));
+		}
 
-			//This is bad design but we just try to see if it's a polymorphic runtime linker
-			//If not we can't register the type.
-			IRuntimePolymorphicRegisterable<TBaseType> strategy = baseTypeSerializerStrategy as IRuntimePolymorphicRegisterable<TBaseType>;
-			if (strategy != null)
+		private bool Link(WireDataContractBaseLinkAttribute linkAttribute, Type baseType, Type childType)
+		{
+			if(serializerStorageService.HasSerializerFor(baseType))
 			{
-				strategy.TryLink<TChildType>(linkAttribute.Index);
-				return true;
+				try
+				{
+					(serializerStorageService.Get(baseType) as IRuntimePolymorphicRegisterable)
+						.TryLink(childType, linkAttribute.Index);
+
+					return true;
+				}
+				catch(Exception e)
+				{
+					throw new InvalidOperationException($"Unable to link type {baseType.Name} and {childType.Name}.", e);
+				}
 			}
 
 			return false;

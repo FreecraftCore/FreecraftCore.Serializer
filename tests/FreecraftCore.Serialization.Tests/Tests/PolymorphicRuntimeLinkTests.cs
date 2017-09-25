@@ -25,7 +25,7 @@ namespace FreecraftCore.Serializer.Tests
 	}
 
 	[WireDataContract]
-	[WireDataContractBaseTypeRuntimeLink(5)]
+	[WireDataContractBaseLink(5)]
 	public class ChildType : TestBaseType
 	{
 		[WireMember(1)]
@@ -34,6 +34,35 @@ namespace FreecraftCore.Serializer.Tests
 		public ChildType()
 		{
 			
+		}
+	}
+
+	[WireDataContract(WireDataContractAttribute.KeyType.Byte, InformationHandlingFlags.Default, true)]
+	public class TestBaseTypeNoRuntimeLink
+	{
+		[WireMember(1)]
+		public int i = 5;
+
+		[KnownSize(4)]
+		[WireMember(4)]
+		public byte[] bytes { get; } = new byte[4];
+
+		public TestBaseTypeNoRuntimeLink()
+		{
+
+		}
+	}
+
+	[WireDataContract]
+	[WireDataContractBaseLink(5, typeof(TestBaseTypeNoRuntimeLink))]
+	public class ChildTypeNoRuntimeLink : TestBaseTypeNoRuntimeLink
+	{
+		[WireMember(1)]
+		public int j;
+
+		public ChildTypeNoRuntimeLink()
+		{
+
 		}
 	}
 
@@ -87,6 +116,24 @@ namespace FreecraftCore.Serializer.Tests
 			//assert
 			Assert.NotNull(child);
 			Assert.True(child.GetType() == typeof(ChildType));
+		}
+
+		[Test]
+		public static void Test_Can_Serialize_Then_Deserialize_With_Linked_TypeWithoutLink()
+		{
+			//arrange
+			SerializerService serivce = new SerializerService();
+			serivce.RegisterType<ChildTypeNoRuntimeLink>();
+			serivce.Compile();
+
+			//act
+			ChildTypeNoRuntimeLink child = serivce.Deserialize<TestBaseTypeNoRuntimeLink>(serivce.Serialize(new ChildTypeNoRuntimeLink())) as ChildTypeNoRuntimeLink;
+
+			Console.WriteLine(child.i + 5);
+
+			//assert
+			Assert.NotNull(child);
+			Assert.True(child.GetType() == typeof(ChildTypeNoRuntimeLink));
 		}
 	}
 }

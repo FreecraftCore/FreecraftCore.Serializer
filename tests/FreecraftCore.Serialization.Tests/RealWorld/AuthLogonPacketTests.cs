@@ -90,7 +90,7 @@ namespace FreecraftCore.Serializer.Tests
 		/// Response payload sent in response to the <see cref="AuthLogonProofRequest"/>.
 		/// </summary>
 		[WireDataContract]
-		[WireDataContractBaseTypeRuntimeLink((0x01 << 8) + 2)]
+		[WireDataContractBaseLink((0x01 << 8) + 2)]
 		public class AuthLogonProofResponse : AuthPacketBaseTest
 		{
 			//Not a wire member. Pull from proof result. It eats the byte for type info

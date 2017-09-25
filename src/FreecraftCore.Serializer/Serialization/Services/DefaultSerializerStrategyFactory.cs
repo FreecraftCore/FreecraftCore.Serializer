@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
 
-
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
