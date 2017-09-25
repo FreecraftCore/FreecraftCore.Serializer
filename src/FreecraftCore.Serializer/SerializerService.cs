@@ -46,7 +46,7 @@ namespace FreecraftCore.Serializer
 
 			ContextLookupKeyFactoryService lookupKeyFactoryService = new ContextLookupKeyFactoryService();
 			//Create the decoration service
-			serializerStrategyFactoryService = new DefaultSerializerStrategyFactory(SerializerDecoratorHandlerFactory.Create(serializerStorageService, lookupKeyFactoryService, this), serializerStorageService, this, lookupKeyFactoryService);
+			serializerStrategyFactoryService = new DefaultSerializerStrategyFactory(SerializerDecoratorHandlerFactory.Create(serializerStorageService, lookupKeyFactoryService, this), serializerStorageService, this, lookupKeyFactoryService, serializerStorageService);
 
 			typeof(SerializerService).GetTypeInfo().Assembly.GetTypes()
 				.Where(t => t.GetTypeInfo().HasAttribute<KnownTypeSerializerAttribute>())
@@ -109,9 +109,6 @@ namespace FreecraftCore.Serializer
 
 			//At this point this is a class marked with [WireDataContract] so we should assume and treat it as a complex type
 			ITypeSerializerStrategy<TTypeToRegister> serializer = serializerStrategyFactoryService.Create<TTypeToRegister>(new TypeBasedSerializationContext(typeof(TTypeToRegister))) as ITypeSerializerStrategy<TTypeToRegister>;
-
-			//All types calling RegisterType are contextless complex types. Register the result as a contextless type serializer
-			serializerStorageService.RegisterType(typeof(TTypeToRegister), serializer);
 
 			//Return the serializer; callers shouldn't need it though
 			return serializer != null;
@@ -183,21 +180,6 @@ namespace FreecraftCore.Serializer
 			if (strategy == null)
 				throw new InvalidOperationException($"Failed to create serializer for Type: {context.TargetType} with Context: {context.ToString()}.");
 
-			//If the serializer is contextless we can register it with the general provider
-			if (strategy.ContextRequirement == SerializationContextRequirement.Contextless)
-				serializerStorageService.RegisterType(context.TargetType, strategy);
-			else
-			{
-				//TODO: Clean this up
-				if (context.HasContextualKey())
-				{
-					//Register the serializer with the context key that was built into the serialization context.
-					serializerStorageService.RegisterType(context.BuiltContextKey.Value.ContextFlags, context.BuiltContextKey.Value.ContextSpecificKey, context.TargetType, strategy);
-				}
-				else
-					throw new InvalidOperationException($"Serializer was created but Type: {context.TargetType} came with no contextual key in the end for a contextful serialization context.");
-			}
-
 			return strategy;
 		}
 
@@ -254,7 +236,6 @@ namespace FreecraftCore.Serializer
 				throw new InvalidOperationException($"Tried to link Child: {typeof(TChildType).FullName} with Base: {typeof(TBaseType).FullName} but no {nameof(WireDataContractBaseTypeRuntimeLinkAttribute)} attribute is marked on child.");
 
 			//Ensure both are registered
-			RegisterType<TBaseType>();
 			RegisterType<TChildType>();
 
 			ITypeSerializerStrategy<TBaseType> baseTypeSerializerStrategy = serializerStorageService.Get<TBaseType>();
@@ -264,7 +245,6 @@ namespace FreecraftCore.Serializer
 			IRuntimePolymorphicRegisterable<TBaseType> strategy = baseTypeSerializerStrategy as IRuntimePolymorphicRegisterable<TBaseType>;
 			if (strategy != null)
 			{
-				IRuntimePolymorphicRegisterable<TBaseType> linker = strategy;
 				strategy.TryLink<TChildType>(linkAttribute.Index);
 				return true;
 			}

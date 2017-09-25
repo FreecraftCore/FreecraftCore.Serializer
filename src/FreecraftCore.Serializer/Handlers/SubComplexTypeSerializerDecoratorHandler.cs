@@ -89,11 +89,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		protected override IEnumerable<ISerializableTypeContext> TryGetAssociatedSerializableContexts(ISerializableTypeContext context)
 		{
-			if (context == null) throw new ArgumentNullException(nameof(context));
+			if(context == null) throw new ArgumentNullException(nameof(context));
 
 			//We need to include the potential default child type now
-			IEnumerable<ISerializableTypeContext> contexts = context.TargetType.GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>() != null ?
-				new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>().ChildType) } : Enumerable.Empty<ISerializableTypeContext>();
+			IEnumerable<ISerializableTypeContext> contexts = context.TargetType.GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>() != null ? new ISerializableTypeContext[] {new TypeBasedSerializationContext(context.TargetType.GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>().ChildType)} : Enumerable.Empty<ISerializableTypeContext>();
 
 
 			contexts = contexts.Concat(new TypeMemberParsedTypeContextCollection(context.TargetType));

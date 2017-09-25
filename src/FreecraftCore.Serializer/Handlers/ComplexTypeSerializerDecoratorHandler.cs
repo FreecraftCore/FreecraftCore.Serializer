@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using JetBrains.Annotations;
+using Reflect.Extent;
 
 namespace FreecraftCore.Serializer
 {
@@ -52,7 +53,15 @@ namespace FreecraftCore.Serializer
 
 			//We need context when we refer to the members of a Type. They could be marked with metadata that could cause a serializer to be context based
 
-			return new TypeMemberParsedTypeContextCollection(context.TargetType);
+			return new TypeMemberParsedTypeContextCollection(context.TargetType)
+				.Concat(GetInheritanceHierarchy(context.TargetType).Where(t => t.GetTypeInfo().GetCustomAttribute<WireDataContractAttribute>(false) != null).Select(t => new TypeBasedSerializationContext(t)));
+		}
+
+		//https://stackoverflow.com/questions/5716896/get-inheritance-tree-of-type
+		public static IEnumerable<Type> GetInheritanceHierarchy(Type type)
+		{
+			for(var current = type.GetTypeInfo().BaseType; current != null; current = current.GetTypeInfo().BaseType)
+				yield return current;
 		}
 	}
 }

@@ -67,6 +67,7 @@
     <Compile Include="SubComplexTypeTests.cs" />
     <Compile Include="Tests\BitArraySerializationTests.cs" />
     <Compile Include="Tests\CompressionTests.cs" />
+    <Compile Include="Tests\DefaultNoSizeArraySerializationTests.cs" />
     <Compile Include="Tests\EnumTests.cs" />
     <Compile Include="Tests\FixedReverseByteSerializerTests.cs" />
     <Compile Include="Tests\GeneralTests.cs" />
