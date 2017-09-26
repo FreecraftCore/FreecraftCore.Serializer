@@ -31,6 +31,7 @@ namespace FreecraftCore.Serialization
 		[WireDataContract]
 		public class TestNoSizeByteArray
 		{
+			[ReadToEnd]
 			[WireMember(1)]
 			public byte[] Bytes { get; set; }
 		}

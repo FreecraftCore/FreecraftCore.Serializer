@@ -18,6 +18,25 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 			SerializerService serializer = new SerializerService();
 			serializer.RegisterType<PSOBBPatchPacketPayloadServer>();
 		}
+
+		[Test]
+		public void Test_Can_Serialize_Payload()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType<PSOBBPatchPacketPayloadServer>();
+			byte[] bytes = Enumerable.Repeat((byte)55, 200).ToArray();
+
+			//act
+			serializer.Compile();
+			UnknownPatchPacket payload = serializer.Deserialize<PSOBBPatchPacketPayloadServer>(bytes)
+				as UnknownPatchPacket;
+
+			Assert.True(payload.UnknownBytes.Length == (200 - 2));
+
+			for(int i = 0; i < bytes.Length - 2; i++)
+				Assert.AreEqual(bytes[i], payload.UnknownBytes[i]);
+		}
 	}
 
 	/// <summary>

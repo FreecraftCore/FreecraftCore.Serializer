@@ -76,6 +76,9 @@ namespace FreecraftCore.Serializer
 		{
 			lock (SyncObj)
 			{
+				//Call compile on the serializer provider
+				serializerStorageService.Compile();
+
 				//Build the least derived cache
 				foreach (Type t in serializerStorageService)
 				{

@@ -78,13 +78,10 @@ namespace FreecraftCore.Serializer
 			if(serializerProviderService.HasSerializerFor(context.BuiltContextKey.Value))
 				throw new InvalidOperationException($"Tried to create multiple serializer for already created serialize with Context: {context.ToString()}.");
 
-			IEnumerable<ISerializableTypeContext> byLikelyRegisteration = OrderByLikelyRegisteration(GetAllSubTypeContexts(context, Enumerable.Empty<ISerializableTypeContext>())
+			IEnumerable<ISerializableTypeContext> byLikelyRegisteration = GetAllSubTypeContexts(context, Enumerable.Empty<ISerializableTypeContext>())
 					.Where(s => !context.BuiltContextKey.Value.Equals(s.BuiltContextKey.Value))
-					.Distinct(new SerializableTypeContextComparer()))
+					.Distinct(new SerializableTypeContextComparer())
 					.ToList();
-
-			foreach(ISerializableTypeContext subContext in byLikelyRegisteration)
-				Console.WriteLine($"ToRegister: {subContext.BuiltContextKey.Value}");
 
 			//We must register all subcontexts first
 			foreach(ISerializableTypeContext subContext in byLikelyRegisteration)
@@ -96,48 +93,6 @@ namespace FreecraftCore.Serializer
 
 			//Now that all dependencies in the object graph are registered we can create the requested type
 			return InternalCreate<TType>(context);
-		}
-
-		public IEnumerable<ISerializableTypeContext> OrderByLikelyRegisteration(IEnumerable<ISerializableTypeContext> contexts)
-		{
-			return contexts
-				.OrderBy(s =>
-				{
-					//Give primtives or arrays of primitives HIGH priority
-					if(s.TargetType.GetTypeInfo().IsPrimitive)
-						return -1;
-
-					if(s.TargetType.IsArray)
-						if(s.TargetType.GetElementType().GetTypeInfo().IsPrimitive)
-							return -1;
-
-					IEnumerable<ISerializableTypeContext> serializableTypeContexts = decoratorHandlers.First(h => h.CanHandle(s))
-						.GetAssociatedSerializationContexts(s)
-						.ToList()
-						.Select(s2 =>
-						{
-							s2.BuiltContextKey = lookupKeyFactoryService.Create(s2);
-							return s2;
-						});
-
-					return serializableTypeContexts
-						.Count(s2 => serializerProviderService.HasSerializerFor(s2.BuiltContextKey.Value));
-				});
-		}
-
-		private int UnregisteredDependencyCount(ISerializableTypeContext context)
-		{
-			IEnumerable<ISerializableTypeContext> serializableTypeContexts = decoratorHandlers.First(h => h.CanHandle(context))
-				.GetAssociatedSerializationContexts(context)
-				.ToList()
-				.Select(s2 =>
-				{
-					s2.BuiltContextKey = lookupKeyFactoryService.Create(s2);
-					return s2;
-				});
-
-			return serializableTypeContexts
-				.Count(s2 => serializerProviderService.HasSerializerFor(s2.BuiltContextKey.Value));
 		}
 
 		private ITypeSerializerStrategy<TType> InternalCreate<TType>([NotNull] ISerializableTypeContext context)
@@ -176,15 +131,8 @@ namespace FreecraftCore.Serializer
 
 		private IEnumerable<ISerializableTypeContext> GetAllSubTypeContexts([NotNull] ISerializableTypeContext context, IEnumerable<ISerializableTypeContext> knownContexts)
 		{
-			Console.WriteLine($"Getting Subtypes for Context: {context.BuiltContextKey.Value}");
-
 			List<ISerializableTypeContext> contexts = GetUnknownUnregisteredSubTypeContexts(context, knownContexts)
 				.ToList();
-
-			foreach(ISerializableTypeContext log in contexts)
-				Console.WriteLine($"Found UnregisteredSub: {log.BuiltContextKey.Value}");
-			
-			Console.WriteLine($"Subcontext Count: {contexts.Count}");
 
 			foreach(ISerializableTypeContext s in contexts)
 				s.BuiltContextKey = lookupKeyFactoryService.Create(s);
@@ -192,8 +140,6 @@ namespace FreecraftCore.Serializer
 			//Get only the new contexts
 			contexts = contexts.Except(knownContexts, new SerializableTypeContextComparer())
 				.ToList();
-
-			Console.WriteLine($"Subcontext Count: {contexts.Count}");
 
 			//After we've made context unique ones we haven't registered we NEED to make sure that the ones we know in this stack
 			//are included in the knowns we pass to ones below this recurring stack

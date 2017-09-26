@@ -3,12 +3,38 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FreecraftCore.Serializer.API.Extensions;
 using JetBrains.Annotations;
 
 
 namespace FreecraftCore.Serializer
 {
-	public class SerializerStrategyProvider : IContextualSerializerProvider, ISerializerStrategyRegistry, IEnumerable<Type>
+	internal interface ILazySerializerProvider
+	{
+		Lazy<ITypeSerializerStrategy> SerializerStrategy { get; }
+	}
+
+	internal sealed class ContextlessLazyStrategyProvider : ILazySerializerProvider
+	{
+		public Lazy<ITypeSerializerStrategy> SerializerStrategy { get; }
+
+		public ContextlessLazyStrategyProvider(IContextualSerializerProvider provider, Type t)
+		{
+			SerializerStrategy = new Lazy<ITypeSerializerStrategy>(() => provider.Get(t), true);
+		}
+	}
+
+	internal sealed class ContextualLazyStrategyProvider : ILazySerializerProvider
+	{
+		public Lazy<ITypeSerializerStrategy> SerializerStrategy { get; }
+
+		public ContextualLazyStrategyProvider(IContextualSerializerProvider provider, ContextualSerializerLookupKey key)
+		{
+			SerializerStrategy = new Lazy<ITypeSerializerStrategy>(() => provider.Get(key), true);
+		}
+	}
+
+	public class SerializerStrategyProvider : IContextualSerializerProvider, ISerializerStrategyRegistry, IEnumerable<Type>, ICompilable
 	{
 		[NotNull]
 		private IDictionary<Type, ITypeSerializerStrategy> contextlessSerializerLookupTable { get; }
@@ -30,7 +56,13 @@ namespace FreecraftCore.Serializer
 		{
 			//TODO: If we just grab the serializer and throw instead we can get a speed up
 			if(!contextlessSerializerLookupTable.ContainsKey(type))
-				throw new KeyNotFoundException($"Requested Type: {type.FullName} was not found in the provider service {this.GetType().FullName}.");
+			{
+				//Return a lazy loaded version
+				ContextlessLazyStrategyProvider lazyProvider = new ContextlessLazyStrategyProvider(this, type);
+
+				return Activator.CreateInstance(typeof(LazyLoadedSerializerStrategy<>).MakeGenericType(type), SerializationContextRequirement.Contextless, type, lazyProvider)
+					as ITypeSerializerStrategy;
+			}
 
 			return contextlessSerializerLookupTable[type];
 		}
@@ -42,19 +74,14 @@ namespace FreecraftCore.Serializer
 			if (key.ContextFlags == ContextTypeFlags.None)
 				return Get(key.ContextType);
 
-			ITypeSerializerStrategy strat = null;
+			if(strategyLookupTable.ContainsKey(key))
+				return strategyLookupTable[key];
 
-			//We don't runtime check the key because it's slow to hash
-			try
-			{
-				strat = strategyLookupTable[key];
-			}
-			catch(KeyNotFoundException e)
-			{
-				throw new KeyNotFoundException($"Requested Type: {key.ToString()} was not found in the provider service {this.GetType().FullName}.", e);
-			}
+			//Return a lazy loaded version if it doesn't exist
+			ContextualLazyStrategyProvider lazyProvider = new ContextualLazyStrategyProvider(this, key);
 
-			return strat;
+			return Activator.CreateInstance(typeof(LazyLoadedSerializerStrategy<>).MakeGenericType(key.ContextType), SerializationContextRequirement.Contextless, key.ContextType, lazyProvider)
+				as ITypeSerializerStrategy;
 		}
 
 		/// <inheritdoc />
@@ -128,6 +155,17 @@ namespace FreecraftCore.Serializer
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
+		}
+
+		public void Compile()
+		{
+			foreach(ITypeSerializerStrategy s in contextlessSerializerLookupTable.Values)
+				if(s is ICompilable com)
+					com.Compile();
+
+			foreach(ITypeSerializerStrategy s in strategyLookupTable.Values)
+				if(s is ICompilable com)
+					com.Compile();
 		}
 	}
 }
