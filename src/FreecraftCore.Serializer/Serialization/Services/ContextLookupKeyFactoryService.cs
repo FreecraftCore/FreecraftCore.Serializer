@@ -25,23 +25,26 @@ namespace FreecraftCore.Serializer
 			//Build the relevant flags
 			ContextTypeFlags flags = ContextTypeFlags.None;
 
-			if (context.HasMemberAttribute<ReverseDataAttribute>())
+			if(context.HasMemberAttribute<ReadToEndAttribute>())
+				flags |= ContextTypeFlags.ReadToEnd;
+
+			if(context.HasMemberAttribute<ReverseDataAttribute>())
 				flags |= ContextTypeFlags.Reverse;
 
-			if (context.HasMemberAttribute<EnumStringAttribute>())
+			if(context.HasMemberAttribute<EnumStringAttribute>())
 				flags |= ContextTypeFlags.EnumString;
 
 			//Check for no terminate too
-			if (context.HasMemberAttribute<DontTerminateAttribute>())
+			if(context.HasMemberAttribute<DontTerminateAttribute>())
 				flags |= ContextTypeFlags.DontTerminate;
 
 			if(context.HasMemberAttribute<CompressAttribute>())
 				flags |= ContextTypeFlags.Compressed;
 
-			if (context.HasMemberAttribute<SendSizeAttribute>())
+			if(context.HasMemberAttribute<SendSizeAttribute>())
 				return new ContextualSerializerLookupKey(flags | ContextTypeFlags.SendSize, new SendSizeContextKey(context.GetMemberAttribute<SendSizeAttribute>().TypeOfSize), context.TargetType);
 
-			if (context.HasMemberAttribute<KnownSizeAttribute>())
+			if(context.HasMemberAttribute<KnownSizeAttribute>())
 				return new ContextualSerializerLookupKey(flags | ContextTypeFlags.FixedSize, new SizeContextKey(context.GetMemberAttribute<KnownSizeAttribute>().KnownSize), context.TargetType);
 
 			//If we're here then we have flags that weren't mutually exclusive

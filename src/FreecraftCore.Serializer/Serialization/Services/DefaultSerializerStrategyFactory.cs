@@ -71,8 +71,6 @@ namespace FreecraftCore.Serializer
 		{
 			if(context == null) throw new ArgumentNullException(nameof(context));
 
-			ITypeSerializerStrategy<TType> strategy = null;
-
 			//Build the contextual key first. We used to do this as one of the last steps but we need
 			//to grab the key to check if it already exists.
 			context.BuiltContextKey = lookupKeyFactoryService.Create(context);
@@ -80,12 +78,75 @@ namespace FreecraftCore.Serializer
 			if(serializerProviderService.HasSerializerFor(context.BuiltContextKey.Value))
 				throw new InvalidOperationException($"Tried to create multiple serializer for already created serialize with Context: {context.ToString()}.");
 
-			DecoratorHandler handler = decoratorHandlers.First(h => h.CanHandle(context));
+			IEnumerable<ISerializableTypeContext> byLikelyRegisteration = OrderByLikelyRegisteration(GetAllSubTypeContexts(context, Enumerable.Empty<ISerializableTypeContext>())
+					.Where(s => !context.BuiltContextKey.Value.Equals(s.BuiltContextKey.Value))
+					.Distinct(new SerializableTypeContextComparer()))
+					.ToList();
+
+			foreach(ISerializableTypeContext subContext in byLikelyRegisteration)
+				Console.WriteLine($"ToRegister: {subContext.BuiltContextKey.Value}");
 
 			//We must register all subcontexts first
-			CreateaAndRegisterDistinctObjectGraphSerializableTypeContexts(context, Enumerable.Empty<ISerializableTypeContext>());
+			foreach(ISerializableTypeContext subContext in byLikelyRegisteration)
+			{
+				this.GetType().GetTypeInfo().GetMethod(nameof(InternalCreate), BindingFlags.NonPublic | BindingFlags.Instance)
+					.MakeGenericMethod(subContext.TargetType)
+					.Invoke(this, new object[] {subContext});
+			}
 
-			strategy = handler.Create<TType>(context);
+			//Now that all dependencies in the object graph are registered we can create the requested type
+			return InternalCreate<TType>(context);
+		}
+
+		public IEnumerable<ISerializableTypeContext> OrderByLikelyRegisteration(IEnumerable<ISerializableTypeContext> contexts)
+		{
+			return contexts
+				.OrderBy(s =>
+				{
+					//Give primtives or arrays of primitives HIGH priority
+					if(s.TargetType.GetTypeInfo().IsPrimitive)
+						return -1;
+
+					if(s.TargetType.IsArray)
+						if(s.TargetType.GetElementType().GetTypeInfo().IsPrimitive)
+							return -1;
+
+					IEnumerable<ISerializableTypeContext> serializableTypeContexts = decoratorHandlers.First(h => h.CanHandle(s))
+						.GetAssociatedSerializationContexts(s)
+						.ToList()
+						.Select(s2 =>
+						{
+							s2.BuiltContextKey = lookupKeyFactoryService.Create(s2);
+							return s2;
+						});
+
+					return serializableTypeContexts
+						.Count(s2 => serializerProviderService.HasSerializerFor(s2.BuiltContextKey.Value));
+				});
+		}
+
+		private int UnregisteredDependencyCount(ISerializableTypeContext context)
+		{
+			IEnumerable<ISerializableTypeContext> serializableTypeContexts = decoratorHandlers.First(h => h.CanHandle(context))
+				.GetAssociatedSerializationContexts(context)
+				.ToList()
+				.Select(s2 =>
+				{
+					s2.BuiltContextKey = lookupKeyFactoryService.Create(s2);
+					return s2;
+				});
+
+			return serializableTypeContexts
+				.Count(s2 => serializerProviderService.HasSerializerFor(s2.BuiltContextKey.Value));
+		}
+
+		private ITypeSerializerStrategy<TType> InternalCreate<TType>([NotNull] ISerializableTypeContext context)
+		{
+			if(context == null) throw new ArgumentNullException(nameof(context));
+
+			DecoratorHandler handler = decoratorHandlers.First(h => h.CanHandle(context));
+
+			ITypeSerializerStrategy<TType> strategy = handler.Create<TType>(context);
 
 			if(strategy == null)
 				throw new InvalidOperationException($"Couldn't generate a strategy for Type: {context.TargetType} with Context: {context.BuiltContextKey?.ToString()}.");
@@ -113,100 +174,73 @@ namespace FreecraftCore.Serializer
 			}
 		}
 
-		public IEnumerable<ISerializableTypeContext> CreateaAndRegisterDistinctObjectGraphSerializableTypeContexts([NotNull] ISerializableTypeContext context, IEnumerable<ISerializableTypeContext> currentContexts)
+		private IEnumerable<ISerializableTypeContext> GetAllSubTypeContexts([NotNull] ISerializableTypeContext context, IEnumerable<ISerializableTypeContext> knownContexts)
 		{
-			if(context == null) throw new ArgumentNullException(nameof(context));
+			Console.WriteLine($"Getting Subtypes for Context: {context.BuiltContextKey.Value}");
 
-			int currentCount = currentContexts.Count();
+			List<ISerializableTypeContext> contexts = GetUnknownUnregisteredSubTypeContexts(context, knownContexts)
+				.ToList();
 
-			List<ISerializableTypeContext> newContexts = new List<ISerializableTypeContext>();
+			foreach(ISerializableTypeContext log in contexts)
+				Console.WriteLine($"Found UnregisteredSub: {log.BuiltContextKey.Value}");
+			
+			Console.WriteLine($"Subcontext Count: {contexts.Count}");
 
-			foreach(DecoratorHandler handler in decoratorHandlers)
+			foreach(ISerializableTypeContext s in contexts)
+				s.BuiltContextKey = lookupKeyFactoryService.Create(s);
+
+			//Get only the new contexts
+			contexts = contexts.Except(knownContexts, new SerializableTypeContextComparer())
+				.ToList();
+
+			Console.WriteLine($"Subcontext Count: {contexts.Count}");
+
+			//After we've made context unique ones we haven't registered we NEED to make sure that the ones we know in this stack
+			//are included in the knowns we pass to ones below this recurring stack
+			knownContexts = knownContexts.Concat(contexts);
+
+			//If there are any new we need to recurr to get their dependencies
+			foreach(var s in contexts)
 			{
-				if(!handler.CanHandle(context))
-					continue;
-
-				IEnumerable<ISerializableTypeContext> serializationContexts = handler.GetAssociatedSerializationContexts(context);
-
-				foreach(ISerializableTypeContext subContext in serializationContexts)
-				{
-					//populate key first; we need to check if we already know about it
-					subContext.BuiltContextKey = lookupKeyFactoryService.Create(subContext);
-				}
-
-				newContexts = newContexts.Concat(serializationContexts).ToList();
-				break;
-			}
-
-			//We want to recurr if we found more contexts this recurrision
-			if(currentCount != currentContexts.Concat(newContexts).Distinct(new SerializableTypeContextComparer()).Count())
-			{
-				IEnumerable<ISerializableTypeContext> contextsToProvideRecursively = currentContexts
-					.Concat(newContexts)
-					.Distinct(new SerializableTypeContextComparer());
-
-				foreach(ISerializableTypeContext s in newContexts)
-					contextsToProvideRecursively = contextsToProvideRecursively
-						.Concat(CreateaAndRegisterDistinctObjectGraphSerializableTypeContexts(s, contextsToProvideRecursively))
-						.Distinct(new SerializableTypeContextComparer());
+				knownContexts = knownContexts.Concat(GetAllSubTypeContexts(s, knownContexts));
 			}
 				
 
-			//This point we have fully unique creatable without circular dependency/reference types
-			//If it can handle then we should register the associated types
-			foreach(ISerializableTypeContext subContext in newContexts)
-			{
-				//populate key first; we need to check if we already know about it
-				subContext.BuiltContextKey = lookupKeyFactoryService.Create(subContext);
+			//Return the entire tree of contexts
+			return knownContexts;
+		}
 
-				if(!subContext.BuiltContextKey.HasValue)
-					throw new InvalidOperationException($"Type: {subContext.TargetType}");
-
-				//Had to add check for if it was registered; don't want to register a type multiple times; was casuing exceptions too
-				if(subContext.ContextRequirement == SerializationContextRequirement.Contextless && serializerProviderService.HasSerializerFor(subContext.TargetType))
-					continue;
-
-				if(subContext.BuiltContextKey.HasValue && this.serializerProviderService.HasSerializerFor(subContext.BuiltContextKey.Value))
-					continue;
-
-				DecoratorHandler handler = decoratorHandlers.First(h => h.CanHandle(subContext));
-
-				ITypeSerializerStrategy strat = handler.GetType().GetTypeInfo()
-						.GetMethod(nameof(handler.Create))
-						.MakeGenericMethod(subContext.TargetType)
-						.Invoke(handler, new object[1] {subContext}) as ITypeSerializerStrategy;
-
-				RegisterNewSerializerStrategy(subContext, strat);
-			}
-
-			//basecase is we've call register on all subcontexts and registered all the ones we know.
-			return newContexts.Distinct(new SerializableTypeContextComparer());
+		private IEnumerable<ISerializableTypeContext> GetUnknownUnregisteredSubTypeContexts([NotNull] ISerializableTypeContext context, IEnumerable<ISerializableTypeContext> knownContexts)
+		{
+			return decoratorHandlers.First(h => h.CanHandle(context))
+				.GetAssociatedSerializationContexts(context)
+				.Select(s =>
+				{
+					s.BuiltContextKey = lookupKeyFactoryService.Create(s);
+					return s;
+				})
+				.Where(s => !serializerProviderService.HasSerializerFor(s.BuiltContextKey.Value)) //make sure we ignore known registered types
+				.Except(knownContexts, new SerializableTypeContextComparer())
+				.ToList();
 		}
 
 		public class SerializableTypeContextComparer : IEqualityComparer<ISerializableTypeContext>
 		{
 			public bool Equals(ISerializableTypeContext x, ISerializableTypeContext y)
 			{
-				if(x == null)
-					return y == null;
+				if(x.ContextRequirement == SerializationContextRequirement.Contextless)
+					if(y.ContextRequirement == SerializationContextRequirement.Contextless)
+						return x.TargetType == y.TargetType;
 
-				if(y == null)
-					return x == null;
+				if(!x.BuiltContextKey.HasValue || !y.BuiltContextKey.HasValue)
+					throw new ArgumentException($"Type context T1: {x.TargetType} T2: {y.TargetType} don't have keys.");
 
-				if(x.TargetType == y.TargetType)
-					if(x.ContextRequirement == SerializationContextRequirement.Contextless && y.ContextRequirement == SerializationContextRequirement.Contextless)
-						return true;
-
-				if(x.HasContextualKey() && y.HasContextualKey())
-					return x.BuiltContextKey.Equals(y);
-
-				return false;
+				return x.BuiltContextKey.Value.Equals(y.BuiltContextKey.Value);
 			}
 
 			public int GetHashCode(ISerializableTypeContext obj)
 			{
-				string contextString = obj.HasContextualKey() ? obj.BuiltContextKey.HasValue.ToString() : "null";
-				return $"{contextString}{obj.TargetType}".GetHashCode();
+				return obj.BuiltContextKey.Value.GetHashCode();
 			}
 		}
 	}

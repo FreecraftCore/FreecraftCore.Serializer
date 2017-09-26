@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Xml.Schema;
 using JetBrains.Annotations;
 using Reflect.Extent;
 
@@ -63,7 +64,8 @@ namespace FreecraftCore.Serializer
 			//When registering a complex type a decorator may be available to handle that case but it's not relevant to the serialization context.
 			return attri.GetType() == typeof(CompressAttribute) || attri.GetType() == typeof(KnownSizeAttribute) || attri.GetType() == typeof(EnumStringAttribute)
 				|| attri.GetType() == typeof(SendSizeAttribute) || attri.GetType() == typeof(ReverseDataAttribute) //decided to add reverse data. It does require context because it decorates other serializers
-				|| attri.GetType() == typeof(DontTerminateAttribute); //Dont terminate really shouldn't need to be contextual but at this point I'm abusing the system. We forgo purity for ease of implementation. We pay a slight memory penalty though.
+				|| attri.GetType() == typeof(DontTerminateAttribute) //Dont terminate really shouldn't need to be contextual but at this point I'm abusing the system. We forgo purity for ease of implementation. We pay a slight memory penalty though.
+				|| attri.GetType() == typeof(ReadToEndAttribute); //this attribute is for reading to the end of the array
 		}
 	}
 }

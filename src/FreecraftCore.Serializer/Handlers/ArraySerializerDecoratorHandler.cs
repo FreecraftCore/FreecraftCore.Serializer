@@ -108,7 +108,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 				//If it's a byte array and we have no collection/size handling
 				//then really all we can do is read ALL and write ALL
 				//So there is a default strategy specifically for that
-				if(typeof(TType) == typeof(byte[]))
+				if(typeof(TType) == typeof(byte[]) && context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.ReadToEnd))
 					strat = new DefaultByteArraySerializerStrategy() as ITypeSerializerStrategy<TType>;
 			}
 

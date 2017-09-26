@@ -13,7 +13,7 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public sealed class DefaultByteArraySerializerStrategy : SimpleTypeSerializerStrategy<byte[]>
 	{
-		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
+		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
 
 		public override byte[] Read(IWireStreamReaderStrategy source)
 		{
