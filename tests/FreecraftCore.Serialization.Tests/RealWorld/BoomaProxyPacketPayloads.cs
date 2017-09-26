@@ -17,6 +17,9 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 			//arrange
 			SerializerService serializer = new SerializerService();
 			serializer.RegisterType(typeof(PSOBBPatchPacketPayloadServer));
+			serializer.RegisterType(typeof(PSOBBPatchPacketPayloadServer));
+			serializer.RegisterType(typeof(PSOBBPatchPacketPayloadServer));
+			serializer.RegisterType(typeof(PSOBBPatchPacketPayloadServer));
 		}
 
 		[Test]
@@ -24,6 +27,8 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 		{
 			//arrange
 			SerializerService serializer = new SerializerService();
+			serializer.RegisterType(typeof(PSOBBPatchPacketPayloadServer));
+			serializer.RegisterType(typeof(PSOBBPatchPacketPayloadServer));
 			serializer.RegisterType(typeof(PSOBBPatchPacketPayloadServer));
 			byte[] bytes = Enumerable.Repeat((byte)55, 200).ToArray();
 
@@ -44,6 +49,22 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 			//arrange
 			SerializerService serializer = new SerializerService();
 			serializer.RegisterType(typeof(PatchingInformationPayload));
+			serializer.RegisterType(typeof(PSOBBPatchPacketPayloadServer));
+			serializer.RegisterType(typeof(PSOBBPatchPacketPayloadServer));
+			serializer.RegisterType(typeof(PatchingInformationPayload));
+			serializer.RegisterType(typeof(PSOBBPatchPacketPayloadServer));
+			serializer.RegisterType(typeof(PatchingInformationPayload));
+			serializer.Compile();
+		}
+
+		[Test]
+		public void Test_Can_Register_PatchingLoginRequestPayload()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType(typeof(PatchingLoginRequestPayload));
+			serializer.Compile();
+
 		}
 
 		[Test]
@@ -52,6 +73,66 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 			//arrange
 			SerializerService serializer = new SerializerService();
 			serializer.Link<PatchingInformationPayload, PSOBBPatchPacketPayloadServer>();
+			serializer.Compile();
+		}
+
+		[Test]
+		public void Test_No_Stack_Overflow_On_Deserializing_Unknown_Type()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			//don't register
+			serializer.Compile();
+			byte[] bytes = new byte[] {55, 78};
+
+			//assert
+			Assert.Throws<InvalidOperationException>(() => serializer.Deserialize<PSOBBPacketHeader>(bytes));
+		}
+	}
+
+	/// <summary>
+	/// The header for PSOBB packets.
+	/// This looks non-standard according to documentation but for serialization purposes it's easier to
+	/// write 
+	/// </summary>
+	[WireDataContract]
+	public class PSOBBPacketHeader
+	{
+		/// <summary>
+		/// The size of the packet.
+		/// </summary>
+		[WireMember(1)]
+		public short PacketSize { get; }
+
+		//The PacketSize contains the whole size of the packet
+		//So the payload is just the size minus the size of the packetsize field.
+		/// <summary>
+		/// Indicates the size of the payload.
+		/// </summary>
+		public int PayloadSize => PacketSize - sizeof(short);
+
+		/// <summary>
+		/// Creates a new packet header with the specified size.
+		/// </summary>
+		/// <param name="packetSize">The packet size</param>
+		public PSOBBPacketHeader(short packetSize)
+		{
+			PacketSize = packetSize;
+		}
+
+		/// <summary>
+		/// Creates a new packet header with the specified size.
+		/// </summary>
+		/// <param name="packetSize">The packet size</param>
+		public PSOBBPacketHeader(int packetSize)
+		{
+			PacketSize = (short)packetSize;
+		}
+
+		//serializer ctor
+		private PSOBBPacketHeader()
+		{
+
 		}
 	}
 
@@ -60,7 +141,7 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 	//Tethella implementation: https://github.com/justnoxx/psobb-tethealla/blob/master/patch_server/patch_server.c#L578
 	//Sylverant implementation: https://github.com/Sylverant/patch_server/blob/master/src/patch_packets.c#L237 and structure https://github.com/Sylverant/patch_server/blob/master/src/patch_packets.h#L106
 	[WireDataContract]
-	[WireDataContractBaseLink(0x05)]
+	[WireDataContractBaseLink(0x05, typeof(PSOBBPatchPacketPayloadServer))]
 	public sealed class PatchingInformationPayload : PSOBBPatchPacketPayloadServer
 	{
 		//0x0C 0x00 Size
@@ -143,6 +224,77 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 		public override string ToString()
 		{
 			return $"Unknown OpCode: #{OperationCode:X} Type: {base.ToString()} Size: {UnknownBytes.Length + 2}";
+		}
+	}
+
+	/// <summary>
+	/// The base type for PSOBB patching packet payloads that the client sends. This isn't for ship payloads The child
+	/// type based on a 2 byte opcode <see cref="ushort"/> that comes over the network.
+	/// </summary>
+	[WireDataContract(WireDataContractAttribute.KeyType.UShort, true)]
+	public abstract class PSOBBPatchPacketPayloadClient
+	{
+		//Nothing, only the 2 byte Type is relevant for this base packet.
+
+		protected PSOBBPatchPacketPayloadClient()
+		{
+
+		}
+	}
+
+	//Syl struct: https://github.com/Sylverant/patch_server/blob/master/src/patch_packets.h#L62
+	/// <summary>
+	/// The login request packet for the patching server.
+	/// </summary>
+	[WireDataContract]
+	[WireDataContractBaseLink((int)0x07, typeof(PSOBBPatchPacketPayloadClient))]
+	public sealed class PatchingLoginRequestPayload : PSOBBPatchPacketPayloadClient
+	{
+		/// <summary>
+		/// Username to authenticate with the patchserver.
+		/// </summary>
+		[KnownSize(16)]
+		[WireMember(2)]
+		public string UserName { get; }
+
+		/// <summary>
+		/// Password to authenticate with the patchserver.
+		/// </summary>
+		[KnownSize(16)]
+		[WireMember(3)]
+		public string Password { get; }
+
+		/// <summary>
+		/// Padding (?)
+		/// </summary>
+		[KnownSize(64)]
+		[WireMember(1)]
+		private byte[] Padding2 { get; } = new byte[64];
+
+		/// <summary>
+		/// Padding (?)
+		/// </summary>
+		[KnownSize(12)]
+		[WireMember(4)]
+		private byte[] Padding { get; } = new byte[12];
+
+		//serializer ctor
+
+		public PatchingLoginRequestPayload(string userName, string password)
+		{
+			if(string.IsNullOrWhiteSpace(userName)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(userName));
+			if(string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(password));
+
+			//TODO: Verify length, I have a headache right now.
+
+			UserName = userName;
+			Password = password;
+		}
+
+		//serializer ctor
+		private PatchingLoginRequestPayload()
+		{
+
 		}
 	}
 }

@@ -45,6 +45,11 @@ namespace FreecraftCore.Serializer
 		[NotNull]
 		private IDictionary<ContextualSerializerLookupKey, ITypeSerializerStrategy> strategyLookupTable { get; }
 
+		/// <summary>
+		/// Indicates if the serializer has been compiled.
+		/// </summary>
+		private bool isCompiled { get; set; } = false;
+
 		public SerializerStrategyProvider()
 		{
 			contextlessSerializerLookupTable = new Dictionary<Type, ITypeSerializerStrategy>();
@@ -57,6 +62,9 @@ namespace FreecraftCore.Serializer
 			//TODO: If we just grab the serializer and throw instead we can get a speed up
 			if(!contextlessSerializerLookupTable.ContainsKey(type))
 			{
+				if(isCompiled)
+					throw new InvalidOperationException($"Requested serializer for Type: {type.Name} but none were registered.");
+
 				//Return a lazy loaded version
 				ContextlessLazyStrategyProvider lazyProvider = new ContextlessLazyStrategyProvider(this, type);
 
@@ -76,6 +84,9 @@ namespace FreecraftCore.Serializer
 
 			if(strategyLookupTable.ContainsKey(key))
 				return strategyLookupTable[key];
+
+			if(isCompiled)
+				throw new InvalidOperationException($"Requested contextual serializer for Type: {key.ContextType} with but none were registered with Key: {key.ContextFlags} {key.ContextSpecificKey.Key}.");
 
 			//Return a lazy loaded version if it doesn't exist
 			ContextualLazyStrategyProvider lazyProvider = new ContextualLazyStrategyProvider(this, key);
@@ -159,6 +170,8 @@ namespace FreecraftCore.Serializer
 
 		public void Compile()
 		{
+			isCompiled = true;
+
 			foreach(ITypeSerializerStrategy s in contextlessSerializerLookupTable.Values)
 				if(s is ICompilable com)
 					com.Compile();
