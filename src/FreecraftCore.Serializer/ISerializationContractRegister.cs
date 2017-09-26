@@ -10,6 +10,13 @@ namespace FreecraftCore.Serializer
 	public interface ISerializationContractRegister
 	{
 		/// <summary>
+		/// Attempts to register a contract for the provided <param name="typeToRegister">
+		/// </summary>
+		/// <param name="typeToRegister">The type to register.</param>
+		[NotNull]
+		bool RegisterType(Type typeToRegister);
+
+		/// <summary>
 		/// Attempts to register a contract for the provided <typeparam name="TTypeToRegister"></typeparam>.
 		/// </summary>
 		[NotNull]

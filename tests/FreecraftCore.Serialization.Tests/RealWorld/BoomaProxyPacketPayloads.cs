@@ -16,7 +16,7 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 		{
 			//arrange
 			SerializerService serializer = new SerializerService();
-			serializer.RegisterType<PSOBBPatchPacketPayloadServer>();
+			serializer.RegisterType(typeof(PSOBBPatchPacketPayloadServer));
 		}
 
 		[Test]
@@ -24,7 +24,7 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 		{
 			//arrange
 			SerializerService serializer = new SerializerService();
-			serializer.RegisterType<PSOBBPatchPacketPayloadServer>();
+			serializer.RegisterType(typeof(PSOBBPatchPacketPayloadServer));
 			byte[] bytes = Enumerable.Repeat((byte)55, 200).ToArray();
 
 			//act
@@ -36,6 +36,63 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 
 			for(int i = 0; i < bytes.Length - 2; i++)
 				Assert.AreEqual(bytes[i], payload.UnknownBytes[i]);
+		}
+
+		[Test]
+		public void Test_Can_Register_PatchingUpOneDir()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType(typeof(PatchingInformationPayload));
+		}
+
+		[Test]
+		public void Test_Can_Link_PatchingUpOneDir()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.Link<PatchingInformationPayload, PSOBBPatchPacketPayloadServer>();
+		}
+	}
+
+	//0x0C 0x00 0x11 0x00
+	//PatchingByteLength{4} PatchFileCount{4}
+	//Tethella implementation: https://github.com/justnoxx/psobb-tethealla/blob/master/patch_server/patch_server.c#L578
+	//Sylverant implementation: https://github.com/Sylverant/patch_server/blob/master/src/patch_packets.c#L237 and structure https://github.com/Sylverant/patch_server/blob/master/src/patch_packets.h#L106
+	[WireDataContract]
+	[WireDataContractBaseLink(0x05)]
+	public sealed class PatchingInformationPayload : PSOBBPatchPacketPayloadServer
+	{
+		//0x0C 0x00 Size
+		//0x11 0x00 Type
+
+		//If there is patching information it will send
+		/// <summary>
+		/// Indicates the length and size of the patching data.
+		/// </summary>
+		[WireMember(1)]
+		public int PatchingByteLength { get; }
+
+		/// <summary>
+		/// Not 100% sure but looks like the number of files that need to be patched.
+		/// </summary>
+		[WireMember(2)]
+		public int PatchFileCount { get; }
+
+		public PatchingInformationPayload(int patchingByteLength, int patchFileCount)
+		{
+			if(patchingByteLength < 0) throw new ArgumentOutOfRangeException(nameof(patchingByteLength));
+			if(patchFileCount < 0) throw new ArgumentOutOfRangeException(nameof(patchFileCount));
+
+			PatchingByteLength = patchingByteLength;
+			PatchFileCount = patchFileCount;
+		}
+
+		//Serializer ctor
+		protected PatchingInformationPayload()
+			: base()
+		{
+
 		}
 	}
 

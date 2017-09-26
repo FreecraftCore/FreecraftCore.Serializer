@@ -104,6 +104,15 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
+		public bool RegisterType(Type typeToRegister)
+		{
+			//TODO: Improve this so that registering isn't super slow
+			return (bool)GetType().GetTypeInfo().GetMethod(nameof(RegisterType), Enumerable.Empty<Type>().ToArray())
+				.MakeGenericMethod(typeToRegister)
+				.Invoke(this, null);
+		}
+
+		/// <inheritdoc />
 		public bool RegisterType<TTypeToRegister>()
 		{
 			//Ingoring all but wiretypes makes this a lot easier.
