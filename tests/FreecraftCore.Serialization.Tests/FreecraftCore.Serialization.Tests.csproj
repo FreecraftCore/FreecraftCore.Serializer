@@ -86,6 +86,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.API\FreecraftCore.Serializer.API.csproj">
+      <Project>{e9199c44-9a68-44d1-bc00-ccba85342f09}</Project>
+      <Name>FreecraftCore.Serializer.API</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj">
       <Project>{891cc3d5-9d84-47fd-95cc-00fbbc730752}</Project>
       <Name>FreecraftCore.Serializer.Metadata</Name>

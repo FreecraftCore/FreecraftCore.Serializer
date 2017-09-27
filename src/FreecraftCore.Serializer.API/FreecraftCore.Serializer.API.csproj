@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
+    <Authors>Andrew Blakely, HelloKitty</Authors>
+    <Company />
+    <Product>FreecraftCore.Serializer</Product>
+    <Description>API library for the FreecraftCore.Serializer. Provide interface/service/contracts for the serialization service. Include this project to reference the serializer's interfaces. This way you can avoid the hard dependencies the serializer includes.</Description>
+    <Copyright>Andrew Blakely, HelloKitty</Copyright>
+    <PackageLicenseUrl>https://github.com/FreecraftCore/FreecraftCore.Serializer/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/FreecraftCore/FreecraftCore.Serializer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/FreecraftCore/FreecraftCore.Serializer</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>WorldofWarcraft WoW Blizzard JAM Packet Protocol Serialization Serializer Freecraft FreecraftCore API</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="10.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FreecraftCore.Serializer.Stream\FreecraftCore.Serializer.Stream.csproj" />
+  </ItemGroup>
+
+</Project>

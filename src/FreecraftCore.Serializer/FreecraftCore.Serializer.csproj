@@ -57,6 +57,7 @@ Can be extended for use outside of World of Warcraft too!</Description>
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FreecraftCore.Serializer.API\FreecraftCore.Serializer.API.csproj" />
     <ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" />
     <ProjectReference Include="..\FreecraftCore.Serializer.Stream\FreecraftCore.Serializer.Stream.csproj" />
   </ItemGroup>
