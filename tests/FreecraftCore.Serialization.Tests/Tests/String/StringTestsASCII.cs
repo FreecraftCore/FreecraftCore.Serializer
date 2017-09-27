@@ -9,7 +9,7 @@ using System.Text;
 namespace FreecraftCore.Serializer.Tests
 {
 	[TestFixture]
-	public class StringTests
+	public class StringTestsASCII
 	{
 		[Test]
 		public static void Test_String_Serializer_Serializes()
@@ -52,7 +52,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Fixed_String_Can_Write()
 		{
 			//arrange
-			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy());
+			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy(), Encoding.ASCII);
 
 			stringSerializer.Write("hello", new DefaultStreamWriterStrategy());
 		}
@@ -61,7 +61,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Fixed_String_Can_Write_Proper_Length()
 		{
 			//arrange
-			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy());
+			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy(), Encoding.ASCII);
 			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 
 			//act
@@ -75,7 +75,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Fixed_String_Can_Read()
 		{
 			//arrange
-			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy());
+			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy(), Encoding.ASCII);
 			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 
 			//act
@@ -105,7 +105,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Send_With_Size_Can_Read()
 		{
 			//arrange
-			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(new GenericTypePrimitiveSharedBufferSerializerStrategy<byte>(), true), new StringSerializerStrategy());
+			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(new GenericTypePrimitiveSharedBufferSerializerStrategy<byte>(), true), new StringSerializerStrategy(), Encoding.ASCII);
 			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 
 			//act
@@ -122,7 +122,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_DontTerminate_Serializer_Doesnt_Add_Terminator()
 		{
 			//arrange
-			DontTerminateStringSerializerDecorator serializer = new DontTerminateStringSerializerDecorator(new StringSerializerStrategy());
+			DontTerminateStringSerializerDecorator serializer = new DontTerminateStringSerializerDecorator(new StringSerializerStrategy(), Encoding.ASCII);
 			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 
 			//act

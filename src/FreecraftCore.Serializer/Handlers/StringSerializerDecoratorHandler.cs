@@ -40,14 +40,39 @@ namespace FreecraftCore.Serializer.KnownTypes
 				return (ITypeSerializerStrategy<TType>) serializerProviderService.Get<string>(); //The caller should know what he's doing.
 
 			//TODO: Throw on invalid metadata combinations
+			ITypeSerializerStrategy<string> serializer = null;
+			Encoding encoding = Encoding.ASCII;
 
-			ITypeSerializerStrategy<string> serializer = serializerProviderService.Get<string>();
+			if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Encoding))
+			{
+				if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.ASCII))
+				{
+					encoding = Encoding.ASCII;
+					serializer = serializerProviderService.Get<string>();
+				}
+				else if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.UTF16))
+				{
+					encoding = Encoding.Unicode;
+					serializer = new StringSerializerStrategy(Encoding.Unicode);
+				}
+				else if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.UTF32))
+				{
+					encoding = Encoding.UTF32;
+					serializer = new StringSerializerStrategy(Encoding.UTF32);
+				}
+				else
+					throw new InvalidOperationException($"String had encoding flags but no specified encoding.");
+			}
+			else
+				//If we have a context, but don't have an encoding context, then we should grab the default that uses ASCII
+				serializer = serializerProviderService.Get<string>();
+
 
 			bool shouldTerminate = !context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.DontTerminate);
 
 			//Determine which base string serializer we want to decorate
 			if (!shouldTerminate)
-				serializer = new DontTerminateStringSerializerDecorator(serializer);
+				serializer = new DontTerminateStringSerializerDecorator(serializer, encoding);
 
 			//It is possible that the WoW protocol expects a fixed-size string that both client and server know the length of
 			//This can be seen in the first packet Auth_Challenge: uint8   gamename[4];
@@ -57,7 +82,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 				//read the key. It will have the size
 				int size = context.BuiltContextKey.Value.ContextSpecificKey.Key;
 
-				serializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(context.BuiltContextKey.Value.ContextSpecificKey.Key), serializer);
+				serializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(context.BuiltContextKey.Value.ContextSpecificKey.Key), serializer, encoding);
 			}
 
 			//It is also possible that the WoW protocol expects a length prefixed string
@@ -67,13 +92,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 				switch ((SendSizeAttribute.SizeType)context.BuiltContextKey.Value.ContextSpecificKey.Key)
 				{
 					case SendSizeAttribute.SizeType.Byte:
-						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(serializerProviderService.Get<byte>(), shouldTerminate), serializer);
+						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(serializerProviderService.Get<byte>(), shouldTerminate), serializer, encoding);
 						break;
 					case SendSizeAttribute.SizeType.Int32:
-						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<int>(serializerProviderService.Get<int>(), shouldTerminate), serializer);
+						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<int>(serializerProviderService.Get<int>(), shouldTerminate), serializer, encoding);
 						break;
 					case SendSizeAttribute.SizeType.UShort:
-						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<ushort>(serializerProviderService.Get<ushort>(), shouldTerminate), serializer);
+						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<ushort>(serializerProviderService.Get<ushort>(), shouldTerminate), serializer, encoding);
 						break;
 
 					default:

@@ -41,6 +41,29 @@ namespace FreecraftCore.Serializer
 			if(context.HasMemberAttribute<CompressAttribute>())
 				flags |= ContextTypeFlags.Compressed;
 
+			//Encoding requires multiple flags to be set.
+			//We can't rely on the context key since it may be used for size
+			if(context.HasMemberAttribute<EncodingAttribute>())
+			{
+				flags |= ContextTypeFlags.Encoding;
+				EncodingAttribute attri = context.GetMemberAttribute<EncodingAttribute>();
+				switch(attri.DesiredEncodingType)
+				{
+					case EncodingType.ASCII:
+						flags |= ContextTypeFlags.ASCII;
+						break;
+
+					case EncodingType.UTF16:
+						flags |= ContextTypeFlags.UTF16;
+						break;
+
+					case EncodingType.UTF32:
+						flags |= ContextTypeFlags.UTF32;
+						break;
+				}
+			}
+				
+
 			if(context.HasMemberAttribute<SendSizeAttribute>())
 				return new ContextualSerializerLookupKey(flags | ContextTypeFlags.SendSize, new SendSizeContextKey(context.GetMemberAttribute<SendSizeAttribute>().TypeOfSize), context.TargetType);
 

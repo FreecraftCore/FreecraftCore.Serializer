@@ -18,7 +18,13 @@ namespace FreecraftCore.Serializer
 		SendSize = 1 << 3,
 		Reverse = 1 << 4,
 		DontTerminate = 1 << 5,
-		ReadToEnd = 1 << 6
+		ReadToEnd = 1 << 6,
+
+		//These flags should appear together
+		Encoding = 1 << 7,
+		ASCII = 1 << 8,
+		UTF16 = 1 << 9,
+		UTF32 = 1 << 10
 		//We could add more types of context but this should be fine for now
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
@@ -9,11 +10,25 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// <see cref="ITypeSerializerStrategy"/> for Type <see cref="string"/>.
 	/// </summary>
 	[KnownTypeSerializer]
-	public class StringSerializerStrategy : SimpleTypeSerializerStrategy<string>
+	public class StringSerializerStrategy : BaseStringSerializerStrategy
 	{
 		//All primitive serializer stragies are contextless
 		/// <inheritdoc />
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
+
+		public StringSerializerStrategy()
+			: base(Encoding.ASCII)
+		{
+			//This is the default that WoW uses
+			//however now that the serializer is being used for other projects
+			//we need to have the option to use different ones.
+		}
+
+		public StringSerializerStrategy(Encoding encodingStrategy)
+			: base(encodingStrategy)
+		{
+			
+		}
 
 		/// <inheritdoc />
 		public override void Write(string value, IWireStreamWriterStrategy dest)
@@ -27,12 +42,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//TODO: Pointer hack for speed
 			//Convert the string to bytes
 			//Not sure about encoding yet
-			byte[] stringBytes = Encoding.ASCII.GetBytes(value);
+			byte[] stringBytes = EncodingStrategy.GetBytes(value);
 			
 			dest.Write(stringBytes);
 			
 			//Write the null terminator; Client expects it.
-			dest.Write(0);
+			for(int i = 0; i < CharacterSize; i++)
+				dest.Write(0);
 		}
 		
 		/// <summary>
@@ -51,20 +67,30 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//TODO: We can likely do some fancy pointer stuff to make this much cheaper.
 			//Read a byte from the stream; Stop when we find a 0
 			List<byte> stringBytes = new List<byte>();
-			
-			byte currentByte = source.ReadByte();
-			
-			//TODO: Security/prevent spoofs causing exceptions
-			while(currentByte != 0)
+
+			//This is used to track larger than 1 char null terminators
+			int zeroByteCountFound = 0;
+
+			do
 			{
+				byte currentByte = source.ReadByte();
+
 				stringBytes.Add(currentByte);
 
-				currentByte = source.ReadByte();
-			}
-			
+				//If we find a 0 byte we need to track it
+				//char could be 1 byte or even 4 so we need to reset
+				//if we encounter an actual character before we find all
+				//null terminator bytes
+				if(currentByte == 0)
+					zeroByteCountFound++;
+				else
+					zeroByteCountFound = 0;
+
+			} while(zeroByteCountFound < CharacterSize);
+
 			//TODO: Invesitgate expected WoW/TC behavior for strings of length 0. Currently violates contract for return type.
 			//Serializer design decision: Return null instead of String.Empty for no strings
-			return stringBytes.Count == 0 ? null : Encoding.ASCII.GetString(stringBytes.ToArray());
+			return stringBytes.Count - CharacterSize <= 0 ? null : EncodingStrategy.GetString(stringBytes.ToArray(), 0, Math.Max(0, stringBytes.Count - CharacterSize));
 		}
 
 		/// <inheritdoc />
@@ -73,12 +99,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			//See sync method for doc
-			byte[] stringBytes = Encoding.ASCII.GetBytes(value);
+			byte[] stringBytes = EncodingStrategy.GetBytes(value);
 
 			await dest.WriteAsync(stringBytes);
 
 			//Write the null terminator; Client expects it.
-			await dest.WriteAsync(0);
+			for(int i = 0; i < CharacterSize; i++)
+				await dest.WriteAsync(0);
 		}
 
 		/// <inheritdoc />
@@ -90,19 +117,29 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//TODO: Find an average size for WoW strings
 			List<byte> stringBytes = new List<byte>();
 
-			byte currentByte = await source.ReadByteAsync();
+			//This is used to track larger than 1 char null terminators
+			int zeroByteCountFound = 0;
 
-			//TODO: Security/prevent spoofs causing exceptions
-			while (currentByte != 0)
+			do
 			{
-				stringBytes.Add(currentByte);
+				byte currentByte = await source.ReadByteAsync();
 
-				currentByte = await source.ReadByteAsync();
-			}
+				stringBytes.Add(currentByte);	
+
+				//If we find a 0 byte we need to track it
+				//char could be 1 byte or even 4 so we need to reset
+				//if we encounter an actual character before we find all
+				//null terminator bytes
+				if(currentByte == 0)
+					zeroByteCountFound++;
+				else
+					zeroByteCountFound = 0;
+
+			} while(zeroByteCountFound < CharacterSize);
 
 			//TODO: Invesitgate expected WoW/TC behavior for strings of length 0. Currently violates contract for return type.
 			//Serializer design decision: Return null instead of String.Empty for no strings
-			return stringBytes.Count == 0 ? null : Encoding.ASCII.GetString(stringBytes.ToArray());
+			return stringBytes.Count - CharacterSize <= 0 ? null : EncodingStrategy.GetString(stringBytes.ToArray(), 0, Math.Max(0, stringBytes.Count - CharacterSize));
 		}
 	}
 }

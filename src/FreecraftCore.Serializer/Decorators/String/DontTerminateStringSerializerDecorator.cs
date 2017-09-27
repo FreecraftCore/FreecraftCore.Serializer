@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
-	public class DontTerminateStringSerializerDecorator : SimpleTypeSerializerStrategy<string>
+	public class DontTerminateStringSerializerDecorator : BaseStringSerializerStrategy
 	{
 		/// <inheritdoc />
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
@@ -15,9 +15,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 		[NotNull]
 		ITypeSerializerStrategy<string> decoratedSerializer { get; }
 
-		public DontTerminateStringSerializerDecorator([NotNull] ITypeSerializerStrategy<string> stringSerializer)
+		public DontTerminateStringSerializerDecorator([NotNull] ITypeSerializerStrategy<string> stringSerializer, [NotNull] Encoding encodingStrategy)
+			: base(encodingStrategy)
 		{
 			if (stringSerializer == null) throw new ArgumentNullException(nameof(stringSerializer));
+			if(encodingStrategy == null) throw new ArgumentNullException(nameof(encodingStrategy));
 
 			decoratedSerializer = stringSerializer;
 		}
@@ -38,7 +40,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			//TODO: Pointer hack for speed
-			byte[] stringBytes = Encoding.ASCII.GetBytes(value);
+			byte[] stringBytes = EncodingStrategy.GetBytes(value);
 
 			dest.Write(stringBytes); //Just don't write terminator. Very simple.
 		}
@@ -49,7 +51,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			//TODO: Pointer hack for speed
-			byte[] stringBytes = Encoding.ASCII.GetBytes(value);
+			byte[] stringBytes = EncodingStrategy.GetBytes(value);
 
 			await dest.WriteAsync(stringBytes); //Just don't write terminator. Very simple.
 		}
