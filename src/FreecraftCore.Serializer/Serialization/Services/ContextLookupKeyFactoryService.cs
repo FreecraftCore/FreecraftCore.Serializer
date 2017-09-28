@@ -62,7 +62,6 @@ namespace FreecraftCore.Serializer
 						break;
 				}
 			}
-				
 
 			if(context.HasMemberAttribute<SendSizeAttribute>())
 				return new ContextualSerializerLookupKey(flags | ContextTypeFlags.SendSize, new SendSizeContextKey(context.GetMemberAttribute<SendSizeAttribute>().TypeOfSize), context.TargetType);

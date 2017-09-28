@@ -24,10 +24,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//we need to have the option to use different ones.
 		}
 
-		public StringSerializerStrategy(Encoding encodingStrategy)
+		public StringSerializerStrategy(Encoding encodingStrategy, SerializationContextRequirement contextRequirement = SerializationContextRequirement.Contextless)
 			: base(encodingStrategy)
 		{
-			
+			//We may need to override this as contextual
+			ContextRequirement = contextRequirement;
 		}
 
 		/// <inheritdoc />
@@ -43,7 +44,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//Convert the string to bytes
 			//Not sure about encoding yet
 			byte[] stringBytes = EncodingStrategy.GetBytes(value);
-			
+
 			dest.Write(stringBytes);
 			
 			//Write the null terminator; Client expects it.
@@ -71,9 +72,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//This is used to track larger than 1 char null terminators
 			int zeroByteCountFound = 0;
 
+			//How many characters have been counted
+			int currentCharCount = 0;
+
 			do
 			{
 				byte currentByte = source.ReadByte();
+				currentCharCount++;
 
 				stringBytes.Add(currentByte);
 
@@ -84,6 +89,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 				if(currentByte == 0)
 					zeroByteCountFound++;
 				else
+					zeroByteCountFound = 0;
+				
+				//if we found 4 0 bytes in arow but we didn't find a full char set of CharacterSize
+				//then we should reset. This can happen if you have {5 0 0 0} {0 0 0 0} it will stop after the first 4
+				//But with this is will read the whole {0 0 0 0}.
+				if(currentCharCount % CharacterSize == 0 && zeroByteCountFound < CharacterSize)
 					zeroByteCountFound = 0;
 
 			} while(zeroByteCountFound < CharacterSize);
@@ -120,11 +131,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//This is used to track larger than 1 char null terminators
 			int zeroByteCountFound = 0;
 
+			//How many characters have been counted
+			int currentCharCount = 0;
+
 			do
 			{
 				byte currentByte = await source.ReadByteAsync();
+				currentCharCount++;
 
-				stringBytes.Add(currentByte);	
+				stringBytes.Add(currentByte);
 
 				//If we find a 0 byte we need to track it
 				//char could be 1 byte or even 4 so we need to reset
@@ -133,6 +148,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 				if(currentByte == 0)
 					zeroByteCountFound++;
 				else
+					zeroByteCountFound = 0;
+
+				//if we found 4 0 bytes in arow but we didn't find a full char set of CharacterSize
+				//then we should reset. This can happen if you have {5 0 0 0} {0 0 0 0} it will stop after the first 4
+				//But with this is will read the whole {0 0 0 0}.
+				if(currentCharCount % CharacterSize == 0 && zeroByteCountFound < CharacterSize)
 					zeroByteCountFound = 0;
 
 			} while(zeroByteCountFound < CharacterSize);

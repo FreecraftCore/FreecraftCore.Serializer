@@ -72,7 +72,12 @@ namespace FreecraftCore.Serializer.Tests
 			service.Compile();
 
 			//act
-			TestIsSerializingToStringClass testInstance = service.Deserialize<TestIsSerializingToStringClass>((service.Serialize<WireDataContractWithStringEnum>(new WireDataContractWithStringEnum(TestEnum.Something))));
+			byte[] bytes = service.Serialize<WireDataContractWithStringEnum>(new WireDataContractWithStringEnum(TestEnum.Something))
+				.Concat(new byte[1] {0})
+				.ToArray();
+
+			Assert.True(bytes.Length == 10, "Expected length of 9 from KnownSize string. Appended nullterminator for test");
+			TestIsSerializingToStringClass testInstance = service.Deserialize<TestIsSerializingToStringClass>(bytes);
 
 			//assert
 			Assert.AreEqual(testInstance.test, TestEnum.Something.ToString());
@@ -99,8 +104,9 @@ namespace FreecraftCore.Serializer.Tests
 			//act
 			byte[] bytes = service.Serialize(new KnownSizeEnumStringTest(TestStringEnum.Hello));
 
-			Assert.AreEqual(6, bytes.Length);
-			Assert.True(bytes[bytes.Length - 1] == 0);
+			//using KnownSize won't null terminate extend
+			Assert.AreEqual(5, bytes.Length);
+			Assert.True(bytes[bytes.Length - 1] != 0);
 			Assert.True(bytes[bytes.Length - 2] != 0);
 		}
 

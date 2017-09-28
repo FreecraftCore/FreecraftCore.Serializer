@@ -25,6 +25,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 		[NotNull]
 		private ITypeSerializerStrategy<string> decoratedSerializer { get; }
 
+		private char[] NullTermincatorCharacterArray { get; }
+
 		public SizeStringSerializerDecorator([NotNull] IStringSizeStrategy size, [NotNull] ITypeSerializerStrategy<string> stringSerializer, Encoding encodingStrategy)
 			: base(encodingStrategy)
 		{
@@ -33,6 +35,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			sizeProvider = size;
 			decoratedSerializer = stringSerializer;
+			NullTermincatorCharacterArray = Enumerable.Repeat('\0', CharacterSize).ToArray();
 		}
 
 		/// <inheritdoc />
@@ -51,7 +54,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//There may be a more efficient way of removing the padding
 			//There is actually an unsafe pointer hack to improve preformance here too.
 			//profile and add later.
-			return EncodingStrategy.GetString(bytes).TrimEnd('\0'); 
+			return EncodingStrategy.GetString(bytes).TrimEnd(NullTermincatorCharacterArray); 
 		}
 
 		/// <inheritdoc />
@@ -97,7 +100,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			byte[] bytes = await source.ReadBytesAsync(size);
 
-			return EncodingStrategy.GetString(bytes).TrimEnd('\0');
+			return EncodingStrategy.GetString(bytes).TrimEnd(NullTermincatorCharacterArray);
 		}
 	}
 }

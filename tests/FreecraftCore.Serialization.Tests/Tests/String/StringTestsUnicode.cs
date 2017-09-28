@@ -121,9 +121,81 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.True(bytes.Length == 5 * 2);
 		}
 
+		[Test]
+		public static void Test_SerializerService_Can_Handle_Type_With_All_string_Types()
+		{
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType<AllStringTypeStringObject>();
+			serializer.Compile();
+			AllStringTypeStringObject stringObject = new AllStringTypeStringObject("Hello");
+
+			//act
+			byte[] bytes = serializer.Serialize(stringObject);
+			AllStringTypeStringObject deserializedObject = serializer.Deserialize<AllStringTypeStringObject>(bytes);
+
+			//assert
+			Assert.NotNull(bytes);
+			Assert.IsNotEmpty(bytes);
+			
+			//Assert.AreEqual(stringObject.Test, UnicodeEncoding.Unicode.GetString(bytes.Take(10).ToArray()), "Failed to unicode deserialize");
+			//Assert.AreEqual(stringObject.Test2, UnicodeEncoding.ASCII.GetString(bytes.Skip(10).Take(2).ToArray()), "Failed to unicode deserialize");
+
+			Assert.AreEqual(stringObject.Test, deserializedObject.Test, $"{nameof(stringObject.Test)}");
+			Assert.AreEqual(stringObject.Test2, deserializedObject.Test2, $"{nameof(stringObject.Test2)}");
+			Assert.AreEqual(stringObject.Test3, deserializedObject.Test3, $"{nameof(stringObject.Test3)}");
+		}
+
+		[Test]
+		public static void Test_Serializer_Will_Write_Multibyte_Nullterminator_If_We_Include_It_In_knownSize_String()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType<MultiByteNullTerminatorInKnownSizeTest>();
+			serializer.Compile();
+			MultiByteNullTerminatorInKnownSizeTest t = new MultiByteNullTerminatorInKnownSizeTest("Gello\0hi\0");
+
+			//act
+			byte[] bytes = serializer.Serialize(t);
+			MultiByteNullTerminatorInKnownSizeTest t2 = serializer.Deserialize<MultiByteNullTerminatorInKnownSizeTest>(bytes);
+
+			//arrange
+			Assert.NotNull(t);
+			Assert.True(bytes.Length == 10 * 2 + sizeof(int) + sizeof(int), $"Lenght was {bytes.Length}");
+
+			Assert.AreEqual(t.i, t2.i);
+			Assert.AreEqual(t.j, t2.j);
+			Assert.AreEqual(new string(t.TestString.Reverse().Skip(1).Reverse().ToArray()), t2.TestString);
+		}
+
+		[WireDataContract]
+		public class MultiByteNullTerminatorInKnownSizeTest
+		{
+			[WireMember(1)]
+			public int i = 5;
+
+			[Encoding(EncodingType.UTF16)]
+			[KnownSize(10)]
+			[WireMember(2)]
+			public string TestString { get; }
+
+			[WireMember(3)]
+			public int j = 6;
+
+			public MultiByteNullTerminatorInKnownSizeTest(string testString)
+			{
+				TestString = testString;
+			}
+
+			public MultiByteNullTerminatorInKnownSizeTest()
+			{
+				
+			}
+		}
+
 		[WireDataContract]
 		public class TestDontTerminateString
 		{
+
 			[Encoding(EncodingType.UTF16)]
 			[DontTerminate]
 			[WireMember(1)]
@@ -136,7 +208,45 @@ namespace FreecraftCore.Serializer.Tests
 
 			public TestDontTerminateString()
 			{
-				
+
+			}
+		}
+
+		[WireDataContract]
+		public class AllStringTypeStringObject
+		{
+			[Encoding(EncodingType.UTF16)]
+			[SendSize(SendSizeAttribute.SizeType.Byte)]
+			[DontTerminate]
+			[WireMember(1)]
+			public string Test;
+
+			[KnownSize(8)]
+			[Encoding(EncodingType.ASCII)]
+			[WireMember(2)]
+			public string Test2 { get; set; } = "Hi";
+
+			[KnownSize(8)]
+			[Encoding(EncodingType.ASCII)]
+			[WireMember(3)]
+			public string Test69 { get; set; } = "Hi56";
+
+			[Encoding(EncodingType.UTF16)]
+			[WireMember(4)]
+			public string Test78 { get; set; } = "Hi";
+
+			[Encoding(EncodingType.UTF32)]
+			[WireMember(5)]
+			public string Test3 { get; set; } = "Hi";
+
+			public AllStringTypeStringObject(string test)
+			{
+				Test = test;
+			}
+
+			public AllStringTypeStringObject()
+			{
+
 			}
 		}
 	}

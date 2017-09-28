@@ -48,17 +48,17 @@ namespace FreecraftCore.Serializer.KnownTypes
 				if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.ASCII))
 				{
 					encoding = Encoding.ASCII;
-					serializer = serializerProviderService.Get<string>();
+					serializer = new StringSerializerStrategy(Encoding.ASCII, SerializationContextRequirement.RequiresContext);
 				}
 				else if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.UTF16))
 				{
 					encoding = Encoding.Unicode;
-					serializer = new StringSerializerStrategy(Encoding.Unicode);
+					serializer = new StringSerializerStrategy(Encoding.Unicode, SerializationContextRequirement.RequiresContext);
 				}
 				else if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.UTF32))
 				{
 					encoding = Encoding.UTF32;
-					serializer = new StringSerializerStrategy(Encoding.UTF32);
+					serializer = new StringSerializerStrategy(Encoding.UTF32, SerializationContextRequirement.RequiresContext);
 				}
 				else
 					throw new InvalidOperationException($"String had encoding flags but no specified encoding.");
@@ -70,8 +70,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			bool shouldTerminate = !context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.DontTerminate);
 
-			//Determine which base string serializer we want to decorate
-			if (!shouldTerminate)
+			//If we shouldn't null terminate or if we're using a fixed/known size (meaning we never want to append a null terminator past the size)
+			if (!shouldTerminate || context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.FixedSize))
 				serializer = new DontTerminateStringSerializerDecorator(serializer, encoding);
 
 			//It is possible that the WoW protocol expects a fixed-size string that both client and server know the length of
@@ -84,9 +84,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 				serializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(context.BuiltContextKey.Value.ContextSpecificKey.Key), serializer, encoding);
 			}
-
 			//It is also possible that the WoW protocol expects a length prefixed string
-			if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.SendSize))
+			else if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.SendSize))
 			{
 				//This is an odd choice but if they mark it with conflicting metdata maybe we should throw?
 				switch ((SendSizeAttribute.SizeType)context.BuiltContextKey.Value.ContextSpecificKey.Key)
