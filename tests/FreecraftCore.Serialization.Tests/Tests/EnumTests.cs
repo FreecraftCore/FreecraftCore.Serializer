@@ -110,6 +110,42 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.True(bytes[bytes.Length - 2] != 0);
 		}
 
+		[Test]
+		public static void Test_EnumStringUTF16_Produces_Expected_Byte_Size()
+		{
+			//arrange
+			SerializerService service = new SerializerService();
+			service.RegisterType<KnownSizeEnumStringTestUTF16>();
+			service.Compile();
+
+			//act
+			byte[] bytes = service.Serialize(new KnownSizeEnumStringTestUTF16(TestStringEnum.Hello));
+
+			//using KnownSize won't null terminate extend
+			Assert.AreEqual(5 * 2, bytes.Length);
+			Assert.AreEqual(TestStringEnum.Hello.ToString(), Encoding.Unicode.GetString(bytes));
+		}
+
+		[WireDataContract]
+		public class KnownSizeEnumStringTestUTF16
+		{
+			[Encoding(EncodingType.UTF16)]
+			[KnownSize(5)]
+			[EnumString]
+			[WireMember(1)]
+			public TestStringEnum test;
+
+			public KnownSizeEnumStringTestUTF16(TestStringEnum t)
+			{
+				test = t;
+			}
+
+			public KnownSizeEnumStringTestUTF16()
+			{
+
+			}
+		}
+
 		[WireDataContract]
 		public class KnownSizeEnumStringTest
 		{
