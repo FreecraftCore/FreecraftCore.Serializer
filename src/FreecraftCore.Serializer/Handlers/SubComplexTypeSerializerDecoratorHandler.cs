@@ -56,6 +56,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//Build the strategy for child size and value read/write
 			switch (contractAttribute.OptionalChildTypeKeySize)
 			{
+				
 				//TODO: Make it a factory
 				case WireDataContractAttribute.KeyType.Byte:
 					keyStrategy = new GenericChildKeyStrategy<byte>(contractAttribute.TypeHandling, serializerProviderService.Get<byte>());

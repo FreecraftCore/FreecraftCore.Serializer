@@ -88,6 +88,30 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 			//assert
 			Assert.Throws<InvalidOperationException>(() => serializer.Deserialize<PSOBBPacketHeader>(bytes));
 		}
+
+		[Test]
+		public void Test_Patching_Payload_Deserializes_To_Correct_Values()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType(typeof(PSOBBPatchPacketPayloadServer));
+			serializer.RegisterType<PatchingWelcomePayload>();
+			//don't register
+			serializer.Compile();
+			PatchingWelcomePayload payload = new PatchingWelcomePayload("Patch Server. Copyright SonicTeam, LTD. 2001", 506953426, 214005626);
+
+
+			//assert
+			PatchingWelcomePayload deserializedPayload = serializer.Deserialize<PatchingWelcomePayload>(serializer.Serialize(payload));
+
+			//assert
+			Assert.AreEqual(payload.PatchCopyrightMessage, deserializedPayload.PatchCopyrightMessage);
+			Assert.AreEqual(payload.ClientVector, deserializedPayload.ClientVector);
+			Assert.AreEqual(payload.ServerVector, deserializedPayload.ServerVector);
+			Assert.AreEqual(0x99, deserializedPayload.OperationCode);
+		}
+
+
 	}
 
 	/// <summary>
@@ -189,8 +213,9 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 		/// <summary>
 		/// The operation code of the packet.
 		/// </summary>
+		[DontWrite]
 		[WireMember(1)]
-		protected short OperationCode { get; }
+		public short OperationCode { get; }
 
 		//Nothing, only the 2 byte Type is relevant for this base packet.
 
@@ -293,6 +318,53 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 
 		//serializer ctor
 		private PatchingLoginRequestPayload()
+		{
+
+		}
+	}
+
+	[WireDataContract]
+	[WireDataContractBaseLink(0x99, typeof(PSOBBPatchPacketPayloadServer))]
+	public sealed class PatchingWelcomePayload : PSOBBPatchPacketPayloadServer
+	{
+		/// <summary>
+		/// Copyright message sent down from the patch server.
+		/// Always the same message.
+		/// </summary>
+		[DontTerminate]
+		[KnownSize(44)]
+		[WireMember(1)]
+		public string PatchCopyrightMessage { get; } //I don't think this is null terminated?
+
+		//TODO: Why?
+		[KnownSize(20)]
+		[WireMember(2)]
+		private byte[] Padding { get; } = new byte[20];
+
+		//TODO: What is this?
+		/// <summary>
+		/// Server IV (?)
+		/// </summary>
+		[WireMember(3)]
+		public uint ServerVector { get; }
+
+		/// <summary>
+		/// Client IV (?)
+		/// </summary>
+		[WireMember(4)]
+		public uint ClientVector { get; }
+
+		public PatchingWelcomePayload(string patchCopyrightMessage, uint serverVector, uint clientVector)
+		{
+			if(string.IsNullOrWhiteSpace(patchCopyrightMessage)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(patchCopyrightMessage));
+
+			PatchCopyrightMessage = patchCopyrightMessage;
+			ServerVector = serverVector;
+			ClientVector = clientVector;
+		}
+
+		//serializer ctor
+		private PatchingWelcomePayload()
 		{
 
 		}

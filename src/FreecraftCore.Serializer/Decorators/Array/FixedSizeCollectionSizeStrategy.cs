@@ -25,9 +25,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <param name="size"></param>
 		public FixedSizeCollectionSizeStrategy(int size)
 		{
-			if (size <= 0 || size > 255)
+			if (size <= 0)
 				throw new ArgumentOutOfRangeException(nameof(size),
-					$"Provided {nameof(size)} must be bounded between 1 and 255. Was {size}.");
+					$"Provided {nameof(size)} must be bounded between 1 and {int.MaxValue - 1}. Was {size}.");
 
 			FixedSize = size;
 		}
