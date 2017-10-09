@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Serialization
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreecraftCore.Serializer.API", "src\FreecraftCore.Serializer.API\FreecraftCore.Serializer.API.csproj", "{E9199C44-9A68-44D1-BC00-CCBA85342F09}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Register.PerfTest", "tests\FreecraftCore.Register.PerfTest\FreecraftCore.Register.PerfTest.csproj", "{E8A93B41-505A-415B-8C19-6A42CF0BBB3C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,18 @@ Global
 		{E9199C44-9A68-44D1-BC00-CCBA85342F09}.Release|x64.Build.0 = Release|Any CPU
 		{E9199C44-9A68-44D1-BC00-CCBA85342F09}.Release|x86.ActiveCfg = Release|Any CPU
 		{E9199C44-9A68-44D1-BC00-CCBA85342F09}.Release|x86.Build.0 = Release|Any CPU
+		{E8A93B41-505A-415B-8C19-6A42CF0BBB3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8A93B41-505A-415B-8C19-6A42CF0BBB3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8A93B41-505A-415B-8C19-6A42CF0BBB3C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E8A93B41-505A-415B-8C19-6A42CF0BBB3C}.Debug|x64.Build.0 = Debug|Any CPU
+		{E8A93B41-505A-415B-8C19-6A42CF0BBB3C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E8A93B41-505A-415B-8C19-6A42CF0BBB3C}.Debug|x86.Build.0 = Debug|Any CPU
+		{E8A93B41-505A-415B-8C19-6A42CF0BBB3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8A93B41-505A-415B-8C19-6A42CF0BBB3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8A93B41-505A-415B-8C19-6A42CF0BBB3C}.Release|x64.ActiveCfg = Release|Any CPU
+		{E8A93B41-505A-415B-8C19-6A42CF0BBB3C}.Release|x64.Build.0 = Release|Any CPU
+		{E8A93B41-505A-415B-8C19-6A42CF0BBB3C}.Release|x86.ActiveCfg = Release|Any CPU
+		{E8A93B41-505A-415B-8C19-6A42CF0BBB3C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,6 +141,7 @@ Global
 		{127F5B64-66DF-471D-800A-75FF39FDD8C0} = {2E903AB5-E882-49A7-A612-FCCB9F11D540}
 		{5583F0D8-F594-4E63-878B-D1C4452A662C} = {2E903AB5-E882-49A7-A612-FCCB9F11D540}
 		{E9199C44-9A68-44D1-BC00-CCBA85342F09} = {C69D878A-A37C-4DBD-8D90-8AF30074E3C0}
+		{E8A93B41-505A-415B-8C19-6A42CF0BBB3C} = {2E903AB5-E882-49A7-A612-FCCB9F11D540}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {77340858-04C1-4169-93A3-121A82FA6670}

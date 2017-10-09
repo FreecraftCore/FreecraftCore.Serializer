@@ -39,6 +39,8 @@ namespace FreecraftCore.Serializer
 
 		public ISerializerStrategyRegistry StrategyRegistry { get; }
 
+		private Dictionary<Type, MethodInfo> CachedGenericInternalCreateMap { get; } = new Dictionary<Type, MethodInfo>();
+
 		public DefaultSerializerStrategyFactory([NotNull] IEnumerable<DecoratorHandler> handlers, [NotNull] IContextualSerializerProvider serializerProvider, 
 			[NotNull] ISerializerStrategyFactory fallbackFactory, [NotNull] IContextualSerializerLookupKeyFactory lookupKeyFactory, ISerializerStrategyRegistry strategyRegistry)
 		{
@@ -78,17 +80,28 @@ namespace FreecraftCore.Serializer
 			if(serializerProviderService.HasSerializerFor(context.BuiltContextKey.Value))
 				throw new InvalidOperationException($"Tried to create multiple serializer for already created serialize with Context: {context.ToString()}.");
 
-			IEnumerable<ISerializableTypeContext> byLikelyRegisteration = GetAllSubTypeContexts(context, Enumerable.Empty<ISerializableTypeContext>())
-					.Where(s => !context.BuiltContextKey.Value.Equals(s.BuiltContextKey.Value))
+			//This may look weird but this was done for perf reasons
+			//We can't be passing around IEnumerables and ToListing them
+			//Otherwise complex types will take seconds to register
+			List<ISerializableTypeContext> contexts = new List<ISerializableTypeContext>(200);
+			GetAllSubTypeContexts(context, contexts);
+
+			IEnumerable<ISerializableTypeContext> byLikelyRegisteration = contexts
 					.Distinct(new SerializableTypeContextComparer())
 					.ToList();
 
 			//We must register all subcontexts first
 			foreach(ISerializableTypeContext subContext in byLikelyRegisteration)
 			{
-				this.GetType().GetTypeInfo().GetMethod(nameof(InternalCreate), BindingFlags.NonPublic | BindingFlags.Instance)
-					.MakeGenericMethod(subContext.TargetType)
-					.Invoke(this, new object[] {subContext});
+				MethodInfo info = null;
+
+				if(CachedGenericInternalCreateMap.ContainsKey(subContext.TargetType))
+					info = CachedGenericInternalCreateMap[subContext.TargetType];
+				else
+					info = (CachedGenericInternalCreateMap[subContext.TargetType] = GetType().GetTypeInfo().GetMethod(nameof(InternalCreate), BindingFlags.NonPublic | BindingFlags.Instance)
+						.MakeGenericMethod(subContext.TargetType));
+
+				info.Invoke(this, new object[] {subContext});
 			}
 
 			//Now that all dependencies in the object graph are registered we can create the requested type
@@ -129,10 +142,9 @@ namespace FreecraftCore.Serializer
 			}
 		}
 
-		private IEnumerable<ISerializableTypeContext> GetAllSubTypeContexts([NotNull] ISerializableTypeContext context, IEnumerable<ISerializableTypeContext> knownContexts)
+		private void GetAllSubTypeContexts([NotNull] ISerializableTypeContext context, List<ISerializableTypeContext> knownContexts)
 		{
-			List<ISerializableTypeContext> contexts = GetUnknownUnregisteredSubTypeContexts(context, knownContexts)
-				.ToList();
+			List<ISerializableTypeContext> contexts = GetUnknownUnregisteredSubTypeContexts(context, knownContexts);
 
 			foreach(ISerializableTypeContext s in contexts)
 				s.BuiltContextKey = lookupKeyFactoryService.Create(s);
@@ -143,20 +155,17 @@ namespace FreecraftCore.Serializer
 
 			//After we've made context unique ones we haven't registered we NEED to make sure that the ones we know in this stack
 			//are included in the knowns we pass to ones below this recurring stack
-			knownContexts = knownContexts.Concat(contexts);
+			knownContexts.AddRange(contexts);
 
 			//If there are any new we need to recurr to get their dependencies
 			foreach(var s in contexts)
 			{
-				knownContexts = knownContexts.Concat(GetAllSubTypeContexts(s, knownContexts));
+				//We don't return lists anymore. Just add elements instead to avoid allocations
+				GetAllSubTypeContexts(s, knownContexts);
 			}
-				
-
-			//Return the entire tree of contexts
-			return knownContexts;
 		}
 
-		private IEnumerable<ISerializableTypeContext> GetUnknownUnregisteredSubTypeContexts([NotNull] ISerializableTypeContext context, IEnumerable<ISerializableTypeContext> knownContexts)
+		private List<ISerializableTypeContext> GetUnknownUnregisteredSubTypeContexts([NotNull] ISerializableTypeContext context, IEnumerable<ISerializableTypeContext> knownContexts)
 		{
 			return decoratorHandlers.First(h => h.CanHandle(context))
 				.GetAssociatedSerializationContexts(context)

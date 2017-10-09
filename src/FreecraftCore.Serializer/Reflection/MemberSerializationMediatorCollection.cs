@@ -45,9 +45,10 @@ namespace FreecraftCore.Serializer
 			//TODO: Cleaner/better way to provide instuctions
 			//Build the instructions for serializion with mediators
 			MemberInfo[] infos = typeof(TTargetType).GetTypeInfo().DeclaredMembers
-				.Where(mi => mi is FieldInfo || mi is PropertyInfo)
+				.Where(mi => (mi is FieldInfo || mi is PropertyInfo))
 				.Where(mi => mi.HasAttribute<WireMemberAttribute>())
-				.OrderBy(x => x.GetCustomAttribute<WireMemberAttribute>().MemberOrder).ToArray();
+				.OrderBy(x => x.GetCustomAttribute<WireMemberAttribute>().MemberOrder)
+				.ToArray();
 
 			//We need to check that there isn't any duplicate WireMember id.
 			if(infos.Length != infos

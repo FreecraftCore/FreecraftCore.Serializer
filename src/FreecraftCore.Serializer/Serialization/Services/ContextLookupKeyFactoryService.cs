@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,14 +14,19 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public class ContextLookupKeyFactoryService : IContextualSerializerLookupKeyFactory
 	{
+		private object syncObj = new object();
+
+		private Dictionary<Type, Dictionary<ContextTypeFlags, ContextualSerializerLookupKey>> CachedKeyStore { get; }
+			= new Dictionary<Type, Dictionary<ContextTypeFlags, ContextualSerializerLookupKey>>();
+
 		/// <inheritdoc />
 		public ContextualSerializerLookupKey Create([NotNull] ISerializableTypeContext context)
 		{
 			if (context == null) throw new ArgumentNullException(nameof(context));
 
 			//We must inspect the metadata to build the key
-			if (!context.HasContextualMemberMetadata())
-				return new ContextualSerializerLookupKey(ContextTypeFlags.None, NoContextKey.Value, context.TargetType);
+			if(!context.HasContextualMemberMetadata())
+				GetKeyFromStorage(ContextTypeFlags.None, context.TargetType);
 
 			//Build the relevant flags
 			ContextTypeFlags flags = ContextTypeFlags.None;
@@ -70,7 +76,26 @@ namespace FreecraftCore.Serializer
 				return new ContextualSerializerLookupKey(flags | ContextTypeFlags.FixedSize, new SizeContextKey(context.GetMemberAttribute<KnownSizeAttribute>().KnownSize), context.TargetType);
 
 			//If we're here then we have flags that weren't mutually exclusive
-			return new ContextualSerializerLookupKey(flags, new NoContextKey(), context.TargetType);
+			return GetKeyFromStorage(flags, context.TargetType);
+		}
+
+		private ContextualSerializerLookupKey GetKeyFromStorage(ContextTypeFlags flags, Type t)
+		{
+			lock(syncObj)
+			{
+				if(CachedKeyStore.ContainsKey(t))
+				{
+					if(CachedKeyStore[t].ContainsKey(flags))
+						return CachedKeyStore[t][flags];
+					else
+						return CachedKeyStore[t][flags] = new ContextualSerializerLookupKey(flags, NoContextKey.Value, t);
+				}
+				else
+				{
+					CachedKeyStore.Add(t, new Dictionary<ContextTypeFlags, ContextualSerializerLookupKey>());
+					return GetKeyFromStorage(flags, t);
+				}
+			}
 		}
 
 		/// <inheritdoc />
