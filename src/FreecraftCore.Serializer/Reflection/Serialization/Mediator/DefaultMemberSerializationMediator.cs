@@ -23,7 +23,7 @@ namespace FreecraftCore.Serializer
 			//TODO: Check how TC handles optionals or nulls.
 			//Do we write nothing? Do we write 0?
 			//object memberValue = value.TryGetValue(serializerInfo.MemberInformation.Name);
-			object memberValue = MemberGetter(obj); //instead of fasterflect we use delegate to getter
+			object memberValue = MemberGetter.Getter(obj); //instead of fasterflect we use delegate to getter
 
 			//We used to do a null check here. It was kind of pointless to do and it was slightly expensive since they weren't all
 			//reference types. No reason to check nullness; it's just a perf issue
@@ -37,7 +37,7 @@ namespace FreecraftCore.Serializer
 
 			try
 			{
-				MemberAccessor(obj, (TMemberType) TypeSerializer.Read(source));
+				MemberSetter.Setter(obj, (TMemberType) TypeSerializer.Read(source));
 			}
 			catch (Exception e)
 			{
@@ -54,7 +54,7 @@ namespace FreecraftCore.Serializer
 			//TODO: Check how TC handles optionals or nulls.
 			//Do we write nothing? Do we write 0?
 			//object memberValue = value.TryGetValue(serializerInfo.MemberInformation.Name);
-			object memberValue = MemberGetter(obj); //instead of fasterflect we use delegate to getter
+			object memberValue = MemberGetter.Getter(obj); //instead of fasterflect we use delegate to getter
 
 			//We used to do a null check here. It was kind of pointless to do and it was slightly expensive since they weren't all
 			//reference types. No reason to check nullness; it's just a perf issue
@@ -70,7 +70,7 @@ namespace FreecraftCore.Serializer
 #if NET35
 			throw new NotImplementedException();
 #else
-			MemberAccessor(obj, (TMemberType)await TypeSerializer.ReadAsync(source));
+			MemberSetter.Setter(obj, (TMemberType)await TypeSerializer.ReadAsync(source));
 #endif
 		}
 	}
