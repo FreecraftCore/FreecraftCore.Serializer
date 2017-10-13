@@ -70,7 +70,7 @@ namespace FreecraftCore.Serializer
 			}
 
 			if(context.HasMemberAttribute<SendSizeAttribute>())
-				return new ContextualSerializerLookupKey(flags | ContextTypeFlags.SendSize, new SendSizeContextKey(context.GetMemberAttribute<SendSizeAttribute>().TypeOfSize), context.TargetType);
+				return new ContextualSerializerLookupKey(flags | ContextTypeFlags.SendSize, new SendSizeContextKey(context.GetMemberAttribute<SendSizeAttribute>().TypeOfSize, context.GetMemberAttribute<SendSizeAttribute>().AddedSize), context.TargetType);
 
 			if(context.HasMemberAttribute<KnownSizeAttribute>())
 				return new ContextualSerializerLookupKey(flags | ContextTypeFlags.FixedSize, new SizeContextKey(context.GetMemberAttribute<KnownSizeAttribute>().KnownSize), context.TargetType);

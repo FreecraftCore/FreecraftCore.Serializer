@@ -81,14 +81,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			int size = sizeStrategyService.Size<TObjectType[], TObjectType>(value, dest);
 
-			if(size != value.Length)
-				throw new InvalidOperationException($"Invalid size. Provided {nameof(TObjectType)}[] had a size mismatch with expected size: {size} and was: {value.Length}.");
+			//We no longer verify size thanks to PHANTASY STAR ONLINE. Thanks Sega. Sometimes we have to fake the size
 
-			unchecked
-			{
-				for (int i = 0; i < size; i++)
-					decoratedSerializer.Write(value[i], dest);
-			}
+			for (int i = 0; i < size; i++)
+				decoratedSerializer.Write(value[i], dest);
 		}
 
 		/// <inheritdoc />
@@ -98,14 +94,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			int size = await sizeStrategyService.SizeAsync<TObjectType[], TObjectType>(value, dest);
 
-			if (size != value.Length)
-				throw new InvalidOperationException($"Invalid size. Provided {typeof(TObjectType).FullName}[] had a size mismatch with expected size: {size} and was: {value.Length}.");
+			//We no longer verify size thanks to PHANTASY STAR ONLINE. Thanks Sega. Sometimes we have to fake the size
 
-			unchecked
-			{
-				for (int i = 0; i < size; i++)
-					await decoratedSerializer.WriteAsync(value[i], dest);
-			}
+			for (int i = 0; i < size; i++)
+				await decoratedSerializer.WriteAsync(value[i], dest);
 		}
 
 		/// <inheritdoc />

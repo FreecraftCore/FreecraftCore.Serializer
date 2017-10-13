@@ -87,17 +87,18 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//It is also possible that the WoW protocol expects a length prefixed string
 			else if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.SendSize))
 			{
+				byte addedSize = (byte)(context.BuiltContextKey.Value.ContextSpecificKey.Key >> 4);
 				//This is an odd choice but if they mark it with conflicting metdata maybe we should throw?
-				switch ((SendSizeAttribute.SizeType)context.BuiltContextKey.Value.ContextSpecificKey.Key)
+				switch ((SendSizeAttribute.SizeType)(context.BuiltContextKey.Value.ContextSpecificKey.Key & 0b0000_0000_0000_1111))
 				{
 					case SendSizeAttribute.SizeType.Byte:
-						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(serializerProviderService.Get<byte>(), shouldTerminate), serializer, encoding);
+						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(serializerProviderService.Get<byte>(), shouldTerminate, addedSize), serializer, encoding);
 						break;
 					case SendSizeAttribute.SizeType.Int32:
-						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<int>(serializerProviderService.Get<int>(), shouldTerminate), serializer, encoding);
+						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<int>(serializerProviderService.Get<int>(), shouldTerminate, addedSize), serializer, encoding);
 						break;
 					case SendSizeAttribute.SizeType.UShort:
-						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<ushort>(serializerProviderService.Get<ushort>(), shouldTerminate), serializer, encoding);
+						serializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<ushort>(serializerProviderService.Get<ushort>(), shouldTerminate, addedSize), serializer, encoding);
 						break;
 
 					default:

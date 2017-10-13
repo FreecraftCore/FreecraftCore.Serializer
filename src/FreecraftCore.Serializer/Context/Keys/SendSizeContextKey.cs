@@ -17,12 +17,13 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		public int Key { get; }
 
-		public SendSizeContextKey(SendSizeAttribute.SizeType sizeType)
+		public SendSizeContextKey(SendSizeAttribute.SizeType sizeType, byte addedSize)
 		{
 			if (!Enum.IsDefined(typeof(SendSizeAttribute.SizeType), sizeType))
 				throw new ArgumentException($"Provided SizeType {sizeType} was invalid.");
 
 			Key = (int)sizeType;
+			Key += ((int)addedSize) << 4; //we should to store the value in the upper part of the key. Default will be shifting 0.
 		}
 
 		//TODO: Override rest of methods

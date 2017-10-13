@@ -12,7 +12,7 @@ namespace FreecraftCore.Serializer
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 	public class SendSizeAttribute : Attribute
 	{
-		public enum SizeType
+		public enum SizeType : byte //make byte because we need to shift and pack into int key
 		{
 			Byte,
 			UShort,
@@ -24,12 +24,32 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		public SizeType TypeOfSize { get; }
 
+		/// <summary>
+		/// Indicates the size to be added when read/written.
+		/// For example, if protocols send N but only say N - 1 you can
+		/// initialize this to 1 to support that.
+		/// </summary>
+		public byte AddedSize { get; }
+
 		public SendSizeAttribute(SizeType sizeType)
+			: this(sizeType, 0)
 		{
-			if (!Enum.IsDefined(typeof(SizeType), sizeType))
+			
+		}
+
+		/// <summary>
+		/// Initializes the metadata with the optional added size offset.
+		/// This sill increase or decrease the sent size by the provided value <see cref="AddedSize"/>.
+		/// </summary>
+		/// <param name="sizeType"></param>
+		/// <param name="addedSize"></param>
+		public SendSizeAttribute(SizeType sizeType, byte addedSize)
+		{
+			if(!Enum.IsDefined(typeof(SizeType), sizeType))
 				throw new ArgumentException($"Provided enum argument {nameof(sizeType)} of Type {typeof(SizeType)} with value {sizeType} was not in valid range.", nameof(sizeType));
 
 			TypeOfSize = sizeType;
+			AddedSize = addedSize;
 		}
 	}
 }

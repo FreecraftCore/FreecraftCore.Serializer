@@ -51,17 +51,19 @@ namespace FreecraftCore.Serializer.KnownTypes
 			}
 			else if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.SendSize))
 			{
-				switch ((SendSizeAttribute.SizeType)context.BuiltContextKey.Value.ContextSpecificKey.Key)
+				byte addedSize = (byte)(context.BuiltContextKey.Value.ContextSpecificKey.Key >> 4);
+				//TODO: Is there a way to obsecure this bit fiddling?
+				switch ((SendSizeAttribute.SizeType)(context.BuiltContextKey.Value.ContextSpecificKey.Key & 0b0000_0000_0000_1111)) //get just the key
 				{
 					//TODO: Refactor into factory
 					case SendSizeAttribute.SizeType.Byte:
-						collectionSizeStrategy = new GenericCollectionSizeStrategy<byte>(serializerProviderService.Get<byte>());
+						collectionSizeStrategy = new GenericCollectionSizeStrategy<byte>(serializerProviderService.Get<byte>(), addedSize);
 						break;
 					case SendSizeAttribute.SizeType.Int32:
-						collectionSizeStrategy = new GenericCollectionSizeStrategy<int>(serializerProviderService.Get<int>());
+						collectionSizeStrategy = new GenericCollectionSizeStrategy<int>(serializerProviderService.Get<int>(), addedSize);
 						break;
 					case SendSizeAttribute.SizeType.UShort:
-						collectionSizeStrategy = new GenericCollectionSizeStrategy<ushort>(serializerProviderService.Get<ushort>());
+						collectionSizeStrategy = new GenericCollectionSizeStrategy<ushort>(serializerProviderService.Get<ushort>(), addedSize);
 						break;
 
 					default:
@@ -92,7 +94,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 				//TODO: Should we really have a default?
 				//if they marked it with nothing then use a the byte
 				if(collectionSizeStrategy == null)
-					collectionSizeStrategy = new GenericCollectionSizeStrategy<byte>(serializerProviderService.Get<byte>());
+					collectionSizeStrategy = new GenericCollectionSizeStrategy<byte>(serializerProviderService.Get<byte>(), 0);
 
 				//If it's a primitive array we should use the new generic primitive array serializer
 				if(typeof(TType).GetTypeInfo().GetElementType().GetTypeInfo().IsPrimitive)

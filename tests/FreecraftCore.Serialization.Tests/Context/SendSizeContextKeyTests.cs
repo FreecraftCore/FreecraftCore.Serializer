@@ -15,7 +15,7 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 		{
 			//Originally I took the typeof() the wrong type to check if the enum was defined. This was causing exceptions
 			//arrange
-			Assert.DoesNotThrow(() => new SendSizeContextKey(SendSizeAttribute.SizeType.Int32));
+			Assert.DoesNotThrow(() => new SendSizeContextKey(SendSizeAttribute.SizeType.Int32, 0));
 		}
 	}
 }

@@ -22,11 +22,18 @@ namespace FreecraftCore.Serializer.KnownTypes
 		[NotNull]
 		private ITypeSerializerStrategy<TSizeType> SizeTypeSerializerStrategy { get; }
 
-		public GenericCollectionSizeStrategy([NotNull] ITypeSerializerStrategy<TSizeType> sizeTypeSerializerStrategy)
+		/// <summary>
+		/// Additional size to add when reading the collection.
+		/// Remove from writing the collection.
+		/// </summary>
+		public byte AddedSize { get; }
+
+		public GenericCollectionSizeStrategy([NotNull] ITypeSerializerStrategy<TSizeType> sizeTypeSerializerStrategy, byte addedSize)
 		{
 			if (sizeTypeSerializerStrategy == null) throw new ArgumentNullException(nameof(sizeTypeSerializerStrategy));
 
 			SizeTypeSerializerStrategy = sizeTypeSerializerStrategy;
+			AddedSize = addedSize;
 		}
 
 		/// <summary>
@@ -37,7 +44,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (reader == null) throw new ArgumentNullException(nameof(reader));
 
 			//Read the byte size from the stream.
-			return GenericMath.Convert<TSizeType, int>(SizeTypeSerializerStrategy.Read(reader));
+			//Readd the addedsize so that we know how many items are really there.
+			return GenericMath.Convert<TSizeType, int>(SizeTypeSerializerStrategy.Read(reader)) + AddedSize;
 		}
 
 		/// <summary>
@@ -49,7 +57,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (collection == null) throw new ArgumentNullException(nameof(collection));
 			if (writer == null) throw new ArgumentNullException(nameof(writer));
 
-			int size = collection.Count();
+			//When writing N items we want to write N - X. The otherside will X so it will still understand
+			//This was added to suppose very rare scenarios where the encoded size was off from the actual size.
+			int size = collection.Count() - AddedSize;
 
 			//Since the size is unknown it's critical that we write the size to the stream.
 			SizeTypeSerializerStrategy.Write(GenericMath.Convert<int, TSizeType>(size), writer);
@@ -65,7 +75,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (collection == null) throw new ArgumentNullException(nameof(collection));
 			if (writer == null) throw new ArgumentNullException(nameof(writer));
 
-			int size = collection.Count();
+			//When writing N items we want to write N - X. The otherside will X so it will still understand
+			//This was added to suppose very rare scenarios where the encoded size was off from the actual size.
+			int size = collection.Count() - AddedSize;
 
 			//yield until we write (shouldn't take long and maybe syncronous is more efficient and performant but async API should be fully async) 
 			await SizeTypeSerializerStrategy.WriteAsync(GenericMath.Convert<int, TSizeType>(size), writer);
@@ -81,8 +93,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//Read the byte size from the stream.
 			TSizeType result = await SizeTypeSerializerStrategy.ReadAsync(reader);
-
-			return GenericMath.Convert<TSizeType, int>(result);
+			
+			//Readd the addedsize so that we know how many items are really there.
+			return GenericMath.Convert<TSizeType, int>(result) + AddedSize;
 		}
 	}
 }

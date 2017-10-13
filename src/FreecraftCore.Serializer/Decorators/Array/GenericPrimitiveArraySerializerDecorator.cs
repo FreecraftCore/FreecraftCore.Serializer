@@ -64,8 +64,7 @@ namespace FreecraftCore.Serializer
 
 			int size = SizeStrategyService.Size<TType[], TType>(value, dest);
 
-			if(size != value.Length)
-				throw new InvalidOperationException($"Invalid size. Provided {typeof(TType).FullName}[] had a size mismatch with expected size: {size} and was: {value.Length}.");
+			//We no longer verify size thanks to PHANTASY STAR ONLINE. Thanks Sega. Sometimes we have to fake the size
 
 			dest.Write(value.Reinterpret());
 		}
@@ -77,8 +76,7 @@ namespace FreecraftCore.Serializer
 
 			int size = await SizeStrategyService.SizeAsync<TType[], TType>(value, dest);
 
-			if(size != value.Length)
-				throw new InvalidOperationException($"Invalid size. Provided {typeof(TType).FullName}[] had a size mismatch with expected size: {size} and was: {value.Length}.");
+			//We no longer verify size thanks to PHANTASY STAR ONLINE. Thanks Sega. Sometimes we have to fake the size
 
 			await dest.WriteAsync(value.Reinterpret());
 		}

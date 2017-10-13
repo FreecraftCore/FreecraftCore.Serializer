@@ -164,7 +164,7 @@ namespace FreecraftCore.Serialization.Tests.Tests
 	[WireDataContract]
 	public class TestComplexOptionalFieldWithDisable
 	{
-		public bool isSerialized { get; } = false; //default to true
+		public bool isSerialized => false; //default to true
 
 		[Optional(nameof(isSerialized))]
 		[KnownSize(4)]
@@ -192,7 +192,7 @@ namespace FreecraftCore.Serialization.Tests.Tests
 	[WireDataContract]
 	public class TestComplexOptionalFieldWithEnable
 	{
-		public bool isSerialized { get; } = true; //default to true
+		public bool isSerialized => true; //default to true
 
 		[Optional(nameof(isSerialized))]
 		[KnownSize(4)]
