@@ -88,8 +88,73 @@ namespace FreecraftCore.Serializer.KnownTypes
 				return;
 			}
 
+			ITypeSerializerStrategy serializer = GetWriteSerializer(value, ref childType);
+
+			if(serializer == null || childType == null || !typeToKeyLookup.ContainsKey(childType))
+				throw new InvalidOperationException($"Unable to find serializer for Type: {typeof(TBaseType).Name} looking for Subtype: {childType.Name}");
+
+			//TODO: Oh man, this is a disaster. How do we handle the default? How do we tell consumers to use the default?
+			//Defer key writing to the key writing strategy
+			keyStrategy.Write(typeToKeyLookup[childType], dest);
+			serializer.Write(value, dest);
+		}
+
+		/// <inheritdoc />
+		public override TBaseType Read(IWireStreamReaderStrategy source)
+		{
+			if (source == null) throw new ArgumentNullException(nameof(source));
+
+			//Incoming should be a byte that indicates the child type to use
+			//Read it to lookup in the map to determine which type we should create
+			int childIndexRequested = keyStrategy.Read(source); //defer to key reader (could be int, byte or something else)
+
+			ITypeSerializerStrategy strategy = GetReadStrategy(childIndexRequested);
+
+			//Once we know which child this particular object should be
+			//we need to dispatch the read request to that child's serializer handler
+			//and if it happens to map to another child, which should be rare, it'll dispatch until it reaches a ComplexType serializer which is where
+			//the end of the inheritance graph tree should end up. The complextype serializer, which is the true type serializer, should handle deserialization
+			//include going up the base heriachiry.
+			return (TBaseType)strategy.Read(source);
+		}
+
+		private ITypeSerializerStrategy GetReadStrategy(int key)
+		{
+			//If it's the reserved key self then we know we should
+			//dispatch reading to the internally managed complex version of this Type.
+			if(key == keyStrategy.DefaultKey)
+			{
+				return InternallyManagedComplexSerializer;
+			}
+
+			//Check if we have that index; if not use default
+			if(!keyToTypeLookup.ContainsKey(key))
+			{
+				if(DefaultSerializer != null)
+				{
+					return DefaultSerializer;
+				}
+				else
+					throw new InvalidOperationException($"{this.GetType()} attempted to deserialize a child of Type: {typeof(TBaseType).FullName} with Key: {key} but no valid type matches and there is no default type.");
+			}
+
+			Type childTypeRequest = keyToTypeLookup[key];
+
+			if(childTypeRequest == null)
+				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Index: {key} but the lookup table provided a null type. This may indicate a failure in registeration of child types.");
+
+			//Once we know which child this particular object should be
+			//we need to dispatch the read request to that child's serializer handler
+			//and if it happens to map to another child, which should be rare, it'll dispatch until it reaches a ComplexType serializer which is where
+			//the end of the inheritance graph tree should end up. The complextype serializer, which is the true type serializer, should handle deserialization
+			//include going up the base heriachiry.
+			return serializerProviderService.Get(childTypeRequest);
+		}
+
+		private ITypeSerializerStrategy GetWriteSerializer(TBaseType value, ref Type childType)
+		{
 			//TODO: Clean up default serializer implementation
-			if (!typeToKeyLookup.ContainsKey(childType))
+			if(!typeToKeyLookup.ContainsKey(childType))
 			{
 				bool foundType = false;
 				//We might be encountering a multiple level polymorphic/multiinheritance Type
@@ -110,63 +175,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 					throw new InvalidOperationException($"{this.GetType()} attempted to serialize a child Type: {value.GetType()} but no valid type matches. Writing cannot use default types.");
 			}
 
-			//TODO: Oh man, this is a disaster. How do we handle the default? How do we tell consumers to use the default?
-			//Defer key writing to the key writing strategy
-			keyStrategy.Write(typeToKeyLookup[childType], dest);
-
-			ITypeSerializerStrategy serializer;
-
 			try
 			{
-				serializer = serializerProviderService.Get(childType);
+				return serializerProviderService.Get(childType);
 
 			}
-			catch (KeyNotFoundException e)
+			catch(KeyNotFoundException e)
 			{
 				throw new InvalidOperationException($"Couldn't locate serializer for {value.GetType().Name} in the {nameof(IGeneralSerializerProvider)} service.", e);
 			}
-
-			serializer.Write(value, dest);
-		}
-
-		/// <inheritdoc />
-		public override TBaseType Read(IWireStreamReaderStrategy source)
-		{
-			if (source == null) throw new ArgumentNullException(nameof(source));
-
-			//Incoming should be a byte that indicates the child type to use
-			//Read it to lookup in the map to determine which type we should create
-			int childIndexRequested = keyStrategy.Read(source); //defer to key reader (could be int, byte or something else)
-
-			//If it's the reserved key self then we know we should
-			//dispatch reading to the internally managed complex version of this Type.
-			if(childIndexRequested == keyStrategy.DefaultKey)
-			{
-				return InternallyManagedComplexSerializer.Read(source);
-			}
-
-			//Check if we have that index; if not use default
-			if (!keyToTypeLookup.ContainsKey(childIndexRequested))
-			{
-				if (DefaultSerializer != null)
-				{
-					return (TBaseType)DefaultSerializer.Read(source);
-				}
-				else
-					throw new InvalidOperationException($"{this.GetType()} attempted to deserialize a child of Type: {typeof(TBaseType).FullName} with Key: {childIndexRequested} but no valid type matches and there is no default type.");
-			}
-
-			Type childTypeRequest = keyToTypeLookup[childIndexRequested];
-
-			if(childTypeRequest == null)
-				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Index: {childIndexRequested} but the lookup table provided a null type. This may indicate a failure in registeration of child types.");
-
-			//Once we know which child this particular object should be
-			//we need to dispatch the read request to that child's serializer handler
-			//and if it happens to map to another child, which should be rare, it'll dispatch until it reaches a ComplexType serializer which is where
-			//the end of the inheritance graph tree should end up. The complextype serializer, which is the true type serializer, should handle deserialization
-			//include going up the base heriachiry.
-			return (TBaseType)serializerProviderService.Get(childTypeRequest).Read(source);
 		}
 
 		/// <inheritdoc />
@@ -174,27 +191,24 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			//TODO: Clean up default serializer implementation
-			if (!typeToKeyLookup.ContainsKey(value.GetType()))
+			Type childType = value.GetType();
+
+			//If the actual type is just this type then we should handle serialization as if we
+			//were a regular complex type
+			if(childType == typeof(TBaseType))
 			{
-				throw new InvalidOperationException($"{this.GetType()} attempted to serialize a child Type: {value.GetType()} but no valid type matches. Writing cannot use default types.");
+				//We know the complex serializer won't be null because it HAS to be non-abstract for this to 
+				//have been true
+				keyStrategy.WriteDefault(dest);
+				InternallyManagedComplexSerializer.Write(value, dest);
+				return;
 			}
+
+			ITypeSerializerStrategy serializer = GetWriteSerializer(value, ref childType);
 
 			//TODO: Oh man, this is a disaster. How do we handle the default? How do we tell consumers to use the default?
 			//Defer key writing to the key writing strategy
-			await keyStrategy.WriteAsync(typeToKeyLookup[value.GetType()], dest);
-
-			ITypeSerializerStrategy serializer;
-
-			try
-			{
-				serializer = serializerProviderService.Get(value.GetType());
-
-			}
-			catch (KeyNotFoundException e)
-			{
-				throw new InvalidOperationException($"Couldn't locate serializer for {value.GetType().FullName} in the {nameof(IGeneralSerializerProvider)} service.", e);
-			}
+			await keyStrategy.WriteAsync(typeToKeyLookup[childType], dest);
 
 			await serializer.WriteAsync(value, dest);
 		}
@@ -206,23 +220,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//Incoming should be a byte that indicates the child type to use
 			//Read it to lookup in the map to determine which type we should create
-			int childIndexRequested = await keyStrategy.ReadAsync(source);
+			int childIndexRequested = keyStrategy.Read(source); //defer to key reader (could be int, byte or something else)
 
-			//Check if we have that index; if not use default
-			if (!keyToTypeLookup.ContainsKey(childIndexRequested))
-			{
-				if (DefaultSerializer != null)
-				{
-					return (TBaseType)await DefaultSerializer.ReadAsync(source);
-				}
-				else
-					throw new InvalidOperationException($"{this.GetType()} attempted to deserialize a child of Type: {typeof(TBaseType).FullName} with Key: {childIndexRequested} but no valid type matches and there is no default type.");
-			}
-
-			Type childTypeRequest = keyToTypeLookup[childIndexRequested];
-
-			if (childTypeRequest == null)
-				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Index: {childIndexRequested} but the lookup table provided a null type. This may indicate a failure in registeration of child types.");
+			ITypeSerializerStrategy strategy = GetReadStrategy(childIndexRequested);
 
 
 			//Once we know which child this particular object should be
@@ -230,7 +230,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//and if it happens to map to another child, which should be rare, it'll dispatch until it reaches a ComplexType serializer which is where
 			//the end of the inheritance graph tree should end up. The complextype serializer, which is the true type serializer, should handle deserialization
 			//include going up the base heriachiry.
-			return (TBaseType)await serializerProviderService.Get(childTypeRequest).ReadAsync(source);
+			return (TBaseType)await strategy.ReadAsync(source);
 		}
 
 		private void RegisterPair(Type child, int key)

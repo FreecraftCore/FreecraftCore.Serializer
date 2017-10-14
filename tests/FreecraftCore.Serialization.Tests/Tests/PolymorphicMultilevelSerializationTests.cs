@@ -22,7 +22,7 @@ namespace FreecraftCore.Serializer.Tests.Tests
 		{
 			//arrange
 			SerializerService serializer = new SerializerService();
-			Assert.DoesNotThrow(() => serializer.RegisterType<TestBaseClass>());
+			Assert.DoesNotThrow(() => serializer.RegisterType<SecondLevelClass>());
 			serializer.Compile();
 
 			//act
@@ -38,7 +38,7 @@ namespace FreecraftCore.Serializer.Tests.Tests
 		{
 			//arrange
 			SerializerService serializer = new SerializerService();
-			Assert.DoesNotThrow(() => serializer.RegisterType<TestBaseClass>());
+			Assert.DoesNotThrow(() => serializer.RegisterType<SecondLevelClass>());
 			serializer.Compile();
 
 			//act
@@ -58,9 +58,7 @@ namespace FreecraftCore.Serializer.Tests.Tests
 		{
 			//arrange
 			SerializerService serializer = new SerializerService();
-			Assert.DoesNotThrow(() => serializer.RegisterType<TestBaseClass>());
-			Assert.DoesNotThrow(() => serializer.RegisterType<SecondLevelClass>());
-			Assert.DoesNotThrow(() => serializer.RegisterType<ChildClass1>());
+			Assert.DoesNotThrow(() => serializer.RegisterType(typeof(SecondLevelClass)));
 			serializer.Compile();
 
 			//act
@@ -76,9 +74,7 @@ namespace FreecraftCore.Serializer.Tests.Tests
 			Assert.AreEqual(4356, child.i);
 		}
 
-		[WireDataContract(WireDataContractAttribute.KeyType.Byte)]
-		[WireDataContractBaseType(1, typeof(ChildClass1))]
-		[WireDataContractBaseType(2, typeof(ChildClass2))]
+		[WireDataContract(WireDataContractAttribute.KeyType.Byte, true)]
 		public abstract class TestBaseClass
 		{
 			[WireMember(1)]
@@ -91,6 +87,7 @@ namespace FreecraftCore.Serializer.Tests.Tests
 		}
 
 		[WireDataContract]
+		[WireDataContractBaseLink(76, typeof(ChildClass1))]
 		public class SecondLevelClass : ChildClass1
 		{
 			[Encoding(EncodingType.UTF32)]
@@ -103,8 +100,9 @@ namespace FreecraftCore.Serializer.Tests.Tests
 			}
 		}
 
-		[WireDataContract(WireDataContractAttribute.KeyType.Byte)]
-		[WireDataContractBaseType(1, typeof(SecondLevelClass))]
+		
+		[WireDataContractBaseLink(98, typeof(TestBaseClass))]
+		[WireDataContract(WireDataContractAttribute.KeyType.Byte, true)]
 		public class ChildClass1 : TestBaseClass
 		{
 			[WireMember(1)]
@@ -119,6 +117,8 @@ namespace FreecraftCore.Serializer.Tests.Tests
 			}
 		}
 
+		[WireDataContract]
+		[WireDataContractBaseLink(42, typeof(TestBaseClass))]
 		public class ChildClass2 : TestBaseClass
 		{
 			[WireMember(1)]

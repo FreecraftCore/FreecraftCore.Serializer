@@ -119,23 +119,29 @@ namespace FreecraftCore.Serializer
 			if (typeof(TTypeToRegister).GetTypeInfo().GetCustomAttribute<WireDataContractAttribute>(true) == null)
 				throw new InvalidOperationException($"Do not register any type that isn't marked with {nameof(WireDataContractAttribute)}. Only register WireDataContracts too; contained types will be registered automatically.");
 
-			//At this point this is a class marked with [WireDataContract] so we should assume and treat it as a complex type
-			ITypeSerializerStrategy<TTypeToRegister> serializer = serializerStrategyFactoryService.Create<TTypeToRegister>(new TypeBasedSerializationContext(typeof(TTypeToRegister))) as ITypeSerializerStrategy<TTypeToRegister>;
-
 			bool result = true;
 
 			//Check if it requires runtime linking
-			if(typeof(TTypeToRegister).GetTypeInfo().HasAttribute<WireDataContractBaseLinkAttribute>())
+			if(typeof(TTypeToRegister).GetTypeInfo().GetCustomAttribute<WireDataContractBaseLinkAttribute>(false) != null)
 			{
-				WireDataContractBaseLinkAttribute linkAttribute = typeof(TTypeToRegister).GetTypeInfo().GetCustomAttribute<WireDataContractBaseLinkAttribute>();
+				WireDataContractBaseLinkAttribute linkAttribute = typeof(TTypeToRegister).GetTypeInfo().GetCustomAttribute<WireDataContractBaseLinkAttribute>(false);
 
 				//Only link if they provided a basetype.
 				//Users may call RegisterType before linking so don't throw
 				if(linkAttribute.BaseType != null)
 				{
+					if(!serializerStorageService.HasSerializerFor(linkAttribute.BaseType))
+						RegisterType(linkAttribute.BaseType);
+
 					result = result && Link(linkAttribute, linkAttribute.BaseType, typeof(TTypeToRegister));
 				}
 			}
+
+			if(!result)
+				return false;
+
+			//At this point this is a class marked with [WireDataContract] so we should assume and treat it as a complex type
+			ITypeSerializerStrategy<TTypeToRegister> serializer = serializerStrategyFactoryService.Create<TTypeToRegister>(new TypeBasedSerializationContext(typeof(TTypeToRegister))) as ITypeSerializerStrategy<TTypeToRegister>;
 
 			//Return the serializer; callers shouldn't need it though
 			return serializer != null && result;
