@@ -32,6 +32,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 		[CanBeNull]
 		public ITypeSerializerStrategy DefaultSerializer { get; }
 
+		//This exists for cases where the type is non-abstract and we need to serialize as if we weren't a subtype.
+		private ComplexTypeSerializerDecorator<TBaseType> InternallyManagedComplexSerializer { get; }
+
+		private const int AsSelfKeyValue = Int32.MaxValue;
+
 		public SubComplexTypeSerializerDecorator([NotNull] IDeserializationPrototypeFactory<TBaseType> prototypeGenerator,
 			[NotNull] IEnumerable<IMemberSerializationMediator<TBaseType>> serializationDirections,
 			[NotNull] IGeneralSerializerProvider serializerProvider, [NotNull] IChildKeyStrategy childKeyStrategy)
@@ -55,6 +60,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 			{
 				RegisterPair(wa.ChildType, wa.Index);
 			}
+
+			//If we're not abstract we may be asked to serialize ourselves
+			if(!typeof(TBaseType).GetTypeInfo().IsAbstract)
+				InternallyManagedComplexSerializer = new ComplexTypeSerializerDecorator<TBaseType>(serializationDirections, prototypeGenerator, serializerProvider);
 		}
 
 		/// <inheritdoc />
@@ -65,27 +74,55 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (value == null)
 				throw new InvalidOperationException($"Serializes a null {typeof(TBaseType).FullName} is not a supported serialization scenario. It is impossible to know which type to encode.");
 
+			Type childType = value.GetType();
+
+			//If the actual type is just this type then we should handle serialization as if we
+			//were a regular complex type
+			if(childType == typeof(TBaseType))
+			{
+				//We know the complex serializer won't be null because it HAS to be non-abstract for this to 
+				//have been true
+				keyStrategy.Write(AsSelfKeyValue, dest);
+				InternallyManagedComplexSerializer.Write(value, dest);
+				return;
+			}
 
 			//TODO: Clean up default serializer implementation
-			if (!typeToKeyLookup.ContainsKey(value.GetType()))
+			if (!typeToKeyLookup.ContainsKey(childType))
 			{
-				throw new InvalidOperationException($"{this.GetType()} attempted to serialize a child Type: {value.GetType()} but no valid type matches. Writing cannot use default types.");
+				bool foundType = false;
+				//We might be encountering a multiple level polymorphic/multiinheritance Type
+				//We need to find a Type in the heirarchy that we do know
+				while(childType != null && childType != typeof(object))
+				{
+					//Check if we know this type
+					if(typeToKeyLookup.ContainsKey(childType))
+					{
+						foundType = true;
+						break;
+					}
+
+					childType = childType.GetTypeInfo().BaseType;
+				}
+
+				if(!foundType)
+					throw new InvalidOperationException($"{this.GetType()} attempted to serialize a child Type: {value.GetType()} but no valid type matches. Writing cannot use default types.");
 			}
 
 			//TODO: Oh man, this is a disaster. How do we handle the default? How do we tell consumers to use the default?
 			//Defer key writing to the key writing strategy
-			keyStrategy.Write(typeToKeyLookup[value.GetType()], dest);
+			keyStrategy.Write(typeToKeyLookup[childType], dest);
 
 			ITypeSerializerStrategy serializer;
 
 			try
 			{
-				serializer = serializerProviderService.Get(value.GetType());
+				serializer = serializerProviderService.Get(childType);
 
 			}
 			catch (KeyNotFoundException e)
 			{
-				throw new InvalidOperationException($"Couldn't locate serializer for {value.GetType().FullName} in the {nameof(IGeneralSerializerProvider)} service.", e);
+				throw new InvalidOperationException($"Couldn't locate serializer for {value.GetType().Name} in the {nameof(IGeneralSerializerProvider)} service.", e);
 			}
 
 			serializer.Write(value, dest);
@@ -99,6 +136,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//Incoming should be a byte that indicates the child type to use
 			//Read it to lookup in the map to determine which type we should create
 			int childIndexRequested = keyStrategy.Read(source); //defer to key reader (could be int, byte or something else)
+
+			//If it's the reserved key self then we know we should
+			//dispatch reading to the internally managed complex version of this Type.
+			if(childIndexRequested == AsSelfKeyValue)
+			{
+				return InternallyManagedComplexSerializer.Read(source);
+			}
 
 			//Check if we have that index; if not use default
 			if (!keyToTypeLookup.ContainsKey(childIndexRequested))
@@ -115,7 +159,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			if(childTypeRequest == null)
 				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Index: {childIndexRequested} but the lookup table provided a null type. This may indicate a failure in registeration of child types.");
-
 
 			//Once we know which child this particular object should be
 			//we need to dispatch the read request to that child's serializer handler

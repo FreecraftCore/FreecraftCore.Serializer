@@ -53,6 +53,29 @@ namespace FreecraftCore.Serializer.Tests.Tests
 			Assert.AreEqual(1, child.i);
 		}
 
+		[Test]
+		public static void Test_Can_Serialize_Then_Deserialize_With_Correct_Values_Multi_Level()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			Assert.DoesNotThrow(() => serializer.RegisterType<TestBaseClass>());
+			Assert.DoesNotThrow(() => serializer.RegisterType<SecondLevelClass>());
+			Assert.DoesNotThrow(() => serializer.RegisterType<ChildClass1>());
+			serializer.Compile();
+
+			//act
+			byte[] bytes = serializer.Serialize(new SecondLevelClass() { i = 4356, b = 75432, c = 88585, TestString = "This is a test string.!"});
+			SecondLevelClass child = serializer.Deserialize<TestBaseClass>(bytes) as SecondLevelClass;
+
+			//assert
+			Assert.NotNull(child);
+
+			Assert.AreEqual("This is a test string.!", child.TestString);
+			Assert.AreEqual(88585, child.c);
+			Assert.AreEqual(75432, child.b);
+			Assert.AreEqual(4356, child.i);
+		}
+
 		[WireDataContract(WireDataContractAttribute.KeyType.Byte)]
 		[WireDataContractBaseType(1, typeof(ChildClass1))]
 		[WireDataContractBaseType(2, typeof(ChildClass2))]
@@ -67,6 +90,21 @@ namespace FreecraftCore.Serializer.Tests.Tests
 			}
 		}
 
+		[WireDataContract]
+		public class SecondLevelClass : ChildClass1
+		{
+			[Encoding(EncodingType.UTF32)]
+			[WireMember(1)]
+			public string TestString;
+
+			public SecondLevelClass()
+			{
+				
+			}
+		}
+
+		[WireDataContract(WireDataContractAttribute.KeyType.Int32)]
+		[WireDataContractBaseType(1, typeof(SecondLevelClass))]
 		public class ChildClass1 : TestBaseClass
 		{
 			[WireMember(1)]

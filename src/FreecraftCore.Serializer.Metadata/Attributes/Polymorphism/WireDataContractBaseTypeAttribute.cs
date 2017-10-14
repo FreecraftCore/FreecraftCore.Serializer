@@ -8,7 +8,7 @@ namespace FreecraftCore.Serializer
 	/// that have basetypes that deserialize to.
 	/// Blizzard's JAM for information on the concept).
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)] //classes or structs can be WireDataContracts
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = false)] //classes or structs can be WireDataContracts
 	public class WireDataContractBaseTypeAttribute : Attribute
 	{
 		/// <summary>
@@ -29,6 +29,9 @@ namespace FreecraftCore.Serializer
 		{
 			if (uniqueIndex < 0)
 				throw new ArgumentException($"Provided wire child index is less than 0. Was: {uniqueIndex}.");
+
+			if(uniqueIndex == Int32.MaxValue)
+				throw new ArgumentException($"Provided wire child index was reserved value Int32.MaxValue. This is reserved internally. Was: {uniqueIndex}.");
 
 			if (childType == null)
 				throw new ArgumentNullException(nameof(childType), $"Provided {nameof(childType)} was null.");
