@@ -103,7 +103,7 @@ namespace FreecraftCore.Serializer.Tests.Tests
 			}
 		}
 
-		[WireDataContract(WireDataContractAttribute.KeyType.Int32)]
+		[WireDataContract(WireDataContractAttribute.KeyType.Byte)]
 		[WireDataContractBaseType(1, typeof(SecondLevelClass))]
 		public class ChildClass1 : TestBaseClass
 		{

@@ -22,6 +22,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 		[NotNull]
 		private ITypeSerializerStrategy<TKeyType> KeyTypeSerializerStrategy { get; }
 
+		/// <inheritdoc />
+		public int DefaultKey { get; }
+
 		public GenericChildKeyStrategy(InformationHandlingFlags typeHandling, [NotNull] ITypeSerializerStrategy<TKeyType> keyTypeSerializerStrategy)
 		{
 			if (keyTypeSerializerStrategy == null) throw new ArgumentNullException(nameof(keyTypeSerializerStrategy));
@@ -35,6 +38,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (!Enum.IsDefined(typeof(InformationHandlingFlags), typeHandling) && Int32.TryParse(typeHandling.ToString(), out i))
 				throw new InvalidEnumArgumentException(nameof(typeHandling), (int)typeHandling,
 					typeof(InformationHandlingFlags));*/
+			
+			//Try to get the max value for this type
+			DefaultKey = GenericMath.Convert<TKeyType, int>(GenericMath.Convert<int, TKeyType>(Int32.MaxValue));
 
 			typeHandlingFlags = typeHandling;
 			KeyTypeSerializerStrategy = keyTypeSerializerStrategy;
@@ -62,6 +68,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//something about the type later down the line.
 			if (!typeHandlingFlags.HasFlag(InformationHandlingFlags.DontWrite))
 				KeyTypeSerializerStrategy.Write(GenericMath.Convert<int, TKeyType>(value), dest);
+		}
+
+		/// <inheritdoc />
+		public void WriteDefault(IWireStreamWriterStrategy dest)
+		{
+			//Just write all 1 bits
+			Write(Int32.MaxValue, dest);
 		}
 
 		/// <inheritdoc />

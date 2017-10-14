@@ -11,6 +11,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 	public interface IChildKeyStrategy : IChildKeyStrategyAsync
 	{
 		/// <summary>
+		/// The default/reserved key.
+		/// Typically is the byte.MaxValue int.MaxValue, ushort.MaxValue or etc.
+		/// </summary>
+		int DefaultKey { get; }
+
+		/// <summary>
 		/// Attempts to the read the child key from the source.
 		/// </summary>
 		/// <param name="source"></param>
@@ -25,5 +31,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <param name="dest"></param>
 		/// <exception cref="ArgumentNullException">Throws if the <see cref="dest"/> provided was null.</exception>
 		void Write(int value, [NotNull] IWireStreamWriterStrategy dest);
+
+		/// <summary>
+		/// Writes the default key to the stream using the size implemented by the strategy.
+		/// </summary>
+		/// <param name="dest"></param>
+		/// <exception cref="ArgumentNullException">Throws if the <see cref="dest"/> provided was null.</exception>
+		void WriteDefault([NotNull] IWireStreamWriterStrategy dest);
 	}
 }

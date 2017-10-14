@@ -35,8 +35,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 		//This exists for cases where the type is non-abstract and we need to serialize as if we weren't a subtype.
 		private ComplexTypeSerializerDecorator<TBaseType> InternallyManagedComplexSerializer { get; }
 
-		private const int AsSelfKeyValue = Int32.MaxValue;
-
 		public SubComplexTypeSerializerDecorator([NotNull] IDeserializationPrototypeFactory<TBaseType> prototypeGenerator,
 			[NotNull] IEnumerable<IMemberSerializationMediator<TBaseType>> serializationDirections,
 			[NotNull] IGeneralSerializerProvider serializerProvider, [NotNull] IChildKeyStrategy childKeyStrategy)
@@ -58,6 +56,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//TODO: Add support for basetype serialization metadata marking.
 			foreach (WireDataContractBaseTypeAttribute wa in typeof(TBaseType).GetTypeInfo().GetCustomAttributes<WireDataContractBaseTypeAttribute>())
 			{
+				if(wa.Index == keyStrategy.DefaultKey)
+					throw new InvalidOperationException($"Encountered reserved BaseType Key: {wa.Index} on Type: {wa.ChildType.Name}. This key value is reserved for internal handling.");
+
 				RegisterPair(wa.ChildType, wa.Index);
 			}
 
@@ -82,7 +83,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			{
 				//We know the complex serializer won't be null because it HAS to be non-abstract for this to 
 				//have been true
-				keyStrategy.Write(AsSelfKeyValue, dest);
+				keyStrategy.WriteDefault(dest);
 				InternallyManagedComplexSerializer.Write(value, dest);
 				return;
 			}
@@ -139,7 +140,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//If it's the reserved key self then we know we should
 			//dispatch reading to the internally managed complex version of this Type.
-			if(childIndexRequested == AsSelfKeyValue)
+			if(childIndexRequested == keyStrategy.DefaultKey)
 			{
 				return InternallyManagedComplexSerializer.Read(source);
 			}

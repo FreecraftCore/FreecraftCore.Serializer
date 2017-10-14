@@ -30,6 +30,7 @@ namespace FreecraftCore.Serializer
 			if (uniqueIndex < 0)
 				throw new ArgumentException($"Provided wire child index is less than 0. Was: {uniqueIndex}.");
 
+			//TODO: How can we prevent them from registering types with reserved keys?
 			if(uniqueIndex == Int32.MaxValue)
 				throw new ArgumentException($"Provided wire child index was reserved value Int32.MaxValue. This is reserved internally. Was: {uniqueIndex}.");
 
