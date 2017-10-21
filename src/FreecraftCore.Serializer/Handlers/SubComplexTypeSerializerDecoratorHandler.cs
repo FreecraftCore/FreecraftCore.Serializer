@@ -51,7 +51,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//TODO: Check if we can get this from context?
 			//Check the WireDataContract attribute for keysize information
-			WireDataContractAttribute contractAttribute = typeof(TType).GetTypeInfo().GetCustomAttribute<WireDataContractAttribute>(true);
+			WireDataContractAttribute contractAttribute = typeof(TType).GetTypeInfo().GetCustomAttribute<WireDataContractAttribute>(false);
 
 			//Build the strategy for child size and value read/write
 			switch (contractAttribute.OptionalChildTypeKeySize)
@@ -75,11 +75,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			ITypeSerializerStrategy<TType> strat = null;
 
 			//Depending on if we're flags or key return the right serializer decorator.
-			if (typeof(TType).GetTypeInfo().GetCustomAttribute<WireDataContractBaseTypeByFlagsAttribute>() == null)
+			if (typeof(TType).GetTypeInfo().GetCustomAttribute<WireDataContractBaseTypeByFlagsAttribute>(false) == null)
 				//Won't be null at this point. Should be a valid strategy. We also don't need to deal with context since there is only EVER 1 serializer of this type per type.
-				strat = new SubComplexTypeSerializerDecorator<TType>(new LambdabasedDeserializationPrototyeFactory<TType>(), new MemberSerializationMediatorCollection<TType>(mediatorFactoryService),  serializerProviderService, keyStrategy);
+				strat = new SubComplexTypeSerializerDecorator<TType>(new LambdabasedDeserializationPrototyeFactory<TType>(), new MemberSerializationMediatorCollection<TType>(mediatorFactoryService).ToArray(),  serializerProviderService, keyStrategy);
 			else
-				strat = new SubComplexTypeWithFlagsSerializerDecorator<TType>(new LambdabasedDeserializationPrototyeFactory<TType>(), new MemberSerializationMediatorCollection<TType>(mediatorFactoryService), serializerProviderService, keyStrategy);
+				strat = new SubComplexTypeWithFlagsSerializerDecorator<TType>(new LambdabasedDeserializationPrototyeFactory<TType>(), new MemberSerializationMediatorCollection<TType>(mediatorFactoryService).ToArray(), serializerProviderService, keyStrategy);
 
 			//Check for compression flags
 			if (context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.Compressed))
@@ -95,7 +95,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//We need to include the potential default child type now
 			IEnumerable<ISerializableTypeContext> contexts = new TypeMemberParsedTypeContextCollection(context.TargetType);
 
-			contexts = contexts.Concat(context.TargetType.GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>() != null ? new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>().ChildType) } : Enumerable.Empty<ISerializableTypeContext>());
+			contexts = contexts.Concat(context.TargetType.GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>(false) != null ? new ISerializableTypeContext[] { new TypeBasedSerializationContext(context.TargetType.GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>().ChildType) } : Enumerable.Empty<ISerializableTypeContext>());
 
 			//Grab the children from the metadata; return type contexts so the types can be handled (no context is required because the children are their own registerable type
 			return contexts.Concat(GetAssociatedChildren(context.TargetType).Select(t => new TypeBasedSerializationContext(t) as ISerializableTypeContext));
@@ -106,9 +106,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (type == null) throw new ArgumentNullException(nameof(type));
 
-			IEnumerable<Type> baseTypesByKey = type.GetTypeInfo().GetCustomAttributes<WireDataContractBaseTypeAttribute>().Select(x => x.ChildType);
+			IEnumerable<Type> baseTypesByKey = type.GetTypeInfo().GetCustomAttributes<WireDataContractBaseTypeAttribute>(false).Select(x => x.ChildType);
 
-			IEnumerable<Type> baseTypesByFlags = type.GetTypeInfo().GetCustomAttributes<WireDataContractBaseTypeByFlagsAttribute>().Select(x => x.ChildType);
+			IEnumerable<Type> baseTypesByFlags = type.GetTypeInfo().GetCustomAttributes<WireDataContractBaseTypeByFlagsAttribute>(false).Select(x => x.ChildType);
 
 			return baseTypesByKey.Concat(baseTypesByFlags);
 		}

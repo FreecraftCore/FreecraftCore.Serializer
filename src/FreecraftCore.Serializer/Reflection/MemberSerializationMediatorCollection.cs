@@ -47,12 +47,12 @@ namespace FreecraftCore.Serializer
 			MemberInfo[] infos = typeof(TTargetType).GetTypeInfo().DeclaredMembers
 				.Where(mi => (mi is FieldInfo || mi is PropertyInfo))
 				.Where(mi => mi.HasAttribute<WireMemberAttribute>())
-				.OrderBy(x => x.GetCustomAttribute<WireMemberAttribute>().MemberOrder)
+				.OrderBy(x => x.GetCustomAttribute<WireMemberAttribute>(false).MemberOrder)
 				.ToArray();
 
 			//We need to check that there isn't any duplicate WireMember id.
 			if(infos.Length != infos
-								.GroupBy(wm => wm.GetCustomAttribute<WireMemberAttribute>().MemberOrder)
+								.GroupBy(wm => wm.GetCustomAttribute<WireMemberAttribute>(false).MemberOrder)
 								.Select(group => group.First())
 								.Count())
 			throw new InvalidOperationException($"Type: {typeof(TTargetType).FullName} contains some non-unique ID'd {nameof(WireMemberAttribute)}.");

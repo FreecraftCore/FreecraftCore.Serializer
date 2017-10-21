@@ -30,14 +30,29 @@ namespace FreecraftCore.Serializer
 		{
 			if(info == null) throw new ArgumentNullException(nameof(info));
 
+			ITypeSerializerStrategy strategy = typeSerializerProvider.Get(lookupKeyFactory.Create(info));
 			//Construct a default and then we can decorate as needed
 			//We now have a generic arg for the member type which we don't technically have a compile time ref to
 			//therefore we must use activator to create
 			IMemberSerializationMediator<TContainingType> mediator = 
 				Activator.CreateInstance(typeof(DefaultMemberSerializationMediator<,>).MakeGenericType(new Type[] { typeof(TContainingType), info.Type()}),
-					info, typeSerializerProvider.Get(lookupKeyFactory.Create(info))) as IMemberSerializationMediator<TContainingType>;
+					info, strategy) as IMemberSerializationMediator<TContainingType>;
 
 			//TODO: Do checking and exceptions for mediator failure
+
+			//Check for seperated collection size attributes. We need to decorate for each one this is linked to
+			foreach (var attri in info.DeclaringType.GetCustomAttributes<SeperatedCollectionSizeAttribute>())
+			{
+				//[NotNull] MemberInfo sizeMemberInfo, [NotNull] MemberInfo collectionMemberInfo, [NotNull] ITypeSerializerStrategy serializer, [NotNull] IMemberSerializationMediator<TContainingType> decoratedMediator) 
+				if(attri.SizePropertyName == info.Name)
+					mediator = Activator.CreateInstance(typeof(ConnectedCollectionSizeSerializationMediator<,>).MakeGenericType(new Type[] {typeof(TContainingType), info.Type()}),
+						info, info.DeclaringType.GetMember(attri.CollectionPropertyName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public), strategy, mediator) as IMemberSerializationMediator<TContainingType>;
+
+				//TODO: Undefined behavior if we have to decorate this multiple times
+				if(attri.CollectionPropertyName == info.Name)
+					mediator = Activator.CreateInstance(typeof(ConnectedCollectionCollectionSerializationMediator<,>).MakeGenericType(new Type[] { typeof(TContainingType), info.Type() }),
+						info, info.DeclaringType.GetMember(attri.SizePropertyName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public), strategy, mediator) as IMemberSerializationMediator<TContainingType>;
+			}
 
 			if(info.HasAttribute<DontWriteAttribute>())
 				mediator = new DisableWriteMemberSerializationMediatorDecorator<TContainingType>(mediator);

@@ -56,14 +56,14 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			keyStrategy = childKeyStrategy;
 
-			DefaultSerializer = typeof(TBaseType).GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>() != null
-				? serializerProviderService.Get(typeof(TBaseType).GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>().ChildType) : null;
+			DefaultSerializer = typeof(TBaseType).GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>(false) != null
+				? serializerProviderService.Get(typeof(TBaseType).GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>(false).ChildType) : null;
 
 			//We no longer reserve 0. Sometimes type information of a child is sent as a 0 in WoW protocol. We can opt for mostly metadata market style interfaces.
 
 			List<ChildKeyPair> pairs = new List<ChildKeyPair>();
 
-			foreach (WireDataContractBaseTypeByFlagsAttribute waf in typeof(TBaseType).GetTypeInfo().GetCustomAttributes<WireDataContractBaseTypeByFlagsAttribute>())
+			foreach (WireDataContractBaseTypeByFlagsAttribute waf in typeof(TBaseType).GetTypeInfo().GetCustomAttributes<WireDataContractBaseTypeByFlagsAttribute>(false))
 			{
 				if (!typeof(TBaseType).GetTypeInfo().IsAssignableFrom(waf.ChildType.GetTypeInfo()))
 					throw new InvalidOperationException($"Failed to register Type: {typeof(TBaseType).GetType().FullName} because a provided ChildType: {waf.ChildType.FullName} was not actually a child.");

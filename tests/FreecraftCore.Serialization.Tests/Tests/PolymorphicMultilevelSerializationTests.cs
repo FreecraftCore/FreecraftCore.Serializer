@@ -39,6 +39,8 @@ namespace FreecraftCore.Serializer.Tests.Tests
 			//arrange
 			SerializerService serializer = new SerializerService();
 			Assert.DoesNotThrow(() => serializer.RegisterType<SecondLevelClass>());
+			serializer.Link<SecondLevelClass, ChildClass1>();
+			serializer.Link<ChildClass1, TestBaseClass>();
 			serializer.Compile();
 
 			//act
@@ -74,15 +76,45 @@ namespace FreecraftCore.Serializer.Tests.Tests
 			Assert.AreEqual(4356, child.i);
 		}
 
-		[WireDataContract(WireDataContractAttribute.KeyType.Byte, true)]
+		//TODO: One day I'd like to support multi-inheritance
+		//[Test]
+		public static void Test_Can_Manually_Deserialize_HandCrafted_Bytes()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			Assert.DoesNotThrow(() => serializer.RegisterType<SecondLevelClass>());
+			serializer.Compile();
+
+			//act
+			byte[] bytes = new byte[] { /*type*/ 55, 0, 0, 0, /*i val*/ 99, 0, 0, 0, /*b val*/ 69, 0, 0, 0, /*c val*/ 255, 255, 255, 255 };
+			ChildClass1 child = serializer.Deserialize<TestBaseClass>(bytes) as ChildClass1;
+
+			//assert
+			Assert.NotNull(child);
+
+			Assert.AreEqual(int.MaxValue, child.c);
+			Assert.AreEqual(69, child.b);
+			Assert.AreEqual(99, child.i);
+		}
+
+		[DefaultChild(typeof(DefaultTestClass))]
+		[WireDataContract(WireDataContractAttribute.KeyType.Int32, true)]
 		public abstract class TestBaseClass
 		{
-			[WireMember(1)]
+			[WireMember(2)]
 			public int i;
 
 			public TestBaseClass()
 			{
 					
+			}
+		}
+
+		public sealed class DefaultTestClass : TestBaseClass
+		{
+			public DefaultTestClass()
+			{
+				
 			}
 		}
 
@@ -101,8 +133,8 @@ namespace FreecraftCore.Serializer.Tests.Tests
 		}
 
 		
-		[WireDataContractBaseLink(98, typeof(TestBaseClass))]
-		[WireDataContract(WireDataContractAttribute.KeyType.Byte, true)]
+		[WireDataContractBaseLink(55, typeof(TestBaseClass))]
+		[WireDataContract(WireDataContractAttribute.KeyType.UShort, true)]
 		public class ChildClass1 : TestBaseClass
 		{
 			[WireMember(1)]

@@ -48,13 +48,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 			typeToKeyLookup = new Dictionary<Type, int>();
 			keyToTypeLookup = new Dictionary<int, Type>();
 
-			DefaultSerializer = typeof(TBaseType).GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>() != null
-				? serializerProviderService.Get(typeof(TBaseType).GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>().ChildType)
+			DefaultSerializer = typeof(TBaseType).GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>(false) != null
+				? serializerProviderService.Get(typeof(TBaseType).GetTypeInfo().GetCustomAttribute<DefaultChildAttribute>(false).ChildType)
 				: null;
 
 			//We no longer reserve 0. Sometimes type information of a child is sent as a 0 in WoW protocol. We can opt for mostly metadata marker style interfaces.
 			//TODO: Add support for basetype serialization metadata marking.
-			foreach (WireDataContractBaseTypeAttribute wa in typeof(TBaseType).GetTypeInfo().GetCustomAttributes<WireDataContractBaseTypeAttribute>())
+			foreach (WireDataContractBaseTypeAttribute wa in typeof(TBaseType).GetTypeInfo().GetCustomAttributes<WireDataContractBaseTypeAttribute>(false))
 			{
 				if(wa.Index == keyStrategy.DefaultKey)
 					throw new InvalidOperationException($"Encountered reserved BaseType Key: {wa.Index} on Type: {wa.ChildType.Name}. This key value is reserved for internal handling.");
@@ -73,7 +73,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			if (value == null)
-				throw new InvalidOperationException($"Serializes a null {typeof(TBaseType).FullName} is not a supported serialization scenario. It is impossible to know which type to encode.");
+				throw new InvalidOperationException($"Serializing a null {typeof(TBaseType).FullName} is not a supported serialization scenario. It is impossible to know which type to encode.");
 
 			Type childType = value.GetType();
 
@@ -120,6 +120,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		private ITypeSerializerStrategy GetReadStrategy(int key)
 		{
+			Console.WriteLine($"Ley: {key} Type: {typeof(TBaseType)}");
 			//If it's the reserved key self then we know we should
 			//dispatch reading to the internally managed complex version of this Type.
 			if(key == keyStrategy.DefaultKey)
@@ -130,6 +131,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//Check if we have that index; if not use default
 			if(!keyToTypeLookup.ContainsKey(key))
 			{
+				Console.WriteLine($"Not Found: {key} Type: {typeof(TBaseType).Name}");
+
 				if(DefaultSerializer != null)
 				{
 					return DefaultSerializer;
