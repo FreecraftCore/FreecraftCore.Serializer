@@ -77,6 +77,7 @@
     <Compile Include="Tests\PolymorphicRuntimeLinkTests.cs" />
     <Compile Include="Tests\PolymorphicSerializationTests.cs" />
     <Compile Include="Tests\ReadonlyPropertyTests.cs" />
+    <Compile Include="Tests\SeperatedCollectionSizeTests.cs" />
     <Compile Include="Tests\SerializationTests.cs" />
     <Compile Include="Tests\Stream\BufferedPeekStreamTests.cs" />
     <Compile Include="Tests\Stream\PrependStreamTests.cs" />
