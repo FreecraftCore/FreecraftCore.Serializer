@@ -231,7 +231,7 @@ namespace FreecraftCore.Serializer
 			if(!isCompiled)
 				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
 
-			GetLeastDerivedSerializer(typeof(TTypeToSerialize).GetTypeInfo().IsInterface ? typeof(TTypeToSerialize) : data.GetType()).Write(data, writer);
+			GetLeastDerivedSerializer(data.GetType()).Write(data, writer);
 
 			return writer.GetBytes();
 		}
@@ -318,7 +318,7 @@ namespace FreecraftCore.Serializer
 				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
 
 			//TODO: Cache IsInterface
-			await GetLeastDerivedSerializer(typeof(TTypeToSerialize).GetTypeInfo().IsInterface ? typeof(TTypeToSerialize) : data.GetType()).WriteAsync(data, writer);
+			await GetLeastDerivedSerializer(data.GetType()).WriteAsync(data, writer);
 
 			return await writer.GetBytesAsync();
 		}
