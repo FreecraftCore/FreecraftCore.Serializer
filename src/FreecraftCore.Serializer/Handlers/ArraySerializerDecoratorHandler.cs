@@ -89,8 +89,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 					throw new InvalidOperationException($"Cannot have a {typeof(TType).FullName} serialized with Reverse and Fixed attributes.");
 				}
 			}
-			else if(collectionSizeStrategy != null || typeof(TType) != typeof(byte[])) //if we have a size collection or the type isn't a byte array
+			else if(collectionSizeStrategy != null || !context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.ReadToEnd))//if we have a size collection or the type isn't a byte array
 			{
+				
 				//TODO: Should we really have a default?
 				//if they marked it with nothing then use a the byte
 				if(collectionSizeStrategy == null)
@@ -113,7 +114,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 				if(typeof(TType) == typeof(byte[]) && context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.ReadToEnd))
 					strat = new DefaultByteArraySerializerStrategy() as ITypeSerializerStrategy<TType>;
 				else if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.ReadToEnd))
-					strat = new GenericReadToEndSerializerStrategyDecorator<TType>(serializerProviderService.Get<TType>()) as ITypeSerializerStrategy<TType>;
+					strat = Activator.CreateInstance(typeof(GenericReadToEndSerializerStrategyDecorator<>).MakeGenericType(context.TargetType.GetElementType()), serializerProviderService.Get(context.TargetType.GetElementType()))
+						as ITypeSerializerStrategy<TType>;
 			}
 
 			if (strat == null)
