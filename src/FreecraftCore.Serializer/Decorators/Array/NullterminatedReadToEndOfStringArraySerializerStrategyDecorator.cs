@@ -13,64 +13,65 @@ namespace FreecraftCore.Serializer.KnownTypes
 	/// <summary>
 	/// Decorator that will read all nullterminated strings till the end of the buffer is reached.
 	/// </summary>
-	public class NullterminatedReadToEndOfStringArraySerializerStrategyDecorator : SimpleTypeSerializerStrategy<string[]>
+	public class GenericReadToEndSerializerStrategyDecorator<TObjectType> : SimpleTypeSerializerStrategy<TObjectType[]>
 	{
+		[NotNull]
+		private ITypeSerializerStrategy<TObjectType> ElementSerializer { get; }
+
 		/// <inheritdoc />
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
 
-		private ITypeSerializerStrategy<string> StringSerialzier { get; }
-
-		public NullterminatedReadToEndOfStringArraySerializerStrategyDecorator([NotNull] ITypeSerializerStrategy<string> stringSerialzier)
+		public GenericReadToEndSerializerStrategyDecorator([NotNull] ITypeSerializerStrategy<TObjectType> elementSerializer)
 		{
-			if(stringSerialzier == null) throw new ArgumentNullException(nameof(stringSerialzier));
+			if(elementSerializer == null) throw new ArgumentNullException(nameof(elementSerializer));
 
-			StringSerialzier = stringSerialzier;
+			ElementSerializer = elementSerializer;
 		}
 
 		/// <inheritdoc />
-		public override string[] Read(IWireStreamReaderStrategy source)
+		public override TObjectType[] Read(IWireStreamReaderStrategy source)
 		{
 			byte[] bytes = source.ReadAllBytes();
 			FixedBufferWireReaderStrategy fixedStrategy = new FixedBufferWireReaderStrategy(bytes, 0, bytes.Length);
 
-			QuickList<string> strings = new QuickList<string>(4);
+			QuickList<TObjectType> objects = new QuickList<TObjectType>(4);
 
-			//Read until the fixed buffer is empty. This iwll give us all strings without read exceptions when end is reached.
+			//Read until the fixed buffer is empty. This iwll give us all objects without read exceptions when end is reached.
 			while(!fixedStrategy.isFinished)
-				strings.Add(StringSerialzier.Read(fixedStrategy));
+				objects.Add(ElementSerializer.Read(fixedStrategy));
 
 			//We can avoid some copies like this
-			return strings.Count == strings._items.Length ? strings._items : strings.ToArray();
+			return objects.Count == objects._items.Length ? objects._items : objects.ToArray();
 		}
 
 		/// <inheritdoc />
-		public override void Write(string[] value, IWireStreamWriterStrategy dest)
+		public override void Write(TObjectType[] value, IWireStreamWriterStrategy dest)
 		{
 			for(int i = 0; i < value.Length; i++)
-				StringSerialzier.Write(value[i], dest);
+				ElementSerializer.Write(value[i], dest);
 		}
 
 		/// <inheritdoc />
-		public override async Task WriteAsync(string[] value, IWireStreamWriterStrategyAsync dest)
+		public override async Task WriteAsync(TObjectType[] value, IWireStreamWriterStrategyAsync dest)
 		{
 			for(int i = 0; i < value.Length; i++)
-				await StringSerialzier.WriteAsync(value[i], dest);
+				await ElementSerializer.WriteAsync(value[i], dest);
 		}
 
 		/// <inheritdoc />
-		public override async Task<string[]> ReadAsync(IWireStreamReaderStrategyAsync source)
+		public override async Task<TObjectType[]> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
 			byte[] bytes = await source.ReadAllBytesAsync();
 			FixedBufferWireReaderStrategy fixedStrategy = new FixedBufferWireReaderStrategy(bytes, 0, bytes.Length);
 
-			QuickList<string> strings = new QuickList<string>(4);
+			QuickList<TObjectType> objects = new QuickList<TObjectType>(4);
 
-			//Read until the fixed buffer is empty. This iwll give us all strings without read exceptions when end is reached.
+			//Read until the fixed buffer is empty. This iwll give us all objects without read exceptions when end is reached.
 			while(!fixedStrategy.isFinished)
-				strings.Add(StringSerialzier.Read(fixedStrategy));
+				objects.Add(ElementSerializer.Read(fixedStrategy));
 
 			//We can avoid some copies like this
-			return strings.Count == strings._items.Length ? strings._items : strings.ToArray();
+			return objects.Count == objects._items.Length ? objects._items : objects.ToArray();
 		}
 
 		//TODO: Refactor this into a stream
