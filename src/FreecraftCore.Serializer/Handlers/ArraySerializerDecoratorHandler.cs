@@ -112,6 +112,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 				//So there is a default strategy specifically for that
 				if(typeof(TType) == typeof(byte[]) && context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.ReadToEnd))
 					strat = new DefaultByteArraySerializerStrategy() as ITypeSerializerStrategy<TType>;
+
+				//TODO: Support different encoding and length prefixing for ReadToEnd strings.
+				if(typeof(TType) == typeof(string) && context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.ReadToEnd))
+					strat = new NullterminatedReadToEndOfStringArraySerializerStrategyDecorator(serializerProviderService.Get<string>()) as ITypeSerializerStrategy<TType>;
 			}
 
 			if (strat == null)
