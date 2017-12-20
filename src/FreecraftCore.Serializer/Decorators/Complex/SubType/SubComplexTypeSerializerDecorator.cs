@@ -120,7 +120,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 		private ITypeSerializerStrategy GetReadStrategy(int key)
 		{
-			Console.WriteLine($"Ley: {key} Type: {typeof(TBaseType)}");
 			//If it's the reserved key self then we know we should
 			//dispatch reading to the internally managed complex version of this Type.
 			if(key == keyStrategy.DefaultKey)
@@ -131,8 +130,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//Check if we have that index; if not use default
 			if(!keyToTypeLookup.ContainsKey(key))
 			{
-				Console.WriteLine($"Not Found: {key} Type: {typeof(TBaseType).Name}");
-
 				if(DefaultSerializer != null)
 				{
 					return DefaultSerializer;

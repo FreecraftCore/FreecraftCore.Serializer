@@ -60,8 +60,6 @@ namespace FreecraftCore.Serializer
 			//so that the collection can recieve it and then be able to deserialize the elements.
 			byte[] bytes = ((TSizeType)SizeMemberGetter.Getter(obj)).Reinterpret();
 
-			Console.WriteLine(bytes.Aggregate("", (s, b) => $"{s} {b}"));
-
 			//We don't need to modify how we set the size member
 			DecoratedMediator.SetMember(obj, source.PreprendWithBytes(bytes));
 		}
