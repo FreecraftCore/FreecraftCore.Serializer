@@ -86,9 +86,10 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public override async Task<TType[]> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
-			TType[] objectArray = new TType[await SizeStrategyService.SizeAsync(source).ConfigureAwait(false)];
+			int size = await SizeStrategyService.SizeAsync(source)
+				.ConfigureAwait(false);
 
-			int byteCount = SizeOfType * SizeStrategyService.Size(source);
+			int byteCount = SizeOfType * size;
 
 			byte[] bytes = await source.ReadBytesAsync(byteCount)
 				.ConfigureAwait(false);

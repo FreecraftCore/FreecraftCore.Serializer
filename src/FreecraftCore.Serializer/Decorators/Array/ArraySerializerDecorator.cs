@@ -105,7 +105,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <inheritdoc />
 		public override async Task<TObjectType[]> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
-			TObjectType[] objectArray = new TObjectType[await sizeStrategyService.SizeAsync(source).ConfigureAwait(false)];
+			int size = await sizeStrategyService.SizeAsync(source).ConfigureAwait(false);
+
+			TObjectType[] objectArray = new TObjectType[size];
 
 			//TODO: Error handling
 			//read as many objects as in the message (this is safe for clients. Not so safe if the client sent a message of this type)
