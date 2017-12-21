@@ -48,7 +48,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			await decoratedSerializer.WriteAsync(new string(value.Reverse().ToArray()), dest);
+			await decoratedSerializer.WriteAsync(new string(value.Reverse().ToArray()), dest)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -56,7 +57,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
-			string value = await decoratedSerializer.ReadAsync(source);
+			string value = await decoratedSerializer.ReadAsync(source)
+				.ConfigureAwait(false);
 
 			return new string(value.Reverse().ToArray());
 		}

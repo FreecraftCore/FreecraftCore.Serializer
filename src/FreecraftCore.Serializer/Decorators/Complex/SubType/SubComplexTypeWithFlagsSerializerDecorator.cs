@@ -149,10 +149,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 					//Well, what do we do? Do we just write the flag?
 					//It's the best we can do I think. Otherwise they should use NoConsume
 					//to better define the flag written themselves
-					await keyStrategy.WriteAsync(childKey.Flags, dest);
+					await keyStrategy.WriteAsync(childKey.Flags, dest)
+						.ConfigureAwait(false);
 
 					//Now write
-					await childKey.Serializer.WriteAsync(value, dest);
+					await childKey.Serializer.WriteAsync(value, dest)
+						.ConfigureAwait(false);
+
 					return;
 				}
 
@@ -164,7 +167,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 				throw new InvalidOperationException($"Failed to serialize Type: {value.GetType().FullName}. No prepared serializer could be found. Make sure to properly setup child mapping.");
 			else
 			{
-				await DefaultSerializer.WriteAsync(value, dest);
+				await DefaultSerializer.WriteAsync(value, dest)
+					.ConfigureAwait(false);
 			}
 		}
 
@@ -175,18 +179,21 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//TODO: Handle 0 flags
 			//Ask the key strategy for what flags are present
-			int flags = await keyStrategy.ReadAsync(source); //defer to key reader (could be int, byte or something else)
+			int flags = await keyStrategy.ReadAsync(source)
+				.ConfigureAwait(false); //defer to key reader (could be int, byte or something else)
 
 			//TODO: Test perf
 			foreach (ChildKeyPair childKey in serializers)
 			{
 				if ((childKey.Flags & flags) != 0)
-					return (TBaseType)await childKey.Serializer.ReadAsync(source);
+					return (TBaseType)await childKey.Serializer.ReadAsync(source)
+						.ConfigureAwait(false); ;
 			}
 
 			//If we didn't find a flags for it then try the default
 			if (DefaultSerializer != null)
-				return (TBaseType)await DefaultSerializer.ReadAsync(source);
+				return (TBaseType)await DefaultSerializer.ReadAsync(source)
+					.ConfigureAwait(false);
 			else
 				throw new InvalidOperationException($"{this.GetType()} attempted to deserialize to a child type with Flags: {flags} but no valid type matches and there is no default type.");
 		}

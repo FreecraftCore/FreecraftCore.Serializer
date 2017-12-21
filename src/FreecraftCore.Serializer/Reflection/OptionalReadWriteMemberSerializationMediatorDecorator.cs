@@ -51,7 +51,8 @@ namespace FreecraftCore.Serializer
 			if(!(bool)isReadWriteEnabledGetter.Getter((TContainingType)obj))
 				return;
 
-			await DecoratedMediator.WriteMemberAsync(obj, dest);
+			await DecoratedMediator.WriteMemberAsync(obj, dest)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -61,7 +62,8 @@ namespace FreecraftCore.Serializer
 			if(!(bool)isReadWriteEnabledGetter.Getter((TContainingType)obj))
 				return;
 
-			await DecoratedMediator.SetMemberAsync(obj, source);
+			await DecoratedMediator.SetMemberAsync(obj, source)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -71,7 +73,8 @@ namespace FreecraftCore.Serializer
 			if(!(bool)isReadWriteEnabledGetter.Getter(obj))
 				return;
 
-			await DecoratedMediator.WriteMemberAsync(obj, dest);
+			await DecoratedMediator.WriteMemberAsync(obj, dest)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -81,7 +84,8 @@ namespace FreecraftCore.Serializer
 			if(!(bool)isReadWriteEnabledGetter.Getter(obj))
 				return;
 
-			await DecoratedMediator.SetMemberAsync(obj, source);
+			await DecoratedMediator.SetMemberAsync(obj, source)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />

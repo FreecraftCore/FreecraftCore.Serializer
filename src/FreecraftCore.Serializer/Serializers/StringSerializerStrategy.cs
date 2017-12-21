@@ -112,11 +112,14 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//See sync method for doc
 			byte[] stringBytes = EncodingStrategy.GetBytes(value);
 
-			await dest.WriteAsync(stringBytes);
+			await dest.WriteAsync(stringBytes)
+				.ConfigureAwait(false);
 
+			//TODO: Make this more efficient instead of multiple wrtie calls
 			//Write the null terminator; Client expects it.
 			for(int i = 0; i < CharacterSize; i++)
-				await dest.WriteAsync(0);
+				await dest.WriteAsync(0)
+					.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -136,7 +139,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			do
 			{
-				byte currentByte = await source.ReadByteAsync();
+				byte currentByte = await source.ReadByteAsync()
+					.ConfigureAwait(false);
+
 				currentCharCount++;
 
 				stringBytes.Add(currentByte);

@@ -72,7 +72,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//add one for null terminator
 			//Using JonSkeets MiscUtils we can convert objects efficently
-			await sizeSerializer.WriteAsync(GenericMath<int, TSizeType>.Convert(size + (includeNullTerminatorInSizeCalculation ? 1 : 0)), writer);
+			await sizeSerializer.WriteAsync(GenericMath<int, TSizeType>.Convert(size + (includeNullTerminatorInSizeCalculation ? 1 : 0)), writer)
+				.ConfigureAwait(false);
 
 			return size;
 		}
@@ -82,7 +83,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (reader == null) throw new ArgumentNullException(nameof(reader));
 
-			TSizeType size = await sizeSerializer.ReadAsync(reader);
+			TSizeType size = await sizeSerializer.ReadAsync(reader)
+				.ConfigureAwait(false);
 
 			//Using JonSkeets MiscUtils we can convert objects efficently
 			return GenericMath<TSizeType, int>.Convert(size) + AddedSize;

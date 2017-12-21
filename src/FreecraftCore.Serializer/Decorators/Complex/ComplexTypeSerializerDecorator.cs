@@ -102,9 +102,11 @@ namespace FreecraftCore.Serializer
 			if (reversedInheritanceHierarchy.Count() != 0)
 				foreach (Type t in reversedInheritanceHierarchy)
 					if (serializerProviderService.HasSerializerFor(t))
-						await serializerProviderService.Get(t).ReadIntoObjectAsync(obj, source);
+						await serializerProviderService.Get(t).ReadIntoObjectAsync(obj, source)
+							.ConfigureAwait(false);
 
-			await SetMembersFromReaderDataAsync(obj, source);
+			await SetMembersFromReaderDataAsync(obj, source)
+				.ConfigureAwait(false);
 
 			return obj;
 		}
@@ -143,10 +145,12 @@ namespace FreecraftCore.Serializer
 			if (reversedInheritanceHierarchy.Count() != 0)
 				foreach (Type t in reversedInheritanceHierarchy)
 					if (serializerProviderService.HasSerializerFor(t)) //TODO: Should we remove this check for perf?
-						await serializerProviderService.Get(t).ObjectIntoWriterAsync(value, dest);
+						await serializerProviderService.Get(t).ObjectIntoWriterAsync(value, dest)
+							.ConfigureAwait(false);
 
 			//Write our own members now.
-			await WriteMemberDataAsync(value, dest);
+			await WriteMemberDataAsync(value, dest)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -154,7 +158,8 @@ namespace FreecraftCore.Serializer
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
-			TComplexType obj = await ReadAsync(prototypeGeneratorService.Create(), source);
+			TComplexType obj = await ReadAsync(prototypeGeneratorService.Create(), source)
+				.ConfigureAwait(false);
 
 			//invoke after deserialization if it's available
 			(obj as ISerializationEventListener)?.OnAfterDeserialization();

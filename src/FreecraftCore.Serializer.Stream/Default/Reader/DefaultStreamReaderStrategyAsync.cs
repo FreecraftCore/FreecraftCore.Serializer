@@ -38,7 +38,8 @@ namespace FreecraftCore.Serializer
 			byte[] singleByteBuffer = new byte[1];
 
 			//would be -1 if it's invalid
-			int readResult = await ManagedStream.ReadAsync(singleByteBuffer, 0, 1);
+			int readResult = await ManagedStream.ReadAsync(singleByteBuffer, 0, 1)
+				.ConfigureAwait(false);
 
 			if(readResult == 0)
 				throw new InvalidOperationException($"Failed to read byte in {nameof(ReadByteAsync)}.");
@@ -49,7 +50,8 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public async Task<byte> PeekByteAsync()
 		{
-			byte resultByte = await ReadByteAsync();
+			byte resultByte = await ReadByteAsync()
+				.ConfigureAwait(false);
 
 			//Move it back one
 			ManagedStream.Position = ManagedStream.Position - 1;
@@ -59,7 +61,8 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public async Task<byte[]> ReadAllBytesAsync()
 		{
-			return await ReadBytesAsync((int)(ManagedStream.Length - ManagedStream.Position));
+			return await ReadBytesAsync((int)(ManagedStream.Length - ManagedStream.Position))
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -67,7 +70,8 @@ namespace FreecraftCore.Serializer
 		{
 			byte[] bytes = new byte[count];
 
-			int readCount = await ManagedStream.ReadAsync(bytes, 0, count);
+			int readCount = await ManagedStream.ReadAsync(bytes, 0, count)
+				.ConfigureAwait(false);
 
 			if (readCount != count)
 				throw new InvalidOperationException($"Failed to read {count} bytes from the stream.");
@@ -78,7 +82,8 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public async Task<byte[]> PeekBytesAsync(int count)
 		{
-			byte[] bytes = await ReadBytesAsync(count);
+			byte[] bytes = await ReadBytesAsync(count)
+				.ConfigureAwait(false);
 
 			//Now move the stream back
 			ManagedStream.Position = ManagedStream.Position - count;

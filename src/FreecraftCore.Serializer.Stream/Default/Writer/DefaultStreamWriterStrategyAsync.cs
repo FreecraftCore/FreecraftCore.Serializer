@@ -33,20 +33,23 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public async Task WriteAsync(byte[] data)
 		{
-			await WriteAsync(data, 0, data.Length);
+			await WriteAsync(data, 0, data.Length)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
 		public async Task WriteAsync(byte[] data, int offset, int count)
 		{
-			await ManagedStream.WriteAsync(data, offset, count);
+			await ManagedStream.WriteAsync(data, offset, count)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
 		public async Task WriteAsync(byte data)
 		{
 			//TODO: Can we do this more efficiently?
-			await WriteAsync(new byte[1] {data}, 0, 1);
+			await WriteAsync(new byte[1] {data}, 0, 1)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />

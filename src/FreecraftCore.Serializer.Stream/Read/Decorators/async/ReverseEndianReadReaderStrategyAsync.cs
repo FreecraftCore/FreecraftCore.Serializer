@@ -19,19 +19,22 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public async Task<byte> ReadByteAsync()
 		{
-			return await DecoratedReader.ReadByteAsync();
+			return await DecoratedReader.ReadByteAsync()
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
 		public async Task<byte> PeekByteAsync()
 		{
-			return await DecoratedReader.PeekByteAsync();
+			return await DecoratedReader.PeekByteAsync()
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
 		public async Task<byte[]> ReadAllBytesAsync()
 		{
-			byte[] bytes = await DecoratedReader.ReadAllBytesAsync();
+			byte[] bytes = await DecoratedReader.ReadAllBytesAsync()
+				.ConfigureAwait(false);
 
 			Array.Reverse(bytes);
 
@@ -41,7 +44,8 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public async Task<byte[]> ReadBytesAsync(int count)
 		{
-			byte[] bytes = await DecoratedReader.ReadBytesAsync(count);
+			byte[] bytes = await DecoratedReader.ReadBytesAsync(count)
+				.ConfigureAwait(false);
 
 			Array.Reverse(bytes);
 
@@ -52,7 +56,8 @@ namespace FreecraftCore.Serializer
 		public async Task<byte[]> PeekBytesAsync(int count)
 		{
 			//Blocks until the bytes are loaded
-			byte[] bytes = await DecoratedReader.PeekBytesAsync(count);
+			byte[] bytes = await DecoratedReader.PeekBytesAsync(count)
+				.ConfigureAwait(false);
 
 			Array.Reverse(bytes);
 

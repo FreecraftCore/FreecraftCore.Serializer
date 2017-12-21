@@ -82,12 +82,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (value == null) throw new ArgumentNullException(nameof(value));
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			int size = await sizeProvider.SizeAsync(value, dest);
+			int size = await sizeProvider.SizeAsync(value, dest)
+				.ConfigureAwait(false);
 
-			await decoratedSerializer.WriteAsync(value, dest);
+			await decoratedSerializer.WriteAsync(value, dest)
+				.ConfigureAwait(false);
 
 			if (value.Length < size)
-				await dest.WriteAsync(new byte[(CharacterSize * (size - value.Length))]);
+				await dest.WriteAsync(new byte[(CharacterSize * (size - value.Length))])
+					.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -96,9 +99,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//The size must come from the strategy provided
-			int size = CharacterSize * await sizeProvider.SizeAsync(source);
+			int size = CharacterSize * await sizeProvider.SizeAsync(source)
+				.ConfigureAwait(false);
 
-			byte[] bytes = await source.ReadBytesAsync(size);
+			byte[] bytes = await source.ReadBytesAsync(size)
+				.ConfigureAwait(false);
 
 			return EncodingStrategy.GetString(bytes).TrimEnd(NullTermincatorCharacterArray);
 		}

@@ -63,7 +63,7 @@ namespace FreecraftCore.Serializer
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
-			return DeserializeFromBuffer(await source.ReadBytesAsync(ByteRepresentationSize));
+			return DeserializeFromBuffer(await source.ReadBytesAsync(ByteRepresentationSize).ConfigureAwait(false));
 		}
 
 		/// <summary>

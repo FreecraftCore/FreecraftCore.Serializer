@@ -107,7 +107,8 @@ namespace FreecraftCore.Serializer
 			//This method is only responsible for writing the members
 			//Even if we're suppose to write type data for this type we don't
 			//Just members
-			await WriteMemberDataAsync(obj, dest);
+			await WriteMemberDataAsync(obj, dest)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -117,7 +118,8 @@ namespace FreecraftCore.Serializer
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//Basically if someone calls this method they want us to set the members from the reader
-			await SetMembersFromReaderDataAsync(obj, source);
+			await SetMembersFromReaderDataAsync(obj, source)
+				.ConfigureAwait(false);
 
 			return obj;
 		}
@@ -129,7 +131,8 @@ namespace FreecraftCore.Serializer
 			// Tested, does not yield better perf
 			// ReSharper disable once ForCanBeConvertedToForeach
 			for (int i = 0; i < orderedMemberInfos.Length; i++)
-				await orderedMemberInfos[i].SetMemberAsync(obj, source);
+				await orderedMemberInfos[i].SetMemberAsync(obj, source)
+					.ConfigureAwait(false);
 		}
 
 		protected async Task WriteMemberDataAsync(TType obj, [NotNull] IWireStreamWriterStrategyAsync dest)
@@ -139,7 +142,8 @@ namespace FreecraftCore.Serializer
 			// Tested, does not yield better perf
 			// ReSharper disable once ForCanBeConvertedToForeach
 			for (int i = 0; i < orderedMemberInfos.Length; i++)
-				await orderedMemberInfos[i].WriteMemberAsync(obj, dest);
+				await orderedMemberInfos[i].WriteMemberAsync(obj, dest)
+					.ConfigureAwait(false);
 		}
 	}
 }

@@ -92,23 +92,26 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			int size = await sizeStrategyService.SizeAsync<TObjectType[], TObjectType>(value, dest);
+			int size = await sizeStrategyService.SizeAsync<TObjectType[], TObjectType>(value, dest)
+				.ConfigureAwait(false);
 
 			//We no longer verify size thanks to PHANTASY STAR ONLINE. Thanks Sega. Sometimes we have to fake the size
 
 			for (int i = 0; i < size; i++)
-				await decoratedSerializer.WriteAsync(value[i], dest);
+				await decoratedSerializer.WriteAsync(value[i], dest)
+					.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
 		public override async Task<TObjectType[]> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
-			TObjectType[] objectArray = new TObjectType[await sizeStrategyService.SizeAsync(source)];
+			TObjectType[] objectArray = new TObjectType[await sizeStrategyService.SizeAsync(source).ConfigureAwait(false)];
 
 			//TODO: Error handling
 			//read as many objects as in the message (this is safe for clients. Not so safe if the client sent a message of this type)
-			for (int i = 0; i < objectArray.Length; i++)
-				objectArray[i] = await decoratedSerializer.ReadAsync(source);
+			for(int i = 0; i < objectArray.Length; i++)
+				objectArray[i] = await decoratedSerializer.ReadAsync(source)
+					.ConfigureAwait(false);
 
 			return objectArray;
 		}

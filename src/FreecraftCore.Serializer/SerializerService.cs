@@ -298,7 +298,8 @@ namespace FreecraftCore.Serializer
 		{
 			using (DefaultStreamWriterStrategyAsync asyncWriter = new DefaultStreamWriterStrategyAsync())
 			{
-				return await SerializeAsync(data, asyncWriter);
+				return await SerializeAsync(data, asyncWriter)
+					.ConfigureAwait(false);
 			}
 		}
 
@@ -318,9 +319,12 @@ namespace FreecraftCore.Serializer
 				throw new InvalidOperationException($"You cannot serialize before compiling the serializer.");
 
 			//TODO: Cache IsInterface
-			await GetLeastDerivedSerializer(data.GetType()).WriteAsync(data, writer);
+			await GetLeastDerivedSerializer(data.GetType())
+				.WriteAsync(data, writer)
+				.ConfigureAwait(false);
 
-			return await writer.GetBytesAsync();
+			return await writer.GetBytesAsync()
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -328,7 +332,8 @@ namespace FreecraftCore.Serializer
 		{
 			using (DefaultStreamReaderStrategyAsync asyncReader = new DefaultStreamReaderStrategyAsync(data))
 			{
-				return await DeserializeAsync<TTypeToDeserializeTo>(asyncReader);
+				return await DeserializeAsync<TTypeToDeserializeTo>(asyncReader)
+					.ConfigureAwait(false);
 			}
 		}
 
@@ -345,7 +350,9 @@ namespace FreecraftCore.Serializer
 			if (!isCompiled)
 				throw new InvalidOperationException($"You cannot deserialize before compiling the serializer.");
 
-			return (TTypeToDeserializeTo)await GetLeastDerivedSerializer(typeof(TTypeToDeserializeTo)).ReadAsync(source);
+			return (TTypeToDeserializeTo)await GetLeastDerivedSerializer(typeof(TTypeToDeserializeTo))
+				.ReadAsync(source)
+				.ConfigureAwait(false);
 		}
 	}
 }

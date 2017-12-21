@@ -53,7 +53,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//TODO: Pointer hack for speed
 			byte[] stringBytes = EncodingStrategy.GetBytes(value);
 
-			await dest.WriteAsync(stringBytes); //Just don't write terminator. Very simple.
+			await dest.WriteAsync(stringBytes)
+				.ConfigureAwait(false); //Just don't write terminator. Very simple.
 		}
 
 		/// <inheritdoc />
@@ -63,7 +64,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//This is akward. If to terminator was sent we cannot really fall back to the default string reader.
 			//Someone must decorate this and override the read. Otherwise this will almost assuredly fail.
-			return await decoratedSerializer.ReadAsync(source);
+			return await decoratedSerializer.ReadAsync(source)
+				.ConfigureAwait(false);
 		}
 	}
 }

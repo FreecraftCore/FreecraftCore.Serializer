@@ -61,7 +61,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//MUST copy or it will modify the external objects
 			byte[] bytes = value.ToArray();
 			Array.Reverse(bytes);
-			await dest.WriteAsync(bytes);
+			await dest.WriteAsync(bytes)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -74,7 +75,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			return await source.WithOneTimeReadingAsync()
 				.WithByteReversalAsync()
-				.ReadBytesAsync(size);
+				.ReadBytesAsync(size)
+				.ConfigureAwait(false);
 		}
 	}
 }

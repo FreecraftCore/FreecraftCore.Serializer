@@ -55,13 +55,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 		public override async Task WriteAsync(TObjectType[] value, IWireStreamWriterStrategyAsync dest)
 		{
 			for(int i = 0; i < value.Length; i++)
-				await ElementSerializer.WriteAsync(value[i], dest);
+				await ElementSerializer.WriteAsync(value[i], dest)
+					.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
 		public override async Task<TObjectType[]> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
-			byte[] bytes = await source.ReadAllBytesAsync();
+			byte[] bytes = await source.ReadAllBytesAsync()
+				.ConfigureAwait(false);
 			FixedBufferWireReaderStrategy fixedStrategy = new FixedBufferWireReaderStrategy(bytes, 0, bytes.Length);
 
 			QuickList<TObjectType> objects = new QuickList<TObjectType>(4);

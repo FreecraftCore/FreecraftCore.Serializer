@@ -70,7 +70,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			await serializerStrategy.WriteAsync(GenericMath.Convert<TEnumType, TBaseType>(value), dest);
+			await serializerStrategy.WriteAsync(GenericMath.Convert<TEnumType, TBaseType>(value), dest)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -79,7 +80,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//TODO: Should be handle exceptions?
-			return GenericMath.Convert<TBaseType, TEnumType>(await serializerStrategy.ReadAsync(source));
+			return GenericMath.Convert<TBaseType, TEnumType>(await serializerStrategy.ReadAsync(source).ConfigureAwait(false));
 		}
 	}
 }

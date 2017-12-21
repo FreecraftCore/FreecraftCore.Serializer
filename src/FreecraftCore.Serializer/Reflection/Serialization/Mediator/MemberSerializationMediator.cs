@@ -62,7 +62,8 @@ namespace FreecraftCore.Serializer
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			await WriteMemberAsync((TContainingType)obj, dest);
+			await WriteMemberAsync((TContainingType)obj, dest)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -70,7 +71,8 @@ namespace FreecraftCore.Serializer
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
-			await SetMemberAsync((TContainingType)obj, source);
+			await SetMemberAsync((TContainingType)obj, source)
+				.ConfigureAwait(false);
 		}
 	}
 

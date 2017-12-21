@@ -74,21 +74,24 @@ namespace FreecraftCore.Serializer
 		{
 			if(dest == null) throw new ArgumentNullException(nameof(dest));
 
-			int size = await SizeStrategyService.SizeAsync<TType[], TType>(value, dest);
+			int size = await SizeStrategyService.SizeAsync<TType[], TType>(value, dest)
+				.ConfigureAwait(false);
 
 			//We no longer verify size thanks to PHANTASY STAR ONLINE. Thanks Sega. Sometimes we have to fake the size
 
-			await dest.WriteAsync(value.Reinterpret());
+			await dest.WriteAsync(value.Reinterpret())
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
 		public override async Task<TType[]> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
-			TType[] objectArray = new TType[await SizeStrategyService.SizeAsync(source)];
+			TType[] objectArray = new TType[await SizeStrategyService.SizeAsync(source).ConfigureAwait(false)];
 
 			int byteCount = SizeOfType * SizeStrategyService.Size(source);
 
-			byte[] bytes = await source.ReadBytesAsync(byteCount);
+			byte[] bytes = await source.ReadBytesAsync(byteCount)
+				.ConfigureAwait(false);
 
 			return bytes.ReinterpretToArray<TType>();
 		}

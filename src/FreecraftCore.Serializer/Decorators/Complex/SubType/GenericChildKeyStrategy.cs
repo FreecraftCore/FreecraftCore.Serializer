@@ -82,7 +82,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			//Read the key from the stream.
 			TKeyType key = await KeyTypeSerializerStrategy
-				.ReadAsync(typeHandlingFlags.HasFlag(InformationHandlingFlags.DontConsumeRead) ? source.WithOnlyPeekingAsync() : source);
+				.ReadAsync(typeHandlingFlags.HasFlag(InformationHandlingFlags.DontConsumeRead) ? source.WithOnlyPeekingAsync() : source)
+				.ConfigureAwait(false);
 
 			return GenericMath.Convert<TKeyType, int>(key);
 		}
@@ -96,7 +97,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//It may be that the data is needed to be left in the stream to indicate
 			//something about the type later down the line.
 			if (!typeHandlingFlags.HasFlag(InformationHandlingFlags.DontWrite))
-				await KeyTypeSerializerStrategy.WriteAsync(GenericMath.Convert<int, TKeyType>(value), dest);
+				await KeyTypeSerializerStrategy.WriteAsync(GenericMath.Convert<int, TKeyType>(value), dest)
+					.ConfigureAwait(false);
 		}
 	}
 }

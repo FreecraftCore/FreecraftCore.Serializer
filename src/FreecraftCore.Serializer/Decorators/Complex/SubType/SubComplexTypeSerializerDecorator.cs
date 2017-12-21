@@ -208,9 +208,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//TODO: Oh man, this is a disaster. How do we handle the default? How do we tell consumers to use the default?
 			//Defer key writing to the key writing strategy
-			await keyStrategy.WriteAsync(typeToKeyLookup[childType], dest);
+			await keyStrategy.WriteAsync(typeToKeyLookup[childType], dest)
+				.ConfigureAwait(false);
 
-			await serializer.WriteAsync(value, dest);
+			await serializer.WriteAsync(value, dest)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -230,7 +232,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//and if it happens to map to another child, which should be rare, it'll dispatch until it reaches a ComplexType serializer which is where
 			//the end of the inheritance graph tree should end up. The complextype serializer, which is the true type serializer, should handle deserialization
 			//include going up the base heriachiry.
-			return (TBaseType)await strategy.ReadAsync(source);
+			return (TBaseType)await strategy.ReadAsync(source)
+				.ConfigureAwait(false);
 		}
 
 		private void RegisterPair(Type child, int key)

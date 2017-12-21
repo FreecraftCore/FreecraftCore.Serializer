@@ -91,7 +91,8 @@ namespace FreecraftCore.Serializer
 
 			//Write the uncompressed length
 			//WoW expects to know the uncomrpessed length
-			await SizeSerializer.WriteAsync((uint)decoratedSerializerBytes.Length, dest);
+			await SizeSerializer.WriteAsync((uint)decoratedSerializerBytes.Length, dest)
+				.ConfigureAwait(false);
 
 			using (MemoryStream contentStream = new MemoryStream(decoratedSerializerBytes))
 			{
@@ -101,11 +102,13 @@ namespace FreecraftCore.Serializer
 					using (ZlibStream compressionStream = new ZlibStream(compressedStream, Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.BestCompression))
 					{
 						//Wait for compression to finish
-						await contentStream.CopyToAsync(compressionStream);
+						await contentStream.CopyToAsync(compressionStream)
+							.ConfigureAwait(false);
 					}
 
 					//Wait until the stream is written
-					await dest.WriteAsync(compressedStream.ToArray());
+					await dest.WriteAsync(compressedStream.ToArray())
+						.ConfigureAwait(false);
 				}
 			}
 		}
@@ -115,18 +118,21 @@ namespace FreecraftCore.Serializer
 		{
 			//WoW sends a 4 byte uncompressed size. We can't use it for anything
 			//We could assert or throw on it though.
-			uint size = await SizeSerializer.ReadAsync(source);
+			uint size = await SizeSerializer.ReadAsync(source)
+				.ConfigureAwait(false);
 
 			using (MemoryStream decompressedStream = new MemoryStream())
 			{
 				using (ZlibStream decompressionStream = new ZlibStream(decompressedStream, Ionic.Zlib.CompressionMode.Decompress, CompressionLevel.BestCompression))
 				{
 					//wait for the stream to decompress
-					await decompressionStream.CopyToAsync(decompressedStream);
+					await decompressionStream.CopyToAsync(decompressedStream)
+						.ConfigureAwait(false);
 				}
 
 				//wait for the stream to be interpreted
-				return await DecoratedStrategy.ReadAsync(new DefaultStreamReaderStrategyAsync(decompressedStream.ToArray()));
+				return await DecoratedStrategy.ReadAsync(new DefaultStreamReaderStrategyAsync(decompressedStream.ToArray()))
+					.ConfigureAwait(false);
 			}
 		}
 	}

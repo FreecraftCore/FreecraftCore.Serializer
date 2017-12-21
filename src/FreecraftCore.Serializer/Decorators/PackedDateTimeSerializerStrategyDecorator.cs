@@ -80,14 +80,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 		public override async Task WriteAsync(DateTime value, IWireStreamWriterStrategyAsync dest)
 		{
 			//pass to decorated serializer
-			await decoratedSerializer.WriteAsync(ConvertDateTimeToIntegerRepresentation(ref value), dest);
+			await decoratedSerializer.WriteAsync(ConvertDateTimeToIntegerRepresentation(ref value), dest)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
 		public override async Task<DateTime> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
 			//reads the packed int value from the stream
-			return ConvertIntegerToDateTimeRepresentation(await decoratedSerializer.ReadAsync(source));
+			return ConvertIntegerToDateTimeRepresentation(await decoratedSerializer.ReadAsync(source).ConfigureAwait(false));
 		}
 	}
 }

@@ -67,7 +67,8 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public override async Task WriteMemberAsync(TContainingType obj, IWireStreamWriterStrategyAsync dest)
 		{
-			await DecoratedMediator.WriteMemberAsync(obj, new SkipSomeBytesWireStreamWriterStrategyDecoratorAsync(dest, SizeOfCollectionSizeType));
+			await DecoratedMediator.WriteMemberAsync(obj, new SkipSomeBytesWireStreamWriterStrategyDecoratorAsync(dest, SizeOfCollectionSizeType))
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -78,7 +79,8 @@ namespace FreecraftCore.Serializer
 			byte[] bytes = ((TSizeType)SizeMemberGetter.Getter(obj)).Reinterpret();
 
 			//We don't need to modify how we set the size member
-			await DecoratedMediator.SetMemberAsync(obj, source.PreprendWithBytesAsync(bytes));
+			await DecoratedMediator.SetMemberAsync(obj, source.PreprendWithBytesAsync(bytes))
+				.ConfigureAwait(false);
 		}
 	}
 }

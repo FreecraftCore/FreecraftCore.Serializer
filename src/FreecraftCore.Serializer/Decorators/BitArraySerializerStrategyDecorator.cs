@@ -73,9 +73,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 			((ICollection)value).CopyTo(bitmask, 0);
 
 			//Write the size as if it were an int array first
-			await dest.WriteAsync((byte)(bitmask.Length / 4));
+			await dest.WriteAsync((byte)(bitmask.Length / 4))
+				.ConfigureAwait(false);
 
-			await dest.WriteAsync(bitmask);
+			await dest.WriteAsync(bitmask)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -85,12 +87,13 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//TODO: We should handle multiple types of sizes
 			//WoW sends a byte for the block count and an int array. We use a surrogate to deserialize it
-			byte size = await source.ReadByteAsync();
+			byte size = await source.ReadByteAsync()
+				.ConfigureAwait(false);
 
 			//Load the data for the bitmask
 			//WoW sends the size as an int array but we can more efficiently read a byte array so we pretend
 			//It is the same
-			return new BitArray(await source.ReadBytesAsync(size * sizeof(int)));
+			return new BitArray(await source.ReadBytesAsync(size * sizeof(int)).ConfigureAwait(false));
 		}
 	}
 }

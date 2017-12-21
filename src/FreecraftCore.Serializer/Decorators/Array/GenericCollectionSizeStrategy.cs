@@ -80,7 +80,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			int size = collection.Count() - AddedSize;
 
 			//yield until we write (shouldn't take long and maybe syncronous is more efficient and performant but async API should be fully async) 
-			await SizeTypeSerializerStrategy.WriteAsync(GenericMath.Convert<int, TSizeType>(size), writer);
+			await SizeTypeSerializerStrategy.WriteAsync(GenericMath.Convert<int, TSizeType>(size), writer)
+				.ConfigureAwait(false);
 
 			//We don't know the size so just provide the size of the collection
 			return size;
@@ -92,8 +93,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (reader == null) throw new ArgumentNullException(nameof(reader));
 
 			//Read the byte size from the stream.
-			TSizeType result = await SizeTypeSerializerStrategy.ReadAsync(reader);
-			
+			TSizeType result = await SizeTypeSerializerStrategy.ReadAsync(reader)
+				.ConfigureAwait(false);
+
 			//Readd the addedsize so that we know how many items are really there.
 			return GenericMath.Convert<TSizeType, int>(result) + AddedSize;
 		}

@@ -57,13 +57,15 @@ namespace FreecraftCore.Serializer.API.Reflection
 		/// <inheritdoc />
 		public async Task SetMemberAsync(object obj, IWireStreamReaderStrategyAsync source)
 		{
-			await decoratedMediator.SetMemberAsync(obj, source);
+			await decoratedMediator.SetMemberAsync(obj, source)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
 		public async Task SetMemberAsync(TContainingType obj, IWireStreamReaderStrategyAsync source)
 		{
-			await decoratedMediator.SetMemberAsync(obj, source);
+			await decoratedMediator.SetMemberAsync(obj, source)
+				.ConfigureAwait(false);
 		}
 	}
 }

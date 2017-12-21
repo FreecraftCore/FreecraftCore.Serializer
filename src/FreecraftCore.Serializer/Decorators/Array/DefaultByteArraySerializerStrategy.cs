@@ -22,7 +22,8 @@ namespace FreecraftCore.Serializer
 
 		public override async Task<byte[]> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
-			return await source.ReadAllBytesAsync();
+			return await source.ReadAllBytesAsync()
+				.ConfigureAwait(false);
 		}
 
 		public override void Write(byte[] value, IWireStreamWriterStrategy dest)
@@ -32,7 +33,8 @@ namespace FreecraftCore.Serializer
 
 		public override async Task WriteAsync(byte[] value, IWireStreamWriterStrategyAsync dest)
 		{
-			await dest.WriteAsync(value);
+			await dest.WriteAsync(value)
+				.ConfigureAwait(false);
 		}
 	}
 }

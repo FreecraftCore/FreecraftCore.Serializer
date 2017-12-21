@@ -22,7 +22,8 @@ namespace FreecraftCore.Serializer
 			ThrowIfCantRead();
 			CanRead = false;
 
-			return await DecoratedReader.ReadByteAsync();
+			return await DecoratedReader.ReadByteAsync()
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -31,7 +32,8 @@ namespace FreecraftCore.Serializer
 			ThrowIfCantRead();
 			CanRead = false;
 
-			return await DecoratedReader.PeekByteAsync();
+			return await DecoratedReader.PeekByteAsync()
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -40,7 +42,8 @@ namespace FreecraftCore.Serializer
 			ThrowIfCantRead();
 			CanRead = false;
 
-			return await DecoratedReader.ReadAllBytesAsync();
+			return await DecoratedReader.ReadAllBytesAsync()
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -49,7 +52,8 @@ namespace FreecraftCore.Serializer
 			ThrowIfCantRead();
 			CanRead = false;
 
-			return await DecoratedReader.ReadBytesAsync(count);
+			return await DecoratedReader.ReadBytesAsync(count)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -58,7 +62,8 @@ namespace FreecraftCore.Serializer
 			ThrowIfCantRead();
 			CanRead = false;
 
-			return await DecoratedReader.PeekBytesAsync(count);
+			return await DecoratedReader.PeekBytesAsync(count)
+				.ConfigureAwait(false);
 		}
 	}
 }

@@ -20,10 +20,11 @@ namespace FreecraftCore.Serializer
 		public async Task<byte> ReadByteAsync()
 		{
 			if (ReaderState == State.Default)
-				return await DecoratedReader.ReadByteAsync();
+				return await DecoratedReader.ReadByteAsync()
+					.ConfigureAwait(false);
 			else
 			{
-				return (await ReadBytesAsync(1))[0];
+				return (await ReadBytesAsync(1).ConfigureAwait(false))[0];
 			}
 		}
 
@@ -32,7 +33,8 @@ namespace FreecraftCore.Serializer
 		{
 			//More efficient to get the byte array
 			//We need to buffer it anyway
-			byte[] bytes = await ReadBytesAsync(1);
+			byte[] bytes = await ReadBytesAsync(1)
+				.ConfigureAwait(false);
 
 			//Don't set peek until AFTER read. We may need to peek into buffered but we may not to.
 			//We avoid messing with the state until after the read.
@@ -50,11 +52,13 @@ namespace FreecraftCore.Serializer
 		public async Task<byte[]> ReadAllBytesAsync()
 		{
 			if (ReaderState == State.Default)
-				return await DecoratedReader.ReadAllBytesAsync();
+				return await DecoratedReader.ReadAllBytesAsync()
+					.ConfigureAwait(false);
 			else
 			{
 				//Make sure to read outside the return task
-				byte[] bytes = await DecoratedReader.ReadAllBytesAsync();
+				byte[] bytes = await DecoratedReader.ReadAllBytesAsync()
+					.ConfigureAwait(false);
 
 				ReaderState = State.Default;
 				BufferedCount = 0;
@@ -69,7 +73,8 @@ namespace FreecraftCore.Serializer
 		public async Task<byte[]> ReadBytesAsync(int count)
 		{
 			if (ReaderState == State.Default)
-				return await DecoratedReader.ReadBytesAsync(count);
+				return await DecoratedReader.ReadBytesAsync(count)
+					.ConfigureAwait(false);
 			else
 			{
 				byte[] bytes = null;
@@ -85,7 +90,8 @@ namespace FreecraftCore.Serializer
 				}
 				else
 				{
-					byte[] streamReadBytes = await DecoratedReader.ReadBytesAsync(count - BufferedCount);
+					byte[] streamReadBytes = await DecoratedReader.ReadBytesAsync(count - BufferedCount)
+						.ConfigureAwait(false);
 
 					bytes = BufferedBytes.Concat(streamReadBytes).ToArray();
 				}
@@ -106,7 +112,8 @@ namespace FreecraftCore.Serializer
 		public async Task<byte[]> PeekBytesAsync(int count)
 		{
 			//When we peek we must buffer the results.
-			byte[] bytes = await ReadBytesAsync(count);
+			byte[] bytes = await ReadBytesAsync(count)
+				.ConfigureAwait(false);
 
 			//Don't set peek until AFTER read. We may need to peek into buffered but we may not to.
 			//We avoid messing with the state until after the read.

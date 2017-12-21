@@ -81,7 +81,8 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public async Task WriteAsync(byte[] data)
 		{
-			await WriteAsync(data, 0, data.Length);
+			await WriteAsync(data, 0, data.Length)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -90,7 +91,8 @@ namespace FreecraftCore.Serializer
 			if(ByteNumberToSkip > 0)
 				if(count > ByteNumberToSkip)
 				{
-					await DecoratedWriter.WriteAsync(data, ByteNumberToSkip, count - ByteNumberToSkip);
+					await DecoratedWriter.WriteAsync(data, ByteNumberToSkip, count - ByteNumberToSkip)
+						.ConfigureAwait(false);
 					ByteNumberToSkip = 0;
 				}
 				else
@@ -99,7 +101,8 @@ namespace FreecraftCore.Serializer
 					ByteNumberToSkip = ByteNumberToSkip - count;
 				}
 			else
-				await DecoratedWriter.WriteAsync(data, offset, count);
+				await DecoratedWriter.WriteAsync(data, offset, count)
+					.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -111,7 +114,8 @@ namespace FreecraftCore.Serializer
 				return;
 			}
 
-			await DecoratedWriter.WriteAsync(data);
+			await DecoratedWriter.WriteAsync(data)
+				.ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
