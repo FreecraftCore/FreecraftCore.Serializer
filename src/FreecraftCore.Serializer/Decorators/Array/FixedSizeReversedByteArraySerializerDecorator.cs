@@ -71,7 +71,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//Must read size first before reverseing
-			int size = SizeStrategy.Size(source);
+			int size = await SizeStrategy.SizeAsync(source);
 
 			return await source.WithOneTimeReadingAsync()
 				.WithByteReversalAsync()
