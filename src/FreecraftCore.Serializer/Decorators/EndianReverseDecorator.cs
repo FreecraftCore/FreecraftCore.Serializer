@@ -42,20 +42,18 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public override async Task WriteAsync(TType value, IWireStreamWriterStrategyAsync dest)
+		public override Task WriteAsync(TType value, IWireStreamWriterStrategyAsync dest)
 		{
 			byte[] bytes = SerializerStrategy.GetBytes(value);
 			Array.Reverse(bytes);
 
-			await dest.WriteAsync(bytes)
-				.ConfigureAwait(false);
+			return dest.WriteAsync(bytes);
 		}
 
 		/// <inheritdoc />
-		public override async Task<TType> ReadAsync(IWireStreamReaderStrategyAsync source)
+		public override Task<TType> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
-			return await SerializerStrategy.ReadAsync(source.WithOneTimeReadingAsync().WithByteReversalAsync())
-				.ConfigureAwait(false);
+			return SerializerStrategy.ReadAsync(source.WithOneTimeReadingAsync().WithByteReversalAsync());
 		}
 	}
 }

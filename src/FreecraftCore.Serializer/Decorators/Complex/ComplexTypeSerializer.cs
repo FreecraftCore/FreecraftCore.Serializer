@@ -99,7 +99,7 @@ namespace FreecraftCore.Serializer
 
 		//TODO: Implement once we have write and read async
 		/// <inheritdoc />
-		public override async Task ObjectIntoWriterAsync(TType obj, IWireStreamWriterStrategyAsync dest)
+		public override Task ObjectIntoWriterAsync(TType obj, IWireStreamWriterStrategyAsync dest)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
@@ -107,8 +107,7 @@ namespace FreecraftCore.Serializer
 			//This method is only responsible for writing the members
 			//Even if we're suppose to write type data for this type we don't
 			//Just members
-			await WriteMemberDataAsync(obj, dest)
-				.ConfigureAwait(false);
+			return WriteMemberDataAsync(obj, dest);
 		}
 
 		/// <inheritdoc />

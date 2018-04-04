@@ -66,12 +66,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override async Task WriteAsync(TEnumType value, IWireStreamWriterStrategyAsync dest)
+		public override Task WriteAsync(TEnumType value, IWireStreamWriterStrategyAsync dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			await serializerStrategy.WriteAsync(GenericMath.Convert<TEnumType, TBaseType>(value), dest)
-				.ConfigureAwait(false);
+			return serializerStrategy.WriteAsync(GenericMath.Convert<TEnumType, TBaseType>(value), dest);
 		}
 
 		/// <inheritdoc />
@@ -80,7 +79,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//TODO: Should be handle exceptions?
-			return GenericMath.Convert<TBaseType, TEnumType>(await serializerStrategy.ReadAsync(source).ConfigureAwait(false));
+			return GenericMath.Convert<TBaseType, TEnumType>(await serializerStrategy.ReadAsync(source)
+				.ConfigureAwait(false));
 		}
 	}
 }

@@ -46,26 +46,24 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override async Task WriteAsync(string value, IWireStreamWriterStrategyAsync dest)
+		public override Task WriteAsync(string value, IWireStreamWriterStrategyAsync dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			//TODO: Pointer hack for speed
 			byte[] stringBytes = EncodingStrategy.GetBytes(value);
 
-			await dest.WriteAsync(stringBytes)
-				.ConfigureAwait(false); //Just don't write terminator. Very simple.
+			return dest.WriteAsync(stringBytes); //Just don't write terminator. Very simple.
 		}
 
 		/// <inheritdoc />
-		public override async Task<string> ReadAsync(IWireStreamReaderStrategyAsync source)
+		public override Task<string> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//This is akward. If to terminator was sent we cannot really fall back to the default string reader.
 			//Someone must decorate this and override the read. Otherwise this will almost assuredly fail.
-			return await decoratedSerializer.ReadAsync(source)
-				.ConfigureAwait(false);
+			return decoratedSerializer.ReadAsync(source);
 		}
 	}
 }

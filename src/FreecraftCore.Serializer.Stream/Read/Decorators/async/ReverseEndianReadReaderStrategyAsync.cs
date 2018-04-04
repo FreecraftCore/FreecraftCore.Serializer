@@ -17,17 +17,15 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public async Task<byte> ReadByteAsync()
+		public Task<byte> ReadByteAsync()
 		{
-			return await DecoratedReader.ReadByteAsync()
-				.ConfigureAwait(false);
+			return DecoratedReader.ReadByteAsync();
 		}
 
 		/// <inheritdoc />
-		public async Task<byte> PeekByteAsync()
+		public Task<byte> PeekByteAsync()
 		{
-			return await DecoratedReader.PeekByteAsync()
-				.ConfigureAwait(false);
+			return DecoratedReader.PeekByteAsync();
 		}
 
 		/// <inheritdoc />

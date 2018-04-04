@@ -59,10 +59,9 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public async Task<byte[]> ReadAllBytesAsync()
+		public Task<byte[]> ReadAllBytesAsync()
 		{
-			return await ReadBytesAsync((int)(ManagedStream.Length - ManagedStream.Position))
-				.ConfigureAwait(false);
+			return ReadBytesAsync((int)(ManagedStream.Length - ManagedStream.Position));
 		}
 
 		/// <inheritdoc />

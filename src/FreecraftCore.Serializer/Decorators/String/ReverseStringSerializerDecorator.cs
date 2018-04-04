@@ -44,12 +44,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override async Task WriteAsync(string value, IWireStreamWriterStrategyAsync dest)
+		public override Task WriteAsync(string value, IWireStreamWriterStrategyAsync dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			await decoratedSerializer.WriteAsync(new string(value.Reverse().ToArray()), dest)
-				.ConfigureAwait(false);
+			return decoratedSerializer.WriteAsync(new string(value.Reverse().ToArray()), dest);
 		}
 
 		/// <inheritdoc />

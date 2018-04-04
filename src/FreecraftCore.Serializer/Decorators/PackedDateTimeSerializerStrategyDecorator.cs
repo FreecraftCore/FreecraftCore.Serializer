@@ -77,11 +77,10 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override async Task WriteAsync(DateTime value, IWireStreamWriterStrategyAsync dest)
+		public override Task WriteAsync(DateTime value, IWireStreamWriterStrategyAsync dest)
 		{
 			//pass to decorated serializer
-			await decoratedSerializer.WriteAsync(ConvertDateTimeToIntegerRepresentation(ref value), dest)
-				.ConfigureAwait(false);
+			return decoratedSerializer.WriteAsync(ConvertDateTimeToIntegerRepresentation(ref value), dest);
 		}
 
 		/// <inheritdoc />

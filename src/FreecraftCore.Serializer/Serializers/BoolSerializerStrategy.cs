@@ -79,12 +79,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override async Task WriteAsync(bool value, [NotNull] IWireStreamWriterStrategyAsync dest)
+		public override Task WriteAsync(bool value, [NotNull] IWireStreamWriterStrategyAsync dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			await dest.WriteAsync(ConvertFromBool(value))
-				.ConfigureAwait(false);
+			return dest.WriteAsync(ConvertFromBool(value));
 		}
 
 		/// <inheritdoc />

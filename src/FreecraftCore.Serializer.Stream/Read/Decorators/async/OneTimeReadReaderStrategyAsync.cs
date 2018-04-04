@@ -17,53 +17,48 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public async Task<byte> ReadByteAsync()
+		public Task<byte> ReadByteAsync()
 		{
 			ThrowIfCantRead();
 			CanRead = false;
 
-			return await DecoratedReader.ReadByteAsync()
-				.ConfigureAwait(false);
+			return DecoratedReader.ReadByteAsync();
 		}
 
 		/// <inheritdoc />
-		public async Task<byte> PeekByteAsync()
+		public Task<byte> PeekByteAsync()
 		{
 			ThrowIfCantRead();
 			CanRead = false;
 
-			return await DecoratedReader.PeekByteAsync()
-				.ConfigureAwait(false);
+			return DecoratedReader.PeekByteAsync();
 		}
 
 		/// <inheritdoc />
-		public async Task<byte[]> ReadAllBytesAsync()
+		public Task<byte[]> ReadAllBytesAsync()
 		{
 			ThrowIfCantRead();
 			CanRead = false;
 
-			return await DecoratedReader.ReadAllBytesAsync()
-				.ConfigureAwait(false);
+			return DecoratedReader.ReadAllBytesAsync();
 		}
 
 		/// <inheritdoc />
-		public async Task<byte[]> ReadBytesAsync(int count)
+		public Task<byte[]> ReadBytesAsync(int count)
 		{
 			ThrowIfCantRead();
 			CanRead = false;
 
-			return await DecoratedReader.ReadBytesAsync(count)
-				.ConfigureAwait(false);
+			return DecoratedReader.ReadBytesAsync(count);
 		}
 
 		/// <inheritdoc />
-		public async Task<byte[]> PeekBytesAsync(int count)
+		public Task<byte[]> PeekBytesAsync(int count)
 		{
 			ThrowIfCantRead();
 			CanRead = false;
 
-			return await DecoratedReader.PeekBytesAsync(count)
-				.ConfigureAwait(false);
+			return DecoratedReader.PeekBytesAsync(count);
 		}
 	}
 }

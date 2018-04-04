@@ -63,16 +63,14 @@ namespace FreecraftCore.Serializer
 			DecoratedSerializer.ObjectIntoWriter(obj, dest);
 		}
 
-		public async Task ObjectIntoWriterAsync([NotNull] TType obj, [NotNull] IWireStreamWriterStrategyAsync dest)
+		public Task ObjectIntoWriterAsync([NotNull] TType obj, [NotNull] IWireStreamWriterStrategyAsync dest)
 		{
-			await DecoratedSerializer.ObjectIntoWriterAsync(obj, dest)
-				.ConfigureAwait(false);
+			return DecoratedSerializer.ObjectIntoWriterAsync(obj, dest);
 		}
 
-		public async Task ObjectIntoWriterAsync([CanBeNull] object obj, [NotNull] IWireStreamWriterStrategyAsync dest)
+		public Task ObjectIntoWriterAsync([CanBeNull] object obj, [NotNull] IWireStreamWriterStrategyAsync dest)
 		{
-			await DecoratedSerializer.ObjectIntoWriterAsync(obj, dest)
-				.ConfigureAwait(false);
+			return DecoratedSerializer.ObjectIntoWriterAsync(obj, dest);
 		}
 
 		public TType Read([NotNull] IWireStreamReaderStrategy source)
@@ -80,10 +78,9 @@ namespace FreecraftCore.Serializer
 			return DecoratedSerializer.Read(source);
 		}
 
-		public async Task<TType> ReadAsync([NotNull] IWireStreamReaderStrategyAsync source)
+		public Task<TType> ReadAsync([NotNull] IWireStreamReaderStrategyAsync source)
 		{
-			return await DecoratedSerializer.ReadAsync(source)
-				.ConfigureAwait(false);
+			return DecoratedSerializer.ReadAsync(source);
 		}
 
 		public TType ReadIntoObject([CanBeNull] TType obj, [NotNull] IWireStreamReaderStrategy source)
@@ -96,16 +93,14 @@ namespace FreecraftCore.Serializer
 			return DecoratedSerializer.ReadIntoObject(obj, source);
 		}
 
-		public async Task<TType> ReadIntoObjectAsync([CanBeNull] TType obj, [NotNull] IWireStreamReaderStrategyAsync source)
+		public Task<TType> ReadIntoObjectAsync([CanBeNull] TType obj, [NotNull] IWireStreamReaderStrategyAsync source)
 		{
-			return await DecoratedSerializer.ReadIntoObjectAsync(obj, source)
-				.ConfigureAwait(false);
+			return DecoratedSerializer.ReadIntoObjectAsync(obj, source);
 		}
 
-		public async Task<object> ReadIntoObjectAsync([CanBeNull] object obj, [NotNull] IWireStreamReaderStrategyAsync source)
+		public Task<object> ReadIntoObjectAsync([CanBeNull] object obj, [NotNull] IWireStreamReaderStrategyAsync source)
 		{
-			return await DecoratedSerializer.ReadIntoObjectAsync(obj, source)
-				.ConfigureAwait(false);
+			return DecoratedSerializer.ReadIntoObjectAsync(obj, source);
 		}
 
 		public void Write(TType value, [NotNull] IWireStreamWriterStrategy dest)
@@ -118,16 +113,14 @@ namespace FreecraftCore.Serializer
 			DecoratedSerializer.Write(value, dest);
 		}
 
-		public async Task WriteAsync(TType value, [NotNull] IWireStreamWriterStrategyAsync dest)
+		public Task WriteAsync(TType value, [NotNull] IWireStreamWriterStrategyAsync dest)
 		{
-			await DecoratedSerializer.WriteAsync(value, dest)
-				.ConfigureAwait(false);
+			return DecoratedSerializer.WriteAsync(value, dest);
 		}
 
-		public async Task WriteAsync(object value, [NotNull] IWireStreamWriterStrategyAsync dest)
+		public Task WriteAsync(object value, [NotNull] IWireStreamWriterStrategyAsync dest)
 		{
-			await DecoratedSerializer.WriteAsync(value, dest)
-				.ConfigureAwait(false);
+			return DecoratedSerializer.WriteAsync(value, dest);
 		}
 
 		object IObjectByteReader.FromBytes(byte[] bytes)

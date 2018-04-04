@@ -21,18 +21,16 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public async Task<byte> ReadByteAsync()
+		public Task<byte> ReadByteAsync()
 		{
 			//Force a peek
-			return await DecoratedReader.PeekByteAsync()
-				.ConfigureAwait(false);
+			return DecoratedReader.PeekByteAsync();
 		}
 
 		/// <inheritdoc />
-		public async Task<byte> PeekByteAsync()
+		public Task<byte> PeekByteAsync()
 		{
-			return await DecoratedReader.PeekByteAsync()
-				.ConfigureAwait(false);
+			return DecoratedReader.PeekByteAsync();
 		}
 
 		/// <inheritdoc />
@@ -43,18 +41,16 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public async Task<byte[]> ReadBytesAsync(int count)
+		public Task<byte[]> ReadBytesAsync(int count)
 		{
 			//force peeking
-			return await DecoratedReader.PeekBytesAsync(count)
-				.ConfigureAwait(false);
+			return DecoratedReader.PeekBytesAsync(count);
 		}
 
 		/// <inheritdoc />
-		public async Task<byte[]> PeekBytesAsync(int count)
+		public Task<byte[]> PeekBytesAsync(int count)
 		{
-			return await DecoratedReader.PeekBytesAsync(count)
-				.ConfigureAwait(false);
+			return DecoratedReader.PeekBytesAsync(count);
 		}
 	}
 }

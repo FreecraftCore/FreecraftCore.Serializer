@@ -102,33 +102,30 @@ namespace FreecraftCore.Serializer
 		//Async implementation
 
 		/// <inheritdoc />
-		public virtual async Task<TType> ReadIntoObjectAsync(TType obj, IWireStreamReaderStrategyAsync source)
+		public virtual Task<TType> ReadIntoObjectAsync(TType obj, IWireStreamReaderStrategyAsync source)
 		{
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//We can't really write or read into an object on a simple type.
 			
 			//Default implementation is to just read the object from the source.
-			return await ReadAsync(source)
-				.ConfigureAwait(false);
+			return ReadAsync(source);
 		}
 
 		/// <inheritdoc />
-		public virtual async Task ObjectIntoWriterAsync(TType obj, IWireStreamWriterStrategyAsync dest)
+		public virtual Task ObjectIntoWriterAsync(TType obj, IWireStreamWriterStrategyAsync dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			//We can't really write or read into an object on a simple type.
 
-			await WriteAsync(obj, dest)
-				.ConfigureAwait(false);
+			return WriteAsync(obj, dest);
 		}
 
 		/// <inheritdoc />
-		public async Task WriteAsync(object value, IWireStreamWriterStrategyAsync dest)
+		public Task WriteAsync(object value, IWireStreamWriterStrategyAsync dest)
 		{
-			await WriteAsync((TType)value, dest)
-				.ConfigureAwait(false);
+			return WriteAsync((TType)value, dest);
 		}
 
 		/// <inheritdoc />
@@ -146,10 +143,9 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public async Task ObjectIntoWriterAsync(object obj, IWireStreamWriterStrategyAsync dest)
+		public Task ObjectIntoWriterAsync(object obj, IWireStreamWriterStrategyAsync dest)
 		{
-			await ObjectIntoWriterAsync((TType)obj, dest)
-				.ConfigureAwait(false);
+			return ObjectIntoWriterAsync((TType)obj, dest);
 		}
 	}
 }

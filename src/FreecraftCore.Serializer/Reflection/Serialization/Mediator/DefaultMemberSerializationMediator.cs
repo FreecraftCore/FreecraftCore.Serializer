@@ -46,7 +46,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public override async Task WriteMemberAsync(TContainingType obj, IWireStreamWriterStrategyAsync dest)
+		public override Task WriteMemberAsync(TContainingType obj, IWireStreamWriterStrategyAsync dest)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
@@ -59,8 +59,7 @@ namespace FreecraftCore.Serializer
 			//We used to do a null check here. It was kind of pointless to do and it was slightly expensive since they weren't all
 			//reference types. No reason to check nullness; it's just a perf issue
 
-			await TypeSerializer.WriteAsync(memberValue, dest)
-				.ConfigureAwait(false);
+			return TypeSerializer.WriteAsync(memberValue, dest);
 		}
 
 		/// <inheritdoc />

@@ -54,15 +54,14 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override async Task WriteAsync(byte[] value, IWireStreamWriterStrategyAsync dest)
+		public override Task WriteAsync(byte[] value, IWireStreamWriterStrategyAsync dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			//MUST copy or it will modify the external objects
 			byte[] bytes = value.ToArray();
 			Array.Reverse(bytes);
-			await dest.WriteAsync(bytes)
-				.ConfigureAwait(false);
+			return dest.WriteAsync(bytes);
 		}
 
 		/// <inheritdoc />
@@ -71,7 +70,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			if (source == null) throw new ArgumentNullException(nameof(source));
 
 			//Must read size first before reverseing
-			int size = await SizeStrategy.SizeAsync(source);
+			int size = await SizeStrategy.SizeAsync(source)
+				.ConfigureAwait(false);
 
 			return await source.WithOneTimeReadingAsync()
 				.WithByteReversalAsync()

@@ -79,10 +79,9 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public async Task WriteAsync(byte[] data)
+		public Task WriteAsync(byte[] data)
 		{
-			await WriteAsync(data, 0, data.Length)
-				.ConfigureAwait(false);
+			return WriteAsync(data, 0, data.Length);
 		}
 
 		/// <inheritdoc />

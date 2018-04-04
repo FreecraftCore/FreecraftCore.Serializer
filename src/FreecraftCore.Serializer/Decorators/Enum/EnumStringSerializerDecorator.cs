@@ -48,13 +48,12 @@ namespace FreecraftCore.Serializer.KnownTypes
 		}
 
 		/// <inheritdoc />
-		public override async Task WriteAsync(TEnumType value, IWireStreamWriterStrategyAsync dest)
+		public override Task WriteAsync(TEnumType value, IWireStreamWriterStrategyAsync dest)
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			//Just write the string to the stream
-			await decoratedSerializer.WriteAsync(value.ToString(), dest)
-				.ConfigureAwait(false);
+			return decoratedSerializer.WriteAsync(value.ToString(), dest);
 		}
 
 		/// <inheritdoc />
