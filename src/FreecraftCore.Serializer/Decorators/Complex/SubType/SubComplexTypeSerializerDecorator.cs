@@ -200,7 +200,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 				//We know the complex serializer won't be null because it HAS to be non-abstract for this to 
 				//have been true
 				keyStrategy.WriteDefault(dest);
-				InternallyManagedComplexSerializer.Write(value, dest);
+				await InternallyManagedComplexSerializer.WriteAsync(value, dest)
+					.ConfigureAwait(false);
+
 				return;
 			}
 
@@ -222,7 +224,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//Incoming should be a byte that indicates the child type to use
 			//Read it to lookup in the map to determine which type we should create
-			int childIndexRequested = keyStrategy.Read(source); //defer to key reader (could be int, byte or something else)
+			int childIndexRequested = await keyStrategy.ReadAsync(source) //defer to key reader (could be int, byte or something else)
+				.ConfigureAwait(false);
 
 			ITypeSerializerStrategy strategy = GetReadStrategy(childIndexRequested);
 
