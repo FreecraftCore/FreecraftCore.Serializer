@@ -26,7 +26,7 @@ namespace FreecraftCore.Serializer
 		protected override bool PopulateSharedBufferWith(TType value)
 		{
 			//This pushes the value into the buffer.
-			value.Reinterpret(SharedByteBuffer, 0);
+			value.Reinterpret(SharedByteBuffer.Value, 0);
 
 			return true;
 		}

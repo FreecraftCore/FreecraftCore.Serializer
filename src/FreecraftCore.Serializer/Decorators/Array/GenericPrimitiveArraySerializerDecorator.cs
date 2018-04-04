@@ -83,6 +83,13 @@ namespace FreecraftCore.Serializer
 				.ConfigureAwait(false);
 		}
 
+		/*private byte[] ConvertToByteArray(TType[] array)
+		{
+			Span<TType> span = new Span<TType>(array);
+
+			return span.AsBytes();
+		}*/
+
 		/// <inheritdoc />
 		public override async Task<TType[]> ReadAsync(IWireStreamReaderStrategyAsync source)
 		{

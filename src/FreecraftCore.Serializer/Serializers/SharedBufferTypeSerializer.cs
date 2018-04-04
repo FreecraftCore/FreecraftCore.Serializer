@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 #pragma warning disable 618
@@ -16,8 +17,7 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Sharable thread static buffer for 0 allocation serialization.
 		/// </summary>
-		[ThreadStatic]
-		protected readonly byte[] SharedByteBuffer = new byte[ByteRepresentationSize];
+		protected readonly ThreadLocal<byte[]> SharedByteBuffer = new ThreadLocal<byte[]>(() => new byte[ByteRepresentationSize], false);
 
 		protected static int ByteRepresentationSize { get; } = Marshal.SizeOf(typeof(TType));
 
@@ -43,7 +43,7 @@ namespace FreecraftCore.Serializer
 
 			//At this point the SharedBuffer contains the serialized representation of the value
 			//DO NOT RELEASE LOCK UNTIL WRITTEN
-			dest.Write(SharedByteBuffer);
+			dest.Write(SharedByteBuffer.Value);
 		}
 
 		/// <inheritdoc />

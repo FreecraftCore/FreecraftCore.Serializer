@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace FreecraftCore.Serializer
 {
+	//TODO: Rewrite this is too slow
 	/// <summary>
 	/// Decorates a <see cref="IWireStreamReaderStrategy"/> and provides the ability to peek
 	/// and seek through a reader that doesn't support peeking by default.
