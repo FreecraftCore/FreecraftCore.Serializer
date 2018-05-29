@@ -229,7 +229,6 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			ITypeSerializerStrategy strategy = GetReadStrategy(childIndexRequested);
 
-
 			//Once we know which child this particular object should be
 			//we need to dispatch the read request to that child's serializer handler
 			//and if it happens to map to another child, which should be rare, it'll dispatch until it reaches a ComplexType serializer which is where

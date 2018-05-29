@@ -115,8 +115,11 @@ namespace FreecraftCore.Serializer.Tests
 		[WireDataContract]
 		public class TestInt32ArrayCompression
 		{
-			[Compress]
 			[WireMember(1)]
+			public int Test = 2;
+
+			[Compress]
+			[WireMember(2)]
 			public int[] Integers;
 			
 			public TestInt32ArrayCompression(int[] integers)

@@ -41,7 +41,7 @@ namespace FreecraftCore.Serializer
 			}
 			catch (Exception e)
 			{
-				throw new InvalidOperationException($"Failed to set member {MemberInformation.Name} on Type: {MemberInformation.DeclaringType} for Type: {obj.GetType().Name}.", e);
+				throw new InvalidOperationException($"Failed to set member {MemberInformation.Name} on Type: {MemberInformation.DeclaringType} for Type: {obj.GetType().Name} Exception: {e.Message}.", e);
 			}
 		}
 

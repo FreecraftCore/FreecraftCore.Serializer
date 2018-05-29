@@ -11,6 +11,9 @@ namespace FreecraftCore.Serializer
 		[NotNull]
 		public Action<TContainingType, TMemberType> Setter { get; }
 
+		//Do a global by generic Type lock
+		private static object SyncObj = new object();
+
 		public MemberSetterMediator([NotNull] MemberInfo memberInfo)
 		{
 			try
@@ -52,17 +55,28 @@ namespace FreecraftCore.Serializer
 		//See: http://stackoverflow.com/a/17117548
 		static Action<TContainingType, TMemberType> CreateSetterForReadonlyField(FieldInfo field)
 		{
-			//Must provide the the type to attach this method to and indicate that JIT should skip accessibility checks.
-			var method = new DynamicMethod($"set_readonly_{field.Name}", null,
-				new[] { typeof(TContainingType), typeof(TMemberType) }, field.DeclaringType, true);
+			//We lock because it's possible this type already has a setter
+			lock(SyncObj)
+			{
+				//Check first if the method exists
+				string methodName = $"set_readonly_{field.Name}";
 
-			var il = method.GetILGenerator();
-			il.Emit(OpCodes.Ldarg_0);
-			il.Emit(OpCodes.Castclass, typeof(TContainingType));
-			il.Emit(OpCodes.Ldarg_1);
-			il.Emit(OpCodes.Stfld, field);
-			il.Emit(OpCodes.Ret);
-			return (Action<TContainingType, TMemberType>)method.CreateDelegate(typeof(Action<TContainingType, TMemberType>));
+				MethodInfo setterMethod = typeof(TContainingType).GetTypeInfo().GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic);
+				if(setterMethod != null)
+					return (Action<TContainingType, TMemberType>)setterMethod.CreateDelegate(typeof(Action<TContainingType, TMemberType>));
+
+				//Must provide the the type to attach this method to and indicate that JIT should skip accessibility checks.
+				var method = new DynamicMethod(methodName, null,
+					new[] { typeof(TContainingType), typeof(TMemberType) }, field.DeclaringType, true);
+
+				var il = method.GetILGenerator();
+				il.Emit(OpCodes.Ldarg_0);
+				il.Emit(OpCodes.Castclass, typeof(TContainingType));
+				il.Emit(OpCodes.Ldarg_1);
+				il.Emit(OpCodes.Stfld, field);
+				il.Emit(OpCodes.Ret);
+				return (Action<TContainingType, TMemberType>)method.CreateDelegate(typeof(Action<TContainingType, TMemberType>));
+			}
 		}
 	}
 }
