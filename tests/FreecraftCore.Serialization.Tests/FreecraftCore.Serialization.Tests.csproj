@@ -94,6 +94,7 @@
     <Compile Include="Tests\String\StringTestsUnicode.cs" />
     <Compile Include="Tests\String\StringTestsASCII.cs" />
     <Compile Include="Tests\SubtypeTests.cs" />
+    <Compile Include="Tests\TestCustomTypeSerializerIncludeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

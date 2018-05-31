@@ -98,6 +98,23 @@ namespace FreecraftCore.Serialization.Tests.Tests
 			Assert.AreEqual(123456, deserialized.AnotherValue);
 			Assert.AreEqual(55, deserialized.ValueAfterArray);
 		}
+
+		[Test]
+		public static void Test_Seperated_Collection_Size_Does_Not_Extend_TypeSize_For_Unwritten_Members()
+		{
+			Assert.Warn("TODO You must fix and reimplement seperated collection. It's not working fully as intended.");
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType<TestSeperatedCollectionSerializedSizeShouldBeZero>();
+			serializer.Compile();
+			TestSeperatedCollectionSerializedSizeShouldBeZero testValue = new TestSeperatedCollectionSerializedSizeShouldBeZero();
+
+			//act
+			byte[] bytes = serializer.Serialize(testValue);
+
+			//assert
+			Assert.AreEqual(0, bytes.Length, "Should not serializer any data.");
+		}
 	}
 
 	[SeperatedCollectionSize(nameof(TestSeperatedCollection.IntsChars), nameof(TestSeperatedCollection.InternalSize))]
@@ -133,6 +150,21 @@ namespace FreecraftCore.Serialization.Tests.Tests
 		}
 
 		public TestSeperatedCollection()
+		{
+			
+		}
+	}
+
+	[SeperatedCollectionSize(nameof(TestSeperatedCollectionThroughInternal.Size), nameof(TestSeperatedCollectionSerializedSizeShouldBeZero.CollectionSize))]
+	[WireDataContract]
+	public class TestSeperatedCollectionSerializedSizeShouldBeZero
+	{
+		public int CollectionSize { get; } = 0;
+
+		[WireMember(1)]
+		public int[] Collection { get; } = Array.Empty<int>();
+
+		public TestSeperatedCollectionSerializedSizeShouldBeZero()
 		{
 			
 		}

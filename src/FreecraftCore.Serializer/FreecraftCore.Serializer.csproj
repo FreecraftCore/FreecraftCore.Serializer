@@ -54,6 +54,7 @@ Can be extended for use outside of World of Warcraft too!</Description>
 
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="Serializers\Async\" />
   </ItemGroup>
 
   <ItemGroup>

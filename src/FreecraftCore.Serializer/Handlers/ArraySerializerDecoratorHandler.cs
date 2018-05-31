@@ -91,9 +91,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			}
 			else if(collectionSizeStrategy != null || !context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.ReadToEnd))//if we have a size collection or the type isn't a byte array
 			{
-				
-				//TODO: Should we really have a default?
-				//if they marked it with nothing then use a the byte
+				//Default is back to byte. For legacy purposes. We can't solve SeperatedCollectionSize in this way. DO NOT TRY. I am adding new Metadata for computedsize.
 				if(collectionSizeStrategy == null)
 					collectionSizeStrategy = new GenericCollectionSizeStrategy<byte>(serializerProviderService.Get<byte>(), 0);
 

@@ -12,6 +12,7 @@
     <RepositoryUrl>https://github.com/FreecraftCore/FreecraftCore.Serializer</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>WorldofWarcraft WoW Blizzard JAM Packet Protocol Serialization Serializer Freecraft FreecraftCore API</PackageTags>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

@@ -65,13 +65,21 @@ namespace FreecraftCore.Serializer
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			//replaced for perf
-			/*foreach (IMemberSerializationMediator<TType> serializerInfo in orderedMemberInfos)
+			try
 			{
-				serializerInfo.WriteMember(obj, dest);
-			}*/
-			for (int i = 0; i < orderedMemberInfos.Length; i++)
-				orderedMemberInfos[i].WriteMember(obj, dest);
+				//replaced for perf
+				/*foreach (IMemberSerializationMediator<TType> serializerInfo in orderedMemberInfos)
+				{
+					serializerInfo.WriteMember(obj, dest);
+				}*/
+				for(int i = 0; i < orderedMemberInfos.Length; i++)
+					orderedMemberInfos[i].WriteMember(obj, dest);
+			}
+			catch(Exception e)
+			{
+				Console.WriteLine(e);
+				throw;
+			}
 		}
 
 		/// <inheritdoc />

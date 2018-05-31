@@ -17,7 +17,7 @@ namespace FreecraftCore.Serializer
 
 		public override void WriteMember([NotNull] TContainingType obj, [NotNull] IWireStreamWriterStrategy dest)
 		{
-			if (obj == null) throw new ArgumentNullException(nameof(obj));
+			if (obj == null) throw new ArgumentNullException(nameof(obj), $"Cannot serialize a null value for {this.MemberInformation.Name} on Type: {typeof(TContainingType).Name}");
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
 			//TODO: Check how TC handles optionals or nulls.

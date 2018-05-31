@@ -121,6 +121,7 @@ namespace FreecraftCore.Serializer.Tests
 			[WireMember(5)]
 			public BasicWireDataContract b;
 
+			[SendSize(SendSizeAttribute.SizeType.UShort)]
 			[WireMember(7)]
 			public TestEnum[] testEnums { get; private set; }
 

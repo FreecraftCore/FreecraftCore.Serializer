@@ -116,7 +116,7 @@ namespace FreecraftCore.Serializer
 		public bool RegisterType<TTypeToRegister>()
 		{
 			//Ingoring all but wiretypes makes this a lot easier.
-			if (typeof(TTypeToRegister).GetTypeInfo().GetCustomAttribute<WireDataContractAttribute>(true) == null)
+			if(typeof(TTypeToRegister).GetTypeInfo().GetCustomAttribute<WireDataContractAttribute>(true) == null)
 				throw new InvalidOperationException($"Do not register any type that isn't marked with {nameof(WireDataContractAttribute)}. Only register WireDataContracts too; contained types will be registered automatically.");
 
 			bool result = true;
@@ -139,12 +139,31 @@ namespace FreecraftCore.Serializer
 
 			if(!result)
 				return false;
-
-			//At this point this is a class marked with [WireDataContract] so we should assume and treat it as a complex type
-			ITypeSerializerStrategy<TTypeToRegister> serializer = serializerStrategyFactoryService.Create<TTypeToRegister>(new TypeBasedSerializationContext(typeof(TTypeToRegister))) as ITypeSerializerStrategy<TTypeToRegister>;
+			ITypeSerializerStrategy<TTypeToRegister> serializer = GetTypeSerializerStrategyForType<TTypeToRegister>();
 
 			//Return the serializer; callers shouldn't need it though
 			return serializer != null && result;
+		}
+
+		private ITypeSerializerStrategy<TTypeToRegister> GetTypeSerializerStrategyForType<TTypeToRegister>()
+		{
+			//We should check if the specified a custom type serializer
+			if(typeof(TTypeToRegister).GetTypeInfo().HasAttribute<IncludeCustomTypeSerializerAttribute>())
+			{
+				IncludeCustomTypeSerializerAttribute attri = typeof(TTypeToRegister).GetTypeInfo().GetCustomAttribute<IncludeCustomTypeSerializerAttribute>();
+
+				if(!typeof(ITypeSerializerStrategy<TTypeToRegister>).GetTypeInfo().IsAssignableFrom(attri.TypeSerializerType))
+					throw new InvalidOperationException($"Specified custom Type Serializer Type: {attri.TypeSerializerType} but did not implement {nameof(ITypeSerializerStrategy<TTypeToRegister>)}. Must implment that interface for custom serializers.");
+
+				ITypeSerializerStrategy<TTypeToRegister> serializer = Activator.CreateInstance(attri.TypeSerializerType) as ITypeSerializerStrategy<TTypeToRegister>;
+
+				this.serializerStorageService.RegisterType(typeof(TTypeToRegister), serializer);
+
+				return serializer;
+			}
+
+			//At this point this is a class marked with [WireDataContract] so we should assume and treat it as a complex type
+			return serializerStrategyFactoryService.Create<TTypeToRegister>(new TypeBasedSerializationContext(typeof(TTypeToRegister))) as ITypeSerializerStrategy<TTypeToRegister>;
 		}
 
 		/// <inheritdoc />
