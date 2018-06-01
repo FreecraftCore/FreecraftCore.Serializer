@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
+using Reflect.Extent;
 
 namespace FreecraftCore.Serializer
 {
@@ -111,6 +112,23 @@ namespace FreecraftCore.Serializer
 		private ITypeSerializerStrategy<TType> InternalCreate<TType>([NotNull] ISerializableTypeContext context)
 		{
 			if(context == null) throw new ArgumentNullException(nameof(context));
+
+			//TODO: Refactor this. It's duplicated code
+			//We should check if the specified a custom type serializer
+			if(typeof(TType).GetTypeInfo().HasAttribute<IncludeCustomTypeSerializerAttribute>())
+			{
+				IncludeCustomTypeSerializerAttribute attri = typeof(TType).GetTypeInfo().GetCustomAttribute<IncludeCustomTypeSerializerAttribute>();
+
+				if(!typeof(ITypeSerializerStrategy<TType>).GetTypeInfo().IsAssignableFrom(attri.TypeSerializerType))
+					throw new InvalidOperationException($"Specified custom Type Serializer Type: {attri.TypeSerializerType} but did not implement {nameof(ITypeSerializerStrategy<TType>)}. Must implment that interface for custom serializers.");
+
+				ITypeSerializerStrategy<TType> serializer = Activator.CreateInstance(attri.TypeSerializerType) as ITypeSerializerStrategy<TType>;
+
+				this.StrategyRegistry.RegisterType(typeof(TType), serializer);
+
+				return serializer;
+			}
+
 
 			DecoratorHandler handler = decoratorHandlers.First(h => h.CanHandle(context));
 
