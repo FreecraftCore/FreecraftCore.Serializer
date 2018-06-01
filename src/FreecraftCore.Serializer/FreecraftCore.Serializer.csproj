@@ -59,7 +59,7 @@ Can be extended for use outside of World of Warcraft too!</Description>
 
   <ItemGroup>
     <PackageReference Include="Reflect.Extent" Version="1.0.7" />
-    <PackageReference Include="Reinterpret.Net" Version="2.0.2" />
+    <PackageReference Include="Reinterpret.Net" Version="2.0.5" />
     <PackageReference Include="System.Memory" Version="4.5.0-preview1-26216-02" />
   </ItemGroup>
 
