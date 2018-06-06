@@ -35,8 +35,12 @@ namespace FreecraftCore.Serializer.Tests
 			//act
 			string value = serializer.Deserialize<string>(serializer.Serialize(""));
 
+			//Change was made here that makes null strings empty strings
+			//This seems preferable and easier to deal with. Nullrefs are bad
+			//and also serializing null is harder than serializing empty
+			//this is overall less error prone.
 			//assert
-			Assert.Null(value);
+			Assert.NotNull(value);
 		}
 
 		[Test]
@@ -154,6 +158,59 @@ namespace FreecraftCore.Serializer.Tests
 
 			Assert.False(bytes[bytes.Length - 1] == 0);
 			Assert.True(bytes.Length == 5);
+		}
+
+		[Test]
+		public static void Test_Can_Deserialize_To_String_With_Only_Null_Terminator()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType<TestOnlyNullTerminatorString>();
+			serializer.Compile();
+
+			//act
+			TestOnlyNullTerminatorString obj = serializer.Deserialize<TestOnlyNullTerminatorString>(new byte[1] {0});
+
+			//assert
+			Assert.NotNull(obj, "Object was null.");
+			Assert.NotNull(obj.TestString, "String was null.");
+			Assert.True(obj.TestString.Length == 0);
+		}
+
+		[Test]
+		public static void Test_Can_Serialize_To_String_With_Only_Null_Terminator()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType<TestOnlyNullTerminatorString>();
+			serializer.Compile();
+
+			//act
+			byte[] bytes = serializer.Serialize(new TestOnlyNullTerminatorString(""));
+
+			//assert
+			Assert.NotNull(bytes, "bytes array was null.");
+			Assert.True(bytes.Length == 1);
+			Assert.True(bytes[0] == 0);
+		}
+
+		[WireDataContract]
+		public class TestOnlyNullTerminatorString
+		{
+			[Encoding(EncodingType.ASCII)]
+			[WireMember(1)]
+			public string TestString { get; }
+
+			/// <inheritdoc />
+			public TestOnlyNullTerminatorString(string testString)
+			{
+				TestString = testString;
+			}
+
+			public TestOnlyNullTerminatorString()
+			{
+				
+			}
 		}
 
 		[WireDataContract]

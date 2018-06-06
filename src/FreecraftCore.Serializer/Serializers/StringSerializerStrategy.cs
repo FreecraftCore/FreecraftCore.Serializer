@@ -40,12 +40,17 @@ namespace FreecraftCore.Serializer.KnownTypes
 			//(ctr+f << for std::string): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_source.html
 			//They use 0 byte to terminate the string in the stream
 			
-			//TODO: Pointer hack for speed
-			//Convert the string to bytes
-			//Not sure about encoding yet
-			byte[] stringBytes = EncodingStrategy.GetBytes(value);
+			//We should check this so we don't try to decode
+			//or write null. Null should be considered empty.
+			if(!String.IsNullOrEmpty(value))
+			{
+				//TODO: Pointer hack for speed
+				//Convert the string to bytes
+				//Not sure about encoding yet
+				byte[] stringBytes = EncodingStrategy.GetBytes(value);
 
-			dest.Write(stringBytes);
+				dest.Write(stringBytes);
+			}
 			
 			//Write the null terminator; Client expects it.
 			for(int i = 0; i < CharacterSize; i++)
@@ -100,8 +105,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			} while(zeroByteCountFound < CharacterSize);
 
 			//TODO: Invesitgate expected WoW/TC behavior for strings of length 0. Currently violates contract for return type.
-			//Serializer design decision: Return null instead of String.Empty for no strings
-			return stringBytes.Count - CharacterSize <= 0 ? null : EncodingStrategy.GetString(stringBytes.ToArray(), 0, Math.Max(0, stringBytes.Count - CharacterSize));
+			//I have decided to support empty strings instead of null
+			return stringBytes.Count - CharacterSize <= 0 ? "" : EncodingStrategy.GetString(stringBytes.ToArray(), 0, Math.Max(0, stringBytes.Count - CharacterSize));
 		}
 
 		/// <inheritdoc />
@@ -109,11 +114,16 @@ namespace FreecraftCore.Serializer.KnownTypes
 		{
 			if (dest == null) throw new ArgumentNullException(nameof(dest));
 
-			//See sync method for doc
-			byte[] stringBytes = EncodingStrategy.GetBytes(value);
+			//We should check this so we don't try to decode
+			//or write null. Null should be considered empty.
+			if(!String.IsNullOrEmpty(value))
+			{
+				//See sync method for doc
+				byte[] stringBytes = EncodingStrategy.GetBytes(value);
 
-			await dest.WriteAsync(stringBytes)
-				.ConfigureAwait(false);
+				await dest.WriteAsync(stringBytes)
+					.ConfigureAwait(false);
+			}
 
 			//TODO: Make this more efficient instead of multiple wrtie calls
 			//Write the null terminator; Client expects it.
@@ -164,8 +174,8 @@ namespace FreecraftCore.Serializer.KnownTypes
 			} while(zeroByteCountFound < CharacterSize);
 
 			//TODO: Invesitgate expected WoW/TC behavior for strings of length 0. Currently violates contract for return type.
-			//Serializer design decision: Return null instead of String.Empty for no strings
-			return stringBytes.Count - CharacterSize <= 0 ? null : EncodingStrategy.GetString(stringBytes.ToArray(), 0, Math.Max(0, stringBytes.Count - CharacterSize));
+			//I have decided to support empty strings instead of null
+			return stringBytes.Count - CharacterSize <= 0 ? "" : EncodingStrategy.GetString(stringBytes.ToArray(), 0, Math.Max(0, stringBytes.Count - CharacterSize));
 		}
 	}
 }
