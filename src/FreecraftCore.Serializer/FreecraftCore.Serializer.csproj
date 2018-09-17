@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
+    <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
     <Authors>Andrew Blakely, HelloKitty</Authors>
     <Company />
     <Description>Metadata based serializer for World of Warcraft packets. Design inspired from Blizzard's JAM and Marc Gravell's Protobuf-Net. Uses attributes to annotate DTOs that are made serializable according to the Blizzard JAM packet protocol.
@@ -45,7 +45,7 @@ Can be extended for use outside of World of Warcraft too!</Description>
     <PackageReference Include="Generic.Math" Version="1.0.2" />
     
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Generic.Math" Version="1.0.2" />
     <PackageReference Include="Iconic.Zlib.Netstandard" Version="1.0.0" />
     <PackageReference Include="Reflect.Extent" Version="1.0.7" />
@@ -59,7 +59,7 @@ Can be extended for use outside of World of Warcraft too!</Description>
 
   <ItemGroup>
     <PackageReference Include="Reflect.Extent" Version="1.0.7" />
-    <PackageReference Include="Reinterpret.Net" Version="2.0.5" />
+    <PackageReference Include="Reinterpret.Net" Version="2.0.7" />
     <PackageReference Include="System.Memory" Version="4.5.0-preview1-26216-02" />
   </ItemGroup>
 
