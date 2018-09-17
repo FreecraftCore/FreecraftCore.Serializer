@@ -35,19 +35,16 @@ Can be extended for use outside of World of Warcraft too!</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetZip" Version="1.11.0" />
     <PackageReference Include="JetBrains.Annotations" Version="10.2.1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-    <PackageReference Include="DotNetZip">
-      <Version>1.10.1</Version>
-    </PackageReference>
     <PackageReference Include="Generic.Math" Version="1.0.2" />
-    
   </ItemGroup>
+  
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Generic.Math" Version="1.0.2" />
-    <PackageReference Include="Iconic.Zlib.Netstandard" Version="1.0.0" />
     <PackageReference Include="Reflect.Extent" Version="1.0.7" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
