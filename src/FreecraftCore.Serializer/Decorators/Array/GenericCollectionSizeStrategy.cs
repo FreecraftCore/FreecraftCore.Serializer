@@ -26,9 +26,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// Additional size to add when reading the collection.
 		/// Remove from writing the collection.
 		/// </summary>
-		public byte AddedSize { get; }
+		public sbyte AddedSize { get; }
 
-		public GenericCollectionSizeStrategy([NotNull] ITypeSerializerStrategy<TSizeType> sizeTypeSerializerStrategy, byte addedSize)
+		public GenericCollectionSizeStrategy([NotNull] ITypeSerializerStrategy<TSizeType> sizeTypeSerializerStrategy, sbyte addedSize)
 		{
 			if (sizeTypeSerializerStrategy == null) throw new ArgumentNullException(nameof(sizeTypeSerializerStrategy));
 

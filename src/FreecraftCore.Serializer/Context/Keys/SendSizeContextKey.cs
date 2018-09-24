@@ -17,7 +17,7 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		public int Key { get; }
 
-		public SendSizeContextKey(SendSizeAttribute.SizeType sizeType, byte addedSize)
+		public SendSizeContextKey(SendSizeAttribute.SizeType sizeType, sbyte addedSize)
 		{
 			if (!Enum.IsDefined(typeof(SendSizeAttribute.SizeType), sizeType))
 				throw new ArgumentException($"Provided SizeType {sizeType} was invalid.");

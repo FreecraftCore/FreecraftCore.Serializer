@@ -29,7 +29,7 @@ namespace FreecraftCore.Serializer
 		/// For example, if protocols send N but only say N - 1 you can
 		/// initialize this to 1 to support that.
 		/// </summary>
-		public byte AddedSize { get; }
+		public sbyte AddedSize { get; }
 
 		public SendSizeAttribute(SizeType sizeType)
 			: this(sizeType, 0)
@@ -43,7 +43,7 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="sizeType"></param>
 		/// <param name="addedSize"></param>
-		public SendSizeAttribute(SizeType sizeType, byte addedSize)
+		public SendSizeAttribute(SizeType sizeType, sbyte addedSize)
 		{
 			if(!Enum.IsDefined(typeof(SizeType), sizeType))
 				throw new ArgumentException($"Provided enum argument {nameof(sizeType)} of Type {typeof(SizeType)} with value {sizeType} was not in valid range.", nameof(sizeType));

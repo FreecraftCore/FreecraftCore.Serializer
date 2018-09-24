@@ -51,7 +51,7 @@ namespace FreecraftCore.Serializer.KnownTypes
 			}
 			else if(context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.SendSize))
 			{
-				byte addedSize = (byte)(context.BuiltContextKey.Value.ContextSpecificKey.Key >> 4);
+				sbyte addedSize = (sbyte)(context.BuiltContextKey.Value.ContextSpecificKey.Key >> 4);
 				//TODO: Is there a way to obsecure this bit fiddling?
 				switch ((SendSizeAttribute.SizeType)(context.BuiltContextKey.Value.ContextSpecificKey.Key & 0b0000_0000_0000_1111)) //get just the key
 				{

@@ -70,6 +70,27 @@ namespace FreecraftCore.Serialization
 
 			Assert.AreEqual(value, deserialized.Value);
 		}
+
+		[Test]
+		public void Test_Can_Serialize_RemovedSize_Array_Type()
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType<TestRemovedSizeArrayType>();
+			serializer.Compile();
+			int[] values = new int[] { 5, 5, 5, 6, 7, 8 };
+
+			//act
+			byte[] bytes = serializer.Serialize(new TestRemovedSizeArrayType(values));
+			TestRemovedSizeArrayType deserialized = serializer.Deserialize<TestRemovedSizeArrayType>(bytes);
+
+			//assert
+			Assert.AreEqual(values.Length * sizeof(int) + sizeof(ushort), bytes.Length);
+			Assert.AreEqual(bytes[0], values.Length + 2);
+
+			for(int i = 0; i < values.Length; i++)
+				Assert.AreEqual(values[i], deserialized.Values[i]);
+		}
 	}
 
 	[WireDataContract]
@@ -89,6 +110,26 @@ namespace FreecraftCore.Serialization
 		public TestAddedSizeArrayType()
 		{
 			
+		}
+	}
+
+	[WireDataContract]
+	public class TestRemovedSizeArrayType
+	{
+		[SendSize(SendSizeAttribute.SizeType.UShort, -2)]
+		[WireMember(1)]
+		public int[] Values { get; }
+
+		public TestRemovedSizeArrayType(int[] values)
+		{
+			if(values == null) throw new ArgumentNullException(nameof(values));
+
+			Values = values;
+		}
+
+		public TestRemovedSizeArrayType()
+		{
+
 		}
 	}
 
