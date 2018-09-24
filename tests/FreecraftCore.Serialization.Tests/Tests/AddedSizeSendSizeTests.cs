@@ -81,8 +81,8 @@ namespace FreecraftCore.Serialization
 			RefInt[] values = new RefInt[] { new RefInt(5), new RefInt(16) };
 
 			//act
-			byte[] bytes = serializer.Serialize(new TestRemovedSizeArrayType(values));
-			TestRemovedSizeArrayType deserialized = serializer.Deserialize<TestRemovedSizeArrayType>(bytes);
+			byte[] bytes = serializer.SerializeAsync(new TestRemovedSizeArrayType(values)).Result;
+			TestRemovedSizeArrayType deserialized = serializer.DeserializeAsync<TestRemovedSizeArrayType>(bytes).Result;
 
 			//assert
 			Assert.AreEqual(values.Length * sizeof(int) + sizeof(int), bytes.Length, "Bytes size");

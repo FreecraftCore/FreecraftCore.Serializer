@@ -99,7 +99,9 @@ namespace FreecraftCore.Serializer.KnownTypes
 
 			//We no longer verify size thanks to PHANTASY STAR ONLINE. Thanks Sega. Sometimes we have to fake the size
 
-			for (int i = 0; i < size; i++)
+			//Don't use size to know how many to write, since it may have larger size than is in the array now since
+			//negative offset values are possible.
+			for (int i = 0; i < value.Length; i++)
 				await decoratedSerializer.WriteAsync(value[i], dest)
 					.ConfigureAwait(false);
 		}
