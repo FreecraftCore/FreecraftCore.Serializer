@@ -77,13 +77,15 @@ namespace FreecraftCore.Serializer.KnownTypes
 		/// <inheritdoc />
 		public override void Write(TObjectType[] value, IWireStreamWriterStrategy dest)
 		{
-			if (dest == null) throw new ArgumentNullException(nameof(dest));
+			if(dest == null) throw new ArgumentNullException(nameof(dest));
 
 			int size = sizeStrategyService.Size<TObjectType[], TObjectType>(value, dest);
 
 			//We no longer verify size thanks to PHANTASY STAR ONLINE. Thanks Sega. Sometimes we have to fake the size
 
-			for (int i = 0; i < size; i++)
+			//We can't use Size because sometimes the offset might may force this to go out of bounds.
+			//only write what we have, the size is not relevant here and may be written differently in the stream.
+			for(int i = 0; i < value.Length; i++)
 				decoratedSerializer.Write(value[i], dest);
 		}
 

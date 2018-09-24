@@ -23,7 +23,7 @@ namespace FreecraftCore.Serializer
 				throw new ArgumentException($"Provided SizeType {sizeType} was invalid.");
 
 			Key = (int)sizeType;
-			Key += ((int)addedSize) << 4; //we should to store the value in the upper part of the key. Default will be shifting 0.
+			Key += addedSize << 4; //we should to store the value in the upper part of the key. Default will be shifting 0.
 		}
 
 		//TODO: Override rest of methods

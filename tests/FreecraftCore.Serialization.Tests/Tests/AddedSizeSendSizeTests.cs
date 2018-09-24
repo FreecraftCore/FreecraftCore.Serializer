@@ -78,18 +78,36 @@ namespace FreecraftCore.Serialization
 			SerializerService serializer = new SerializerService();
 			serializer.RegisterType<TestRemovedSizeArrayType>();
 			serializer.Compile();
-			int[] values = new int[] { 5, 5, 5, 6, 7, 8 };
+			RefInt[] values = new RefInt[] { new RefInt(5), new RefInt(16) };
 
 			//act
 			byte[] bytes = serializer.Serialize(new TestRemovedSizeArrayType(values));
 			TestRemovedSizeArrayType deserialized = serializer.Deserialize<TestRemovedSizeArrayType>(bytes);
 
 			//assert
-			Assert.AreEqual(values.Length * sizeof(int) + sizeof(ushort), bytes.Length);
-			Assert.AreEqual(bytes[0], values.Length + 2);
+			Assert.AreEqual(values.Length * sizeof(int) + sizeof(int), bytes.Length, "Bytes size");
+			Assert.AreEqual(bytes[0], values.Length + 1);
 
 			for(int i = 0; i < values.Length; i++)
-				Assert.AreEqual(values[i], deserialized.Values[i]);
+				Assert.AreEqual(values[i].Value, deserialized.Values[i].Value);
+		}
+	}
+
+	[WireDataContract]
+	public class RefInt
+	{
+		[WireMember(1)]
+		public int Value { get; }
+
+		/// <inheritdoc />
+		public RefInt(int value)
+		{
+			Value = value;
+		}
+
+		public RefInt()
+		{
+			
 		}
 	}
 
@@ -116,11 +134,11 @@ namespace FreecraftCore.Serialization
 	[WireDataContract]
 	public class TestRemovedSizeArrayType
 	{
-		[SendSize(SendSizeAttribute.SizeType.UShort, -2)]
+		[SendSize(SendSizeAttribute.SizeType.Int32, -1)]
 		[WireMember(1)]
-		public int[] Values { get; }
+		public RefInt[] Values { get; }
 
-		public TestRemovedSizeArrayType(int[] values)
+		public TestRemovedSizeArrayType(RefInt[] values)
 		{
 			if(values == null) throw new ArgumentNullException(nameof(values));
 
