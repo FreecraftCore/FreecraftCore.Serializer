@@ -167,6 +167,67 @@ namespace FreecraftCore.Serializer.Tests
 			Assert.AreEqual(new string(t.TestString.Reverse().Skip(1).Reverse().ToArray()), t2.TestString);
 		}
 
+		[Test]
+		[TestCase("Hello")]
+		[TestCase("t")]
+		[TestCase("derp")]
+		public static void Test_Uf16_UsesNullTerminator_When_Not_Using_DontTerminate(string testString)
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType<Utf16StringTestWithTerminator>();
+			serializer.Compile();
+
+			//act
+			byte[] bytes = serializer.Serialize(new Utf16StringTestWithTerminator(testString));
+
+			Assert.AreEqual(8 + testString.Length * 2 + 2, bytes.Length);
+			Assert.AreEqual(0, bytes.Last());
+			Assert.AreEqual(0, bytes.Reverse().Skip(1).First());
+		}
+
+		[Test]
+		[TestCase("Hello")]
+		[TestCase("t")]
+		[TestCase("derp")]
+		public static void Test_Uf16_UsesNullTerminator_When_BeingReserialized_DontTerminate(string testString)
+		{
+			//arrange
+			SerializerService serializer = new SerializerService();
+			serializer.RegisterType<Utf16StringTestWithTerminator>();
+			serializer.Compile();
+
+			//act
+			byte[] reserialized = serializer.SerializeAsync(serializer.DeserializeAsync<Utf16StringTestWithTerminator>(serializer.SerializeAsync(new Utf16StringTestWithTerminator(testString)).Result).Result).Result;
+
+			Assert.AreEqual(8 + testString.Length * 2 + 2, reserialized.Length);
+			Assert.AreEqual(0, reserialized.Last());
+			Assert.AreEqual(0, reserialized.Reverse().Skip(1).First());
+		}
+
+		[WireDataContract]
+		public class Utf16StringTestWithTerminator
+		{
+			//TODO: What is this?
+			[WireMember(1)]
+			private long unusued { get; }
+
+			[Encoding(EncodingType.UTF16)]
+			[WireMember(2)]
+			public string TestString { get; }
+
+			/// <inheritdoc />
+			public Utf16StringTestWithTerminator(string testString)
+			{
+				TestString = testString ?? throw new ArgumentNullException(nameof(testString));
+			}
+
+			private Utf16StringTestWithTerminator()
+			{
+				
+			}
+		}
+
 		[WireDataContract]
 		public class MultiByteNullTerminatorInKnownSizeTest
 		{
