@@ -60,6 +60,11 @@ namespace FreecraftCore.Serializer.KnownTypes
 					encoding = Encoding.UTF32;
 					serializer = new StringSerializerStrategy(Encoding.UTF32, SerializationContextRequirement.RequiresContext);
 				}
+				else if (context.BuiltContextKey.Value.ContextFlags.HasFlag(ContextTypeFlags.UTF8))
+				{
+					encoding = Encoding.UTF8;
+					serializer = new StringSerializerStrategy(Encoding.UTF8, SerializationContextRequirement.RequiresContext);
+				}
 				else
 					throw new InvalidOperationException($"String had encoding flags but no specified encoding.");
 			}

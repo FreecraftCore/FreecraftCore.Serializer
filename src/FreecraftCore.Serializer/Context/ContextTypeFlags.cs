@@ -24,7 +24,8 @@ namespace FreecraftCore.Serializer
 		Encoding = 1 << 7,
 		ASCII = 1 << 8,
 		UTF16 = 1 << 9,
-		UTF32 = 1 << 10
+		UTF32 = 1 << 10,
+		UTF8 = 1 << 11,
 		//We could add more types of context but this should be fine for now
 	}
 }

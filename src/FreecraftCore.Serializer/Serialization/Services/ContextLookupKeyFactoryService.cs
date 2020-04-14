@@ -66,6 +66,9 @@ namespace FreecraftCore.Serializer
 					case EncodingType.UTF32:
 						flags |= ContextTypeFlags.UTF32;
 						break;
+					case EncodingType.UTF8:
+						flags |= ContextTypeFlags.UTF8;
+						break;
 				}
 			}
 

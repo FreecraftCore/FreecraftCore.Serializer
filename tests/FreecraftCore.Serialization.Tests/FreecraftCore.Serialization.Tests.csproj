@@ -90,6 +90,7 @@
     <Compile Include="Tests\Stream\BufferedPeekStreamTests.cs" />
     <Compile Include="Tests\Stream\PrependStreamTests.cs" />
     <Compile Include="Tests\String\StringTestsReadToEndStringArrayTests.cs" />
+    <Compile Include="Tests\String\StringTestsUTF8.cs" />
     <Compile Include="Tests\String\StringTestsUTF32.cs" />
     <Compile Include="Tests\String\StringTestsUnicode.cs" />
     <Compile Include="Tests\String\StringTestsASCII.cs" />

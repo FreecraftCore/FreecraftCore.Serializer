@@ -18,6 +18,8 @@ namespace FreecraftCore.Serializer
 		/// Indicates that the Unicode or UTF16 serialization/encoding
 		/// should be used. Meaning 4 byte per char.
 		/// </summary>
-		UTF32 = 2
+		UTF32 = 2,
+
+		UTF8 = 3,
 	}
 }

@@ -34,6 +34,8 @@ namespace FreecraftCore.Serializer
 				CharacterSize = 2;
 			else if(CheckEncodingIsOfType<UTF32Encoding>(encodingStrategy.GetType()))
 				CharacterSize = 4;
+			else if(CheckEncodingIsOfType<UTF8Encoding>(encodingStrategy.GetType()))
+				CharacterSize = 1; //In WoW DBC UTF8 strings are null terminated with a single 0 byte.
 			else
 				throw new InvalidOperationException($"Encounted unknown Encoding: {encodingStrategy.GetType().Name}. Due to .NET behavior we cannot trust anything but manual char size.");
 		}
