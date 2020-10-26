@@ -67,40 +67,32 @@ namespace FreecraftCore.Serializer
 			//They use 0 byte to terminate the string in the stream
 
 			//This is used to track larger than 1 char null terminators
-			int zeroByteCountFound = 0;
+			bool terminatorFound = false;
 
 			//How many characters have been counted
 			int currentCharCount = 0;
 
 			//Read a byte from the stream; Stop when we find a 0
-			for(int index = offset; index < source.Length && zeroByteCountFound < CharacterSize; index++)
+			for(int index = offset; index < source.Length && !terminatorFound; index += CharacterSize)
 			{
-				byte currentByte = source[offset];
-				currentCharCount++;
+				currentCharCount += CharacterSize;
 
-				//If we find a 0 byte we need to track it
-				//char could be 1 byte or even 4 so we need to reset
-				//if we encounter an actual character before we find all
-				//null terminator bytes
-				if(currentByte == 0)
-					zeroByteCountFound++;
-				else
-					zeroByteCountFound = 0;
-
-				//if we found 4 0 bytes in arow but we didn't find a full char set of CharacterSize
-				//then we should reset. This can happen if you have {5 0 0 0} {0 0 0 0} it will stop after the first 4
-				//But with this is will read the whole {0 0 0 0}.
-				if(currentCharCount % CharacterSize == 0 && zeroByteCountFound < CharacterSize)
-					zeroByteCountFound = 0;
+				//If all are 0 (we found null terminator) and terminator will be TRUE and we break out.
+				terminatorFound = true;
+				for (int i = 0; i < CharacterSize; i++)
+					if (source[offset + i] != 0)
+					{
+						terminatorFound = false;
+						break;
+					}
 			}
 
 			//TODO: Invesitgate expected WoW/TC behavior for strings of length 0. Currently violates contract for return type.
 			//I have decided to support empty strings instead of null
-			int finalCharCount = Math.Max(0, currentCharCount - CharacterSize);
-			if(currentCharCount - CharacterSize <= 0 || finalCharCount == 0)
+			if(currentCharCount == CharacterSize || currentCharCount == 0)
 			{
 				//Important to include null terminator bytes!!
-				offset += zeroByteCountFound;
+				offset += currentCharCount;
 				return String.Empty;
 			}
 
@@ -110,7 +102,7 @@ namespace FreecraftCore.Serializer
 				//Shift forward by offset, otherwise we read wrong data!!
 				byte* offsetBytes = bytes + offset;
 				offset += currentCharCount;
-				return EncodingStrategy.GetString(offsetBytes, finalCharCount);
+				return EncodingStrategy.GetString(offsetBytes, currentCharCount - CharacterSize);
 			}
 		}
 
