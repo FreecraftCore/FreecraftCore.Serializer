@@ -69,7 +69,7 @@ namespace FreecraftCore.Serializer
 		private void RegisterPrimitiveGenericSerializer<TType>()
 			where TType : struct
 		{
-			serializerStorageService.RegisterType(typeof(TType), new GenericTypePrimitiveSharedBufferSerializerStrategy<TType>());
+			serializerStorageService.RegisterType(typeof(TType), new GenericTypePrimitiveSerializerStrategy<TType>());
 		}
 
 		public void Compile()

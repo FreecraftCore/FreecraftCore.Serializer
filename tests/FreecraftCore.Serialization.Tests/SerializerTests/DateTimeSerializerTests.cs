@@ -16,7 +16,7 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 		public static void Test_DateTime_Serializes()
 		{
 			//arrange
-			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new GenericTypePrimitiveSharedBufferSerializerStrategy<int>());
+			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new GenericTypePrimitiveSerializerStrategy<int>());
 			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 			DateTime testValue = DateTime.Now;
 
@@ -34,7 +34,7 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 		public static void Test_DateTime_Deserializes()
 		{
 			//arrange
-			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new GenericTypePrimitiveSharedBufferSerializerStrategy<int>());
+			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new GenericTypePrimitiveSerializerStrategy<int>());
 			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 			DateTime testValue = DateTime.Now;
 
@@ -51,7 +51,7 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 		public static void Test_DateTime_Deserializes_To_Correct_DateTime()
 		{
 			//arrange
-			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new GenericTypePrimitiveSharedBufferSerializerStrategy<int>());
+			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new GenericTypePrimitiveSerializerStrategy<int>());
 			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 			DateTime testValue = DateTime.Now;
 
@@ -77,10 +77,10 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 		public static void Test_DateTime_Against_WoWPacketParserTest()
 		{
 			//arrange
-			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new GenericTypePrimitiveSharedBufferSerializerStrategy<int>());
+			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new GenericTypePrimitiveSerializerStrategy<int>());
 			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 
-			new GenericTypePrimitiveSharedBufferSerializerStrategy<int>().Write(168938967, writer);
+			new GenericTypePrimitiveSerializerStrategy<int>().Write(168938967, writer);
 
 			DateTime dateTime = serializer.Read(new DefaultStreamReaderStrategy(writer.GetBytes()));
 

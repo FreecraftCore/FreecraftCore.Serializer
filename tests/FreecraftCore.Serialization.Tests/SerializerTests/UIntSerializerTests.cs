@@ -17,7 +17,7 @@ namespace FreecraftCore.Serializer.Tests
 		[TestCase((uint)28532)]
 		public void Test_Int_Serializer_Doesnt_Throw_On_Serialize(uint data)
 		{
-			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSharedBufferSerializerStrategy<uint>();
+			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSerializerStrategy<uint>();
 
 			Assert.DoesNotThrow(() => strategy.Write(data, new TestStorageWriterMock()));
 		}
@@ -29,7 +29,7 @@ namespace FreecraftCore.Serializer.Tests
 		public void Test_Int_Serializer_Writes_Ints_Into_WriterStream(uint data)
 		{
 			//arrange
-			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSharedBufferSerializerStrategy<uint>();
+			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSerializerStrategy<uint>();
 			TestStorageWriterMock writer = new TestStorageWriterMock();
 
 			//act
@@ -46,7 +46,7 @@ namespace FreecraftCore.Serializer.Tests
 		public void Test_Byte_Serializer_Writes_And_Reads_Same_Byte(uint data)
 		{
 			//arrange
-			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSharedBufferSerializerStrategy<uint>();
+			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSerializerStrategy<uint>();
 			TestStorageWriterMock writer = new TestStorageWriterMock();
 			TestStorageReaderMock reader = new TestStorageReaderMock(writer.WriterStream);
 

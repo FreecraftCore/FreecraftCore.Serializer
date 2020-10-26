@@ -18,7 +18,7 @@ namespace FreecraftCore.Serializer.Tests
 		[TestCase(1)]
 		public void Test_Byte_Serializer_Doesnt_Throw_On_Serialize(byte data)
 		{
-			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSharedBufferSerializerStrategy<byte>();
+			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSerializerStrategy<byte>();
 
 			Assert.DoesNotThrow(() => strategy.Write(data, new TestStorageWriterMock()));
 		}
@@ -30,7 +30,7 @@ namespace FreecraftCore.Serializer.Tests
 		public void Test_Byte_Serializer_Writes_Bytes_Into_WriterStream(byte data)
 		{
 			//arrange
-			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSharedBufferSerializerStrategy<byte>();
+			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSerializerStrategy<byte>();
 			TestStorageWriterMock writer = new TestStorageWriterMock();
 
 			//act
@@ -47,7 +47,7 @@ namespace FreecraftCore.Serializer.Tests
 		public void Test_Byte_Serializer_Writes_And_Reads_Same_Byte(byte data)
 		{
 			//arrange
-			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSharedBufferSerializerStrategy<byte>();
+			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSerializerStrategy<byte>();
 			TestStorageWriterMock writer = new TestStorageWriterMock();
 			TestStorageReaderMock reader = new TestStorageReaderMock(writer.WriterStream);
 
@@ -68,7 +68,7 @@ namespace FreecraftCore.Serializer.Tests
 		public void Test_SByte_Serializer_Writes_And_Reads_Same_Byte(sbyte data)
 		{
 			//arrange
-			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSharedBufferSerializerStrategy<sbyte>();
+			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSerializerStrategy<sbyte>();
 			TestStorageWriterMock writer = new TestStorageWriterMock();
 			TestStorageReaderMock reader = new TestStorageReaderMock(writer.WriterStream);
 

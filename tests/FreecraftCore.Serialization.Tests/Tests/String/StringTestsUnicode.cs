@@ -68,7 +68,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Send_With_Size_Can_Read()
 		{
 			//arrange
-			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(new GenericTypePrimitiveSharedBufferSerializerStrategy<byte>(), true), new StringSerializerStrategy(Encoding.Unicode), Encoding.Unicode);
+			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(new GenericTypePrimitiveSerializerStrategy<byte>(), true), new StringSerializerStrategy(Encoding.Unicode), Encoding.Unicode);
 			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
 
 			//act
