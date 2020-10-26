@@ -8,6 +8,7 @@ using Reinterpret.Net;
 
 namespace FreecraftCore.Serializer
 {
+	//TODO: Cannot support Char due to encoding differences.
 	/// <summary>
 	/// Contract for type serializer that is a primitive and generic.
 	/// </summary>
@@ -23,16 +24,19 @@ namespace FreecraftCore.Serializer
 
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public override TType Read(Span<byte> source, int offset)
+		public override TType Read(Span<byte> source, ref int offset)
 		{
-			return Unsafe.ReadUnaligned<TType>(ref source[offset]);
+			TType value = Unsafe.ReadUnaligned<TType>(ref source[offset]);
+			offset += MarshalSizeOf<TType>.SizeOf;
+			return value;
 		}
 
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public override void Write(TType value, Span<byte> destination, int offset)
+		public override void Write(TType value, Span<byte> destination, ref int offset)
 		{
 			Unsafe.As<byte, TType>(ref destination[offset]) = value;
+			offset += MarshalSizeOf<TType>.SizeOf;
 		}
 	}
 }

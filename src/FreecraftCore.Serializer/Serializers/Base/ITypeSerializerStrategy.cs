@@ -22,7 +22,7 @@ namespace FreecraftCore.Serializer
 		/// <param name="offset">The starting offset into the buffer to read from.</param>
 		/// <returns></returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		T Read(Span<byte> source, int offset);
+		T Read(Span<byte> source, ref int offset);
 
 		/// <summary>
 		/// Writes a copy of <typeparamref name="T"/> <paramref name="value"/> starting at <paramref name="offset"/>
@@ -32,6 +32,6 @@ namespace FreecraftCore.Serializer
 		/// <param name="destination">The destination buffer to write the value into.</param>
 		/// <param name="offset">The offset to start writing the value into.</param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		void Write(T value, Span<byte> destination, int offset);
+		void Write(T value, Span<byte> destination, ref int offset);
 	}
 }

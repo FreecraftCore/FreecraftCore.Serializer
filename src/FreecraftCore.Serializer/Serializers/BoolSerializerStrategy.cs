@@ -46,16 +46,19 @@ namespace FreecraftCore.Serializer
 
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public override bool Read(Span<byte> source, int offset)
+		public override bool Read(Span<byte> source, ref int offset)
 		{
-			return ConvertFromByte(source[offset]);
+			bool value = ConvertFromByte(source[offset]);
+			offset++;
+			return value;
 		}
 
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public override void Write(bool value, Span<byte> destination, int offset)
+		public override void Write(bool value, Span<byte> destination, ref int offset)
 		{
 			destination[offset] = ConvertFromBool(value);
+			offset++;
 		}
 	}
 }
