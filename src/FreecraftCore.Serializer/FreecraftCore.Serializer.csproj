@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <Authors>Andrew Blakely, HelloKitty</Authors>
     <Company />
     <Description>Metadata based serializer for World of Warcraft packets. Design inspired from Blizzard's JAM and Marc Gravell's Protobuf-Net. Uses attributes to annotate DTOs that are made serializable according to the Blizzard JAM packet protocol.
@@ -51,7 +51,6 @@ Can be extended for use outside of World of Warcraft too!</Description>
 
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Serializers\Async\" />
   </ItemGroup>
 
   <ItemGroup>

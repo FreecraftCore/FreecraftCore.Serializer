@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
-	public class DontTerminateStringSerializerDecorator : BaseStringSerializerStrategy
+	public class DontTerminateStringSerializerDecorator : BaseStringTypeSerializerStrategy<>
 	{
 		/// <inheritdoc />
 		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;

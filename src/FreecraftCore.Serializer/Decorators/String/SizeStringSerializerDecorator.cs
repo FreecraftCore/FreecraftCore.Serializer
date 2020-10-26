@@ -8,11 +8,8 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer.KnownTypes
 {
-	public class SizeStringSerializerDecorator : BaseStringSerializerStrategy
+	public class SizeStringSerializerDecorator : BaseStringTypeSerializerStrategy<>
 	{
-		/// <inheritdoc />
-		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.RequiresContext;
-
 		/// <summary>
 		/// Provides the size of the fixed string.
 		/// </summary>
