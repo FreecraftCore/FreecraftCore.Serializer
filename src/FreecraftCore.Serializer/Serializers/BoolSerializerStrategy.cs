@@ -14,7 +14,7 @@ namespace FreecraftCore.Serializer
 	/// Known-type serializer for the <see cref="bool"/> value-type.
 	/// </summary>
 	[KnownTypeSerializer]
-	public class BoolSerializerStrategy : StatelessTypeSerializer<BoolSerializerStrategy, bool>
+	public sealed class BoolSerializerStrategy : StatelessTypeSerializer<BoolSerializerStrategy, bool>
 	{
 		public BoolSerializerStrategy()
 		{
@@ -46,7 +46,7 @@ namespace FreecraftCore.Serializer
 
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public override bool Read(ReadOnlySpan<byte> source, int offset)
+		public override bool Read(Span<byte> source, int offset)
 		{
 			return ConvertFromByte(source[offset]);
 		}

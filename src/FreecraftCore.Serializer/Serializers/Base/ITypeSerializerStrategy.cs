@@ -22,7 +22,7 @@ namespace FreecraftCore.Serializer
 		/// <param name="offset">The starting offset into the buffer to read from.</param>
 		/// <returns></returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		T Read(ReadOnlySpan<byte> source, int offset);
+		T Read(Span<byte> source, int offset);
 
 		/// <summary>
 		/// Writes a copy of <typeparamref name="T"/> <paramref name="value"/> starting at <paramref name="offset"/>
