@@ -136,9 +136,12 @@ namespace FreecraftCore.Serializer
 				offset += CharacterSize * value.Length;
 			}
 
-			// Write a null terminator now
+			//Write a null terminator now
 			for(int i = 0; i < CharacterSize; i++)
 				destination[offset + i] = 0;
+
+			//Add the terminator size.
+			offset += CharacterSize;
 		}
 	}
 }
