@@ -73,6 +73,8 @@ namespace FreecraftCore.Serializer
 			int currentCharCount = 0;
 
 			//Read a byte from the stream; Stop when we find a 0
+			//OR if we exceed the provided string length. MEANING that we found the end of a non-null terminated string.
+			//Or a KNOWN SIZE string.
 			for(int index = offset; index < source.Length && !terminatorFound; index += CharacterSize)
 			{
 				currentCharCount += CharacterSize;
@@ -127,13 +129,6 @@ namespace FreecraftCore.Serializer
 				//Wrote string so NOW we need to shift the offset
 				offset += CharacterSize * value.Length;
 			}
-
-			//Write a null terminator now
-			for(int i = 0; i < CharacterSize; i++)
-				destination[offset + i] = 0;
-
-			//Add the terminator size.
-			offset += CharacterSize;
 		}
 	}
 }
