@@ -15,9 +15,6 @@ namespace FreecraftCore.Serializer
 
 		}
 
-		//All generic primitive serializers are contextless
-		public override SerializationContextRequirement ContextRequirement { get; } = SerializationContextRequirement.Contextless;
-
 		protected override TType DeserializeFromBuffer(byte[] bytes)
 		{
 			return bytes.Reinterpret<TType>();
