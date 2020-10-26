@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FreecraftCore
+namespace FreecraftCore.Serializer
 {
 	/// <summary>
 	/// Contract for types that implement serialization strategies for
