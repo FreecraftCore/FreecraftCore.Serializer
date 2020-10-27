@@ -26,6 +26,7 @@ namespace FreecraftCore.Serializer
 			//Review the source for Trinitycore's string reading for their ByteBuffer (payload/packet) Type.
 			//(ctr+f >> for std::string): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_source.html
 			//They use 0 byte to terminate the string in the stream
+			source = source.Slice(offset);
 
 			//This is used to track larger than 1 char null terminators
 			bool terminatorFound = false;
@@ -36,14 +37,14 @@ namespace FreecraftCore.Serializer
 			//Read a byte from the stream; Stop when we find a 0
 			//OR if we exceed the provided string length. MEANING that we found the end of a non-null terminated string.
 			//Or a KNOWN SIZE string.
-			for(int index = offset; index < source.Length && !terminatorFound; index += CharacterSize)
+			for(int index = 0; index < source.Length && !terminatorFound; index += CharacterSize)
 			{
 				currentCharCount += CharacterSize;
 
 				//If all are 0 (we found null terminator) and terminator will be TRUE and we break out.
 				terminatorFound = true;
 				for (int i = 0; i < CharacterSize; i++)
-					if (source[offset + i] != 0)
+					if (source[index + i] != 0)
 					{
 						terminatorFound = false;
 						break;
@@ -63,9 +64,8 @@ namespace FreecraftCore.Serializer
 			fixed(byte* bytes = &source.GetPinnableReference())
 			{
 				//Shift forward by offset, otherwise we read wrong data!!
-				byte* offsetBytes = bytes + offset;
 				offset += currentCharCount;
-				return EncodingStrategy.GetString(offsetBytes, currentCharCount - CharacterSize);
+				return EncodingStrategy.GetString(bytes, currentCharCount - CharacterSize);
 			}
 		}
 
@@ -74,6 +74,7 @@ namespace FreecraftCore.Serializer
 			//Review the source for Trinitycore's string reading for their ByteBuffer (payload/packet) Type.
 			//(ctr+f << for std::string): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_source.html
 			//They use 0 byte to terminate the string in the stream
+			destination = destination.Slice(offset);
 
 			//We should check this so we don't try to decode
 			//or write null. Null should be considered empty.
@@ -83,8 +84,7 @@ namespace FreecraftCore.Serializer
 				fixed(byte* bytes = &destination.GetPinnableReference())
 				{
 					//Shift forward by offset, otherwise we read wrong data!!
-					byte* offsetBytes = bytes + offset;
-					EncodingStrategy.GetBytes(chars, value.Length, offsetBytes, CharacterSize * value.Length);
+					EncodingStrategy.GetBytes(chars, value.Length, bytes, CharacterSize * value.Length);
 				}
 
 				//Wrote string so NOW we need to shift the offset
