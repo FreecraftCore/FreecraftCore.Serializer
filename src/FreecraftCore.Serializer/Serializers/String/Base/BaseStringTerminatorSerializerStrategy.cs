@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using JetBrains.Annotations;
 
@@ -18,14 +19,16 @@ namespace FreecraftCore.Serializer
 
 		}
 
-		public override string Read(Span<byte> source, ref int offset)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public sealed override string Read(Span<byte> source, ref int offset)
 		{
 			//We don't really need to read the data, we just need to push ourselves forward
 			offset += CharacterSize;
 			return String.Empty;
 		}
 
-		public override void Write(string value, Span<byte> destination, ref int offset)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public sealed override void Write(string value, Span<byte> destination, ref int offset)
 		{
 			for (int i = 0; i < CharacterSize; i++)
 				destination[offset + i] = 0;

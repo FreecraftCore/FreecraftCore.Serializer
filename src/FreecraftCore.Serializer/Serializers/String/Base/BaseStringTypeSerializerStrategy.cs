@@ -21,7 +21,7 @@ namespace FreecraftCore.Serializer
 
 		}
 
-		public override unsafe string Read(Span<byte> source, ref int offset)
+		public sealed override unsafe string Read(Span<byte> source, ref int offset)
 		{
 			//Review the source for Trinitycore's string reading for their ByteBuffer (payload/packet) Type.
 			//(ctr+f >> for std::string): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_source.html
@@ -69,7 +69,7 @@ namespace FreecraftCore.Serializer
 			}
 		}
 
-		public override unsafe void Write(string value, Span<byte> destination, ref int offset)
+		public sealed override unsafe void Write(string value, Span<byte> destination, ref int offset)
 		{
 			//Review the source for Trinitycore's string reading for their ByteBuffer (payload/packet) Type.
 			//(ctr+f << for std::string): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_source.html
