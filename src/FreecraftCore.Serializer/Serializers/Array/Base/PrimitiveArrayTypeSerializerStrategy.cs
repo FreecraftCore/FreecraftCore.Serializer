@@ -21,6 +21,7 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public sealed override unsafe T[] Read(Span<byte> source, ref int offset)
 		{
+			//Easier to shift here than later.
 			source = source.Slice(offset);
 
 			int elementSize = MarshalSizeOf<T>.SizeOf;
@@ -51,6 +52,7 @@ namespace FreecraftCore.Serializer
 			if (value.Length == 0)
 				return;
 
+			//Easier to shift here than later.
 			destination = destination.Slice(offset);
 			int elementSize = MarshalSizeOf<T>.SizeOf;
 			int elementsByteSize = elementSize * value.Length;
