@@ -14,7 +14,7 @@ namespace FreecraftCore.Serializer
 	/// Known-type serializer for the <see cref="bool"/> value-type.
 	/// </summary>
 	[KnownTypeSerializer]
-	public sealed class BoolSerializerStrategy : StatelessTypeSerializer<BoolSerializerStrategy, bool>
+	public sealed class BoolSerializerStrategy : StatelessTypeSerializerStrategy<BoolSerializerStrategy, bool>
 	{
 		public BoolSerializerStrategy()
 		{

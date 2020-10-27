@@ -14,18 +14,18 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	/// <typeparam name="TChildType">The child type to construct a singleton instance for.</typeparam>
 	/// <typeparam name="T">The serialized type.</typeparam>
-	public abstract class StatelessTypeSerializer<TChildType, T> : ITypeSerializerStrategy<T>
-		where TChildType : StatelessTypeSerializer<TChildType, T>, new()
+	public abstract class StatelessTypeSerializerStrategy<TChildType, T> : ITypeSerializerStrategy<T>
+		where TChildType : StatelessTypeSerializerStrategy<TChildType, T>, new()
 	{
 		/// <summary>
-		/// The <see cref="StatelessTypeSerializer{TChildType,T}"/>'s static/singleton instance reference object.
+		/// The <see cref="StatelessTypeSerializerStrategy{TChildType,T}"/>'s static/singleton instance reference object.
 		/// </summary>
 		public static TChildType Instance { get; } = new TChildType();
 
 		// See: https://csharpindepth.com/Articles/Singleton
 		// Explicit static constructor to tell C# compiler
 		// not to mark type as beforefieldinit
-		static StatelessTypeSerializer()
+		static StatelessTypeSerializerStrategy()
 		{
 			//DO NOT REMOVE!!
 		}

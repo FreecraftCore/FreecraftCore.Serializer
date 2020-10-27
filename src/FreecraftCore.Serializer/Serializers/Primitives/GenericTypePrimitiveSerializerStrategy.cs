@@ -13,7 +13,7 @@ namespace FreecraftCore.Serializer
 	/// Contract for type serializer that is a primitive and generic.
 	/// </summary>
 	/// <typeparam name="TType"></typeparam>
-	public sealed class GenericTypePrimitiveSerializerStrategy<TType> : StatelessTypeSerializer<GenericTypePrimitiveSerializerStrategy<TType>, TType>
+	public sealed class GenericTypePrimitiveSerializerStrategy<TType> : StatelessTypeSerializerStrategy<GenericTypePrimitiveSerializerStrategy<TType>, TType>
 		where TType : struct
 	{
 		static GenericTypePrimitiveSerializerStrategy()

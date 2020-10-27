@@ -5,8 +5,8 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
-	public abstract class BaseEncodableTypeSerializerStrategy<TChildType> : StatelessTypeSerializer<TChildType, string>
-		where TChildType : StatelessTypeSerializer<TChildType, string>, new()
+	public abstract class BaseEncodableTypeSerializerStrategy<TChildType> : StatelessTypeSerializerStrategy<TChildType, string>
+		where TChildType : StatelessTypeSerializerStrategy<TChildType, string>, new()
 	{
 		/// <summary>
 		/// The encoding strategy to use for the serialization.
