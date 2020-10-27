@@ -12,25 +12,13 @@ namespace FreecraftCore.Serializer
 	/// Contract for base string serialization strategy.
 	/// </summary>
 	/// <typeparam name="TChildType"></typeparam>
-	public abstract class BaseStringTypeSerializerStrategy<TChildType> : StatelessTypeSerializer<TChildType, string> 
+	public abstract class BaseStringTypeSerializerStrategy<TChildType> : BaseEncodableTypeSerializerStrategy<TChildType>
 		where TChildType : StatelessTypeSerializer<TChildType, string>, new()
 	{
-		/// <summary>
-		/// The encoding strategy to use for the string serialization.
-		/// </summary>
-		protected Encoding EncodingStrategy { get; }
-
-		/// <summary>
-		/// Size of the individual chars.
-		/// </summary>
-		protected int CharacterSize { get; }
-
 		protected BaseStringTypeSerializerStrategy([NotNull] Encoding encodingStrategy)
+			: base(encodingStrategy)
 		{
-			if(encodingStrategy == null) throw new ArgumentNullException(nameof(encodingStrategy));
 
-			EncodingStrategy = encodingStrategy;
-			CharacterSize = new EncoderCharacterSizeStrategy().Compute(encodingStrategy);
 		}
 
 		public override unsafe string Read(Span<byte> source, ref int offset)
