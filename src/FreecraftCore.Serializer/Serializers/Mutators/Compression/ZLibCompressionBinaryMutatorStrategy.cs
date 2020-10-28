@@ -12,6 +12,8 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public sealed class ZLibCompressionBinaryMutatorStrategy : StatelessBinaryMutatorStrategy<ZLibCompressionBinaryMutatorStrategy>
 	{
+		public static readonly byte[] MaxCompressionByteHeader = new byte[2] { 0x78, 0xDA };
+
 		//WRITE
 		public sealed override unsafe void Mutate(Span<byte> source, ref int sourceOffset, Span<byte> destination, ref int destinationOffset)
 		{
