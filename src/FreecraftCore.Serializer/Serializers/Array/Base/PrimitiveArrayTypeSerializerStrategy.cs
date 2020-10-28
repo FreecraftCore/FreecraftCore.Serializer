@@ -6,7 +6,7 @@ using System.Text;
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
-	/// 
+	/// Contract for generic generic primitive array serializer
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	public sealed class PrimitiveArrayTypeSerializerStrategy<T> : BaseArrayTypeSerializerStrategy<PrimitiveArrayTypeSerializerStrategy<T>, T>
