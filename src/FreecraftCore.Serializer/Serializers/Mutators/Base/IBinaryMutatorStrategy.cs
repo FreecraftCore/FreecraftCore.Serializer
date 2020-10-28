@@ -11,6 +11,7 @@ namespace FreecraftCore.Serializer
 	{
 		/// <summary>
 		/// Mutates the <see cref="source"/> using the strategy into the <see cref="destination"/> based on provided offsets.
+		/// Mutate can be thought as WRITE.
 		/// </summary>
 		/// <param name="source">The source buffer to mutate.</param>
 		/// <param name="sourceOffset">The offset to start at.</param>
@@ -20,6 +21,7 @@ namespace FreecraftCore.Serializer
 
 		/// <summary>
 		/// UnMutates (reversed <see cref="Mutate"/>) the <see cref="source"/> using the reverse of the strategy into the <see cref="destination"/> based on provided offsets.
+		/// UnMutate can be thought of as READ.
 		/// </summary>
 		/// <param name="source">The source buffer to unmutate.</param>
 		/// <param name="sourceOffset">The offset to start at.</param>
