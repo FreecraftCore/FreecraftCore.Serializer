@@ -1,10 +1,10 @@
-﻿using FreecraftCore.Serializer.KnownTypes;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Reinterpret.Net;
 
 
 namespace FreecraftCore.Serializer.Strategy.Tests
@@ -16,13 +16,14 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 		public static void Test_DateTime_Serializes()
 		{
 			//arrange
-			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new GenericTypePrimitiveSerializerStrategy<int>());
-			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
+			var serializer = PackedDateTimeTypeSerializerStrategy.Instance;
 			DateTime testValue = DateTime.Now;
+			Span<byte> buffer = new Span<byte>(new byte[100]);
+			int offset = 0;
 
 			//act
-			serializer.Write(testValue, writer);
-			byte[] bytes = writer.GetBytes();
+			serializer.Write(testValue, buffer, ref offset);
+			byte[] bytes = buffer.Slice(0, offset).ToArray(); //inefficient hehe
 
 			//assert
 			Assert.NotNull(bytes);
@@ -34,14 +35,16 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 		public static void Test_DateTime_Deserializes()
 		{
 			//arrange
-			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new GenericTypePrimitiveSerializerStrategy<int>());
-			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
+			var serializer = PackedDateTimeTypeSerializerStrategy.Instance;
 			DateTime testValue = DateTime.Now;
+			Span<byte> buffer = new Span<byte>(new byte[100]);
+			int offset = 0;
 
 			//act
-			serializer.Write(testValue, writer);
-			byte[] bytes = writer.GetBytes();
-			DateTime deserializedInstance = serializer.Read(new DefaultStreamReaderStrategy(bytes));
+			serializer.Write(testValue, buffer, ref offset);
+			byte[] bytes = buffer.Slice(0, offset).ToArray(); //inefficient hehe
+			offset = 0;
+			DateTime deserializedInstance = serializer.Read(buffer.Slice(0, offset), ref offset);
 
 			//assert
 			Assert.NotNull(bytes);
@@ -51,15 +54,16 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 		public static void Test_DateTime_Deserializes_To_Correct_DateTime()
 		{
 			//arrange
-			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new GenericTypePrimitiveSerializerStrategy<int>());
-			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
+			var serializer = PackedDateTimeTypeSerializerStrategy.Instance;
 			DateTime testValue = DateTime.Now;
-
+			Span<byte> buffer = new Span<byte>(new byte[100]);
+			int offset = 0;
 
 			//act
-			serializer.Write(testValue, writer);
-			byte[] bytes = writer.GetBytes();
-			DateTime deserializedInstance = serializer.Read(new DefaultStreamReaderStrategy(bytes));
+			serializer.Write(testValue, buffer, ref offset);
+			byte[] bytes = buffer.Slice(0, offset).ToArray(); //inefficient hehe
+			offset = 0;
+			DateTime deserializedInstance = serializer.Read(buffer.Slice(0, offset), ref offset);
 
 			//assert
 			Assert.NotNull(bytes);
@@ -77,13 +81,13 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 		public static void Test_DateTime_Against_WoWPacketParserTest()
 		{
 			//arrange
-			PackedDateTimeSerializerStrategyDecorator serializer = new PackedDateTimeSerializerStrategyDecorator(new GenericTypePrimitiveSerializerStrategy<int>());
-			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
-
-			new GenericTypePrimitiveSerializerStrategy<int>().Write(168938967, writer);
-
-			DateTime dateTime = serializer.Read(new DefaultStreamReaderStrategy(writer.GetBytes()));
-
+			var serializer = PackedDateTimeTypeSerializerStrategy.Instance;
+			DateTime testValue = DateTime.Now;
+			Span<byte> buffer = new Span<byte>(168938967.Reinterpret());
+			int offset = 0; //It's technically sizeof(int);
+			
+			//Act
+			DateTime dateTime = serializer.Read(buffer, ref offset);
 
 			//Assert
 			Assert.AreEqual(23, dateTime.Minute);
