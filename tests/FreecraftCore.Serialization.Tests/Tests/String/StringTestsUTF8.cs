@@ -60,8 +60,8 @@ namespace FreecraftCore.Serializer.Tests
 			TerminatorSerializer.Write(input, buffer, ref offset);
 
 			offset = 0;
-			TerminatorSerializer.Read(buffer, ref offset);
 			string value = Serializer.Read(buffer, ref offset);
+			TerminatorSerializer.Read(buffer, ref offset);
 
 			//assert
 			Assert.NotNull(value);
@@ -74,16 +74,25 @@ namespace FreecraftCore.Serializer.Tests
 		[TestCase("ҬЭSҐЇЍG ҐӉЇЙG")]
 		[TestCase("‎先秦兩漢")]
 		[TestCase("Östliche Königreiche")]
+		[TestCase("Les Mise\u0301rables")]
 		public static void Test_Reverse_Decorator_Can_Reverse_Strings(string input)
 		{
 			//arrange
 			Span<byte> buffer = new Span<byte>(new byte[1024]);
 			int offset = 0;
 
+			//WARNING: When reversing NON-ASCII strings like Unicode we CANNOT naively reverse them
 			//act
-			Serializer.Write(input, buffer, ref offset);
+			Serializer.Write(new string(input.Reverse().ToArray()), buffer, ref offset);
+			buffer = buffer.Slice(0, offset);
+			offset = 0;
 
-			Assert.AreEqual(new string(input.Reverse().ToArray()), new string(Serializer.EncodingStrategy.GetChars(buffer.Slice(0, offset).ToArray())));
+			//WARNING: When reversing NON-ASCII strings like Unicode we CANNOT naively reverse them
+			//ReverseBinaryMutatorStrategy.Instance.Mutate(buffer, ref offset, buffer, ref offset);
+			string reversedString = new string(input.Reverse().ToArray());
+			offset = 0;
+
+			Assert.AreEqual(reversedString, Serializer.Read(buffer, ref offset));
 		}
 
 		//Don't terminate is the DEFAULT now.
