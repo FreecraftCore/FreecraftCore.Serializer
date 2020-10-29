@@ -68,7 +68,6 @@
     <Compile Include="SerializerTests\UInt64SerializerTests.cs" />
     <Compile Include="SerializerTests\UIntSerializerTests.cs" />
     <Compile Include="SubComplexTypeTests.cs" />
-    <Compile Include="Tests\AddedSizeSendSizeTests.cs" />
     <Compile Include="Tests\CompressionTests.cs" />
     <Compile Include="Tests\ArraySerializationTests.cs" />
     <Compile Include="Tests\EnumTests.cs" />
