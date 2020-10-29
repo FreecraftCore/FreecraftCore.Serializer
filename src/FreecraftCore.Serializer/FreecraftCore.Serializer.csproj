@@ -35,8 +35,8 @@ Can be extended for use outside of World of Warcraft too!</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNetZip" Version="1.11.0" />
-    <PackageReference Include="JetBrains.Annotations" Version="10.2.1" />
+    <PackageReference Include="DotNetZip" Version="1.14.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
   </ItemGroup>
 
