@@ -101,14 +101,15 @@ namespace FreecraftCore.Serializer.Tests
 			//act
 			Serializer.Write(input, buffer, ref offset);
 			byte[] bytes = buffer.Slice(0, offset).ToArray();
+			byte[] trueEncodedBytes = Encoding.UTF8.GetBytes(input);
 
 			//assert
 			Assert.NotNull(bytes);
 			Assert.IsNotEmpty(bytes);
 
-			Assert.False(bytes[bytes.Length - 1] == 0);
+			Assert.False(bytes[bytes.Length - 1] == 0, $"Bytes: {bytes.Aggregate("", (s, b) => $"{s} {b}")}");
 
-			Assert.True(bytes.Length == Encoding.UTF8.GetBytes(input).Length);
+			Assert.AreEqual(trueEncodedBytes.Length, bytes.Length, $"TBytes: {trueEncodedBytes.Aggregate("", (s, b) => $"{s} {b}")}\n Bytes: {bytes.Aggregate("", (s, b) => $"{s} {b}")}");
 		}
 	}
 }
