@@ -67,23 +67,12 @@
     <Compile Include="SerializerTests\UInt16SerializerTests.cs" />
     <Compile Include="SerializerTests\UInt64SerializerTests.cs" />
     <Compile Include="SerializerTests\UIntSerializerTests.cs" />
-    <Compile Include="SubComplexTypeTests.cs" />
     <Compile Include="Tests\CompressionTests.cs" />
     <Compile Include="Tests\ArraySerializationTests.cs" />
     <Compile Include="Tests\EnumTests.cs" />
     <Compile Include="Tests\FixedReverseByteSerializerTests.cs" />
-    <Compile Include="Tests\OptionalFieldTests.cs" />
-    <Compile Include="Tests\PolymorphicMultilevelSerializationTests.cs" />
-    <Compile Include="Tests\PolymorphicRuntimeLinkTests.cs" />
-    <Compile Include="Tests\PolymorphicSerializationTests.cs" />
-    <Compile Include="Tests\ReadonlyPropertyTests.cs" />
-    <Compile Include="Tests\ReadToEndArrayTests.cs" />
-    <Compile Include="Tests\SeperatedCollectionSizeTests.cs" />
-    <Compile Include="Tests\SerializationTests.cs" />
     <Compile Include="Tests\String\StringTestsUTF8.cs" />
     <Compile Include="Tests\String\StringTestsASCII.cs" />
-    <Compile Include="Tests\SubtypeTests.cs" />
-    <Compile Include="Tests\TestCustomTypeSerializerIncludeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
