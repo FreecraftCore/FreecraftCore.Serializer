@@ -31,15 +31,15 @@ namespace FreecraftCore.Serializer
 			//This is used to track larger than 1 char null terminators
 			bool terminatorFound = false;
 
-			//How many characters have been counted
-			int currentCharCount = 0;
+			//How many character bytes have been counted
+			int currentByteCount = 0;
 
 			//Read a byte from the stream; Stop when we find a 0
 			//OR if we exceed the provided string length. MEANING that we found the end of a non-null terminated string.
 			//Or a KNOWN SIZE string.
-			for(int index = 0; index < source.Length; index += CharacterSize)
+			for(int index = 0; index < source.Length && !terminatorFound; index += CharacterSize)
 			{
-				currentCharCount += CharacterSize;
+				currentByteCount += CharacterSize;
 
 				//If all are 0 (we found null terminator) and terminator will be TRUE and we break out.
 				terminatorFound = true;
@@ -49,31 +49,26 @@ namespace FreecraftCore.Serializer
 						terminatorFound = false;
 						break;
 					}
-
-				//We found a terminator, we are done.
-				if (terminatorFound)
-				{
-					//We won't be writing the terminator so we should not include it in the char count.
-					currentCharCount--;
-					break;
-				}
 			}
 
 			//TODO: Invesitgate expected WoW/TC behavior for strings of length 0. Currently violates contract for return type.
 			//I have decided to support empty strings instead of null
-			if(currentCharCount == 0)
+			if(currentByteCount == 0 || currentByteCount == CharacterSize) //found only null terminator
 			{
-				//Important to include null terminator bytes!!
-				offset += currentCharCount;
+				//Found nothing, so we don't add anything (parsing/rading the terminator is NOT the job of this serializer
+				//So DON'T change the offset on empty nullterminated strings.
 				return String.Empty;
 			}
 
 			//To access the underlying memory to convert it to a string we must
 			fixed(byte* bytes = &source.GetPinnableReference())
 			{
+				//This serializer DOESN'T discard the null terminator so don't offset by it if found.
+				int trueStringSize = terminatorFound ? currentByteCount - CharacterSize : currentByteCount;
+
 				//Shift forward by offset, otherwise we read wrong data!!
-				offset += currentCharCount;
-				return EncodingStrategy.GetString(bytes, currentCharCount);
+				offset += trueStringSize;
+				return EncodingStrategy.GetString(bytes, trueStringSize);
 			}
 		}
 
@@ -92,11 +87,9 @@ namespace FreecraftCore.Serializer
 				fixed(byte* bytes = &destination.GetPinnableReference())
 				{
 					//Shift forward by offset, otherwise we read wrong data!!
-					EncodingStrategy.GetBytes(chars, value.Length, bytes, CharacterSize * value.Length);
+					//Wrote string so NOW we need to shift the offset
+					offset += EncodingStrategy.GetBytes(chars, value.Length, bytes, destination.Length);
 				}
-
-				//Wrote string so NOW we need to shift the offset
-				offset += CharacterSize * value.Length;
 			}
 		}
 	}
