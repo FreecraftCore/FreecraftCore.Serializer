@@ -7,6 +7,8 @@ namespace FreecraftCore
 {
 	public interface ICompilationUnitEmittable
 	{
+		string UnitName { get; }
+
 		CompilationUnitSyntax CreateUnit();
 	}
 }
