@@ -60,7 +60,7 @@ namespace FreecraftCore.Serializer
 				fixed(byte* outputPtr = &tempOutputBuffer[0])
 				fixed(byte* trueDestPtr = &destination.Slice(destinationOffset).GetPinnableReference())
 				{
-					Unsafe.CopyBlock(outputPtr, trueDestPtr, (uint)stream.TotalBytesOut);
+					Unsafe.CopyBlock(trueDestPtr, outputPtr, (uint)stream.TotalBytesOut);
 				}
 
 				//At this point all is good, the data is in the destination buffer and we should move it forward to indicate to caller.
@@ -96,7 +96,7 @@ namespace FreecraftCore.Serializer
 			//TODO: Support WebGL Unity3D with custom pooling.
 			//TODO: Find a way to use Span without allocation and copy
 			//TODO: Find a way to use Span instead of byte array in ZlibCodec
-			byte[] tempOutputBuffer = ArrayPool<byte>.Shared.Rent(destinationAdjusted.Length);
+			byte[] tempOutputBuffer = ArrayPool<byte>.Shared.Rent(sizeValue); //The read size is the output size!
 			byte[] tempInputBuffer = ArrayPool<byte>.Shared.Rent(sourceAdjusted.Length);
 
 			try
