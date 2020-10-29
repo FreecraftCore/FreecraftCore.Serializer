@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreecraftCore.Serializer", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreecraftCore.Serializer.Metadata", "src\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj", "{891CC3D5-9D84-47FD-95CC-00FBBC730752}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Serialization.Tests", "tests\FreecraftCore.Serialization.Tests\FreecraftCore.Serialization.Tests.csproj", "{5583F0D8-F594-4E63-878B-D1C4452A662C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreecraftCore.Serialization.Tests", "tests\FreecraftCore.Serialization.Tests\FreecraftCore.Serialization.Tests.csproj", "{5583F0D8-F594-4E63-878B-D1C4452A662C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Serializer.Compiler", "src\FreecraftCore.Serializer.Compiler\FreecraftCore.Serializer.Compiler.csproj", "{EA995598-1AAE-4CA7-B464-4E00CCEB4872}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,18 @@ Global
 		{5583F0D8-F594-4E63-878B-D1C4452A662C}.Release|x64.Build.0 = Release|Any CPU
 		{5583F0D8-F594-4E63-878B-D1C4452A662C}.Release|x86.ActiveCfg = Release|Any CPU
 		{5583F0D8-F594-4E63-878B-D1C4452A662C}.Release|x86.Build.0 = Release|Any CPU
+		{EA995598-1AAE-4CA7-B464-4E00CCEB4872}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA995598-1AAE-4CA7-B464-4E00CCEB4872}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA995598-1AAE-4CA7-B464-4E00CCEB4872}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EA995598-1AAE-4CA7-B464-4E00CCEB4872}.Debug|x64.Build.0 = Debug|Any CPU
+		{EA995598-1AAE-4CA7-B464-4E00CCEB4872}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EA995598-1AAE-4CA7-B464-4E00CCEB4872}.Debug|x86.Build.0 = Debug|Any CPU
+		{EA995598-1AAE-4CA7-B464-4E00CCEB4872}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA995598-1AAE-4CA7-B464-4E00CCEB4872}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA995598-1AAE-4CA7-B464-4E00CCEB4872}.Release|x64.ActiveCfg = Release|Any CPU
+		{EA995598-1AAE-4CA7-B464-4E00CCEB4872}.Release|x64.Build.0 = Release|Any CPU
+		{EA995598-1AAE-4CA7-B464-4E00CCEB4872}.Release|x86.ActiveCfg = Release|Any CPU
+		{EA995598-1AAE-4CA7-B464-4E00CCEB4872}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +96,7 @@ Global
 		{1120443D-3709-4CAF-AF9B-A2203671DBB2} = {C69D878A-A37C-4DBD-8D90-8AF30074E3C0}
 		{891CC3D5-9D84-47FD-95CC-00FBBC730752} = {C69D878A-A37C-4DBD-8D90-8AF30074E3C0}
 		{5583F0D8-F594-4E63-878B-D1C4452A662C} = {2E903AB5-E882-49A7-A612-FCCB9F11D540}
+		{EA995598-1AAE-4CA7-B464-4E00CCEB4872} = {C69D878A-A37C-4DBD-8D90-8AF30074E3C0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {77340858-04C1-4169-93A3-121A82FA6670}
