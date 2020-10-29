@@ -10,7 +10,7 @@ namespace FreecraftCore.Serializer
 	/// UTF32 encoding implementation of string serialization.
 	/// </summary>
 	[KnownTypeSerializer]
-	public sealed class UTF32StringTypeSerializerStrategy : BaseStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy>
+	public sealed class UTF32StringTypeSerializerStrategy : BaseStringTypeSerializerStrategy<UTF32StringTypeSerializerStrategy>
 	{
 		public UTF32StringTypeSerializerStrategy()
 			: base(Encoding.UTF32)
