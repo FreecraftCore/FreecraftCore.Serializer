@@ -5,7 +5,7 @@ using System.Linq;
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
-	/// Interface that types may implement to recieve events
+	/// Interface that types may implement to receive events
 	/// before or after serialization steps.
 	/// </summary>
 	public interface ISerializationEventListener
