@@ -47,13 +47,15 @@ namespace FreecraftCore.Serializer.Tests
 
 			//act
 			PrimitiveArrayTypeSerializerStrategy<int>.Instance.Write(values, buffer, ref offset);
-			buffer = buffer.Slice(0, offset);
-			ZLibCompressionBinaryMutatorStrategy.Instance.Mutate(buffer, ref offset, bufferOutput, ref offsetOutput);
+			int bufferSize = offset;
+			offset = 0;
+			ZLibCompressionBinaryMutatorStrategy.Instance.Mutate(buffer.Slice(0, bufferSize), ref offset, bufferOutput, ref offsetOutput);
 
 			//Reverse it!
+			bufferSize = offsetOutput;
 			offset = 0;
 			offsetOutput = 0;
-			ZLibCompressionBinaryMutatorStrategy.Instance.Mutate(bufferOutput, ref offsetOutput, buffer, ref offset);
+			ZLibCompressionBinaryMutatorStrategy.Instance.UnMutate(bufferOutput.Slice(0, bufferSize), ref offsetOutput, buffer, ref offset);
 			buffer = buffer.Slice(0, offset);
 			offset = 0;
 			int[] values2 = PrimitiveArrayTypeSerializerStrategy<int>.Instance.Read(buffer, ref offset);
