@@ -81,10 +81,7 @@
     <Compile Include="Tests\ReadToEndArrayTests.cs" />
     <Compile Include="Tests\SeperatedCollectionSizeTests.cs" />
     <Compile Include="Tests\SerializationTests.cs" />
-    <Compile Include="Tests\String\StringTestsReadToEndStringArrayTests.cs" />
     <Compile Include="Tests\String\StringTestsUTF8.cs" />
-    <Compile Include="Tests\String\StringTestsUTF32.cs" />
-    <Compile Include="Tests\String\StringTestsUnicode.cs" />
     <Compile Include="Tests\String\StringTestsASCII.cs" />
     <Compile Include="Tests\SubtypeTests.cs" />
     <Compile Include="Tests\TestCustomTypeSerializerIncludeTests.cs" />
