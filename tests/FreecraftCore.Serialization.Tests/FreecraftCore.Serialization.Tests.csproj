@@ -54,8 +54,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Aync\AsyncRandomlyBlockingStream.cs" />
-    <Compile Include="Context\SendSizeContextKeyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RealWorld\AuthLogonPacketTests.cs" />
     <Compile Include="RealWorld\AuthRealmListPacketTest.cs" />
@@ -71,12 +69,10 @@
     <Compile Include="SerializerTests\UIntSerializerTests.cs" />
     <Compile Include="SubComplexTypeTests.cs" />
     <Compile Include="Tests\AddedSizeSendSizeTests.cs" />
-    <Compile Include="Tests\BitArraySerializationTests.cs" />
     <Compile Include="Tests\CompressionTests.cs" />
     <Compile Include="Tests\ArraySerializationTests.cs" />
     <Compile Include="Tests\EnumTests.cs" />
     <Compile Include="Tests\FixedReverseByteSerializerTests.cs" />
-    <Compile Include="Tests\GeneralTests.cs" />
     <Compile Include="Tests\OptionalFieldTests.cs" />
     <Compile Include="Tests\PolymorphicMultilevelSerializationTests.cs" />
     <Compile Include="Tests\PolymorphicRuntimeLinkTests.cs" />
@@ -85,8 +81,6 @@
     <Compile Include="Tests\ReadToEndArrayTests.cs" />
     <Compile Include="Tests\SeperatedCollectionSizeTests.cs" />
     <Compile Include="Tests\SerializationTests.cs" />
-    <Compile Include="Tests\Stream\BufferedPeekStreamTests.cs" />
-    <Compile Include="Tests\Stream\PrependStreamTests.cs" />
     <Compile Include="Tests\String\StringTestsReadToEndStringArrayTests.cs" />
     <Compile Include="Tests\String\StringTestsUTF8.cs" />
     <Compile Include="Tests\String\StringTestsUTF32.cs" />
