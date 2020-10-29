@@ -10,19 +10,20 @@ namespace FreecraftCore.Serializer.Tests
 	[TestFixture]
 	public class StringTestsASCII
 	{
+		private static IBaseEncodableTypeSerializerStrategy Serializer { get; } = ASCIIStringTypeSerializerStrategy.Instance;
+
 		[Test]
 		public static void Test_String_Serializer_Serializes()
 		{
 			//arrange
-			var serializer = ASCIIStringTypeSerializerStrategy.Instance;
-			Span<byte> buffer = new Span<byte>(new byte[1024]);
+			Span<byte> buffer = new Span<byte>(new byte[1024 * Serializer.CharacterSize]);
 			int offset = 0;
 
 			//act
-			serializer.Write("Hello!", buffer, ref offset);
+			Serializer.Write("Hello!", buffer, ref offset);
 			buffer = buffer.Slice(0, offset);
 			offset = 0;
-			string value = serializer.Read(buffer, ref offset);
+			string value = Serializer.Read(buffer, ref offset);
 
 			//assert
 			Assert.AreEqual(value, "Hello!");
@@ -32,15 +33,14 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_String_Serializer_Can_Serialize_Empty_String()
 		{
 			//arrange
-			var serializer = ASCIIStringTypeSerializerStrategy.Instance;
-			Span<byte> buffer = new Span<byte>(new byte[1024]);
+			Span<byte> buffer = new Span<byte>(new byte[1024 * Serializer.CharacterSize]);
 			int offset = 0;
 
 			//act
-			serializer.Write(String.Empty, buffer, ref offset);
+			Serializer.Write(String.Empty, buffer, ref offset);
 			buffer = buffer.Slice(0, offset);
 			offset = 0;
-			string value = serializer.Read(buffer, ref offset);
+			string value = Serializer.Read(buffer, ref offset);
 
 			//Change was made here that makes null strings empty strings
 			//This seems preferable and easier to deal with. Nullrefs are bad
@@ -63,42 +63,39 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Fixed_String_Can_Write()
 		{
 			//arrange
-			var serializer = ASCIIStringTypeSerializerStrategy.Instance;
-			Span<byte> buffer = new Span<byte>(new byte[5]);
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
 			int offset = 0;
 
 			//act
-			serializer.Write("hello", buffer, ref offset);
+			Serializer.Write("hello", buffer, ref offset);
 		}
 
 		[Test]
 		public static void Test_Fixed_String_Can_Write_Proper_Length()
 		{
 			//arrange
-			var serializer = ASCIIStringTypeSerializerStrategy.Instance;
-			Span<byte> buffer = new Span<byte>(new byte[5]);
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
 			int offset = 0;
 
 			//act
-			serializer.Write("hello", buffer, ref offset);
+			Serializer.Write("hello", buffer, ref offset);
 
 			//WARNING: Old test assumed serializer wrote null terminator by default. That's done at source generation time now!!
 			//assert
-			Assert.AreEqual(5, offset);
+			Assert.AreEqual(5 * Serializer.CharacterSize, offset);
 		}
 
 		[Test]
 		public static void Test_Fixed_String_Can_Read()
 		{
 			//arrange
-			var serializer = ASCIIStringTypeSerializerStrategy.Instance;
-			Span<byte> buffer = new Span<byte>(new byte[5]);
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
 			int offset = 0;
 
 			//act
-			serializer.Write("hello", buffer, ref offset);
+			Serializer.Write("hello", buffer, ref offset);
 			offset = 0;
-			string value = serializer.Read(buffer, ref offset);
+			string value = Serializer.Read(buffer, ref offset);
 
 			//assert
 			Assert.NotNull(value);
@@ -110,29 +107,27 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Reverse_Decorator_Can_Reverse_Strings()
 		{
 			//arrange
-			var serializer = ASCIIStringTypeSerializerStrategy.Instance;
-			Span<byte> buffer = new Span<byte>(new byte[5]);
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
 			int offset = 0;
 
 			//act
-			serializer.Write("hello", buffer, ref offset);
+			Serializer.Write("hello", buffer, ref offset);
 			buffer = buffer.Slice(0, offset);
 			offset = 0;
 			ReverseBinaryMutatorStrategy.Instance.Mutate(buffer, ref offset, buffer, ref offset);
 
 			//WARNING: Old test assumed serializer wrote null terminator by default. That's done at source generation time now!!
-			Assert.AreEqual("olleH", new string(Encoding.ASCII.GetChars(buffer.ToArray())));
+			Assert.AreEqual("olleH", new string(Serializer.EncodingStrategy.GetChars(buffer.ToArray())));
 		}
 
 		[Test]
 		public static void Test_Can_Deserialize_To_String_With_Only_Null_Terminator()
 		{
 			//arrange
-			var serializer = ASCIIStringTypeSerializerStrategy.Instance;
 			int offset = 0;
 
 			//act
-			string value = serializer.Read(new Span<byte>(new byte[1]), ref offset);
+			string value = Serializer.Read(new Span<byte>(new byte[Serializer.CharacterSize]), ref offset);
 
 			//assert
 			Assert.NotNull(value, "String was null.");
@@ -144,7 +139,7 @@ namespace FreecraftCore.Serializer.Tests
 		{
 			//arrange
 			var serializer = ASCIIStringTypeSerializerStrategy.Instance;
-			Span<byte> buffer = new Span<byte>(new byte[5]);
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
 			int offset = 0;
 
 			//act
