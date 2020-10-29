@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using Reinterpret.Net;
 
-
 namespace FreecraftCore.Serializer.Strategy.Tests
 {
 	[TestFixture]
@@ -44,7 +43,7 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 			serializer.Write(testValue, buffer, ref offset);
 			byte[] bytes = buffer.Slice(0, offset).ToArray(); //inefficient hehe
 			offset = 0;
-			DateTime deserializedInstance = serializer.Read(buffer.Slice(0, offset), ref offset);
+			DateTime deserializedInstance = serializer.Read(buffer, ref offset);
 
 			//assert
 			Assert.NotNull(bytes);
@@ -63,7 +62,7 @@ namespace FreecraftCore.Serializer.Strategy.Tests
 			serializer.Write(testValue, buffer, ref offset);
 			byte[] bytes = buffer.Slice(0, offset).ToArray(); //inefficient hehe
 			offset = 0;
-			DateTime deserializedInstance = serializer.Read(buffer.Slice(0, offset), ref offset);
+			DateTime deserializedInstance = serializer.Read(buffer, ref offset);
 
 			//assert
 			Assert.NotNull(bytes);
