@@ -37,23 +37,31 @@ namespace FreecraftCore.Serializer
 			//Read a byte from the stream; Stop when we find a 0
 			//OR if we exceed the provided string length. MEANING that we found the end of a non-null terminated string.
 			//Or a KNOWN SIZE string.
-			for(int index = 0; index < source.Length && !terminatorFound; index += CharacterSize)
+			for(int index = 0; index < source.Length; index += CharacterSize)
 			{
 				currentCharCount += CharacterSize;
 
 				//If all are 0 (we found null terminator) and terminator will be TRUE and we break out.
 				terminatorFound = true;
-				for (int i = 0; i < CharacterSize; i++)
+				for (int i = 0; i < CharacterSize && index + i < source.Length; i++) //important to make sure we don't go outside the bounds
 					if (source[index + i] != 0)
 					{
 						terminatorFound = false;
 						break;
 					}
+
+				//We found a terminator, we are done.
+				if (terminatorFound)
+				{
+					//We won't be writing the terminator so we should not include it in the char count.
+					currentCharCount--;
+					break;
+				}
 			}
 
 			//TODO: Invesitgate expected WoW/TC behavior for strings of length 0. Currently violates contract for return type.
 			//I have decided to support empty strings instead of null
-			if(currentCharCount == CharacterSize || currentCharCount == 0)
+			if(currentCharCount == 0)
 			{
 				//Important to include null terminator bytes!!
 				offset += currentCharCount;
@@ -65,7 +73,7 @@ namespace FreecraftCore.Serializer
 			{
 				//Shift forward by offset, otherwise we read wrong data!!
 				offset += currentCharCount;
-				return EncodingStrategy.GetString(bytes, currentCharCount - CharacterSize);
+				return EncodingStrategy.GetString(bytes, currentCharCount);
 			}
 		}
 

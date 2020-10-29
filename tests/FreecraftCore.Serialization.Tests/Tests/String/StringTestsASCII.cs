@@ -104,20 +104,25 @@ namespace FreecraftCore.Serializer.Tests
 		}
 
 		[Test]
-		public static void Test_Reverse_Decorator_Can_Reverse_Strings()
+		[TestCase("Hello")]
+		[TestCase("Yo!")]
+		[TestCase("Phantasy")]
+		[TestCase("Warcraft")]
+		[TestCase("warcraft")]
+		public static void Test_Reverse_Decorator_Can_Reverse_Strings(string value)
 		{
 			//arrange
-			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
+			Span<byte> buffer = new Span<byte>(new byte[value.Length * Serializer.CharacterSize + 100]);
 			int offset = 0;
 
 			//act
-			Serializer.Write("hello", buffer, ref offset);
+			Serializer.Write(value, buffer, ref offset);
 			buffer = buffer.Slice(0, offset);
 			offset = 0;
 			ReverseBinaryMutatorStrategy.Instance.Mutate(buffer, ref offset, buffer, ref offset);
 
 			//WARNING: Old test assumed serializer wrote null terminator by default. That's done at source generation time now!!
-			Assert.AreEqual("olleH", new string(Serializer.EncodingStrategy.GetChars(buffer.ToArray())));
+			Assert.AreEqual(value, new string(new string(Serializer.EncodingStrategy.GetChars(buffer.ToArray())).Reverse().ToArray()));
 		}
 
 		[Test]
