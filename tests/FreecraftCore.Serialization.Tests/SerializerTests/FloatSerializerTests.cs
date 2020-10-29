@@ -1,5 +1,4 @@
-﻿using FreecraftCore.Serializer.KnownTypes;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,9 +17,10 @@ namespace FreecraftCore.Serializer.Tests
 		[TestCase(-50212.0f)]
 		public void Test_float_Serializer_Doesnt_Throw_On_Serialize(float data)
 		{
-			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSerializerStrategy<float>();
+			var strategy = GenericTypePrimitiveSerializerStrategy<float>.Instance;
+			int offset = 0;
 
-			Assert.DoesNotThrow(() => strategy.Write(data, new TestStorageWriterMock()));
+			Assert.DoesNotThrow(() => strategy.Write(data, new Span<byte>(new byte[sizeof(float)]), ref offset));
 		}
 
 		[Test]
@@ -30,14 +30,16 @@ namespace FreecraftCore.Serializer.Tests
 		public void Test_float_Serializer_Writes_floats_Into_WriterStream(float data)
 		{
 			//arrange
-			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSerializerStrategy<float>();
-			TestStorageWriterMock writer = new TestStorageWriterMock();
+			var strategy = GenericTypePrimitiveSerializerStrategy<float>.Instance;
+			Span<byte> buffer = new Span<byte>(new byte[sizeof(float)]);
+			int offset = 0;
 
 			//act
-			strategy.Write(data, writer);
+			strategy.Write(data, buffer, ref offset);
 
 			//assert
-			Assert.False(writer.WriterStream.Length == 0);
+			Assert.False(offset == 0);
+			Assert.True(offset == sizeof(float));
 		}
 
 		[Test]
@@ -47,17 +49,19 @@ namespace FreecraftCore.Serializer.Tests
 		public void Test_float_Serializer_Writes_And_Reads_Same_float(float data)
 		{
 			//arrange
-			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSerializerStrategy<float>();
-			TestStorageWriterMock writer = new TestStorageWriterMock();
-			TestStorageReaderMock reader = new TestStorageReaderMock(writer.WriterStream);
+			var strategy = GenericTypePrimitiveSerializerStrategy<float>.Instance;
+			Span<byte> buffer = new Span<byte>(new byte[sizeof(float)]);
+			int offset = 0;
 
 			//act
-			strategy.Write(data, writer);
-			writer.WriterStream.Position = 0;
-			float b = BitConverter.ToSingle(reader.ReadBytes(4), 0);
+			strategy.Write(data, buffer, ref offset);
+			offset = 0;
+			float b = BitConverter.ToSingle(buffer.Slice(0, sizeof(float)).ToArray(), 0);
+			float b2 = strategy.Read(buffer, ref offset);
 
 			//assert
 			Assert.AreEqual(data, b);
+			Assert.AreEqual(data, b2);
 		}
 	}
 }
