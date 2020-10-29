@@ -12,21 +12,24 @@ namespace FreecraftCore.Serializer.Tests
 	public static class FixedReverseByteSerializerTests
 	{
 		[Test]
-		public static void Test_Can_Serialize_ReverseFixedByteArray_Type()
+		[TestCase(3)]
+		[TestCase(4)]
+		[TestCase(5)]
+		[TestCase(1)]
+		public static void Test_Can_Serialize_ReverseFixedByteArray_Type(int size)
 		{
 			//arrange
 			var mutator = ReverseBinaryMutatorStrategy.Instance;
-			byte[] values = new byte[] {1, 2, 3};
-			Span<byte> buffer = new Span<byte>(new byte[1024]);
+			Span<byte> buffer = new Span<byte>(new byte[size]);
 			int offset = 0;
 
 			//arrange
 			mutator.Mutate(buffer, ref offset, buffer, ref offset);
-			byte[] bytes = buffer.Slice(0, offset).ToArray();
+			byte[] bytes = buffer.ToArray();
 
 			//assert
 			Assert.NotNull(bytes);
-			Assert.True(bytes.Length == 3);
+			Assert.AreEqual(size, bytes.Length);
 		}
 
 		[Test]
@@ -34,12 +37,12 @@ namespace FreecraftCore.Serializer.Tests
 		{
 			var mutator = ReverseBinaryMutatorStrategy.Instance;
 			byte[] values = new byte[] {1, 2, 3};
-			Span<byte> buffer = new Span<byte>(new byte[1024]);
+			Span<byte> buffer = new Span<byte>(values.ToArray()); //Important to copy!
 			int offset = 0;
 
 			//arrange
 			mutator.Mutate(buffer, ref offset, buffer, ref offset);
-			byte[] bytes = buffer.Slice(0, offset).ToArray();
+			byte[] bytes = buffer.Slice(0, values.Length).ToArray();
 
 			//assert
 			Assert.NotNull(bytes);
