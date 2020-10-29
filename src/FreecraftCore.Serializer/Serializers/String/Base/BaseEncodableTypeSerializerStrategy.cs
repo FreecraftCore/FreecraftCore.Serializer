@@ -5,18 +5,18 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
-	public abstract class BaseEncodableTypeSerializerStrategy<TChildType> : StatelessTypeSerializerStrategy<TChildType, string>
+	/// <summary>
+	/// Contract/Base serializer strategy for string encodable serializers.
+	/// </summary>
+	/// <typeparam name="TChildType"></typeparam>
+	public abstract class BaseEncodableTypeSerializerStrategy<TChildType> : StatelessTypeSerializerStrategy<TChildType, string>, IBaseEncodableTypeSerializerStrategy
 		where TChildType : StatelessTypeSerializerStrategy<TChildType, string>, new()
 	{
-		/// <summary>
-		/// The encoding strategy to use for the serialization.
-		/// </summary>
-		protected Encoding EncodingStrategy { get; }
+		/// <inheritdoc />
+		public Encoding EncodingStrategy { get; }
 
-		/// <summary>
-		/// Size of the individual char encoding.
-		/// </summary>
-		protected int CharacterSize { get; }
+		/// <inheritdoc />
+		public int CharacterSize { get; }
 
 		protected BaseEncodableTypeSerializerStrategy([NotNull] Encoding encodingStrategy)
 		{
