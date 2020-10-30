@@ -13,28 +13,16 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Strategy for emitting primitive serialization code.
 	/// </summary>
-	public sealed class PrimitiveTypeSerializationMethodBlockEmitter : IStatementsBlockEmittable
+	public sealed class PrimitiveTypeSerializationMethodBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		/// <summary>
-		/// The primitive type to emit serialization for.
-		/// </summary>
-		public Type PrimitiveType { get; }
-
-		/// <summary>
-		/// The member to serialize.
-		/// </summary>
-		public MemberInfo Member { get; }
-
 		public PrimitiveTypeSerializationMethodBlockEmitter([NotNull] Type primitiveType, [NotNull] MemberInfo member)
+			: base(primitiveType, member)
 		{
-			PrimitiveType = primitiveType ?? throw new ArgumentNullException(nameof(primitiveType));
-			Member = member ?? throw new ArgumentNullException(nameof(member));
-
 			if (!primitiveType.IsPrimitive)
 				throw new InvalidOperationException($"Type: {primitiveType} is not a primitive type.");
 		}
 
-		public List<StatementSyntax> CreateStatements()
+		public override List<StatementSyntax> CreateStatements()
 		{
 			List<StatementSyntax> statements = new List<StatementSyntax>();
 			string typeName = new TypeNameStringBuilder(PrimitiveType).ToString();
