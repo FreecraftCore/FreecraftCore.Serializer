@@ -18,6 +18,11 @@ namespace FreecraftCore.Serializer
 		[WireMember(3)]
 		public ushort HelloAgain { get; internal set; }
 
+		[DontTerminate]
+		[SendSize(SendSizeAttribute.SizeType.Int16)]
+		[WireMember(4)]
+		public string TestStringTwo { get; internal set; }
+
 		public TypeStub()
 		{
 			
