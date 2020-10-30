@@ -6,6 +6,8 @@ using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
+	//Originally TStringSerializerStrategy was constrained to IFixedLengthCharacterSerializerStrategy but I decided to support
+	//the hacky UTF16 of PSOBB which is fixed-length. We should probably WARN consumers of the library that this is invalid to the specification.
 	/// <summary>
 	/// Generic serialization strategy for generic length type prefixed strings
 	/// of generic encoding.
@@ -14,11 +16,18 @@ namespace FreecraftCore.Serializer
 	/// <typeparam name="TLengthType"></typeparam>
 	public sealed class LengthPrefixedStringTypeSerializerStrategy<TStringSerializerStrategy, TLengthType> 
 		: BaseEncodableTypeSerializerStrategy<LengthPrefixedStringTypeSerializerStrategy<TStringSerializerStrategy, TLengthType>>
-		where TStringSerializerStrategy : BaseStringTypeSerializerStrategy<TStringSerializerStrategy>, IFixedLengthCharacterSerializerStrategy, new() //Includ fixed-length metadata marker.
+		where TStringSerializerStrategy : BaseStringTypeSerializerStrategy<TStringSerializerStrategy>, new()
 		where TLengthType : unmanaged 
 	{
 		//Pointless allocation but C# doesn't provide a way to access static members of generic types yet.
 		private static TStringSerializerStrategy DecoratedSerializer { get; } = new TStringSerializerStrategy();
+
+		/// <summary>
+		/// The maximum length of a character in byte-size.
+		/// Same as CharacterSize except for the variable length encodings which we *partially* support
+		/// fixed-length sending.
+		/// </summary>
+		private static int MaximumCharacterSize { get; } = DecoratedSerializer.EncodingStrategy.GetMaxByteCount(1);
 
 		public LengthPrefixedStringTypeSerializerStrategy() 
 			: base(DecoratedSerializer.EncodingStrategy)
@@ -35,17 +44,25 @@ namespace FreecraftCore.Serializer
 			TLengthType length = GenericTypePrimitiveSerializerStrategy<TLengthType>.Instance.Read(source, ref offset);
 			int stringLength = Unsafe.As<TLengthType, int>(ref length);
 
+			//Even though some encodings are VARIABLE LENGTH we assume when encoding these we'll send max character size.
 			//Easier to slice towards the end, and keep the offset, than to manage ref offset separate.
-			return DecoratedSerializer.Read(source.Slice(0, stringLength + offset), ref offset);
+			return DecoratedSerializer.Read(source.Slice(0, stringLength * MaximumCharacterSize + offset), ref offset);
 		}
 
 		public sealed override void Write(string value, Span<byte> destination, ref int offset)
 		{
 			//We must write the length prefix first into the buffer
 			int stringLength = value.Length;
+			int expectedByteLength = value.Length * MaximumCharacterSize;
 			GenericTypePrimitiveSerializerStrategy<TLengthType>.Instance.Write(Unsafe.As<int, TLengthType>(ref stringLength), destination, ref offset);
 
+			int lastOffset = offset;
 			DecoratedSerializer.Write(value, destination, ref offset);
+
+			//TODO: This is a COMPLETE hack that should be toggleable honestly.
+			//This isn't *really* how we should handle variable length encodings and stuff, but PSOBB does fixed-length UTF16 for fixed/known size
+			//So to compensate for this we adjust the buffer offset to pretend we're fixed-length
+			offset = lastOffset + expectedByteLength;
 		}
 	}
 }
