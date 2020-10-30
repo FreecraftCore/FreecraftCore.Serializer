@@ -17,6 +17,7 @@ namespace FreecraftCore.Serializer
 		where TStringSerializerStrategy : BaseStringTypeSerializerStrategy<TStringSerializerStrategy>, IFixedLengthCharacterSerializerStrategy, new() //Includ fixed-length metadata marker.
 		where TLengthType : unmanaged 
 	{
+		//Pointless allocation but C# doesn't provide a way to access static members of generic types yet.
 		private static TStringSerializerStrategy DecoratedSerializer { get; } = new TStringSerializerStrategy();
 
 		public LengthPrefixedStringTypeSerializerStrategy() 
