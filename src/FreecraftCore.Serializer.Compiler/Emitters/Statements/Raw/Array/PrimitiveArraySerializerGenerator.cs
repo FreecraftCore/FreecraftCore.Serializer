@@ -10,7 +10,7 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class SendSizeArraySerializerGenerator
+	public sealed class PrimitiveArraySerializerGenerator
 	{
 		public string MemberName { get; }
 
@@ -21,7 +21,7 @@ namespace FreecraftCore.Serializer
 
 		public bool ShouldWriteSize { get; }
 
-		public SendSizeArraySerializerGenerator([NotNull] string memberName, SendSizeAttribute.SizeType sizeType, [NotNull] string sizeAccessMemberName, bool shouldWriteSize)
+		public PrimitiveArraySerializerGenerator([NotNull] string memberName, SendSizeAttribute.SizeType sizeType, [NotNull] string sizeAccessMemberName, bool shouldWriteSize)
 		{
 			if (string.IsNullOrEmpty(memberName)) throw new ArgumentException("Value cannot be null or empty.", nameof(memberName));
 			if (!Enum.IsDefined(typeof(SendSizeAttribute.SizeType), sizeType)) throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(SendSizeAttribute.SizeType));
