@@ -33,6 +33,14 @@ namespace FreecraftCore.Serializer
 		[WireMember(6)]
 		public string DefaultStringTest { get; private set; }
 
+		[SendSize(SendSizeAttribute.SizeType.Int16)]
+		[WireMember(6)]
+		public long[] LongArrayTest { get; private set; }
+
+		[KnownSize(1337)]
+		[WireMember(7)]
+		public ushort[] KnownSizeArrayTest { get; private set; }
+
 		public TypeStub()
 		{
 			
