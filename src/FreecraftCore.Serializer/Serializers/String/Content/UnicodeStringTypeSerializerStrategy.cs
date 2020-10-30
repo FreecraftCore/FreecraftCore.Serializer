@@ -10,9 +10,9 @@ namespace FreecraftCore.Serializer
 	/// Unicode encoding implementation of string serialization.
 	/// </summary>
 	[KnownTypeSerializer]
-	public sealed class UnicodeStringTypeSerializerStrategy : BaseStringTypeSerializerStrategy<UnicodeStringTypeSerializerStrategy>
+	public sealed class UTF16StringTypeSerializerStrategy : BaseStringTypeSerializerStrategy<UTF16StringTypeSerializerStrategy>
 	{
-		public UnicodeStringTypeSerializerStrategy()
+		public UTF16StringTypeSerializerStrategy()
 			: base(Encoding.Unicode)
 		{
 

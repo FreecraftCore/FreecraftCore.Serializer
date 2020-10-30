@@ -10,9 +10,9 @@ namespace FreecraftCore.Serializer
 	/// Unicode null terminator encoding implementation of string serialization.
 	/// </summary>
 	[KnownTypeSerializer]
-	public sealed class UnicodeStringTerminatorTypeSerializerStrategy : BaseStringTerminatorSerializerStrategy<UnicodeStringTerminatorTypeSerializerStrategy>
+	public sealed class UTF16StringTerminatorTypeSerializerStrategy : BaseStringTerminatorSerializerStrategy<UTF16StringTerminatorTypeSerializerStrategy>
 	{
-		public UnicodeStringTerminatorTypeSerializerStrategy()
+		public UTF16StringTerminatorTypeSerializerStrategy()
 			: base(Encoding.Unicode)
 		{
 
