@@ -36,7 +36,7 @@ namespace FreecraftCore.Serializer
 				if (memberType.IsPrimitive)
 				{
 					//Easy case of primitive serialization
-					PrimitiveTypeSerializationMethodBlockEmitter emitter = new PrimitiveTypeSerializationMethodBlockEmitter(memberType, mi);
+					PrimitiveTypeSerializationStatementsBlockEmitter emitter = new PrimitiveTypeSerializationStatementsBlockEmitter(memberType, mi);
 					statements = statements.AddRange(emitter.CreateStatements());
 				}
 				else

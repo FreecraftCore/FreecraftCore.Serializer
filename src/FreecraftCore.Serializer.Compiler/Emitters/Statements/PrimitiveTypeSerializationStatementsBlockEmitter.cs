@@ -13,9 +13,9 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Strategy for emitting primitive serialization code.
 	/// </summary>
-	public sealed class PrimitiveTypeSerializationMethodBlockEmitter : BaseSerializationStatementsBlockEmitter
+	public sealed class PrimitiveTypeSerializationStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		public PrimitiveTypeSerializationMethodBlockEmitter([NotNull] Type primitiveType, [NotNull] MemberInfo member)
+		public PrimitiveTypeSerializationStatementsBlockEmitter([NotNull] Type primitiveType, [NotNull] MemberInfo member)
 			: base(primitiveType, member)
 		{
 			if (!primitiveType.IsPrimitive)
