@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FreecraftCore.Serializer
 {
-	public static class LengthPrefixedPrimitiveArraySerializerHelper
+	public static class PrimitiveArraySerializerHelper
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static TElementType[] Read<TElementType, TSizeType>(Span<byte> source, ref int offset)

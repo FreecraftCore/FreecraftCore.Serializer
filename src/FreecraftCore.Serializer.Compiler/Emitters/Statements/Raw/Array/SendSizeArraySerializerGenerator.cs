@@ -41,8 +41,8 @@ namespace FreecraftCore.Serializer
 						MemberAccessExpression
 						(
 							SyntaxKind.SimpleMemberAccessExpression,
-							IdentifierName(nameof(LengthPrefixedPrimitiveArraySerializerHelper)),
-							IdentifierName(nameof(LengthPrefixedPrimitiveArraySerializerHelper.Write))
+							IdentifierName(nameof(PrimitiveArraySerializerHelper)),
+							IdentifierName(nameof(PrimitiveArraySerializerHelper.Write))
 						)
 					)
 					.WithArgumentList
