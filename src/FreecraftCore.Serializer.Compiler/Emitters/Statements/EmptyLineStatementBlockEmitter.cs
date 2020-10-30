@@ -16,6 +16,7 @@ namespace FreecraftCore.Serializer
 	{
 		public List<StatementSyntax> CreateStatements()
 		{
+			//TODO: How can we make this NOT have a semicolon?
 			return new List<StatementSyntax>
 			{
 				EmptyStatement()
