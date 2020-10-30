@@ -29,6 +29,7 @@ namespace FreecraftCore.Serializer
 					(
 						MissingToken(SyntaxKind.SemicolonToken)
 					)
+					.WithTrailingTrivia(CarriageReturnLineFeed)
 			};
 		}
 	}
