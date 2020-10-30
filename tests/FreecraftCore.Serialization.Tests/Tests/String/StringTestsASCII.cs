@@ -126,6 +126,27 @@ namespace FreecraftCore.Serializer.Tests
 		}
 
 		[Test]
+		[TestCase("Hello")]
+		[TestCase("Yo!")]
+		[TestCase("Phantasy")]
+		[TestCase("Warcraft")]
+		[TestCase("warcraft")]
+		public static void Test_Deserialization_Matches_With_Helper(string value)
+		{
+			//arrange
+			Span<byte> buffer = new Span<byte>(new byte[value.Length * Serializer.CharacterSize + 100]);
+			int offset = 0;
+
+			//act
+			DefaultStringSerializerHelper.Write(value, buffer, ref offset, EncodingType.ASCII, false);
+			offset = 0;
+			string result = DefaultStringSerializerHelper.Read(buffer, ref offset, EncodingType.ASCII, false);
+
+			//assert
+			Assert.AreEqual(value, result);
+		}
+
+		[Test]
 		public static void Test_Can_Deserialize_To_String_With_Only_Null_Terminator()
 		{
 			//arrange
