@@ -39,6 +39,11 @@ namespace FreecraftCore.Serializer
 					PrimitiveTypeSerializationStatementsBlockEmitter emitter = new PrimitiveTypeSerializationStatementsBlockEmitter(memberType, mi);
 					statements = statements.AddRange(emitter.CreateStatements());
 				}
+				else if (memberType == typeof(string))
+				{
+					var emitter = new StringTypeSerializationStatementsBlockEmitter(memberType, mi);
+					statements = statements.AddRange(emitter.CreateStatements());
+				}
 				else
 					throw new NotImplementedException($"TODO: Cannot handle Type: {memberType}");
 
