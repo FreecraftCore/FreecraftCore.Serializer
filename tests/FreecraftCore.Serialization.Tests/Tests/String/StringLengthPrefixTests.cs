@@ -112,5 +112,47 @@ namespace FreecraftCore.Serialization.Tests
 			//assert
 			Assert.AreEqual(value, result);
 		}
+
+		[TestCase("Hello")]
+		[TestCase("Hello!")]
+		[TestCase("Testing")]
+		[TestCase("WooOooOoOo")]
+		public static void Can_Serializer_Encodes_Correct_Length_Dont_Terminate(string value)
+		{
+			//arrange
+			var serializer = DontTerminateLengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, int>.Instance;
+			int offset = 0;
+			Span<byte> buffer = new Span<byte>(new byte[1024]);
+
+			//act
+			serializer.Write(value, buffer, ref offset);
+			offset = 0;
+			int length = GenericTypePrimitiveSerializerStrategy<int>.Instance.Read(buffer, ref offset);
+
+			//assert
+			Assert.AreNotEqual(0, length);
+			Assert.AreEqual(value.Length, length); //SendSize default sends terminator in size
+		}
+
+		[TestCase("Hello")]
+		[TestCase("Hello!")]
+		[TestCase("Testing")]
+		[TestCase("WooOooOoOo")]
+		public static void Can_Serializer_Encodes_Correct_Length_Byte_Dont_Terminate(string value)
+		{
+			//arrange
+			var serializer = DontTerminateLengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, byte>.Instance;
+			int offset = 0;
+			Span<byte> buffer = new Span<byte>(new byte[1024]);
+
+			//act
+			serializer.Write(value, buffer, ref offset);
+			offset = 0;
+			byte length = GenericTypePrimitiveSerializerStrategy<byte>.Instance.Read(buffer, ref offset);
+
+			//assert
+			Assert.AreNotEqual(0, length);
+			Assert.AreEqual(value.Length, length);
+		}
 	}
 }
