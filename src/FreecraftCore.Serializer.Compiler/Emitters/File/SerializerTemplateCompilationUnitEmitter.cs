@@ -446,7 +446,7 @@ namespace FreecraftCore.Serializer
 														(
 															Tab
 														),
-														SyntaxKind.InternalKeyword,
+														SyntaxKind.PublicKeyword,
 														TriviaList
 														(
 															Space
