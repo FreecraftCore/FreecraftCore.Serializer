@@ -10,7 +10,7 @@ namespace FreecraftCore.Serializer
 	/// ASCII encoding implementation of string serialization.
 	/// </summary>
 	[KnownTypeSerializer]
-	public sealed class ASCIIStringTypeSerializerStrategy : BaseStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy>
+	public sealed class ASCIIStringTypeSerializerStrategy : BaseStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy>, IFixedLengthCharacterSerializerStrategy
 	{
 		public ASCIIStringTypeSerializerStrategy()
 			: base(Encoding.ASCII)
