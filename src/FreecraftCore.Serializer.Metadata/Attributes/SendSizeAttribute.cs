@@ -15,7 +15,9 @@ namespace FreecraftCore.Serializer
 		public enum SizeType : byte //make byte because we need to shift and pack into int key
 		{
 			Byte,
-			UShort,
+			UInt16,
+			Int16,
+			UInt32,
 			Int32
 		}
 
