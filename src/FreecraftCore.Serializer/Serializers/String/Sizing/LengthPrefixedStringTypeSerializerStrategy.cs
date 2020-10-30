@@ -15,20 +15,24 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	/// <typeparam name="TStringSerializerStrategy">The decorated string serializer type.</typeparam>
 	/// <typeparam name="TLengthType"></typeparam>
-	public class LengthPrefixedStringTypeSerializerStrategy<TStringSerializerStrategy, TLengthType> 
-		: BaseEncodableTypeSerializerStrategy<LengthPrefixedStringTypeSerializerStrategy<TStringSerializerStrategy, TLengthType>>
+	/// <typeparam name="TStringTerminatorSerializerStrategy"></typeparam>
+	public sealed class LengthPrefixedStringTypeSerializerStrategy<TStringSerializerStrategy, TStringTerminatorSerializerStrategy, TLengthType> 
+		: BaseEncodableTypeSerializerStrategy<LengthPrefixedStringTypeSerializerStrategy<TStringSerializerStrategy, TStringTerminatorSerializerStrategy, TLengthType>>
 		where TStringSerializerStrategy : BaseStringTypeSerializerStrategy<TStringSerializerStrategy>, new()
+		where TStringTerminatorSerializerStrategy : BaseStringTerminatorSerializerStrategy<TStringTerminatorSerializerStrategy>, new()
 		where TLengthType : unmanaged 
 	{
 		//Pointless allocation but C# doesn't provide a way to access static members of generic types yet.
 		private static TStringSerializerStrategy DecoratedSerializer { get; } = new TStringSerializerStrategy();
+
+		private static TStringTerminatorSerializerStrategy DecoratedTerminatorStrategy { get; } = new TStringTerminatorSerializerStrategy();
 
 		/// <summary>
 		/// The maximum length of a character in byte-size.
 		/// Same as CharacterSize except for the variable length encodings which we *partially* support
 		/// fixed-length sending.
 		/// </summary>
-		private static int MaximumCharacterSize { get; } = DecoratedSerializer.EncodingStrategy.GetMaxByteCount(1);
+		private static int MaximumCharacterSize { get; } = DecoratedSerializer.CharacterSize;
 
 		public LengthPrefixedStringTypeSerializerStrategy() 
 			: base(DecoratedSerializer.EncodingStrategy)
@@ -39,20 +43,26 @@ namespace FreecraftCore.Serializer
 		public sealed override string Read(Span<byte> source, ref int offset)
 		{
 			int length = CalculateIncomingStringLength(source, ref offset);
-			int expectedByteLength = length * MaximumCharacterSize;
 
-			//Even though some encodings are VARIABLE LENGTH we assume when encoding these we'll send max character size.
-			//Easier to slice towards the end, and keep the offset, than to manage ref offset separate.
-			int lastOffset = offset;
-			string value = DecoratedSerializer.Read(source.Slice(0, expectedByteLength + offset), ref offset);
+			if(length == 0)
+				return String.Empty;
 
-			//We must override offset because we EXPECTED to read this many. This helps with nullterminator issues
-			//in existing projects that assume KnownSize can INCLUDE the nullterminator.
-			offset = lastOffset + expectedByteLength;
+			//Null terminator is missing??
+			if (length < MaximumCharacterSize)
+			{
+				DecoratedTerminatorStrategy.Read(source, ref offset);
+				return String.Empty;
+			}
+
+			//Read until terminator is found, then we skip over terminator in the buffer.
+			//Slice just incase invalid data and terminator isn't there.
+			string value = DecoratedSerializer.Read(source.Slice(0, (length - 1) * MaximumCharacterSize + offset), ref offset);
+			DecoratedTerminatorStrategy.Read(source, ref offset);
+
 			return value;
 		}
 
-		protected virtual int CalculateIncomingStringLength(Span<byte> source, ref int offset)
+		private int CalculateIncomingStringLength(Span<byte> source, ref int offset)
 		{
 			//This is complicated, we generically deserialize the primitive length BUT we run into the issue
 			//where we NEED a true non-generic primitive to add (without generic math dependency) so we must
@@ -68,11 +78,12 @@ namespace FreecraftCore.Serializer
 			//WARNING: Doing use this calculated string length in ANYTHING but writing, it may contain adjusted sizes.
 			//We must write the length prefix first into the buffer
 			int stringLength = CalculateOutgoingStringLength(value);
+			stringLength++; //add terminator character
 			GenericTypePrimitiveSerializerStrategy<TLengthType>.Instance.Write(Unsafe.As<int, TLengthType>(ref stringLength), destination, ref offset);
 
 			int expectedByteLength = value.Length * MaximumCharacterSize;
 			int lastOffset = offset;
-			DecoratedSerializer.Write(value, destination, ref offset);
+			DecoratedSerializer.Write(value, destination.Slice(0, expectedByteLength + offset), ref offset);
 
 			//TODO: This is a COMPLETE hack that should be toggleable honestly.
 			//This isn't *really* how we should handle variable length encodings and stuff, but PSOBB does fixed-length UTF16 for fixed/known size
@@ -80,6 +91,9 @@ namespace FreecraftCore.Serializer
 			if (offset != lastOffset + expectedByteLength)
 				while(offset < lastOffset + expectedByteLength)
 					GenericTypePrimitiveSerializerStrategy<byte>.Instance.Write(0, destination, ref offset);
+
+			//Now we can write terminator
+			DecoratedTerminatorStrategy.Write(value, destination, ref offset);
 		}
 
 		private static int CalculateOutgoingStringLength(string value)
