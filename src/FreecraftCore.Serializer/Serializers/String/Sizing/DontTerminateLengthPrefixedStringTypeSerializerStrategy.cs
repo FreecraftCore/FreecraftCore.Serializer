@@ -15,7 +15,6 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	/// <typeparam name="TStringSerializerStrategy">The decorated string serializer type.</typeparam>
 	/// <typeparam name="TLengthType"></typeparam>
-	/// <typeparam name="TStringTerminatorSerializerStrategy"></typeparam>
 	public sealed class DontTerminateLengthPrefixedStringTypeSerializerStrategy<TStringSerializerStrategy, TLengthType>
 		: BaseEncodableTypeSerializerStrategy<DontTerminateLengthPrefixedStringTypeSerializerStrategy<TStringSerializerStrategy, TLengthType>>
 		where TStringSerializerStrategy : BaseStringTypeSerializerStrategy<TStringSerializerStrategy>, new()

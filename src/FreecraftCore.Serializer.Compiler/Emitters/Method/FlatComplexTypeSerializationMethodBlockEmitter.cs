@@ -41,6 +41,10 @@ namespace FreecraftCore.Serializer
 				}
 				else
 					throw new NotImplementedException($"TODO: Cannot handle Type: {memberType}");
+
+				//Add 2 line breaks
+				statements = statements.AddRange(new EmptyLineStatementBlockEmitter().CreateStatements());
+				statements = statements.AddRange(new EmptyLineStatementBlockEmitter().CreateStatements());
 			}
 
 			return SyntaxFactory.Block(statements);

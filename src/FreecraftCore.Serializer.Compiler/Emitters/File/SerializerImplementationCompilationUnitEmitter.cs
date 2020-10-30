@@ -1221,7 +1221,6 @@ namespace FreecraftCore.Serializer
 																		new[]
 																		{
 																			CarriageReturnLineFeed,
-																			Whitespace("		"),
 																			Trivia
 																			(
 																				DocumentationCommentTrivia

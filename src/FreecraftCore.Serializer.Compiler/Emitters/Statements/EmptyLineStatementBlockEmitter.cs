@@ -18,17 +18,7 @@ namespace FreecraftCore.Serializer
 		{
 			return new List<StatementSyntax>
 			{
-				ExpressionStatement
-					(
-						IdentifierName
-						(
-							MissingToken(SyntaxKind.IdentifierToken)
-						)
-					)
-					.WithSemicolonToken
-					(
-						MissingToken(SyntaxKind.SemicolonToken)
-					)
+				EmptyStatement()
 					.WithTrailingTrivia(CarriageReturnLineFeed)
 			};
 		}

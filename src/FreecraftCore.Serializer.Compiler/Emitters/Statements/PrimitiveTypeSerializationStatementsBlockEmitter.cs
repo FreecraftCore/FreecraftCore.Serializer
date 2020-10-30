@@ -29,7 +29,6 @@ namespace FreecraftCore.Serializer
 
 			//GenericTypePrimitiveSerializerStrategy<int>.Instance.Write(value, destination, ref offset);
 			statements.Add(new RawPrimitiveTypeSerializationGenerator(Member.Name, typeName).Create());
-			statements.AddRange(new EmptyLineStatementBlockEmitter().CreateStatements());
 
 			return statements;
 		}
