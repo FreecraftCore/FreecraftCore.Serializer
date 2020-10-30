@@ -23,6 +23,16 @@ namespace FreecraftCore.Serializer
 		[WireMember(4)]
 		public string TestStringTwo { get; internal set; }
 
+		[DontTerminate]
+		[Encoding(EncodingType.UTF16)]
+		[KnownSize(1337)]
+		[WireMember(5)]
+		public string KnownSizeStringTest { get; internal set; }
+
+		[Encoding(EncodingType.UTF16)]
+		[WireMember(6)]
+		public string DefaultStringTest { get; private set; }
+
 		public TypeStub()
 		{
 			

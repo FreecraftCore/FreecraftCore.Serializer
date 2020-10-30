@@ -34,10 +34,11 @@ namespace FreecraftCore.Serializer
         /// <param name="offset">See external doc.</param>
         partial void GeneratedWrite(TypeStub value, Span<byte> destination, ref int offset)
         {
-	        GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.Hello, destination, ref offset);
-	        LengthPrefixedStringTypeSerializerStrategy<UTF32StringTypeSerializerStrategy, UTF32StringTerminatorTypeSerializerStrategy, UInt16>.Instance.Write(value.TestString, destination, ref offset);
-	        GenericTypePrimitiveSerializerStrategy<UInt16>.Instance.Write(value.HelloAgain, destination, ref offset);
-	        DontTerminateLengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Int16>.Instance.Write(value.TestStringTwo, destination, ref offset);
+            GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.Hello, destination, ref offset);
+            LengthPrefixedStringTypeSerializerStrategy<UTF32StringTypeSerializerStrategy, UTF32StringTerminatorTypeSerializerStrategy, UInt16>.Instance.Write(value.TestString, destination, ref offset);
+            GenericTypePrimitiveSerializerStrategy<UInt16>.Instance.Write(value.HelloAgain, destination, ref offset);
+            DontTerminateLengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Int16>.Instance.Write(value.TestStringTwo, destination, ref offset);
+            KnownSizeStringSerializerHelper.Write(value.KnownSizeStringTest, destination, ref offset, 1337, EncodingType.UTF16, false);
         }
     }
 }
