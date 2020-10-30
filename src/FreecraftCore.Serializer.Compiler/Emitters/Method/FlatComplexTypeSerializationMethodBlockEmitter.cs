@@ -32,6 +32,10 @@ namespace FreecraftCore.Serializer
 				//The reason is, setting and getting fields vs members are same syntax
 				Type memberType = mi.GetType() == typeof(FieldInfo) ? ((FieldInfo) mi).FieldType : ((PropertyInfo) mi).PropertyType;
 
+				//The serializer is requesting we DON'T WRITE THIS! So we skip
+				if (mi.GetCustomAttribute<DontWriteAttribute>() != null)
+					continue;
+
 				//We know the type, but we have to do special handling depending on on its type
 				if (memberType.IsPrimitive)
 				{
