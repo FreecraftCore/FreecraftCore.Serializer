@@ -4,6 +4,13 @@ using System.Text;
 
 namespace FreecraftCore.Serializer
 {
+	public enum TestEnum : ulong
+	{
+		Value1 = 0,
+		Value2 = 1,
+		Value3 = 2
+	}
+
 	[WireDataContract]
 	public sealed class TypeStub
 	{
@@ -31,15 +38,18 @@ namespace FreecraftCore.Serializer
 
 		[Encoding(EncodingType.UTF16)]
 		[WireMember(6)]
-		public string DefaultStringTest { get; private set; }
+		public string DefaultStringTest { get; internal set; }
 
 		[SendSize(SendSizeAttribute.SizeType.Int16)]
 		[WireMember(6)]
-		public long[] LongArrayTest { get; private set; }
+		public long[] LongArrayTest { get; internal set; }
 
 		[KnownSize(1337)]
 		[WireMember(7)]
-		public ushort[] KnownSizeArrayTest { get; private set; }
+		public ushort[] KnownSizeArrayTest { get; internal set; }
+
+		[WireMember(8)]
+		public TestEnum EnumTestValue { get; internal set; }
 
 		public TypeStub()
 		{
