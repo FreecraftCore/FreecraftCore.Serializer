@@ -32,6 +32,9 @@ namespace FreecraftCore.Serializer
 				//The reason is, setting and getting fields vs members are same syntax
 				Type memberType = mi.GetType() == typeof(FieldInfo) ? ((FieldInfo) mi).FieldType : ((PropertyInfo) mi).PropertyType;
 
+				FieldDocumentationStatementsBlockEmitter commentEmitter = new FieldDocumentationStatementsBlockEmitter(memberType, mi);
+				statements = statements.AddRange(commentEmitter.CreateStatements());
+
 				//The serializer is requesting we DON'T WRITE THIS! So we skip
 				if (mi.GetCustomAttribute<DontWriteAttribute>() != null)
 					continue;
