@@ -51,6 +51,10 @@ namespace FreecraftCore.Serializer
 		[WireMember(8)]
 		public TestEnum EnumTestValue { get; internal set; }
 
+		[SendSize(SendSizeAttribute.SizeType.Int16, 3)]
+		[WireMember(9)]
+		public long[] LongArrayTestAddedSize { get; internal set; }
+
 		public TypeStub()
 		{
 			

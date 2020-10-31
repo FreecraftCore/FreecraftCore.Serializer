@@ -40,6 +40,7 @@ namespace FreecraftCore.Serializer
             DontTerminateLengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Int16>.Instance.Write(value.TestStringTwo, destination, ref offset);
             KnownSizeStringSerializerHelper.Write(value.KnownSizeStringTest, destination, ref offset, 1337, EncodingType.UTF16, false);
             GenericPrimitiveEnumTypeSerializerStrategy<TestEnum, UInt64>.Instance.Write(value.EnumTestValue, destination, ref offset);
+            PrimitiveArraySerializerHelper.Write(value.LongArrayTestAddedSize, destination, ref offset, (Int16)(value.LongArrayTestAddedSize.Length - 3), true);
         }
     }
 }
