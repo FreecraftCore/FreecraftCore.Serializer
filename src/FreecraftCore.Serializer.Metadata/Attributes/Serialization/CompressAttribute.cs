@@ -17,33 +17,19 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Indicates the type of size to send compression information as.
 		/// </summary>
-		public SizeType CompressionSizeType { get; }
-
-		/// <summary>
-		/// Enumeration of acceptable types of size to send with the compression result.
-		/// </summary>
-		public enum SizeType
-		{
-			Byte,
-			Short,
-			UShort,
-			Int32,
-			UInt32,
-			Int64,
-			UInt64
-		}
+		public PrimitiveSizeType CompressionSizeType { get; }
 
 		/// <summary>
 		/// Marks a member with compression metadata.
 		/// (WARNING: WE ONLY SUPPORT COMPRESSION FOR THE LAST MEMBER)
 		/// </summary>
 		/// <param name="sizeType"></param>
-		public CompressAttribute(SizeType sizeType = SizeType.UInt32)
+		public CompressAttribute(PrimitiveSizeType sizeType = PrimitiveSizeType.UInt32)
 		{
-			if (!Enum.IsDefined(typeof(SizeType), sizeType))
-				throw new ArgumentException($"Provided enum argument {nameof(sizeType)} of Type {typeof(SizeType)} with value {sizeType} was not in valid range.", nameof(sizeType));
+			if (!Enum.IsDefined(typeof(PrimitiveSizeType), sizeType))
+				throw new ArgumentException($"Provided enum argument {nameof(sizeType)} of Type {typeof(PrimitiveSizeType)} with value {sizeType} was not in valid range.", nameof(sizeType));
 
-				CompressionSizeType = sizeType;
+			CompressionSizeType = sizeType;
 		}
 	}
 }
