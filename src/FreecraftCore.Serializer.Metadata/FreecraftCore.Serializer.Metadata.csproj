@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net46;netstandard1.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <Description>Metadata/Attribute library for the FreecraftCore.Serializer. This library provides the attributes required to markup DTOs.</Description>
     <Copyright>Andrew Blakely, HelloKitty</Copyright>
     <PackageLicenseUrl>https://github.com/FreecraftCore/FreecraftCore.Serializer/blob/master/LICENSE</PackageLicenseUrl>
