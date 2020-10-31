@@ -10,6 +10,7 @@ namespace FreecraftCore.Serializer
 	/// from writing their length or size into the message.
 	/// Consult (Blizzard's JAM for information on the concept).
 	/// </summary>
+	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)] //members can be fields or props
 	public class KnownSizeAttribute : Attribute
 	{

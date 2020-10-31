@@ -8,6 +8,7 @@ namespace FreecraftCore.Serializer
 	/// Metadata that indicates that a string, or maybe a collection, shouldn't terminate.
 	/// (Ex. String size 4 "Hell" should be written as byte[] { "H".ToByte() ... } with no '\0' character.
 	/// </summary>
+	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
 	public class DontTerminateAttribute : Attribute
 	{

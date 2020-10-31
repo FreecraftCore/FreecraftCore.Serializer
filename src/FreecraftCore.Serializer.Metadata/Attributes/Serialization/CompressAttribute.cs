@@ -10,6 +10,7 @@ namespace FreecraftCore.Serializer
 	/// Meta-data attribute that can be used to mark wire serializable members to indicate they should be compressed.
 	/// (WARNING: WE ONLY SUPPORT COMPRESSION FOR THE LAST MEMBER)
 	/// </summary>
+	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)] //members can be fields or props
 	public class CompressAttribute : Attribute
 	{

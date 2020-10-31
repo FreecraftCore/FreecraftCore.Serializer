@@ -9,6 +9,7 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Meta-data marker that indicates that the size of a member should be sent.
 	/// </summary>
+	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 	public class SendSizeAttribute : Attribute
 	{

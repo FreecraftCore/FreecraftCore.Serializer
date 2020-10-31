@@ -11,6 +11,7 @@ namespace FreecraftCore.Serializer
 	/// Metadata marker that makes a field or property optional.
 	/// Linking it to a <see cref="bool"/> field/property to determine whether it should be read or written
 	/// </summary>
+	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
 	public class OptionalAttribute : Attribute
 	{

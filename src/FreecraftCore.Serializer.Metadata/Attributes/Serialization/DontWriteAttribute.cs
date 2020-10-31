@@ -7,6 +7,7 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Metadata marker that indicates a member sholdn't be written.
 	/// </summary>
+	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 	public class DontWriteAttribute : Attribute
 	{

@@ -10,6 +10,7 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Metadata marker that indicates a <see cref="string"/> should be seril
 	/// </summary>
+	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
 	public sealed class EncodingAttribute : Attribute
 	{
