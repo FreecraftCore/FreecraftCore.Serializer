@@ -19,12 +19,16 @@ namespace FreecraftCore.Serializer
 			List<StatementSyntax> statements = new List<StatementSyntax>();
 
 			EnumStringAttribute enumStringAttri = Member.GetCustomAttribute<EnumStringAttribute>();
+			EnumSizeAttribute enumSizeAttri = Member.GetCustomAttribute<EnumSizeAttribute>();
 
 			//TODO: Support custom primitivie specifier.
 			//Primitive serialization YAY
 			if (enumStringAttri == null)
 			{
-				var generator = new RawEnumPrimitiveSerializationGenerator(Member.Name, PrimitiveType.GetEnumUnderlyingType(), PrimitiveType);
+				//What type to serialize the enum as
+				Type serializeAsType = enumSizeAttri == null ? PrimitiveType.GetEnumUnderlyingType() : Type.GetType($"System.{enumSizeAttri.SizeType.ToString()}", true);
+
+				var generator = new RawEnumPrimitiveSerializationGenerator(Member.Name, serializeAsType, PrimitiveType);
 				statements.Add(generator.Create());
 			}
 
