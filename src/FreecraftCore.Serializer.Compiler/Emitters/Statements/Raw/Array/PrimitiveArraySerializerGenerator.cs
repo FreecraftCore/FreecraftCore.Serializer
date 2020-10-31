@@ -110,7 +110,10 @@ namespace FreecraftCore.Serializer
 										CastExpression
 										(
 											IdentifierName(SizeType.ToString()),
-											IdentifierName(SizeAccessMemberName)
+											ParenthesizedExpression
+											(
+												IdentifierName(SizeAccessMemberName)
+											)
 										)
 									),
 									Token
