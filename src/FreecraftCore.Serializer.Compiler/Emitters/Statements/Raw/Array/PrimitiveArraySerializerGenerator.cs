@@ -14,17 +14,17 @@ namespace FreecraftCore.Serializer
 	{
 		public string MemberName { get; }
 
-		public SendSizeAttribute.SizeType SizeType { get; }
+		public PrimitiveSizeType SizeType { get; }
 
 		//It's possible array.Length is not the SIZE target.
 		public string SizeAccessMemberName { get; }
 
 		public bool ShouldWriteSize { get; }
 
-		public PrimitiveArraySerializerGenerator([NotNull] string memberName, SendSizeAttribute.SizeType sizeType, [NotNull] string sizeAccessMemberName, bool shouldWriteSize)
+		public PrimitiveArraySerializerGenerator([NotNull] string memberName, PrimitiveSizeType sizeType, [NotNull] string sizeAccessMemberName, bool shouldWriteSize)
 		{
 			if (string.IsNullOrEmpty(memberName)) throw new ArgumentException("Value cannot be null or empty.", nameof(memberName));
-			if (!Enum.IsDefined(typeof(SendSizeAttribute.SizeType), sizeType)) throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(SendSizeAttribute.SizeType));
+			if (!Enum.IsDefined(typeof(PrimitiveSizeType), sizeType)) throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(PrimitiveSizeType));
 			MemberName = memberName;
 			SizeType = sizeType;
 			SizeAccessMemberName = sizeAccessMemberName ?? throw new ArgumentNullException(nameof(sizeAccessMemberName));

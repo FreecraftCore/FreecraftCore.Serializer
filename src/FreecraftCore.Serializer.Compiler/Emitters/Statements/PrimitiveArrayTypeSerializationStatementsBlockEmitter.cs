@@ -47,7 +47,7 @@ namespace FreecraftCore.Serializer
 
 			if (knownSizeAttri != null)
 			{
-				var generator = new PrimitiveArraySerializerGenerator(Member.Name, SendSizeAttribute.SizeType.Int32, $"{knownSizeAttri.KnownSize}", false);
+				var generator = new PrimitiveArraySerializerGenerator(Member.Name, PrimitiveSizeType.Int32, $"{knownSizeAttri.KnownSize}", false);
 				statements.Add(generator.Create());
 			}
 
@@ -55,7 +55,7 @@ namespace FreecraftCore.Serializer
 			//Assume it's write ALL and then other side will need to ReadToEnd (but the attribute isn't needed)
 			if (knownSizeAttri == null && sendSizeAttri == null)
 			{
-				var generator = new PrimitiveArraySerializerGenerator(Member.Name, SendSizeAttribute.SizeType.Int32, "0", false);
+				var generator = new PrimitiveArraySerializerGenerator(Member.Name, PrimitiveSizeType.Int32, "0", false);
 				statements.Add(generator.Create());
 			}
 

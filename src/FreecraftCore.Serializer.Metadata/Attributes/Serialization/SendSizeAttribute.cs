@@ -13,19 +13,10 @@ namespace FreecraftCore.Serializer
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 	public class SendSizeAttribute : Attribute
 	{
-		public enum SizeType : byte //make byte because we need to shift and pack into int key
-		{
-			Byte,
-			UInt16,
-			Int16,
-			UInt32,
-			Int32
-		}
-
 		/// <summary>
 		/// Indicates the type of size to send.
 		/// </summary>
-		public SizeType TypeOfSize { get; }
+		public PrimitiveSizeType TypeOfSize { get; }
 
 		/// <summary>
 		/// Indicates the size to be added when read/written.
@@ -34,7 +25,7 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		public sbyte AddedSize { get; }
 
-		public SendSizeAttribute(SizeType sizeType)
+		public SendSizeAttribute(PrimitiveSizeType sizeType)
 			: this(sizeType, 0)
 		{
 			
@@ -46,10 +37,10 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		/// <param name="sizeType"></param>
 		/// <param name="addedSize"></param>
-		public SendSizeAttribute(SizeType sizeType, sbyte addedSize)
+		public SendSizeAttribute(PrimitiveSizeType sizeType, sbyte addedSize)
 		{
-			if(!Enum.IsDefined(typeof(SizeType), sizeType))
-				throw new ArgumentException($"Provided enum argument {nameof(sizeType)} of Type {typeof(SizeType)} with value {sizeType} was not in valid range.", nameof(sizeType));
+			if(!Enum.IsDefined(typeof(PrimitiveSizeType), sizeType))
+				throw new ArgumentException($"Provided enum argument {nameof(sizeType)} of Type {typeof(PrimitiveSizeType)} with value {sizeType} was not in valid range.", nameof(sizeType));
 
 			TypeOfSize = sizeType;
 			AddedSize = addedSize;

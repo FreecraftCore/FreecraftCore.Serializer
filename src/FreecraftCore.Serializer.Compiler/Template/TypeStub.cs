@@ -17,7 +17,7 @@ namespace FreecraftCore.Serializer
 		[WireMember(1)]
 		public int Hello { get; internal set; }
 
-		[SendSize(SendSizeAttribute.SizeType.UInt16)]
+		[SendSize(PrimitiveSizeType.UInt16)]
 		[Encoding(EncodingType.UTF32)]
 		[WireMember(2)]
 		public string TestString { get; internal set; }
@@ -26,7 +26,7 @@ namespace FreecraftCore.Serializer
 		public ushort HelloAgain { get; internal set; }
 
 		[DontTerminate]
-		[SendSize(SendSizeAttribute.SizeType.Int16)]
+		[SendSize(PrimitiveSizeType.Int16)]
 		[WireMember(4)]
 		public string TestStringTwo { get; internal set; }
 
@@ -40,7 +40,7 @@ namespace FreecraftCore.Serializer
 		[WireMember(6)]
 		public string DefaultStringTest { get; internal set; }
 
-		[SendSize(SendSizeAttribute.SizeType.Int16)]
+		[SendSize(PrimitiveSizeType.Int16)]
 		[WireMember(6)]
 		public long[] LongArrayTest { get; internal set; }
 
@@ -51,7 +51,7 @@ namespace FreecraftCore.Serializer
 		[WireMember(8)]
 		public TestEnum EnumTestValue { get; internal set; }
 
-		[SendSize(SendSizeAttribute.SizeType.Int16, 3)]
+		[SendSize(PrimitiveSizeType.Int16, 3)]
 		[WireMember(9)]
 		public long[] LongArrayTestAddedSize { get; internal set; }
 

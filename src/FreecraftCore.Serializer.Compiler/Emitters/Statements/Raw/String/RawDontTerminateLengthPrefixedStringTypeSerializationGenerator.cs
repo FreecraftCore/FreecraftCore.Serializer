@@ -16,13 +16,13 @@ namespace FreecraftCore.Serializer
 
 		public string MemberName { get; }
 
-		public SendSizeAttribute.SizeType SizeType { get; }
+		public PrimitiveSizeType SizeType { get; }
 
-		public RawDontTerminateLengthPrefixedStringTypeSerializationGenerator(EncodingType encoding, [NotNull] string memberName, SendSizeAttribute.SizeType sizeType)
+		public RawDontTerminateLengthPrefixedStringTypeSerializationGenerator(EncodingType encoding, [NotNull] string memberName, PrimitiveSizeType sizeType)
 		{
 			if (!Enum.IsDefined(typeof(EncodingType), encoding)) throw new InvalidEnumArgumentException(nameof(encoding), (int) encoding, typeof(EncodingType));
 			if (string.IsNullOrEmpty(memberName)) throw new ArgumentException("Value cannot be null or empty.", nameof(memberName));
-			if (!Enum.IsDefined(typeof(SendSizeAttribute.SizeType), sizeType)) throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(SendSizeAttribute.SizeType));
+			if (!Enum.IsDefined(typeof(PrimitiveSizeType), sizeType)) throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(PrimitiveSizeType));
 
 			Encoding = encoding;
 			MemberName = memberName;
