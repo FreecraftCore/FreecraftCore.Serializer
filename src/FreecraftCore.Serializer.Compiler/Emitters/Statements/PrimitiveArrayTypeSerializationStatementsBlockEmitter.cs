@@ -9,8 +9,8 @@ namespace FreecraftCore.Serializer
 {
 	public sealed class PrimitiveArrayTypeSerializationStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		public PrimitiveArrayTypeSerializationStatementsBlockEmitter([NotNull] Type primitiveType, [NotNull] MemberInfo member) 
-			: base(primitiveType, member)
+		public PrimitiveArrayTypeSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member) 
+			: base(actualType, member)
 		{
 
 		}
@@ -24,7 +24,7 @@ namespace FreecraftCore.Serializer
 			KnownSizeAttribute knownSizeAttri = Member.GetCustomAttribute<KnownSizeAttribute>();
 
 			if (sendSizeAttri != null && knownSizeAttri != null)
-				throw new InvalidOperationException($"Emit failed for Member: {PrimitiveType} in Type: {Member.DeclaringType}. Cannot use Attributes: {nameof(SendSizeAttribute)} and {nameof(KnownSizeAttribute)} together.");
+				throw new InvalidOperationException($"Emit failed for Member: {ActualType} in Type: {Member.DeclaringType}. Cannot use Attributes: {nameof(SendSizeAttribute)} and {nameof(KnownSizeAttribute)} together.");
 
 			//TODO: Support seperated collection sizes
 			//Case where the array will be send with length-prefixed size

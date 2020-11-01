@@ -15,17 +15,17 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public sealed class PrimitiveTypeSerializationStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		public PrimitiveTypeSerializationStatementsBlockEmitter([NotNull] Type primitiveType, [NotNull] MemberInfo member)
-			: base(primitiveType, member)
+		public PrimitiveTypeSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member)
+			: base(actualType, member)
 		{
-			if (!primitiveType.IsPrimitive)
-				throw new InvalidOperationException($"Type: {primitiveType} is not a primitive type.");
+			if (!actualType.IsPrimitive)
+				throw new InvalidOperationException($"Type: {actualType} is not a primitive type.");
 		}
 
 		public override List<StatementSyntax> CreateStatements()
 		{
 			List<StatementSyntax> statements = new List<StatementSyntax>();
-			string typeName = new TypeNameStringBuilder(PrimitiveType).ToString();
+			string typeName = new TypeNameStringBuilder(ActualType).ToString();
 
 			//GenericTypePrimitiveSerializerStrategy<int>.Instance.Write(value, destination, ref offset);
 			statements.Add(new RawPrimitiveTypeSerializationGenerator(Member.Name, typeName).Create());

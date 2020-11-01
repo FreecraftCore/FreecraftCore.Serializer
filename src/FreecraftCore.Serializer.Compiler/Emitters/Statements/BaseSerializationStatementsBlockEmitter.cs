@@ -10,18 +10,18 @@ namespace FreecraftCore.Serializer
 	public abstract class BaseSerializationStatementsBlockEmitter : IStatementsBlockEmittable
 	{
 		/// <summary>
-		/// The primitive type to emit serialization for.
+		/// The actual type to emit serialization for.
 		/// </summary>
-		public Type PrimitiveType { get; }
+		public Type ActualType { get; }
 
 		/// <summary>
 		/// The member to serialize.
 		/// </summary>
 		public MemberInfo Member { get; }
 
-		protected BaseSerializationStatementsBlockEmitter([NotNull] Type primitiveType, [NotNull] MemberInfo member)
+		protected BaseSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member)
 		{
-			PrimitiveType = primitiveType ?? throw new ArgumentNullException(nameof(primitiveType));
+			ActualType = actualType ?? throw new ArgumentNullException(nameof(actualType));
 			Member = member ?? throw new ArgumentNullException(nameof(member));
 		}
 

@@ -12,8 +12,8 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public sealed class StringTypeSerializationStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		public StringTypeSerializationStatementsBlockEmitter([NotNull] Type memberType, [NotNull] MemberInfo member)
-			: base(memberType, member)
+		public StringTypeSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member)
+			: base(actualType, member)
 		{
 
 		}
@@ -33,7 +33,7 @@ namespace FreecraftCore.Serializer
 				encodingAttri = new EncodingAttribute(EncodingType.ASCII);
 
 			if (knownSizeAttri != null && sendSizeAttri != null)
-				throw new InvalidOperationException($"Emit failed for Member: {PrimitiveType} in Type: {Member.DeclaringType}. Cannot use Attributes: {nameof(SendSizeAttribute)} and {nameof(KnownSizeAttribute)} together.");
+				throw new InvalidOperationException($"Emit failed for Member: {ActualType} in Type: {Member.DeclaringType}. Cannot use Attributes: {nameof(SendSizeAttribute)} and {nameof(KnownSizeAttribute)} together.");
 
 			if (sendSizeAttri != null && dontTerminateAttribute == null)
 			{

@@ -12,8 +12,8 @@ namespace FreecraftCore.Serializer
 {
 	public sealed class FieldDocumentationStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		public FieldDocumentationStatementsBlockEmitter([NotNull] Type primitiveType, [NotNull] MemberInfo member)
-			: base(primitiveType, member)
+		public FieldDocumentationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member)
+			: base(actualType, member)
 		{
 
 		}
@@ -28,7 +28,7 @@ namespace FreecraftCore.Serializer
 
 			//This is a HACK (including the slashes) but I am too dumb to figure out another way lol.
 			statements.Add(EmptyStatement()
-				.WithLeadingTrivia(Comment($"//Field: {fieldId} Name: {Member.Name} Type: {PrimitiveType.Name}")));
+				.WithLeadingTrivia(Comment($"//Field: {fieldId} Name: {Member.Name} Type: {ActualType.Name}")));
 
 			return statements;
 		}
