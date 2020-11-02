@@ -54,7 +54,7 @@ namespace FreecraftCore.Serializer
 						builder.Append(ComputeName(genericTypeArg));
 					}
 					else
-						builder.Append($"{genericTypeArg.Name}_");
+						builder.Append($"{genericTypeArg.Name}");
 				}
 
 				if (builder.Length > 1000)
