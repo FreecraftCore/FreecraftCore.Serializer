@@ -10,7 +10,7 @@ namespace FreecraftCore.Serializer
 	/// as having a specific known/forward declared closed generic Type.
 	/// (Ex. Type{T} having a type T of TypeStub being declared with [KnownGeneric(typeof(TypeStub))]
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Class)]
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 	public sealed class KnownGenericAttribute : Attribute
 	{
 		public Type[] GenericTypeParameters { get; }
