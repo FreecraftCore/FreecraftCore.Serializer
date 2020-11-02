@@ -12,6 +12,28 @@ namespace FreecraftCore.Serializer
 	}
 
 	[WireDataContract]
+	public class NestedTypeStub
+	{
+		public NestedTypeStub()
+		{
+			
+		}
+	}
+
+	[KnownGeneric(typeof(int))]
+	[WireDataContract]
+	public class TypeStubGeneric<T>
+	{
+		[WireMember(1)]
+		public T Value { get; internal set; }
+
+		public TypeStubGeneric()
+		{
+			
+		}
+	}
+
+	[WireDataContract]
 	public sealed class TypeStub
 	{
 		[WireMember(1)]
@@ -58,6 +80,9 @@ namespace FreecraftCore.Serializer
 		[EnumSize(PrimitiveSizeType.Byte)]
 		[WireMember(10)]
 		public TestEnum EnumTestValueSized { get; internal set; }
+
+		[WireMember(11)]
+		public NestedTypeStub ComplexTypeTest { get; internal set; }
 
 		public TypeStub()
 		{
