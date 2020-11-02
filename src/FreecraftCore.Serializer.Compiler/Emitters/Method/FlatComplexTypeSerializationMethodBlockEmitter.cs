@@ -62,6 +62,11 @@ namespace FreecraftCore.Serializer
 					var emitter = new EnumTypeSerializerStatementsBlockEmitter(memberType, mi);
 					statements = statements.AddRange(emitter.CreateStatements());
 				}
+				else if (memberType.IsClass)
+				{
+					var emitter = new ComplexTypeSerializerStatementsBlockEmitter(memberType, mi);
+					statements = statements.AddRange(emitter.CreateStatements());
+				}
 				else
 					throw new NotImplementedException($"TODO: Cannot handle Type: {memberType}");
 
