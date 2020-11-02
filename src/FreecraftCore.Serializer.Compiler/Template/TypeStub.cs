@@ -20,6 +20,7 @@ namespace FreecraftCore.Serializer
 		}
 	}
 
+	[KnownGeneric(typeof(uint))]
 	[KnownGeneric(typeof(int))]
 	[WireDataContract]
 	public class TypeStubGeneric<T>
@@ -30,6 +31,24 @@ namespace FreecraftCore.Serializer
 		public TypeStubGeneric()
 		{
 			
+		}
+	}
+
+	[KnownGeneric(typeof(uint), typeof(string))]
+	[KnownGeneric(typeof(int), typeof(string))]
+	[WireDataContract]
+	public class TypeStubGenericDouble<T, A>
+	{
+		[WireMember(1)]
+		public T Value { get; internal set; }
+
+		[Encoding(EncodingType.UTF16)]
+		[WireMember(2)]
+		public A Value2 { get; internal set; }
+
+		public TypeStubGenericDouble()
+		{
+
 		}
 	}
 
