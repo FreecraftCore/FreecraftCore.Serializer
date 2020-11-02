@@ -49,7 +49,21 @@ namespace FreecraftCore.Serializer
 
 			foreach (var type in serializableTypes)
 			{
-				WriteSerializerStrategyClass(type);
+				//This is for GENERIC types.
+				//We can only realistically support closed generic forward declared types
+				//AND also primitive generic type support.
+				if (type.IsGenericType)
+				{
+					//If it's marked with KnownGeneric attribute then we should generate
+					//a serializer for each closed generic type.
+					var knownGenericAttris = type.GetCustomAttributes<KnownGenericAttribute>();
+					foreach (var gta in knownGenericAttris)
+					{
+						WriteSerializerStrategyClass(type.MakeGenericType(gta.GenericTypeParameters));
+					}
+				}
+				else
+					WriteSerializerStrategyClass(type);
 			}
 		}
 
