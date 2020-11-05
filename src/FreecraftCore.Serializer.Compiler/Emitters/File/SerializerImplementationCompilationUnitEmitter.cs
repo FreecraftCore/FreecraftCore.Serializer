@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis;
@@ -1804,6 +1805,8 @@ namespace FreecraftCore.Serializer
 																)
 														)
 												}
+												.Concat(new RootSerializationMethodBlockEmitter<TSerializableType>()
+													.CreateClasses()) //This embeds our required classes into the Type
 											)
 										)
 										.WithCloseBraceToken

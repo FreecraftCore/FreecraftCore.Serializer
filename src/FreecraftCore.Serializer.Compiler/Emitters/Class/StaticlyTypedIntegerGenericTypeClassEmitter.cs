@@ -229,6 +229,20 @@ namespace FreecraftCore.Serializer
 								)
 							)
 					)
+				)
+				.WithCloseBraceToken
+				(
+					Token
+					(
+						TriviaList
+						(
+						),
+						SyntaxKind.CloseBraceToken,
+						TriviaList
+						(
+							CarriageReturnLineFeed
+						)
+					)
 				);
 		}
 	}
