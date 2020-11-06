@@ -9,12 +9,12 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	internal sealed class DefaulComplexArrayInvokationExpressionEmitter 
+	internal sealed class DefaultComplexArrayInvokationExpressionEmitter 
 		: BaseArraySerializationInvokationExpressionEmitter<ComplexArrayTypeSerializerStrategy>
 	{
 		public Type ElementType { get; }
 
-		public DefaulComplexArrayInvokationExpressionEmitter([NotNull] Type elementType)
+		public DefaultComplexArrayInvokationExpressionEmitter([NotNull] Type elementType)
 		{
 			ElementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
 		}
