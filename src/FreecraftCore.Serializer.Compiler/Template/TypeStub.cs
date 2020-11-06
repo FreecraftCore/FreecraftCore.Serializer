@@ -100,8 +100,13 @@ namespace FreecraftCore.Serializer
 		[WireMember(10)]
 		public TestEnum EnumTestValueSized { get; internal set; }
 
+		[KnownSize(69)]
 		[WireMember(11)]
 		public NestedTypeStub ComplexTypeTest { get; internal set; }
+
+		//ALWAYS LAST, USES REMAINING BUFFER!
+		[WireMember(99)]
+		public int[] FinalArrayMemberWriteToEnd { get; internal set; }
 
 		public TypeStub()
 		{
