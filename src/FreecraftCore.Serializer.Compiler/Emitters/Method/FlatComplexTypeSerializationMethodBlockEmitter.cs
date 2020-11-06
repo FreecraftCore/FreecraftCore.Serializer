@@ -54,7 +54,7 @@ namespace FreecraftCore.Serializer
 				else if (memberType.IsArray && memberType.GetElementType().IsPrimitive)
 				{
 					//This is special case for primitive arrays
-					var emitter = new PrimitiveArrayTypeSerializationStatementsBlockEmitter(memberType, mi);
+					var emitter = new ArrayTypeSerializationStatementsBlockEmitter(memberType, mi);
 					statements = statements.AddRange(emitter.CreateStatements());
 				}
 				else if (memberType.IsEnum)

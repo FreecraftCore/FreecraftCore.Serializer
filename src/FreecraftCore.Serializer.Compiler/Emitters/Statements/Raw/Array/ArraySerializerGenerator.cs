@@ -10,13 +10,13 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class PrimitiveArraySerializerGenerator
+	public sealed class ArraySerializerGenerator
 	{
 		public string MemberName { get; }
 
 		private IInvokationExpressionEmittable InvokationEmitter { get; }
 
-		public PrimitiveArraySerializerGenerator([NotNull] string memberName, 
+		public ArraySerializerGenerator([NotNull] string memberName, 
 			[NotNull] IInvokationExpressionEmittable invokationEmitter)
 		{
 			if (string.IsNullOrEmpty(memberName)) throw new ArgumentException("Value cannot be null or empty.", nameof(memberName));
@@ -26,7 +26,6 @@ namespace FreecraftCore.Serializer
 
 		public StatementSyntax Create()
 		{
-			//LengthPrefixedPrimitiveArraySerializerHelper.Write(value.Field, destination, ref int offset, (UInt32)Size.Access.Member);
 			return ExpressionStatement
 			(
 				InvokationEmitter.Create()
