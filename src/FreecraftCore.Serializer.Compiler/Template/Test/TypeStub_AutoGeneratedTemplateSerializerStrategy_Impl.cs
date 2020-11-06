@@ -49,6 +49,7 @@ namespace FreecraftCore.Serializer
             //Field: 6 Name: LongArrayTest Type: Int64[];
             SendSizePrimitiveArrayTypeSerializerStrategy<Int64, Int16>.Instance.Write(value.LongArrayTest, destination, ref offset);
             //Field: 7 Name: KnownSizeArrayTest Type: UInt16[];
+            FixedSizePrimitiveArrayTypeSerializerStrategy<UInt16, StaticTypedNumeric_Int32_1337>.Instance.Write(value.KnownSizeArrayTest, destination, ref offset);
             //Field: 8 Name: EnumTestValue Type: TestEnum;
             GenericPrimitiveEnumTypeSerializerStrategy<TestEnum, UInt64>.Instance.Write(value.EnumTestValue, destination, ref offset);
             //Field: 9 Name: LongArrayTestAddedSize Type: Int64[];

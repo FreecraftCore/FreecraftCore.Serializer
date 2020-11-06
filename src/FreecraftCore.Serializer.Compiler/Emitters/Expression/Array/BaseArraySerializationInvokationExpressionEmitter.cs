@@ -66,12 +66,15 @@ namespace FreecraftCore.Serializer
 				.ToArray();
 
 			if (parameters.Length < 2)
+			{
 				yield return parameters[0];
+				yield break;
+			}
 
 			//Yield first, rest should have comma tokens
 			yield return parameters[0];
 
-			foreach (SyntaxNodeOrToken entry in parameters)
+			foreach (SyntaxNodeOrToken entry in parameters.Skip(1)) //already did first
 			{
 				yield return Token(SyntaxKind.CommaToken);
 				yield return entry;
