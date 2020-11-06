@@ -6,6 +6,14 @@ using System.Text;
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
+	/// Non-generic nameof metadata.
+	/// </summary>
+	internal class SendSizeComplexArrayTypeSerializerStrategy : BaseArraySerializerNonGenericMarker
+	{
+
+	}
+
+	/// <summary>
 	/// Contract for generic complex/custom array element type serializer.
 	/// Includes a length-prefixed size.
 	/// </summary>

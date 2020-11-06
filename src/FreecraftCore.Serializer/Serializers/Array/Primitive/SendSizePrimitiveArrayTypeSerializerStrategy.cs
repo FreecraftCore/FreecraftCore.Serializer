@@ -8,7 +8,7 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Non-generic nameof metadata.
 	/// </summary>
-	internal class SendSizePrimitiveArrayTypeSerializerStrategy
+	internal class SendSizePrimitiveArrayTypeSerializerStrategy : BaseArraySerializerNonGenericMarker
 	{
 
 	}
