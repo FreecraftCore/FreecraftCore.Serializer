@@ -104,6 +104,10 @@ namespace FreecraftCore.Serializer
 		[WireMember(11)]
 		public NestedTypeStub ComplexTypeTest { get; internal set; }
 
+		[KnownSize(1776)]
+		[WireMember(12)]
+		public NestedTypeStub[] ComplexArrayTest { get; internal set; }
+
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
 		public int[] FinalArrayMemberWriteToEnd { get; internal set; }

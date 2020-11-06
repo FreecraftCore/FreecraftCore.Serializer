@@ -51,9 +51,8 @@ namespace FreecraftCore.Serializer
 					var emitter = new StringTypeSerializationStatementsBlockEmitter(memberType, mi);
 					statements = statements.AddRange(emitter.CreateStatements());
 				}
-				else if (memberType.IsArray && memberType.GetElementType().IsPrimitive)
+				else if (memberType.IsArray)
 				{
-					//This is special case for primitive arrays
 					var emitter = new ArrayTypeSerializationStatementsBlockEmitter(memberType, mi);
 					statements = statements.AddRange(emitter.CreateStatements());
 				}
