@@ -6,6 +6,14 @@ using System.Text;
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
+	/// Non-generic nameof metadata.
+	/// </summary>
+	internal class PrimitiveArrayTypeSerializerStrategy
+	{
+
+	}
+
+	/// <summary>
 	/// Contract for generic generic primitive array serializer
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
