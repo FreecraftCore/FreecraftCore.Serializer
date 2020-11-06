@@ -47,11 +47,15 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public sealed override unsafe void Write(T[] value, Span<byte> destination, ref int offset)
 		{
-			//TODO: Should we ASSERT the array is the correct size?
-			if(value.Length == 0)
-				return;
+			if(value.Length != FixedSize.Value)
+				ThrowNotCorrectSize(value.Length, FixedSize.Value);
 
 			PrimitiveArrayTypeSerializerStrategy<T>.Instance.Write(value, destination, ref offset);
+		}
+
+		private static void ThrowNotCorrectSize(int actualSize, int expectedSize)
+		{
+			throw new InvalidOperationException($"Incorrect ArraySize. Actual: {actualSize} Expected: {expectedSize}");
 		}
 	}
 }
