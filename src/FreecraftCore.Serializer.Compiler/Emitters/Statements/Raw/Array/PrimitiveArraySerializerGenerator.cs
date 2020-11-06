@@ -14,21 +14,14 @@ namespace FreecraftCore.Serializer
 	{
 		public string MemberName { get; }
 
-		public PrimitiveSizeType SizeType { get; }
+		private IInvokationExpressionEmittable InvokationEmitter { get; }
 
-		//It's possible array.Length is not the SIZE target.
-		public string SizeAccessMemberName { get; }
-
-		public bool ShouldWriteSize { get; }
-
-		public PrimitiveArraySerializerGenerator([NotNull] string memberName, PrimitiveSizeType sizeType, [NotNull] string sizeAccessMemberName, bool shouldWriteSize)
+		public PrimitiveArraySerializerGenerator([NotNull] string memberName, 
+			[NotNull] IInvokationExpressionEmittable invokationEmitter)
 		{
 			if (string.IsNullOrEmpty(memberName)) throw new ArgumentException("Value cannot be null or empty.", nameof(memberName));
-			if (!Enum.IsDefined(typeof(PrimitiveSizeType), sizeType)) throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(PrimitiveSizeType));
 			MemberName = memberName;
-			SizeType = sizeType;
-			SizeAccessMemberName = sizeAccessMemberName ?? throw new ArgumentNullException(nameof(sizeAccessMemberName));
-			ShouldWriteSize = shouldWriteSize;
+			InvokationEmitter = invokationEmitter ?? throw new ArgumentNullException(nameof(invokationEmitter));
 		}
 
 		public StatementSyntax Create()
@@ -36,15 +29,7 @@ namespace FreecraftCore.Serializer
 			//LengthPrefixedPrimitiveArraySerializerHelper.Write(value.Field, destination, ref int offset, (UInt32)Size.Access.Member);
 			return ExpressionStatement
 			(
-				InvocationExpression
-					(
-						MemberAccessExpression
-						(
-							SyntaxKind.SimpleMemberAccessExpression,
-							IdentifierName(nameof(PrimitiveArraySerializerHelper)),
-							IdentifierName(nameof(PrimitiveArraySerializerHelper.Write))
-						)
-					)
+				InvokationEmitter.Create()
 					.WithArgumentList
 					(
 						ArgumentList
@@ -94,42 +79,6 @@ namespace FreecraftCore.Serializer
 											(
 												Space
 											)
-										)
-									),
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.CommaToken,
-										TriviaList
-										(
-											Space
-										)
-									),
-									Argument
-									(
-										CastExpression
-										(
-											IdentifierName(SizeType.ToString()),
-											ParenthesizedExpression
-											(
-												IdentifierName(SizeAccessMemberName)
-											)
-										)
-									),
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.CommaToken,
-										TriviaList
-										(
-											Space
-										)
-									),
-									Argument
-									(
-										LiteralExpression
-										(
-											ShouldWriteSize ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression
 										)
 									)
 								}

@@ -10,17 +10,16 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class SendSizePrimitiveArrayInvokationExpressionEmitter : IInvokationExpressionEmittable
+	public sealed class FixedSizePrimitiveArrayInvokationExpressionEmitter : IInvokationExpressionEmittable
 	{
 		public Type ElementType { get; }
 
-		public PrimitiveSizeType SizeType { get; }
+		public int KnownSize { get; }
 
-		public SendSizePrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, PrimitiveSizeType sizeType)
+		public FixedSizePrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, int knownSize)
 		{
-			if (!Enum.IsDefined(typeof(PrimitiveSizeType), sizeType)) throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(PrimitiveSizeType));
 			ElementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
-			SizeType = sizeType;
+			KnownSize = knownSize;
 
 			if (!ElementType.IsPrimitive)
 				throw new InvalidOperationException($"Type: {elementType.Name} must be primitive.");
@@ -38,7 +37,7 @@ namespace FreecraftCore.Serializer
 								SyntaxKind.SimpleMemberAccessExpression,
 								GenericName
 									(
-										Identifier(nameof(SendSizePrimitiveArrayTypeSerializerStrategy))
+										Identifier(nameof(FixedSizePrimitiveArrayTypeSerializerStrategy))
 									)
 									.WithTypeArgumentList
 									(
@@ -50,7 +49,7 @@ namespace FreecraftCore.Serializer
 													{
 														IdentifierName(ElementType.Name),
 														Token(SyntaxKind.CommaToken),
-														IdentifierName(SizeType.ToString())
+														IdentifierName(new StaticlyTypedNumericNameBuilder<Int32>(KnownSize).BuildName())
 													}
 												)
 											)
