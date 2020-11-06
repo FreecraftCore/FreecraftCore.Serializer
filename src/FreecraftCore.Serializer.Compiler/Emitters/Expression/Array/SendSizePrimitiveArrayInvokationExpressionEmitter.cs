@@ -10,7 +10,8 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class SendSizePrimitiveArrayInvokationExpressionEmitter : IInvokationExpressionEmittable
+	internal sealed class SendSizePrimitiveArrayInvokationExpressionEmitter
+		: BaseArraySerializationInvokationExpressionEmitter<SendSizePrimitiveArrayTypeSerializerStrategy>
 	{
 		public Type ElementType { get; }
 
@@ -26,56 +27,10 @@ namespace FreecraftCore.Serializer
 				throw new InvalidOperationException($"Type: {elementType.Name} must be primitive.");
 		}
 
-		public InvocationExpressionSyntax Create()
+		protected override IEnumerable<SyntaxNodeOrToken> CalculateGenericTypeParameters()
 		{
-			return InvocationExpression
-			(
-				MemberAccessExpression
-					(
-						SyntaxKind.SimpleMemberAccessExpression,
-						MemberAccessExpression
-							(
-								SyntaxKind.SimpleMemberAccessExpression,
-								GenericName
-									(
-										Identifier(nameof(SendSizePrimitiveArrayTypeSerializerStrategy))
-									)
-									.WithTypeArgumentList
-									(
-										TypeArgumentList
-											(
-												SeparatedList<TypeSyntax>
-												(
-													new SyntaxNodeOrToken[]
-													{
-														IdentifierName(ElementType.Name),
-														Token(SyntaxKind.CommaToken),
-														IdentifierName(SizeType.ToString())
-													}
-												)
-											)
-											.WithLessThanToken
-											(
-												Token(SyntaxKind.LessThanToken)
-											)
-											.WithGreaterThanToken
-											(
-												Token(SyntaxKind.GreaterThanToken)
-											)
-									),
-								IdentifierName(nameof(PrimitiveArrayTypeSerializerStrategy<int>.Instance))
-							)
-							.WithOperatorToken
-							(
-								Token(SyntaxKind.DotToken)
-							),
-						IdentifierName(nameof(PrimitiveArrayTypeSerializerStrategy<int>.Instance.Write))
-					)
-					.WithOperatorToken
-					(
-						Token(SyntaxKind.DotToken)
-					)
-			);
+			yield return IdentifierName(ElementType.Name);
+			yield return IdentifierName(SizeType.ToString());
 		}
 	}
 }

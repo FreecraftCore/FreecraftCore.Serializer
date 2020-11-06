@@ -9,7 +9,8 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class DefaultPrimitiveArrayInvokationExpressionEmitter : IInvokationExpressionEmittable
+	internal sealed class DefaultPrimitiveArrayInvokationExpressionEmitter 
+		: BaseArraySerializationInvokationExpressionEmitter<PrimitiveArrayTypeSerializerStrategy>
 	{
 		public Type ElementType { get; }
 
@@ -21,54 +22,9 @@ namespace FreecraftCore.Serializer
 				throw new InvalidOperationException($"Type: {elementType.Name} must be primitive.");
 		}
 
-		public InvocationExpressionSyntax Create()
+		protected override IEnumerable<SyntaxNodeOrToken> CalculateGenericTypeParameters()
 		{
-			return InvocationExpression
-			(
-				MemberAccessExpression
-					(
-						SyntaxKind.SimpleMemberAccessExpression,
-						MemberAccessExpression
-							(
-								SyntaxKind.SimpleMemberAccessExpression,
-								GenericName
-									(
-										Identifier(nameof(PrimitiveArrayTypeSerializerStrategy))
-									)
-									.WithTypeArgumentList
-									(
-										TypeArgumentList
-											(
-												SeparatedList<TypeSyntax>
-												(
-													new SyntaxNodeOrToken[]
-													{
-														IdentifierName(ElementType.Name)
-													}
-												)
-											)
-											.WithLessThanToken
-											(
-												Token(SyntaxKind.LessThanToken)
-											)
-											.WithGreaterThanToken
-											(
-												Token(SyntaxKind.GreaterThanToken)
-											)
-									),
-								IdentifierName(nameof(PrimitiveArrayTypeSerializerStrategy<int>.Instance))
-							)
-							.WithOperatorToken
-							(
-								Token(SyntaxKind.DotToken)
-							),
-						IdentifierName(nameof(PrimitiveArrayTypeSerializerStrategy<int>.Instance.Write))
-					)
-					.WithOperatorToken
-					(
-						Token(SyntaxKind.DotToken)
-					)
-			);
+			yield return IdentifierName(ElementType.Name);
 		}
 	}
 }
