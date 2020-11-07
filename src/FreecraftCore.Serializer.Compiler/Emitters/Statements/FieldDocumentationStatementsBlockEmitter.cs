@@ -28,7 +28,7 @@ namespace FreecraftCore.Serializer
 
 			//This is a HACK (including the slashes) but I am too dumb to figure out another way lol.
 			statements.Add(EmptyStatement()
-				.WithLeadingTrivia(Comment($"//Field: {fieldId} Name: {Member.Name} Type: {ActualType.Name}")));
+				.WithLeadingTrivia(Comment($"//Type: {Member.DeclaringType.Name} Field: {fieldId} Name: {Member.Name} Type: {ActualType.Name}")));
 
 			return statements;
 		}
