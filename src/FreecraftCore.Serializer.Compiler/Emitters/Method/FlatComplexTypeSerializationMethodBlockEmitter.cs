@@ -22,9 +22,33 @@ namespace FreecraftCore.Serializer
 			//Create a method scope, and insert statements into it.
 			SyntaxList<StatementSyntax> statements = new SyntaxList<StatementSyntax>();
 
+			List<Type> typeList = new List<Type>();
+			typeList.Add(typeof(TSerializableType));
+			Type currentType = typeof(TSerializableType).BaseType;
+
+			while (currentType != null && currentType != typeof(System.Object))
+			{
+				typeList.Add(currentType);
+				currentType = currentType.BaseType;
+			}
+
+			//Iterate backwards from top to bottom first.
+			foreach (Type t in typeList
+				.AsEnumerable()
+				.Reverse()
+				.Where(t => t.GetCustomAttribute<WireDataContractAttribute>() != null))
+			{
+				statements = EmitTypesMemberSerialization(t, statements);
+			}
+
+			return SyntaxFactory.Block(statements);
+		}
+
+		private static SyntaxList<StatementSyntax> EmitTypesMemberSerialization(Type currentType, SyntaxList<StatementSyntax> statements)
+		{
 			//Conceptually, we need to find ALL serializable members
-			foreach (MemberInfo mi in typeof(TSerializableType)
-				.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+			foreach (MemberInfo mi in currentType
+				.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly)
 				.Where(m => m.GetCustomAttribute<WireMemberAttribute>() != null)
 				.OrderBy(m => m.GetCustomAttribute<WireMemberAttribute>().MemberOrder)) //order is important, we must emit in order!!
 			{
@@ -75,7 +99,7 @@ namespace FreecraftCore.Serializer
 				//statements = statements.AddRange(new EmptyLineStatementBlockEmitter().CreateStatements());
 			}
 
-			return SyntaxFactory.Block(statements);
+			return statements;
 		}
 	}
 }
