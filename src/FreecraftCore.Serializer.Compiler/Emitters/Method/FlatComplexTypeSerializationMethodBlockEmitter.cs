@@ -62,6 +62,13 @@ namespace FreecraftCore.Serializer
 				//The serializer is requesting we DON'T WRITE THIS! So we skip
 				if (mi.GetCustomAttribute<DontWriteAttribute>() != null)
 					continue;
+				
+				//This handles OPTIONAL fields that may or may not be included
+				if (mi.GetCustomAttribute<OptionalAttribute>() != null)
+				{
+					OptionalFieldStatementsBlockEmitter emitter = new OptionalFieldStatementsBlockEmitter(memberType, mi);
+					statements = statements.AddRange(emitter.CreateStatements());
+				}
 
 				//We know the type, but we have to do special handling depending on on its type
 				if (memberType.IsPrimitive)

@@ -120,6 +120,12 @@ namespace FreecraftCore.Serializer
 		[WireMember(12)]
 		public NestedTypeStub[] ComplexArrayTest { get; internal set; }
 
+		[Optional(nameof(OptionalBoolCheck))]
+		[WireMember(13)]
+		public int OptionalValue { get; internal set; }
+
+		public bool OptionalBoolCheck { get; }
+
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
 		public int[] FinalArrayMemberWriteToEnd { get; internal set; }
