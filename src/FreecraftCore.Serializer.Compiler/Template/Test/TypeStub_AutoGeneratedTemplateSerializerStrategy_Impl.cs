@@ -20,7 +20,7 @@ namespace FreecraftCore.Serializer
         /// <param name="value">See external doc.</param>
         /// <param name="source">See external doc.</param>
         /// <param name="offset">See external doc.</param>
-        partial void GeneratedRead(TypeStub value, Span<byte> source, ref int offset)
+        protected override void InternalRead(TypeStub value, Span<byte> source, ref int offset)
         {
             throw new NotImplementedException();
         }
@@ -32,7 +32,7 @@ namespace FreecraftCore.Serializer
         /// <param name="value">See external doc.</param>
         /// <param name="destination">See external doc.</param>
         /// <param name="offset">See external doc.</param>
-        partial void GeneratedWrite(TypeStub value, Span<byte> destination, ref int offset)
+        protected override void InternalWrite(TypeStub value, Span<byte> destination, ref int offset)
         {
             //Type: BaseTypeStub Field: 1 Name: BaseIntField Type: Int32;
             GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.BaseIntField, destination, ref offset);

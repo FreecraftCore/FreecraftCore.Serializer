@@ -69,12 +69,9 @@ namespace FreecraftCore.Serializer
 
 		private void WriteSerializerStrategyClass(Type type)
 		{
-			ICompilationUnitEmittable templateEmittable = CreateEmittableTemplateSerializerStrategy(type);
 			ICompilationUnitEmittable implementationEmittable = CreateEmittableImplementationSerializerStrategy(type);
-			SyntaxNode templateFormattedNode = Formatter.Format(templateEmittable.CreateUnit(), new AdhocWorkspace());
 			SyntaxNode implementationFormattedNode = Formatter.Format(implementationEmittable.CreateUnit(), new AdhocWorkspace());
 
-			WriteEmittedFile(templateFormattedNode, templateEmittable, "Root");
 			WriteEmittedFile(implementationFormattedNode, implementationEmittable, "Impl");
 		}
 
@@ -88,14 +85,6 @@ namespace FreecraftCore.Serializer
 
 			//Write the packet file out
 			File.WriteAllText(Path.Combine(rootPath, $"{emittable.UnitName}_{appendedName}.cs"), sb.ToString());
-		}
-
-		private static ICompilationUnitEmittable CreateEmittableTemplateSerializerStrategy(Type type)
-		{
-			Type serializerTypeEmitter = typeof(SerializerTemplateCompilationUnitEmitter<>)
-				.MakeGenericType(type);
-
-			return (ICompilationUnitEmittable) Activator.CreateInstance(serializerTypeEmitter);
 		}
 
 		private static ICompilationUnitEmittable CreateEmittableImplementationSerializerStrategy(Type type)

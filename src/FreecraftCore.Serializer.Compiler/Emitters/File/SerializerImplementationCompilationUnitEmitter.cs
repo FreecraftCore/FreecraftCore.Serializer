@@ -547,7 +547,7 @@ namespace FreecraftCore.Serializer
 																	)
 																)
 															),
-															Identifier("GeneratedRead")
+															Identifier("InternalRead")
 														)
 														.WithModifiers
 														(
@@ -967,7 +967,16 @@ namespace FreecraftCore.Serializer
 																			Whitespace("		")
 																		}
 																	),
-																	SyntaxKind.PartialKeyword,
+																	SyntaxKind.ProtectedKeyword,
+																	TriviaList
+																	(
+																		Space
+																	)
+																),
+																Token
+																(
+																	TriviaList(),
+																	SyntaxKind.OverrideKeyword,
 																	TriviaList
 																	(
 																		Space
@@ -1209,7 +1218,7 @@ namespace FreecraftCore.Serializer
 																	)
 																)
 															),
-															Identifier("GeneratedWrite")
+															Identifier("InternalWrite")
 														)
 														.WithModifiers
 														(
@@ -1629,7 +1638,16 @@ namespace FreecraftCore.Serializer
 																			Whitespace("		")
 																		}
 																	),
-																	SyntaxKind.PartialKeyword,
+																	SyntaxKind.ProtectedKeyword,
+																	TriviaList
+																	(
+																		Space
+																	)
+																),
+																Token
+																(
+																	TriviaList(),
+																	SyntaxKind.OverrideKeyword,
 																	TriviaList
 																	(
 																		Space
