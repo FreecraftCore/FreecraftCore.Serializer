@@ -976,6 +976,15 @@ namespace FreecraftCore.Serializer
 																Token
 																(
 																	TriviaList(),
+																	SyntaxKind.InternalKeyword,
+																	TriviaList
+																	(
+																		Space
+																	)
+																),
+																Token
+																(
+																	TriviaList(),
 																	SyntaxKind.OverrideKeyword,
 																	TriviaList
 																	(
@@ -1639,6 +1648,15 @@ namespace FreecraftCore.Serializer
 																		}
 																	),
 																	SyntaxKind.ProtectedKeyword,
+																	TriviaList
+																	(
+																		Space
+																	)
+																),
+																Token
+																(
+																	TriviaList(),
+																	SyntaxKind.InternalKeyword,
 																	TriviaList
 																	(
 																		Space
