@@ -10,20 +10,20 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public sealed class PackedDateTimeTypeSerializerStrategy : StatelessTypeSerializerStrategy<PackedDateTimeTypeSerializerStrategy, DateTime>
 	{
-		public sealed override DateTime Read(Span<byte> source, ref int offset)
+		public sealed override DateTime Read(Span<byte> buffer, ref int offset)
 		{
 			//Based on ByteBuffer.h from the Trinitycore Project, Jackpoz's 3.3.5 packet bot and WoWPacketParser
 			//reads the packed int value from the stream
-			int packedTime = GenericTypePrimitiveSerializerStrategy<int>.Instance.Read(source, ref offset);
+			int packedTime = GenericTypePrimitiveSerializerStrategy<int>.Instance.Read(buffer, ref offset);
 			return ConvertIntegerToDateTimeRepresentation(packedTime);
 		}
 
-		public sealed override void Write(DateTime value, Span<byte> destination, ref int offset)
+		public sealed override void Write(DateTime value, Span<byte> buffer, ref int offset)
 		{
 			//Based on ByteBuffer.h from the Trinitycore Project as well as Jackpoz's 3.3.5 packet bot.
 			//Trinitycore: append<uint32>((lt.tm_year - 100) << 24 | lt.tm_mon << 20 | (lt.tm_mday - 1) << 14 | lt.tm_wday << 11 | lt.tm_hour << 6 | lt.tm_min);
 			int packedTime = ConvertDateTimeToIntegerRepresentation(ref value);
-			GenericTypePrimitiveSerializerStrategy<int>.Instance.Write(packedTime, destination, ref offset);
+			GenericTypePrimitiveSerializerStrategy<int>.Instance.Write(packedTime, buffer, ref offset);
 		}
 
 		/// <summary>

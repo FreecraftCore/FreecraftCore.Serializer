@@ -20,7 +20,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public sealed override string Read(Span<byte> source, ref int offset)
+		public sealed override string Read(Span<byte> buffer, ref int offset)
 		{
 			//We don't really need to read the data, we just need to push ourselves forward
 			offset += CharacterSize;
@@ -28,10 +28,10 @@ namespace FreecraftCore.Serializer
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public sealed override void Write(string value, Span<byte> destination, ref int offset)
+		public sealed override void Write(string value, Span<byte> buffer, ref int offset)
 		{
 			for (int i = 0; i < CharacterSize; i++)
-				destination[offset + i] = 0;
+				buffer[offset + i] = 0;
 
 			offset += CharacterSize;
 		}

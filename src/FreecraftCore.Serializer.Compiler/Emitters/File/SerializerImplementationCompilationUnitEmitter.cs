@@ -544,7 +544,7 @@ namespace FreecraftCore.Serializer
 												{
 													Parameter
 														(
-															Identifier(CompilerConstants.INPUT_BUFFER_NAME)
+															Identifier(CompilerConstants.BUFFER_NAME)
 														)
 														.WithType
 														(
@@ -589,7 +589,7 @@ namespace FreecraftCore.Serializer
 													),
 													Parameter
 														(
-															Identifier(CompilerConstants.INPUT_OFFSET_NAME)
+															Identifier(CompilerConstants.OFFSET_NAME)
 														)
 														.WithModifiers
 														(
@@ -691,7 +691,7 @@ namespace FreecraftCore.Serializer
 																		),
 																		Argument
 																		(
-																			IdentifierName(CompilerConstants.INPUT_BUFFER_NAME)
+																			IdentifierName(CompilerConstants.BUFFER_NAME)
 																		),
 																		Token
 																		(
@@ -704,7 +704,7 @@ namespace FreecraftCore.Serializer
 																		),
 																		Argument
 																			(
-																				IdentifierName(CompilerConstants.INPUT_OFFSET_NAME)
+																				IdentifierName(CompilerConstants.OFFSET_NAME)
 																			)
 																			.WithRefKindKeyword
 																			(
@@ -898,7 +898,7 @@ namespace FreecraftCore.Serializer
 													),
 													Parameter
 														(
-															Identifier(CompilerConstants.OUTPUT_BUFFER_NAME)
+															Identifier(CompilerConstants.BUFFER_NAME)
 														)
 														.WithType
 														(
@@ -943,7 +943,7 @@ namespace FreecraftCore.Serializer
 													),
 													Parameter
 														(
-															Identifier(CompilerConstants.OUTPUT_OFFSET_NAME)
+															Identifier(CompilerConstants.OFFSET_NAME)
 														)
 														.WithModifiers
 														(
@@ -1047,7 +1047,7 @@ namespace FreecraftCore.Serializer
 																			),
 																			Argument
 																			(
-																				IdentifierName(CompilerConstants.OUTPUT_BUFFER_NAME)
+																				IdentifierName(CompilerConstants.BUFFER_NAME)
 																			),
 																			Token
 																			(
@@ -1060,7 +1060,7 @@ namespace FreecraftCore.Serializer
 																			),
 																			Argument
 																				(
-																					IdentifierName(CompilerConstants.OUTPUT_OFFSET_NAME)
+																					IdentifierName(CompilerConstants.OFFSET_NAME)
 																				)
 																				.WithRefKindKeyword
 																				(
@@ -1897,7 +1897,7 @@ namespace FreecraftCore.Serializer
 																												)
 																											),
 																											Token(SyntaxKind.DoubleQuoteToken),
-																											IdentifierName("source"),
+																											IdentifierName("buffer"),
 																											Token(SyntaxKind.DoubleQuoteToken)
 																										)
 																									)
@@ -2089,7 +2089,7 @@ namespace FreecraftCore.Serializer
 																	),
 																	Parameter
 																		(
-																			Identifier("source")
+																			Identifier("buffer")
 																		)
 																		.WithType
 																		(
@@ -2522,7 +2522,7 @@ namespace FreecraftCore.Serializer
 																												)
 																											),
 																											Token(SyntaxKind.DoubleQuoteToken),
-																											IdentifierName("destination"),
+																											IdentifierName("buffer"),
 																											Token(SyntaxKind.DoubleQuoteToken)
 																										)
 																									)
@@ -2714,7 +2714,7 @@ namespace FreecraftCore.Serializer
 																	),
 																	Parameter
 																		(
-																			Identifier("destination")
+																			Identifier("buffer")
 																		)
 																		.WithType
 																		(

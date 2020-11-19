@@ -33,26 +33,26 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public sealed override unsafe T[] Read(Span<byte> source, ref int offset)
+		public sealed override unsafe T[] Read(Span<byte> buffer, ref int offset)
 		{
 			//This is SUPER inefficient, causing MANY allocations and a BIG allocation and copy at the end
 			//This should ONLY ever be used if we absolutely do not and cannot know how many elements there are.
 			List<T> tempList = new List<T>();
 
-			while(offset < source.Length)
-				tempList.Add(DecoratedSerializer.Read(source, ref offset));
+			while(offset < buffer.Length)
+				tempList.Add(DecoratedSerializer.Read(buffer, ref offset));
 
 			return tempList.ToArray();
 		}
 
 		/// <inheritdoc />
-		public sealed override unsafe void Write(T[] value, Span<byte> destination, ref int offset)
+		public sealed override unsafe void Write(T[] value, Span<byte> buffer, ref int offset)
 		{
 			if (value.Length == 0)
 				return;
 
 			for (int i = 0; i < value.Length; i++)
-				DecoratedSerializer.Write(value[i], destination, ref offset);
+				DecoratedSerializer.Write(value[i], buffer, ref offset);
 		}
 	}
 }

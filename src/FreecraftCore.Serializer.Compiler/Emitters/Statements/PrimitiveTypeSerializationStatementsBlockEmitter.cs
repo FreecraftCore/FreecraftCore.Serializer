@@ -27,7 +27,7 @@ namespace FreecraftCore.Serializer
 			List<StatementSyntax> statements = new List<StatementSyntax>();
 			string typeName = new TypeNameStringBuilder(ActualType).ToString();
 
-			//GenericTypePrimitiveSerializerStrategy<int>.Instance.Write(value, destination, ref offset);
+			//GenericTypePrimitiveSerializerStrategy<int>.Instance.Write(value, buffer, ref offset);
 			statements.Add(new RawPrimitiveTypeSerializationGenerator(Member.Name, typeName, Mode).Create());
 
 			return statements;

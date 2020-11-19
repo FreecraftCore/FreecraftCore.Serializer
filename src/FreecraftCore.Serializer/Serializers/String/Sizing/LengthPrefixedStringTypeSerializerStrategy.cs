@@ -40,9 +40,9 @@ namespace FreecraftCore.Serializer
 			
 		}
 
-		public sealed override string Read(Span<byte> source, ref int offset)
+		public sealed override string Read(Span<byte> buffer, ref int offset)
 		{
-			int length = CalculateIncomingStringLength(source, ref offset);
+			int length = CalculateIncomingStringLength(buffer, ref offset);
 
 			if(length == 0)
 				return String.Empty;
@@ -50,50 +50,50 @@ namespace FreecraftCore.Serializer
 			//Null terminator is missing??
 			if (length < MaximumCharacterSize)
 			{
-				DecoratedTerminatorStrategy.Read(source, ref offset);
+				DecoratedTerminatorStrategy.Read(buffer, ref offset);
 				return String.Empty;
 			}
 
 			//Read until terminator is found, then we skip over terminator in the buffer.
 			//Slice just incase invalid data and terminator isn't there.
-			string value = DecoratedSerializer.Read(source.Slice(0, (length - 1) * MaximumCharacterSize + offset), ref offset);
-			DecoratedTerminatorStrategy.Read(source, ref offset);
+			string value = DecoratedSerializer.Read(buffer.Slice(0, (length - 1) * MaximumCharacterSize + offset), ref offset);
+			DecoratedTerminatorStrategy.Read(buffer, ref offset);
 
 			return value;
 		}
 
-		private int CalculateIncomingStringLength(Span<byte> source, ref int offset)
+		private int CalculateIncomingStringLength(Span<byte> buffer, ref int offset)
 		{
 			//This is complicated, we generically deserialize the primitive length BUT we run into the issue
 			//where we NEED a true non-generic primitive to add (without generic math dependency) so we must
 			//then do an Unsafe cast. We cannot realistically have a buffer bigger than 2 billion bytes anyway, no matter how it's
 			//encoded so this is probably safe to do.
-			TLengthType length = GenericTypePrimitiveSerializerStrategy<TLengthType>.Instance.Read(source, ref offset);
+			TLengthType length = GenericTypePrimitiveSerializerStrategy<TLengthType>.Instance.Read(buffer, ref offset);
 			int stringLength = Unsafe.As<TLengthType, int>(ref length);
 			return stringLength;
 		}
 
-		public sealed override void Write(string value, Span<byte> destination, ref int offset)
+		public sealed override void Write(string value, Span<byte> buffer, ref int offset)
 		{
 			//WARNING: Doing use this calculated string length in ANYTHING but writing, it may contain adjusted sizes.
 			//We must write the length prefix first into the buffer
 			int stringLength = CalculateOutgoingStringLength(value);
 			stringLength++; //add terminator character
-			GenericTypePrimitiveSerializerStrategy<TLengthType>.Instance.Write(Unsafe.As<int, TLengthType>(ref stringLength), destination, ref offset);
+			GenericTypePrimitiveSerializerStrategy<TLengthType>.Instance.Write(Unsafe.As<int, TLengthType>(ref stringLength), buffer, ref offset);
 
 			int expectedByteLength = value.Length * MaximumCharacterSize;
 			int lastOffset = offset;
-			DecoratedSerializer.Write(value, destination.Slice(0, expectedByteLength + offset), ref offset);
+			DecoratedSerializer.Write(value, buffer.Slice(0, expectedByteLength + offset), ref offset);
 
 			//TODO: This is a COMPLETE hack that should be toggleable honestly.
 			//This isn't *really* how we should handle variable length encodings and stuff, but PSOBB does fixed-length UTF16 for fixed/known size
 			//So to compensate for this we adjust the buffer offset to pretend we're fixed-length
 			if (offset != lastOffset + expectedByteLength)
 				while(offset < lastOffset + expectedByteLength)
-					GenericTypePrimitiveSerializerStrategy<byte>.Instance.Write(0, destination, ref offset);
+					GenericTypePrimitiveSerializerStrategy<byte>.Instance.Write(0, buffer, ref offset);
 
 			//Now we can write terminator
-			DecoratedTerminatorStrategy.Write(value, destination, ref offset);
+			DecoratedTerminatorStrategy.Write(value, buffer, ref offset);
 		}
 
 		private static int CalculateOutgoingStringLength(string value)

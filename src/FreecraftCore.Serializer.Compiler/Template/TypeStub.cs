@@ -66,12 +66,12 @@ namespace FreecraftCore.Serializer
 
 	public sealed class TestCustomSerializer : StatelessTypeSerializerStrategy<TestCustomSerializer, int>
 	{
-		public override int Read(Span<byte> source, ref int offset)
+		public override int Read(Span<byte> buffer, ref int offset)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void Write(int value, Span<byte> destination, ref int offset)
+		public override void Write(int value, Span<byte> buffer, ref int offset)
 		{
 			throw new NotImplementedException();
 		}

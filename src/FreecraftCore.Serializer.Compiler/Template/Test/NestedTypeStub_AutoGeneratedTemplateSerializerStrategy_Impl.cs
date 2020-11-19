@@ -18,9 +18,9 @@ namespace FreecraftCore.Serializer
         /// Partial method implemented from shared partial definition.
         /// </summary>
         /// <param name="value">See external doc.</param>
-        /// <param name="source">See external doc.</param>
+        /// <param name="buffer">See external doc.</param>
         /// <param name="offset">See external doc.</param>
-        protected internal override void InternalRead(NestedTypeStub value, Span<byte> source, ref int offset)
+        protected internal override void InternalRead(NestedTypeStub value, Span<byte> buffer, ref int offset)
         {
             throw new NotImplementedException();
         }
@@ -30,9 +30,9 @@ namespace FreecraftCore.Serializer
         /// Partial method implemented from shared partial definition.
         /// </summary>
         /// <param name="value">See external doc.</param>
-        /// <param name="destination">See external doc.</param>
+        /// <param name="buffer">See external doc.</param>
         /// <param name="offset">See external doc.</param>
-        protected internal override void InternalWrite(NestedTypeStub value, Span<byte> destination, ref int offset)
+        protected internal override void InternalWrite(NestedTypeStub value, Span<byte> buffer, ref int offset)
         {
 
         }

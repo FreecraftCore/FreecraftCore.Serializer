@@ -43,7 +43,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public sealed override unsafe T[] Read(Span<byte> source, ref int offset)
+		public sealed override unsafe T[] Read(Span<byte> buffer, ref int offset)
 		{
 			if(FixedSize.Value == 0)
 				return Array.Empty<T>();
@@ -52,19 +52,19 @@ namespace FreecraftCore.Serializer
 			T[] collection = new T[FixedSize.Value];
 
 			for(int i = 0; i < FixedSize.Value; i++)
-				collection[i] = DecoratedSerializer.Read(source, ref offset);
+				collection[i] = DecoratedSerializer.Read(buffer, ref offset);
 
 			return collection;
 		}
 
 		/// <inheritdoc />
-		public sealed override unsafe void Write(T[] value, Span<byte> destination, ref int offset)
+		public sealed override unsafe void Write(T[] value, Span<byte> buffer, ref int offset)
 		{
 			if (value.Length != FixedSize.Value)
 				ThrowNotCorrectSize(value.Length, FixedSize.Value);
 
 			for (int i = 0; i < FixedSize.Value; i++)
-				DecoratedSerializer.Write(value[i], destination, ref offset);
+				DecoratedSerializer.Write(value[i], buffer, ref offset);
 		}
 
 		private static void ThrowNotCorrectSize(int actualSize, int expectedSize)

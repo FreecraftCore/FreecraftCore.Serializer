@@ -23,9 +23,9 @@ namespace FreecraftCore.Serializer
 		where TSizeType : unmanaged
 	{
 		/// <inheritdoc />
-		public sealed override unsafe T[] Read(Span<byte> source, ref int offset)
+		public sealed override unsafe T[] Read(Span<byte> buffer, ref int offset)
 		{
-			TSizeType size = GenericTypePrimitiveSerializerStrategy<TSizeType>.Instance.Read(source, ref offset);
+			TSizeType size = GenericTypePrimitiveSerializerStrategy<TSizeType>.Instance.Read(buffer, ref offset);
 			int sizeInt = Unsafe.As<TSizeType, int>(ref size);
 			int elementSize = MarshalSizeOf<T>.SizeOf;
 
@@ -34,22 +34,22 @@ namespace FreecraftCore.Serializer
 
 			//We must limit the size so that when we call the basic array serializer
 			//it'll know and understand the array size implicitly.
-			source = source.Slice(0, offset + elementSize * sizeInt);
+			buffer = buffer.Slice(0, offset + elementSize * sizeInt);
 
-			return PrimitiveArrayTypeSerializerStrategy<T>.Instance.Read(source, ref offset);
+			return PrimitiveArrayTypeSerializerStrategy<T>.Instance.Read(buffer, ref offset);
 		}
 
 		/// <inheritdoc />
-		public sealed override unsafe void Write(T[] value, Span<byte> destination, ref int offset)
+		public sealed override unsafe void Write(T[] value, Span<byte> buffer, ref int offset)
 		{
 			//Size needs writing even if 0
 			int valueLength = value.Length;
-			GenericTypePrimitiveSerializerStrategy<TSizeType>.Instance.Write(Unsafe.As<int, TSizeType>(ref valueLength), destination, ref offset);
+			GenericTypePrimitiveSerializerStrategy<TSizeType>.Instance.Write(Unsafe.As<int, TSizeType>(ref valueLength), buffer, ref offset);
 
 			if(value.Length == 0)
 				return;
 
-			PrimitiveArrayTypeSerializerStrategy<T>.Instance.Write(value, destination, ref offset);
+			PrimitiveArrayTypeSerializerStrategy<T>.Instance.Write(value, buffer, ref offset);
 		}
 	}
 }

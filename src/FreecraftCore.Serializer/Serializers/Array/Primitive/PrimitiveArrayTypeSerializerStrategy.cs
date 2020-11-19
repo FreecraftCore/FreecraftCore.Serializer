@@ -27,13 +27,13 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public sealed override unsafe T[] Read(Span<byte> source, ref int offset)
+		public sealed override unsafe T[] Read(Span<byte> buffer, ref int offset)
 		{
 			//Easier to shift here than later.
-			source = source.Slice(offset);
+			buffer = buffer.Slice(offset);
 
 			int elementSize = MarshalSizeOf<T>.SizeOf;
-			int elementCount = (source.Length) / elementSize;
+			int elementCount = (buffer.Length) / elementSize;
 
 			if (elementSize == 0 || elementCount == 0)
 				return Array.Empty<T>();
@@ -43,11 +43,11 @@ namespace FreecraftCore.Serializer
 			//conceptually this should fit all deserializable elements here.
 			//We then want to PIN the binary chunk in the span and do an unsafe block copy
 			//which we must also unsafely pin
-			T[] elementArray = new T[source.Length / elementSize];
-			fixed (byte* bytes = &source.GetPinnableReference())
+			T[] elementArray = new T[buffer.Length / elementSize];
+			fixed (byte* bytes = &buffer.GetPinnableReference())
 			fixed (void* pinnedArray = &elementArray[0]) //This pin is VERY important, otherwise GC could maybe move it.
 			{
-				Unsafe.CopyBlock(pinnedArray, bytes, (uint) source.Length);
+				Unsafe.CopyBlock(pinnedArray, bytes, (uint) buffer.Length);
 			}
 
 			offset += elementSize * elementCount;
@@ -55,20 +55,20 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public sealed override unsafe void Write(T[] value, Span<byte> destination, ref int offset)
+		public sealed override unsafe void Write(T[] value, Span<byte> buffer, ref int offset)
 		{
 			if (value.Length == 0)
 				return;
 
 			//Easier to shift here than later.
-			destination = destination.Slice(offset);
+			buffer = buffer.Slice(offset);
 			int elementSize = MarshalSizeOf<T>.SizeOf;
 			int elementsByteSize = elementSize * value.Length;
 
 			if (elementSize == 0)
 				return;
 
-			fixed(byte* bytes = &destination.GetPinnableReference())
+			fixed(byte* bytes = &buffer.GetPinnableReference())
 			fixed(void* pinnedArray = &value[0]) //This pin is VERY important, otherwise GC could maybe move it.
 			{
 				Unsafe.CopyBlock(bytes, pinnedArray, (uint)elementsByteSize);

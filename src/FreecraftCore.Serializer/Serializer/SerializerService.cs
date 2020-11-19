@@ -19,7 +19,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		/// <inheritdoc />
-		public T Read<T>(Span<byte> source, ref int offset) 
+		public T Read<T>(Span<byte> buffer, ref int offset) 
 			where T : IWireMessage<T>
 		{
 			//To support polymorphic serialization this hack was invented, requiring polymorphic
@@ -27,22 +27,22 @@ namespace FreecraftCore.Serializer
 			if (typeof(T).IsValueType || !typeof(T).IsAbstract)
 			{
 				return Activator.CreateInstance<T>()
-					.Read(source, ref offset);
+					.Read(buffer, ref offset);
 			}
 			else
 			{
 				//This is the case where we have a non-newable abstract type
 				//that actually cannot be construted and read as a WireMessage type
 				return ((ITypeSerializerStrategy<T>) PolymorphicSerializers[typeof(T)])
-					.Read(source, ref offset);
+					.Read(buffer, ref offset);
 			}
 		}
 
 		/// <inheritdoc />
-		public void Write<T>(T value, Span<byte> destination, ref int offset) 
+		public void Write<T>(T value, Span<byte> buffer, ref int offset) 
 			where T : IWireMessage<T>
 		{
-			value.Write(value, destination, ref offset);
+			value.Write(value, buffer, ref offset);
 		}
 
 		public void RegisterPolymorphicSerializer<TSerializerType>() 

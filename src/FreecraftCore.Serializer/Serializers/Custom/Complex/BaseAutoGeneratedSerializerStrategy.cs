@@ -17,37 +17,37 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// Auto-generated deserialization/read code.
 		/// </summary>
-		/// <param name="source">The buffer to read from.</param>
+		/// <param name="buffer">The buffer to read from.</param>
 		/// <param name="offset">Initial offset into the buffer.</param>
 		/// <returns>Deserialized instance of the requested Type.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public override T Read(Span<byte> source, ref int offset)
+		public override T Read(Span<byte> buffer, ref int offset)
 		{
 			//This dispatches to the partial private method implemented in a simplier Roslyn generated form.
 			T value = new T();
-			InternalRead(value, source, ref offset);
+			InternalRead(value, buffer, ref offset);
 			return value;
 		}
 
 		//Partial externally implemented deserialization.
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected internal abstract void InternalRead(T value, Span<byte> source, ref int offset);
+		protected internal abstract void InternalRead(T value, Span<byte> buffer, ref int offset);
 
 		/// <summary>
 		/// Auto-generated serialization/write code.
 		/// </summary>
 		/// <param name="value">The value to write.</param>
-		/// <param name="destination">The destination buffer to write to.</param>
+		/// <param name="buffer">The destination buffer to write to.</param>
 		/// <param name="offset">Initial offset into the buffer.</param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public sealed override void Write(T value, Span<byte> destination, ref int offset)
+		public sealed override void Write(T value, Span<byte> buffer, ref int offset)
 		{
 			//This dispatches to the partial private method implemented in a simplier Roslyn generated form.
-			InternalWrite(value, destination, ref offset);
+			InternalWrite(value, buffer, ref offset);
 		}
 
 		//Partial externally implemented serialization.
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected internal abstract void InternalWrite(T value, Span<byte> destination, ref int offset);
+		protected internal abstract void InternalWrite(T value, Span<byte> buffer, ref int offset);
 	}
 }

@@ -106,7 +106,7 @@ namespace FreecraftCore.Serializer
 			{
 				Argument
 				(
-					IdentifierName(CompilerConstants.OUTPUT_BUFFER_NAME)
+					IdentifierName(CompilerConstants.BUFFER_NAME)
 				),
 				Token
 				(
@@ -119,7 +119,7 @@ namespace FreecraftCore.Serializer
 				),
 				Argument
 					(
-						IdentifierName(CompilerConstants.OUTPUT_OFFSET_NAME)
+						IdentifierName(CompilerConstants.OFFSET_NAME)
 					)
 					.WithRefKindKeyword
 					(

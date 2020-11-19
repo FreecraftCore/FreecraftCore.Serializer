@@ -23,18 +23,18 @@ namespace FreecraftCore.Serializer
 
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public override TType Read(Span<byte> source, ref int offset)
+		public override TType Read(Span<byte> buffer, ref int offset)
 		{
-			TType value = Unsafe.ReadUnaligned<TType>(ref source[offset]);
+			TType value = Unsafe.ReadUnaligned<TType>(ref buffer[offset]);
 			offset += MarshalSizeOf<TType>.SizeOf;
 			return value;
 		}
 
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public override void Write(TType value, Span<byte> destination, ref int offset)
+		public override void Write(TType value, Span<byte> buffer, ref int offset)
 		{
-			Unsafe.As<byte, TType>(ref destination[offset]) = value;
+			Unsafe.As<byte, TType>(ref buffer[offset]) = value;
 			offset += MarshalSizeOf<TType>.SizeOf;
 		}
 	}

@@ -18,20 +18,20 @@ namespace FreecraftCore.Serializer
 	{
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public sealed override TEnumType Read(Span<byte> source, ref int offset)
+		public sealed override TEnumType Read(Span<byte> buffer, ref int offset)
 		{
 			//Assume that the "decorated" primitive serializer handles offset
-			TEncodedPrimitiveType value = GenericTypePrimitiveSerializerStrategy<TEncodedPrimitiveType>.Instance.Read(source, ref offset);
+			TEncodedPrimitiveType value = GenericTypePrimitiveSerializerStrategy<TEncodedPrimitiveType>.Instance.Read(buffer, ref offset);
 			return Unsafe.As<TEncodedPrimitiveType, TEnumType>(ref value);
 		}
 
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public sealed override void Write(TEnumType value, Span<byte> destination, ref int offset)
+		public sealed override void Write(TEnumType value, Span<byte> buffer, ref int offset)
 		{
 			//Assume that the "decorated" primitive serializer handles offset
 			TEncodedPrimitiveType primitiveValue = Unsafe.As<TEnumType, TEncodedPrimitiveType>(ref value);
-			GenericTypePrimitiveSerializerStrategy<TEncodedPrimitiveType>.Instance.Write(primitiveValue, destination, ref offset);
+			GenericTypePrimitiveSerializerStrategy<TEncodedPrimitiveType>.Instance.Write(primitiveValue, buffer, ref offset);
 		}
 	}
 }

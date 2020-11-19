@@ -21,12 +21,12 @@ namespace FreecraftCore.Serializer
 
 		}
 
-		public sealed override unsafe string Read(Span<byte> source, ref int offset)
+		public sealed override unsafe string Read(Span<byte> buffer, ref int offset)
 		{
 			//Review the source for Trinitycore's string reading for their ByteBuffer (payload/packet) Type.
-			//(ctr+f >> for std::string): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_source.html
+			//(ctr+f >> for std::string): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_buffer.html
 			//They use 0 byte to terminate the string in the stream
-			source = source.Slice(offset);
+			buffer = buffer.Slice(offset);
 
 			//This is used to track larger than 1 char null terminators
 			bool terminatorFound = false;
@@ -37,14 +37,14 @@ namespace FreecraftCore.Serializer
 			//Read a byte from the stream; Stop when we find a 0
 			//OR if we exceed the provided string length. MEANING that we found the end of a non-null terminated string.
 			//Or a KNOWN SIZE string.
-			for(int index = 0; index < source.Length && !terminatorFound; index += CharacterSize)
+			for(int index = 0; index < buffer.Length && !terminatorFound; index += CharacterSize)
 			{
 				currentByteCount += CharacterSize;
 
 				//If all are 0 (we found null terminator) and terminator will be TRUE and we break out.
 				terminatorFound = true;
-				for (int i = 0; i < CharacterSize && index + i < source.Length; i++) //important to make sure we don't go outside the bounds
-					if (source[index + i] != 0)
+				for (int i = 0; i < CharacterSize && index + i < buffer.Length; i++) //important to make sure we don't go outside the bounds
+					if (buffer[index + i] != 0)
 					{
 						terminatorFound = false;
 						break;
@@ -61,7 +61,7 @@ namespace FreecraftCore.Serializer
 			}
 
 			//To access the underlying memory to convert it to a string we must
-			fixed(byte* bytes = &source.GetPinnableReference())
+			fixed(byte* bytes = &buffer.GetPinnableReference())
 			{
 				//This serializer DOESN'T discard the null terminator so don't offset by it if found.
 				int trueStringSize = terminatorFound ? currentByteCount - CharacterSize : currentByteCount;
@@ -72,23 +72,23 @@ namespace FreecraftCore.Serializer
 			}
 		}
 
-		public sealed override unsafe void Write(string value, Span<byte> destination, ref int offset)
+		public sealed override unsafe void Write(string value, Span<byte> buffer, ref int offset)
 		{
 			//Review the source for Trinitycore's string reading for their ByteBuffer (payload/packet) Type.
-			//(ctr+f << for std::string): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_source.html
+			//(ctr+f << for std::string): http://www.trinitycore.net/d1/d17/ByteBuffer_8h_buffer.html
 			//They use 0 byte to terminate the string in the stream
-			destination = destination.Slice(offset);
+			buffer = buffer.Slice(offset);
 
 			//We should check this so we don't try to decode
 			//or write null. Null should be considered empty.
 			if(!String.IsNullOrEmpty(value))
 			{
 				fixed(char* chars = value)
-				fixed(byte* bytes = &destination.GetPinnableReference())
+				fixed(byte* bytes = &buffer.GetPinnableReference())
 				{
 					//Shift forward by offset, otherwise we read wrong data!!
 					//Wrote string so NOW we need to shift the offset
-					offset += EncodingStrategy.GetBytes(chars, value.Length, bytes, destination.Length);
+					offset += EncodingStrategy.GetBytes(chars, value.Length, bytes, buffer.Length);
 				}
 			}
 		}

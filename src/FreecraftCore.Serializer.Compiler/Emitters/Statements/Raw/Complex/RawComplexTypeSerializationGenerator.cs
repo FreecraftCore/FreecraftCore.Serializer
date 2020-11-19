@@ -49,14 +49,14 @@ namespace FreecraftCore.Serializer
 		{
 			return new SyntaxNodeOrToken[]{
 				Argument(
-					IdentifierName(CompilerConstants.OUTPUT_BUFFER_NAME)),
+					IdentifierName(CompilerConstants.BUFFER_NAME)),
 				Token(
 					TriviaList(),
 					SyntaxKind.CommaToken,
 					TriviaList(
 						Space)),
 				Argument(
-						IdentifierName(CompilerConstants.OUTPUT_OFFSET_NAME))
+						IdentifierName(CompilerConstants.OFFSET_NAME))
 					.WithRefKindKeyword(
 						Token(
 							TriviaList(),

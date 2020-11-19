@@ -35,10 +35,10 @@ namespace FreecraftCore.Serializer
 
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public abstract T Read(Span<byte> source, ref int offset);
+		public abstract T Read(Span<byte> buffer, ref int offset);
 
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public abstract void Write(T value, Span<byte> destination, ref int offset);
+		public abstract void Write(T value, Span<byte> buffer, ref int offset);
 	}
 }

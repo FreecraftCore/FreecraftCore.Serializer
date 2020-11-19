@@ -29,7 +29,7 @@ namespace FreecraftCore.Serializer
 		private static TStaticTypedSizeValueType FixedSize { get; } = new TStaticTypedSizeValueType();
 
 		/// <inheritdoc />
-		public sealed override unsafe T[] Read(Span<byte> source, ref int offset)
+		public sealed override unsafe T[] Read(Span<byte> buffer, ref int offset)
 		{
 			int size = FixedSize.Value;
 			int elementSize = MarshalSizeOf<T>.SizeOf;
@@ -39,18 +39,18 @@ namespace FreecraftCore.Serializer
 
 			//We must limit the size so that when we call the basic array serializer
 			//it'll know and understand the array size implicitly.
-			source = source.Slice(0, offset + elementSize * size);
+			buffer = buffer.Slice(0, offset + elementSize * size);
 
-			return PrimitiveArrayTypeSerializerStrategy<T>.Instance.Read(source, ref offset);
+			return PrimitiveArrayTypeSerializerStrategy<T>.Instance.Read(buffer, ref offset);
 		}
 
 		/// <inheritdoc />
-		public sealed override unsafe void Write(T[] value, Span<byte> destination, ref int offset)
+		public sealed override unsafe void Write(T[] value, Span<byte> buffer, ref int offset)
 		{
 			if(value.Length != FixedSize.Value)
 				ThrowNotCorrectSize(value.Length, FixedSize.Value);
 
-			PrimitiveArrayTypeSerializerStrategy<T>.Instance.Write(value, destination, ref offset);
+			PrimitiveArrayTypeSerializerStrategy<T>.Instance.Write(value, buffer, ref offset);
 		}
 
 		private static void ThrowNotCorrectSize(int actualSize, int expectedSize)

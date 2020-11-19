@@ -8,30 +8,30 @@ namespace FreecraftCore.Serializer
 	public static class DefaultStringSerializerHelper
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static string Read(Span<byte> source, ref int offset, EncodingType encoding, bool shouldTerminate)
+		public static string Read(Span<byte> buffer, ref int offset, EncodingType encoding, bool shouldTerminate)
 		{
 			string value;
 			switch (encoding)
 			{
 				case EncodingType.ASCII:
-					value = ASCIIStringTypeSerializerStrategy.Instance.Read(source, ref offset);
+					value = ASCIIStringTypeSerializerStrategy.Instance.Read(buffer, ref offset);
 					if (shouldTerminate)
-						ASCIIStringTerminatorTypeSerializerStrategy.Instance.Read(source, ref offset);
+						ASCIIStringTerminatorTypeSerializerStrategy.Instance.Read(buffer, ref offset);
 					return value;
 				case EncodingType.UTF16:
-					value = UTF16StringTypeSerializerStrategy.Instance.Read(source, ref offset);
+					value = UTF16StringTypeSerializerStrategy.Instance.Read(buffer, ref offset);
 					if(shouldTerminate)
-						UTF16StringTerminatorTypeSerializerStrategy.Instance.Read(source, ref offset);
+						UTF16StringTerminatorTypeSerializerStrategy.Instance.Read(buffer, ref offset);
 					return value;
 				case EncodingType.UTF32:
-					value = UTF32StringTypeSerializerStrategy.Instance.Read(source, ref offset);
+					value = UTF32StringTypeSerializerStrategy.Instance.Read(buffer, ref offset);
 					if(shouldTerminate)
-						UTF32StringTerminatorTypeSerializerStrategy.Instance.Read(source, ref offset);
+						UTF32StringTerminatorTypeSerializerStrategy.Instance.Read(buffer, ref offset);
 					return value;
 				case EncodingType.UTF8:
-					value = UTF8StringTypeSerializerStrategy.Instance.Read(source, ref offset);
+					value = UTF8StringTypeSerializerStrategy.Instance.Read(buffer, ref offset);
 					if(shouldTerminate)
-						UTF8StringTerminatorTypeSerializerStrategy.Instance.Read(source, ref offset);
+						UTF8StringTerminatorTypeSerializerStrategy.Instance.Read(buffer, ref offset);
 					return value;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(encoding), encoding, null);
@@ -39,29 +39,29 @@ namespace FreecraftCore.Serializer
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Write(string value, Span<byte> destination,  ref int offset, EncodingType encoding, bool shouldTerminate)
+		public static void Write(string value, Span<byte> buffer,  ref int offset, EncodingType encoding, bool shouldTerminate)
 		{
 			switch(encoding)
 			{
 				case EncodingType.ASCII:
-					ASCIIStringTypeSerializerStrategy.Instance.Write(value, destination, ref offset);
+					ASCIIStringTypeSerializerStrategy.Instance.Write(value, buffer, ref offset);
 					if(shouldTerminate)
-						ASCIIStringTerminatorTypeSerializerStrategy.Instance.Write(value, destination, ref offset);
+						ASCIIStringTerminatorTypeSerializerStrategy.Instance.Write(value, buffer, ref offset);
 					break;
 				case EncodingType.UTF16:
-					UTF16StringTypeSerializerStrategy.Instance.Write(value, destination, ref offset);
+					UTF16StringTypeSerializerStrategy.Instance.Write(value, buffer, ref offset);
 					if(shouldTerminate)
-						UTF16StringTerminatorTypeSerializerStrategy.Instance.Write(value, destination, ref offset);
+						UTF16StringTerminatorTypeSerializerStrategy.Instance.Write(value, buffer, ref offset);
 					break;
 				case EncodingType.UTF32:
-					UTF32StringTypeSerializerStrategy.Instance.Write(value, destination, ref offset);
+					UTF32StringTypeSerializerStrategy.Instance.Write(value, buffer, ref offset);
 					if(shouldTerminate)
-						UTF32StringTerminatorTypeSerializerStrategy.Instance.Write(value, destination, ref offset);
+						UTF32StringTerminatorTypeSerializerStrategy.Instance.Write(value, buffer, ref offset);
 					break;
 				case EncodingType.UTF8:
-					UTF8StringTypeSerializerStrategy.Instance.Write(value, destination, ref offset);
+					UTF8StringTypeSerializerStrategy.Instance.Write(value, buffer, ref offset);
 					if(shouldTerminate)
-						UTF8StringTerminatorTypeSerializerStrategy.Instance.Write(value, destination, ref offset);
+						UTF8StringTerminatorTypeSerializerStrategy.Instance.Write(value, buffer, ref offset);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(encoding), encoding, null);

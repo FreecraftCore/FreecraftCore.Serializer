@@ -8,7 +8,7 @@ namespace FreecraftCore.Serializer
 	public static class KnownSizeStringSerializerHelper
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static string Read(Span<byte> source, ref int offset,
+		public static string Read(Span<byte> buffer, ref int offset,
 			int fixedSize, EncodingType encodingType, bool shouldTerminate) //optional args
 		{
 			if (fixedSize == 0)
@@ -17,20 +17,20 @@ namespace FreecraftCore.Serializer
 			switch (encodingType)
 			{
 				case EncodingType.ASCII:
-					return ReadFixedLength(ASCIIStringTypeSerializerStrategy.Instance, ASCIIStringTerminatorTypeSerializerStrategy.Instance, source, ref offset, fixedSize, shouldTerminate);
+					return ReadFixedLength(ASCIIStringTypeSerializerStrategy.Instance, ASCIIStringTerminatorTypeSerializerStrategy.Instance, buffer, ref offset, fixedSize, shouldTerminate);
 				case EncodingType.UTF16:
-					return ReadFixedLength(UTF16StringTypeSerializerStrategy.Instance, UTF16StringTerminatorTypeSerializerStrategy.Instance, source, ref offset, fixedSize, shouldTerminate);
+					return ReadFixedLength(UTF16StringTypeSerializerStrategy.Instance, UTF16StringTerminatorTypeSerializerStrategy.Instance, buffer, ref offset, fixedSize, shouldTerminate);
 				case EncodingType.UTF32:
-					return ReadFixedLength(UTF32StringTypeSerializerStrategy.Instance, UTF32StringTerminatorTypeSerializerStrategy.Instance, source, ref offset, fixedSize, shouldTerminate);
+					return ReadFixedLength(UTF32StringTypeSerializerStrategy.Instance, UTF32StringTerminatorTypeSerializerStrategy.Instance, buffer, ref offset, fixedSize, shouldTerminate);
 				case EncodingType.UTF8:
-					return ReadFixedLength(UTF8StringTypeSerializerStrategy.Instance, UTF8StringTerminatorTypeSerializerStrategy.Instance, source, ref offset, fixedSize, shouldTerminate);
+					return ReadFixedLength(UTF8StringTypeSerializerStrategy.Instance, UTF8StringTerminatorTypeSerializerStrategy.Instance, buffer, ref offset, fixedSize, shouldTerminate);
 				default:
 					throw new ArgumentOutOfRangeException(nameof(encodingType), encodingType, null);
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Write(string value, Span<byte> destination, ref int offset, 
+		public static void Write(string value, Span<byte> buffer, ref int offset, 
 			int fixedSize, EncodingType encodingType, bool shouldTerminate) //optional args
 		{
 			if (fixedSize == 0)
@@ -40,16 +40,16 @@ namespace FreecraftCore.Serializer
 			switch (encodingType)
 			{
 				case EncodingType.ASCII:
-					WriteFixedLength(ASCIIStringTypeSerializerStrategy.Instance, ASCIIStringTerminatorTypeSerializerStrategy.Instance, value, destination, ref offset, fixedSize, shouldTerminate);
+					WriteFixedLength(ASCIIStringTypeSerializerStrategy.Instance, ASCIIStringTerminatorTypeSerializerStrategy.Instance, value, buffer, ref offset, fixedSize, shouldTerminate);
 					break;
 				case EncodingType.UTF16:
-					WriteFixedLength(UTF16StringTypeSerializerStrategy.Instance, UTF16StringTerminatorTypeSerializerStrategy.Instance, value, destination, ref offset, fixedSize, shouldTerminate);
+					WriteFixedLength(UTF16StringTypeSerializerStrategy.Instance, UTF16StringTerminatorTypeSerializerStrategy.Instance, value, buffer, ref offset, fixedSize, shouldTerminate);
 					break;
 				case EncodingType.UTF32:
-					WriteFixedLength(UTF32StringTypeSerializerStrategy.Instance, UTF32StringTerminatorTypeSerializerStrategy.Instance, value, destination, ref offset, fixedSize, shouldTerminate);
+					WriteFixedLength(UTF32StringTypeSerializerStrategy.Instance, UTF32StringTerminatorTypeSerializerStrategy.Instance, value, buffer, ref offset, fixedSize, shouldTerminate);
 					break;
 				case EncodingType.UTF8:
-					WriteFixedLength(UTF8StringTypeSerializerStrategy.Instance, UTF8StringTerminatorTypeSerializerStrategy.Instance, value, destination, ref offset, fixedSize, shouldTerminate);
+					WriteFixedLength(UTF8StringTypeSerializerStrategy.Instance, UTF8StringTerminatorTypeSerializerStrategy.Instance, value, buffer, ref offset, fixedSize, shouldTerminate);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(encodingType), encodingType, null);
@@ -58,7 +58,7 @@ namespace FreecraftCore.Serializer
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static string ReadFixedLength<TStringSerializerStrategy, TTerminatorStrategy>(TStringSerializerStrategy serializer, TTerminatorStrategy terminatorSerializer,
-			Span<byte> source, ref int offset, int fixedSize, bool shouldTerminate)
+			Span<byte> buffer, ref int offset, int fixedSize, bool shouldTerminate)
 			where TStringSerializerStrategy : BaseStringTypeSerializerStrategy<TStringSerializerStrategy>, new()
 			where TTerminatorStrategy : BaseStringTerminatorSerializerStrategy<TTerminatorStrategy>, new()
 		{
@@ -67,20 +67,20 @@ namespace FreecraftCore.Serializer
 			if(shouldTerminate)
 				fixedSizeLength -= serializer.CharacterSize;
 
-			string value = serializer.Read(source.Slice(0, offset + fixedSizeLength + offset), ref offset);
+			string value = serializer.Read(buffer.Slice(0, offset + fixedSizeLength + offset), ref offset);
 
 			//Did we read enough?? Doesn't matter, we can direct set to new position.
 			offset = initialOffset + fixedSizeLength;
 
 			if(shouldTerminate)
-				terminatorSerializer.Read(source, ref offset);
+				terminatorSerializer.Read(buffer, ref offset);
 
 			return value;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void WriteFixedLength<TStringSerializerStrategy, TTerminatorStrategy>(TStringSerializerStrategy serializer, TTerminatorStrategy terminatorSerializer, 
-			string value, Span<byte> destination, ref int offset, int fixedSize, bool shouldTerminate)
+			string value, Span<byte> buffer, ref int offset, int fixedSize, bool shouldTerminate)
 			where TStringSerializerStrategy : BaseStringTypeSerializerStrategy<TStringSerializerStrategy>, new()
 			where TTerminatorStrategy : BaseStringTerminatorSerializerStrategy<TTerminatorStrategy>, new()
 		{
@@ -89,14 +89,14 @@ namespace FreecraftCore.Serializer
 				fixedSizeLength -= serializer.CharacterSize;
 
 			int lastOffset = offset;
-			serializer.Write(value, destination.Slice(0, fixedSizeLength + offset), ref offset);
+			serializer.Write(value, buffer.Slice(0, fixedSizeLength + offset), ref offset);
 
 			//Force the fixed length buffer write, and null the buffer out (could be data in it otherwise)
 			while(offset < lastOffset)
-				GenericTypePrimitiveSerializerStrategy<byte>.Instance.Write(0, destination, ref offset);
+				GenericTypePrimitiveSerializerStrategy<byte>.Instance.Write(0, buffer, ref offset);
 
 			if (shouldTerminate)
-				terminatorSerializer.Write(value, destination, ref offset);
+				terminatorSerializer.Write(value, buffer, ref offset);
 		}
 	}
 }

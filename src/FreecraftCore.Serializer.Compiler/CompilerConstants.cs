@@ -7,24 +7,14 @@ namespace FreecraftCore.Serializer
 	public static class CompilerConstants
 	{
 		/// <summary>
-		/// Consistently used input buffer name.
+		/// Consistently used buffer name.
 		/// </summary>
-		public const string INPUT_BUFFER_NAME = "source";
+		public const string BUFFER_NAME = "buffer";
 
 		/// <summary>
-		/// Consistently used name for the input offset.
+		/// Consistently used name for the offset.
 		/// </summary>
-		public const string INPUT_OFFSET_NAME = "offset";
-
-		/// <summary>
-		/// Consistently used name for the output buffer.
-		/// </summary>
-		public const string OUTPUT_BUFFER_NAME = "destination";
-
-		/// <summary>
-		/// Consistently used name for the output offset.
-		/// </summary>
-		public const string OUTPUT_OFFSET_NAME = INPUT_OFFSET_NAME;
+		public const string OFFSET_NAME = "offset";
 
 		public const string SERIALZIABLE_OBJECT_REFERENCE_NAME = "value";
 	}
