@@ -80,7 +80,7 @@ namespace FreecraftCore.Serializer
 						attribute = memberType.GetCustomAttribute<CustomTypeSerializerAttribute>();
 
 					//It's DEFINITELY not null.
-					OverridenSerializationGenerator emitter = new OverridenSerializationGenerator(mi.Name, attribute.TypeSerializerType);
+					OverridenSerializationGenerator emitter = new OverridenSerializationGenerator(memberType, mi, attribute.TypeSerializerType);
 					statements = statements.Add(emitter.Create());
 				}
 				else if (memberType.IsPrimitive)

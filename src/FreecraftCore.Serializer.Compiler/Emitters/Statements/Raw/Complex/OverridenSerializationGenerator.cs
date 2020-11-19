@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -10,17 +11,19 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 namespace FreecraftCore.Serializer
 {
 	//TODO: Support generics
-	public sealed class OverridenSerializationGenerator
+	public sealed class OverridenSerializationGenerator : BaseSerializationStatementsBlockEmitter
 	{
-		public string MemberName { get; }
-
 		public Type SerializerType { get; }
 
-		public OverridenSerializationGenerator([NotNull] string memberName, [NotNull] Type serializerType)
+		public OverridenSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, [NotNull] Type serializerType)
+			: base(actualType, member)
 		{
-			if (string.IsNullOrWhiteSpace(memberName)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(memberName));
-			MemberName = memberName;
 			SerializerType = serializerType ?? throw new ArgumentNullException(nameof(serializerType));
+		}
+
+		public override List<StatementSyntax> CreateStatements()
+		{
+			return new List<StatementSyntax>() { Create() };
 		}
 
 		public StatementSyntax Create()
@@ -39,7 +42,7 @@ namespace FreecraftCore.Serializer
 							SeparatedList<ArgumentSyntax>(
 								new SyntaxNodeOrToken[]{
 									Argument(
-										IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{MemberName}")),
+										IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{Member.Name}")),
 									Token(
 										TriviaList(),
 										SyntaxKind.CommaToken,
