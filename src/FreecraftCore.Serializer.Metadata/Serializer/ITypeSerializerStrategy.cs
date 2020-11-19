@@ -8,11 +8,22 @@ using System.Threading.Tasks;
 namespace FreecraftCore.Serializer
 {
 	/// <summary>
+	/// Metadata marker interface.
+	/// </summary>
+	public interface ITypeSerializerStrategy
+	{
+		/// <summary>
+		/// Represents the type that the serializer can/does serialize.
+		/// </summary>
+		Type SerializableType { get; }
+	}
+
+	/// <summary>
 	/// Contract for types that implement serialization strategies for
 	/// the specified <typeparamref name="T"/>.
 	/// </summary>
 	/// <typeparam name="T">The Type to serialize.</typeparam>
-	public interface ITypeSerializerStrategy<T>
+	public interface ITypeSerializerStrategy<T> : ITypeSerializerStrategy
 	{
 		/// <summary>
 		/// Reads a copy of <typeparamref name="T"/> from the buffer <paramref name="source"/>

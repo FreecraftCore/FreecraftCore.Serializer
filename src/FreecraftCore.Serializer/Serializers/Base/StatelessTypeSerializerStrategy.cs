@@ -22,6 +22,9 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		public static TChildType Instance { get; } = new TChildType();
 
+		/// <inheritdoc />
+		public Type SerializableType { get; } = typeof(T);
+
 		// See: https://csharpindepth.com/Articles/Singleton
 		// Explicit static constructor to tell C# compiler
 		// not to mark type as beforefieldinit
