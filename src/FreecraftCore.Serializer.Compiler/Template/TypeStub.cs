@@ -64,8 +64,9 @@ namespace FreecraftCore.Serializer
 		}
 	}
 
+	[WireMessageType]
 	[WireDataContract]
-	public sealed class TypeStub : BaseTypeStub
+	public sealed partial class TypeStub : BaseTypeStub
 	{
 		[WireMember(1)]
 		public int Hello { get; internal set; }
