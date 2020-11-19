@@ -9,8 +9,8 @@ namespace FreecraftCore.Serializer
 {
 	public sealed class EnumTypeSerializerStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		public EnumTypeSerializerStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member) 
-			: base(actualType, member)
+		public EnumTypeSerializerStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode) 
+			: base(actualType, member, mode)
 		{
 
 		}
@@ -29,7 +29,7 @@ namespace FreecraftCore.Serializer
 				//What type to serialize the enum as
 				Type serializeAsType = enumSizeAttri == null ? ActualType.GetEnumUnderlyingType() : Type.GetType($"System.{enumSizeAttri.SizeType.ToString()}", true);
 
-				var generator = new RawEnumPrimitiveSerializationGenerator(Member.Name, serializeAsType, ActualType);
+				var generator = new RawEnumPrimitiveSerializationGenerator(Member.Name, serializeAsType, ActualType, Mode);
 				statements.Add(generator.Create());
 			}
 

@@ -17,7 +17,8 @@ namespace FreecraftCore.Serializer
 
 		public int KnownSize { get; }
 
-		public FixedSizePrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, int knownSize)
+		public FixedSizePrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, int knownSize, SerializationMode mode)
+			: base(mode)
 		{
 			ElementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
 			KnownSize = knownSize;

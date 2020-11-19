@@ -24,21 +24,6 @@ namespace FreecraftCore
 		}
 
 		/// <summary>
-		/// Reads a copy of <typeparamref name="T"/> from the buffer <paramref name="source"/>
-		/// and initializes the specified reference.
-		/// </summary>
-		/// <param name="serializer"></param>
-		/// <param name="value">The reference value to assign.</param>
-		/// <param name="source">The source buffer to read from.</param>
-		/// <param name="offset">The starting offset into the buffer to read from.</param>
-		/// <returns></returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Read<T>(this ITypeSerializerStrategy<T> serializer, ref T value, Span<byte> source, ref int offset)
-		{
-			value = serializer.Read(source, ref offset);
-		}
-
-		/// <summary>
 		/// Writes a copy of <typeparamref name="T"/> <paramref name="value"/> starting at <paramref name="offset"/>
 		/// into the buffer <paramref name="destination"/>.
 		/// Specialized extension that won't move the offset forward.

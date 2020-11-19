@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
@@ -13,6 +14,14 @@ namespace FreecraftCore.Serializer
 	internal abstract class BaseArraySerializationInvokationExpressionEmitter<TSerializerTypeNameType> : IInvokationExpressionEmittable
 		where TSerializerTypeNameType : BaseArraySerializerNonGenericMarker
 	{
+		private SerializationMode Mode { get; }
+
+		protected BaseArraySerializationInvokationExpressionEmitter(SerializationMode mode)
+		{
+			if (!Enum.IsDefined(typeof(SerializationMode), mode)) throw new InvalidEnumArgumentException(nameof(mode), (int) mode, typeof(SerializationMode));
+			Mode = mode;
+		}
+
 		public InvocationExpressionSyntax Create()
 		{
 			return InvocationExpression
@@ -51,7 +60,7 @@ namespace FreecraftCore.Serializer
 							(
 								Token(SyntaxKind.DotToken)
 							),
-						IdentifierName(nameof(PrimitiveArrayTypeSerializerStrategy<int>.Instance.Write))
+						IdentifierName(Mode.ToString())
 					)
 					.WithOperatorToken
 					(

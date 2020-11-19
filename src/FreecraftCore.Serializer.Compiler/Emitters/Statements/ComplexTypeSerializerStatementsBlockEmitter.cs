@@ -9,8 +9,8 @@ namespace FreecraftCore.Serializer
 {
 	public sealed class ComplexTypeSerializerStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		public ComplexTypeSerializerStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member) 
-			: base(actualType, member)
+		public ComplexTypeSerializerStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode) 
+			: base(actualType, member, mode)
 		{
 
 		}
@@ -23,7 +23,7 @@ namespace FreecraftCore.Serializer
 				.Create(ActualType)
 				.BuildName();
 
-			RawComplexTypeSerializationGenerator generator = new RawComplexTypeSerializationGenerator(Member.Name, serializerTypeName);
+			RawComplexTypeSerializationGenerator generator = new RawComplexTypeSerializationGenerator(Member.Name, serializerTypeName, Mode);
 			statements.Add(generator.Create());
 
 			return statements;

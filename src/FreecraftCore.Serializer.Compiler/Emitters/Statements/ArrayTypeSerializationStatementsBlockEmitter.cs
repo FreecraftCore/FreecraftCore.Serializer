@@ -9,8 +9,8 @@ namespace FreecraftCore.Serializer
 {
 	public sealed class ArrayTypeSerializationStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		public ArrayTypeSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member) 
-			: base(actualType, member)
+		public ArrayTypeSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode) 
+			: base(actualType, member, mode)
 		{
 
 		}
@@ -30,13 +30,13 @@ namespace FreecraftCore.Serializer
 			//Case where the array will be send with length-prefixed size
 			if (sendSizeAttri != null)
 			{
-				var generator = new ArraySerializerGenerator(Member.Name, CreateSendSizeExpressionEmitter(sendSizeAttri));
+				var generator = new ArraySerializerGenerator(Member.Name, CreateSendSizeExpressionEmitter(sendSizeAttri), Mode);
 				statements.Add(generator.Create());
 			}
 
 			if (knownSizeAttri != null)
 			{
-				var generator = new ArraySerializerGenerator(Member.Name, CreateFixedSizeExpressionEmitter(knownSizeAttri));
+				var generator = new ArraySerializerGenerator(Member.Name, CreateFixedSizeExpressionEmitter(knownSizeAttri), Mode);
 				statements.Add(generator.Create());
 			}
 
@@ -44,7 +44,7 @@ namespace FreecraftCore.Serializer
 			//Assume it's write ALL and then other side will need to ReadToEnd (but the attribute isn't needed)
 			if (knownSizeAttri == null && sendSizeAttri == null)
 			{
-				var generator = new ArraySerializerGenerator(Member.Name, CreateDefaultExpressionEmitter());
+				var generator = new ArraySerializerGenerator(Member.Name, CreateDefaultExpressionEmitter(), Mode);
 				statements.Add(generator.Create());
 			}
 
@@ -54,9 +54,9 @@ namespace FreecraftCore.Serializer
 		private IInvokationExpressionEmittable CreateDefaultExpressionEmitter()
 		{
 			if (ActualType.GetElementType().IsPrimitive)
-				return new DefaultPrimitiveArrayInvokationExpressionEmitter(ActualType.GetElementType());
+				return new DefaultPrimitiveArrayInvokationExpressionEmitter(ActualType.GetElementType(), Mode);
 			else
-				return new DefaultComplexArrayInvokationExpressionEmitter(ActualType.GetElementType());
+				return new DefaultComplexArrayInvokationExpressionEmitter(ActualType.GetElementType(), Mode);
 		}
 
 		private IInvokationExpressionEmittable CreateFixedSizeExpressionEmitter([NotNull] KnownSizeAttribute knownSizeAttri)
@@ -64,9 +64,9 @@ namespace FreecraftCore.Serializer
 			if (knownSizeAttri == null) throw new ArgumentNullException(nameof(knownSizeAttri));
 
 			if (ActualType.GetElementType().IsPrimitive)
-				return new FixedSizePrimitiveArrayInvokationExpressionEmitter(ActualType.GetElementType(), knownSizeAttri.KnownSize);
+				return new FixedSizePrimitiveArrayInvokationExpressionEmitter(ActualType.GetElementType(), knownSizeAttri.KnownSize, Mode);
 			else
-				return new FixedSizeComplexArrayInvokationExpressionEmitter(ActualType.GetElementType(), knownSizeAttri.KnownSize);
+				return new FixedSizeComplexArrayInvokationExpressionEmitter(ActualType.GetElementType(), knownSizeAttri.KnownSize, Mode);
 		}
 
 		private IInvokationExpressionEmittable CreateSendSizeExpressionEmitter([NotNull] SendSizeAttribute sendSizeAttri)
@@ -74,9 +74,9 @@ namespace FreecraftCore.Serializer
 			if (sendSizeAttri == null) throw new ArgumentNullException(nameof(sendSizeAttri));
 
 			if(ActualType.GetElementType().IsPrimitive)
-				return new SendSizePrimitiveArrayInvokationExpressionEmitter(ActualType.GetElementType(), sendSizeAttri.TypeOfSize);
+				return new SendSizePrimitiveArrayInvokationExpressionEmitter(ActualType.GetElementType(), sendSizeAttri.TypeOfSize, Mode);
 			else
-				return new SendSizeComplexArrayInvokationExpressionEmitter(ActualType.GetElementType(), sendSizeAttri.TypeOfSize);
+				return new SendSizeComplexArrayInvokationExpressionEmitter(ActualType.GetElementType(), sendSizeAttri.TypeOfSize, Mode);
 		}
 	}
 }

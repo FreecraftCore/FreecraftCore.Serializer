@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -15,12 +17,16 @@ namespace FreecraftCore.Serializer
 
 		public string SerializerTypeName { get; }
 
-		public RawComplexTypeSerializationGenerator([NotNull] string memberName, [NotNull] string serializerTypeName)
+		public SerializationMode Mode { get; }
+
+		public RawComplexTypeSerializationGenerator([NotNull] string memberName, [NotNull] string serializerTypeName, SerializationMode mode)
 		{
 			if (string.IsNullOrWhiteSpace(memberName)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(memberName));
 			if (string.IsNullOrWhiteSpace(serializerTypeName)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(serializerTypeName));
+			if (!Enum.IsDefined(typeof(SerializationMode), mode)) throw new InvalidEnumArgumentException(nameof(mode), (int) mode, typeof(SerializationMode));
 			MemberName = memberName;
 			SerializerTypeName = serializerTypeName;
+			Mode = mode;
 		}
 
 		public StatementSyntax Create()
@@ -33,33 +39,46 @@ namespace FreecraftCore.Serializer
 								SyntaxKind.SimpleMemberAccessExpression,
 								IdentifierName(SerializerTypeName),
 								IdentifierName("Instance")),
-							IdentifierName("Write")))
+							IdentifierName(Mode.ToString())))
 					.WithArgumentList(
 						ArgumentList(
-							SeparatedList<ArgumentSyntax>(
-								new SyntaxNodeOrToken[]{
-									Argument(
-										IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{MemberName}")),
-									Token(
-										TriviaList(),
-										SyntaxKind.CommaToken,
-										TriviaList(
-											Space)),
-									Argument(
-										IdentifierName(CompilerConstants.OUTPUT_BUFFER_NAME)),
-									Token(
-										TriviaList(),
-										SyntaxKind.CommaToken,
-										TriviaList(
-											Space)),
-									Argument(
-											IdentifierName(CompilerConstants.OUTPUT_OFFSET_NAME))
-										.WithRefKindKeyword(
-											Token(
-												TriviaList(),
-												SyntaxKind.RefKeyword,
-												TriviaList(
-													Space)))}))));
+							SeparatedList<ArgumentSyntax>(Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs()))));
+		}
+
+		private SyntaxNodeOrToken[] ComputeReadMethodArgs()
+		{
+			return new SyntaxNodeOrToken[]{
+				Argument(
+					IdentifierName(CompilerConstants.OUTPUT_BUFFER_NAME)),
+				Token(
+					TriviaList(),
+					SyntaxKind.CommaToken,
+					TriviaList(
+						Space)),
+				Argument(
+						IdentifierName(CompilerConstants.OUTPUT_OFFSET_NAME))
+					.WithRefKindKeyword(
+						Token(
+							TriviaList(),
+							SyntaxKind.RefKeyword,
+							TriviaList(
+								Space)))};
+		}
+
+		private SyntaxNodeOrToken[] ComputeWriteMethodArgs()
+		{
+			return new SyntaxNodeOrToken[]
+				{
+					Argument(
+						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{MemberName}")),
+					Token(
+						TriviaList(),
+						SyntaxKind.CommaToken,
+						TriviaList(
+							Space))
+				}
+				.Concat(ComputeReadMethodArgs())
+				.ToArray();
 		}
 	}
 }

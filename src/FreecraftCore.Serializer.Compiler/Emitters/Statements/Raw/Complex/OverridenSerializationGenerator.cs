@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
@@ -15,8 +16,8 @@ namespace FreecraftCore.Serializer
 	{
 		public Type SerializerType { get; }
 
-		public OverridenSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, [NotNull] Type serializerType)
-			: base(actualType, member)
+		public OverridenSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, [NotNull] Type serializerType)
+			: base(actualType, member, mode)
 		{
 			SerializerType = serializerType ?? throw new ArgumentNullException(nameof(serializerType));
 		}
@@ -36,33 +37,46 @@ namespace FreecraftCore.Serializer
 								SyntaxKind.SimpleMemberAccessExpression,
 								IdentifierName(SerializerType.Name),
 								IdentifierName("Instance")),
-							IdentifierName("Write")))
+							IdentifierName(Mode.ToString())))
 					.WithArgumentList(
 						ArgumentList(
-							SeparatedList<ArgumentSyntax>(
-								new SyntaxNodeOrToken[]{
-									Argument(
-										IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{Member.Name}")),
-									Token(
-										TriviaList(),
-										SyntaxKind.CommaToken,
-										TriviaList(
-											Space)),
-									Argument(
-										IdentifierName(CompilerConstants.OUTPUT_BUFFER_NAME)),
-									Token(
-										TriviaList(),
-										SyntaxKind.CommaToken,
-										TriviaList(
-											Space)),
-									Argument(
-											IdentifierName(CompilerConstants.OUTPUT_OFFSET_NAME))
-										.WithRefKindKeyword(
-											Token(
-												TriviaList(),
-												SyntaxKind.RefKeyword,
-												TriviaList(
-													Space)))}))));
+							SeparatedList<ArgumentSyntax>(Mode == SerializationMode.Read ? ComputeReadMethodArgs() : ComputeWriteMethodArgs()))));
+		}
+
+		private SyntaxNodeOrToken[] ComputeReadMethodArgs()
+		{
+			return new SyntaxNodeOrToken[]{
+				Argument(
+					IdentifierName(CompilerConstants.OUTPUT_BUFFER_NAME)),
+				Token(
+					TriviaList(),
+					SyntaxKind.CommaToken,
+					TriviaList(
+						Space)),
+				Argument(
+						IdentifierName(CompilerConstants.OUTPUT_OFFSET_NAME))
+					.WithRefKindKeyword(
+						Token(
+							TriviaList(),
+							SyntaxKind.RefKeyword,
+							TriviaList(
+								Space)))};
+		}
+
+		private SyntaxNodeOrToken[] ComputeWriteMethodArgs()
+		{
+			return new SyntaxNodeOrToken[]
+				{
+					Argument(
+						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{Member.Name}")),
+					Token(
+						TriviaList(),
+						SyntaxKind.CommaToken,
+						TriviaList(
+							Space))
+				}
+				.Concat(ComputeReadMethodArgs())
+				.ToArray();
 		}
 	}
 }

@@ -14,7 +14,8 @@ namespace FreecraftCore.Serializer
 	{
 		public Type ElementType { get; }
 
-		public DefaultPrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType)
+		public DefaultPrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, SerializationMode mode)
+			: base(mode)
 		{
 			ElementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
 

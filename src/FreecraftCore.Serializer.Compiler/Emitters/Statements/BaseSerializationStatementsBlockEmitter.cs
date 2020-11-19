@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
@@ -19,10 +20,17 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		public MemberInfo Member { get; }
 
-		protected BaseSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member)
+		/// <summary>
+		/// Indicates the serialization mode to emit for.
+		/// </summary>
+		protected SerializationMode Mode { get; }
+
+		protected BaseSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode)
 		{
+			if (!Enum.IsDefined(typeof(SerializationMode), mode)) throw new InvalidEnumArgumentException(nameof(mode), (int) mode, typeof(SerializationMode));
 			ActualType = actualType ?? throw new ArgumentNullException(nameof(actualType));
 			Member = member ?? throw new ArgumentNullException(nameof(member));
+			Mode = mode;
 		}
 
 		public abstract List<StatementSyntax> CreateStatements();

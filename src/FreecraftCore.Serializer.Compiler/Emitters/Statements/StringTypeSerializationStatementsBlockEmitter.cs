@@ -12,8 +12,8 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public sealed class StringTypeSerializationStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		public StringTypeSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member)
-			: base(actualType, member)
+		public StringTypeSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode)
+			: base(actualType, member, mode)
 		{
 
 		}
@@ -37,26 +37,26 @@ namespace FreecraftCore.Serializer
 
 			if (sendSizeAttri != null && dontTerminateAttribute == null)
 			{
-				var generator = new RawLengthPrefixedStringTypeSerializationGenerator(encodingAttri.DesiredEncodingType, Member.Name, sendSizeAttri.TypeOfSize);
+				var generator = new RawLengthPrefixedStringTypeSerializationGenerator(encodingAttri.DesiredEncodingType, Member.Name, sendSizeAttri.TypeOfSize, Mode);
 				statements.Add(generator.Create());
 			}
 			else if (sendSizeAttri != null)
 			{
 				//Dont Terminate attribute FOUND!
-				var generator = new RawDontTerminateLengthPrefixedStringTypeSerializationGenerator(encodingAttri.DesiredEncodingType, Member.Name, sendSizeAttri.TypeOfSize);
+				var generator = new RawDontTerminateLengthPrefixedStringTypeSerializationGenerator(encodingAttri.DesiredEncodingType, Member.Name, sendSizeAttri.TypeOfSize, Mode);
 				statements.Add(generator.Create());
 			}
 
 			if (knownSizeAttri != null)
 			{
-				var generator = new RawKnownSizeStringTypeSerializerGenerator(Member.Name, encodingAttri.DesiredEncodingType, knownSizeAttri.KnownSize, dontTerminateAttribute == null);
+				var generator = new RawKnownSizeStringTypeSerializerGenerator(Member.Name, encodingAttri.DesiredEncodingType, knownSizeAttri.KnownSize, dontTerminateAttribute == null, Mode);
 				statements.Add(generator.Create());
 			}
 
 			//If it's not knownsize or sendsize then let's emit the default!
 			if (sendSizeAttri == null && knownSizeAttri == null)
 			{
-				var generator = new RawDefaultStringTypeSerializerGenerator(Member.Name, encodingAttri.DesiredEncodingType, dontTerminateAttribute == null);
+				var generator = new RawDefaultStringTypeSerializerGenerator(Member.Name, encodingAttri.DesiredEncodingType, dontTerminateAttribute == null, Mode);
 				statements.Add(generator.Create());
 			}
 

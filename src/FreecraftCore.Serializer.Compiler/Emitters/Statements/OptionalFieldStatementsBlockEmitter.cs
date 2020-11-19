@@ -13,7 +13,7 @@ namespace FreecraftCore.Serializer
 	public sealed class OptionalFieldStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
 		public OptionalFieldStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member) 
-			: base(actualType, member)
+			: base(actualType, member, SerializationMode.None)
 		{
 
 		}

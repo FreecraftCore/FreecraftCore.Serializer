@@ -17,7 +17,8 @@ namespace FreecraftCore.Serializer
 
 		public PrimitiveSizeType SizeType { get; }
 
-		public SendSizePrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, PrimitiveSizeType sizeType)
+		public SendSizePrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, PrimitiveSizeType sizeType, SerializationMode mode)
+			: base(mode)
 		{
 			if (!Enum.IsDefined(typeof(PrimitiveSizeType), sizeType)) throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(PrimitiveSizeType));
 			ElementType = elementType ?? throw new ArgumentNullException(nameof(elementType));

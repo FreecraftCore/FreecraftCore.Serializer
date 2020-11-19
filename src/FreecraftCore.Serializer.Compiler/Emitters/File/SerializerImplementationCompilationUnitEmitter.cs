@@ -23,6 +23,8 @@ namespace FreecraftCore.Serializer
 
 		public string UnitName => SerializerTypeName;
 
+		public RootSerializationMethodBlockEmitter<TSerializableType> SerializationMethodEmitter { get; } = new RootSerializationMethodBlockEmitter<TSerializableType>();
+
 		public CompilationUnitSyntax CreateUnit()
 		{
 			return CompilationUnit()
@@ -2182,62 +2184,7 @@ namespace FreecraftCore.Serializer
 												)
 												.WithBody
 												(
-													Block
-														(
-															SingletonList<StatementSyntax>
-															(
-																ThrowStatement
-																	(
-																		ObjectCreationExpression
-																			(
-																				IdentifierName("NotImplementedException")
-																			)
-																			.WithNewKeyword
-																			(
-																				Token
-																				(
-																					TriviaList(),
-																					SyntaxKind.NewKeyword,
-																					TriviaList
-																					(
-																						Space
-																					)
-																				)
-																			)
-																			.WithArgumentList
-																			(
-																				ArgumentList()
-																			)
-																	)
-																	.WithThrowKeyword
-																	(
-																		Token
-																		(
-																			TriviaList
-																			(
-																				Whitespace("			")
-																			),
-																			SyntaxKind.ThrowKeyword,
-																			TriviaList
-																			(
-																				Space
-																			)
-																		)
-																	)
-																	.WithSemicolonToken
-																	(
-																		Token
-																		(
-																			TriviaList(),
-																			SyntaxKind.SemicolonToken,
-																			TriviaList
-																			(
-																				CarriageReturnLineFeed
-																			)
-																		)
-																	)
-															)
-														)
+													CreateReadBlock()
 														.WithOpenBraceToken
 														(
 															Token
@@ -2862,8 +2809,7 @@ namespace FreecraftCore.Serializer
 												)
 												.WithBody
 												(
-													new RootSerializationMethodBlockEmitter<TSerializableType>()
-														.CreateBlock()
+													CreateWriteBlock()
 														.WithOpenBraceToken
 														(
 															Token
@@ -2897,7 +2843,7 @@ namespace FreecraftCore.Serializer
 														)
 												)
 										}
-										.Concat(new RootSerializationMethodBlockEmitter<TSerializableType>()
+										.Concat(SerializationMethodEmitter
 											.CreateClasses()) //This embeds our required classes into the Type
 								)
 							)
@@ -2930,6 +2876,20 @@ namespace FreecraftCore.Serializer
 						)
 					)
 				);
+		}
+
+		private BlockSyntax CreateWriteBlock()
+		{
+			SerializationMethodEmitter.Mode = SerializationMode.Write;
+			return SerializationMethodEmitter
+				.CreateBlock();
+		}
+
+		private BlockSyntax CreateReadBlock()
+		{
+			SerializationMethodEmitter.Mode = SerializationMode.Read;
+			return SerializationMethodEmitter
+				.CreateBlock();
 		}
 	}
 }

@@ -15,8 +15,8 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public sealed class PrimitiveTypeSerializationStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		public PrimitiveTypeSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member)
-			: base(actualType, member)
+		public PrimitiveTypeSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode)
+			: base(actualType, member, mode)
 		{
 			if (!actualType.IsPrimitive)
 				throw new InvalidOperationException($"Type: {actualType} is not a primitive type.");
@@ -28,7 +28,7 @@ namespace FreecraftCore.Serializer
 			string typeName = new TypeNameStringBuilder(ActualType).ToString();
 
 			//GenericTypePrimitiveSerializerStrategy<int>.Instance.Write(value, destination, ref offset);
-			statements.Add(new RawPrimitiveTypeSerializationGenerator(Member.Name, typeName).Create());
+			statements.Add(new RawPrimitiveTypeSerializationGenerator(Member.Name, typeName, Mode).Create());
 
 			return statements;
 		}

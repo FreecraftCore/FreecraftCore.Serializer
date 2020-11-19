@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -17,6 +18,14 @@ namespace FreecraftCore.Serializer
 	public sealed class FlatComplexTypeSerializationMethodBlockEmitter<TSerializableType> : IMethodBlockEmittable
 		where TSerializableType : new()
 	{
+		private SerializationMode Mode { get; }
+
+		public FlatComplexTypeSerializationMethodBlockEmitter(SerializationMode mode)
+		{
+			if (!Enum.IsDefined(typeof(SerializationMode), mode)) throw new InvalidEnumArgumentException(nameof(mode), (int) mode, typeof(SerializationMode));
+			Mode = mode;
+		}
+
 		public BlockSyntax CreateBlock()
 		{
 			//Create a method scope, and insert statements into it.
@@ -44,7 +53,7 @@ namespace FreecraftCore.Serializer
 			return SyntaxFactory.Block(statements);
 		}
 
-		private static SyntaxList<StatementSyntax> EmitTypesMemberSerialization(Type currentType, SyntaxList<StatementSyntax> statements)
+		private SyntaxList<StatementSyntax> EmitTypesMemberSerialization(Type currentType, SyntaxList<StatementSyntax> statements)
 		{
 			//Conceptually, we need to find ALL serializable members
 			foreach (MemberInfo mi in currentType
@@ -60,8 +69,16 @@ namespace FreecraftCore.Serializer
 				statements = statements.AddRange(commentEmitter.CreateStatements());
 
 				//The serializer is requesting we DON'T WRITE THIS! So we skip
-				if (mi.GetCustomAttribute<DontWriteAttribute>() != null)
-					continue;
+				if (Mode == SerializationMode.Write)
+				{
+					if(mi.GetCustomAttribute<DontWriteAttribute>() != null)
+						continue;
+				}
+				else if (Mode == SerializationMode.Read)
+				{
+					if(mi.GetCustomAttribute<DontReadAttribute>() != null)
+						continue;
+				}
 				
 				//This handles OPTIONAL fields that may or may not be included
 				if (mi.GetCustomAttribute<OptionalAttribute>() != null)
@@ -80,33 +97,33 @@ namespace FreecraftCore.Serializer
 						attribute = memberType.GetCustomAttribute<CustomTypeSerializerAttribute>();
 
 					//It's DEFINITELY not null.
-					OverridenSerializationGenerator emitter = new OverridenSerializationGenerator(memberType, mi, attribute.TypeSerializerType);
-					statements = statements.Add(emitter.Create());
+					OverridenSerializationGenerator emitter = new OverridenSerializationGenerator(memberType, mi, Mode, attribute.TypeSerializerType);
+					statements = statements.AddRange(emitter.CreateStatements());
 				}
 				else if (memberType.IsPrimitive)
 				{
 					//Easy case of primitive serialization
-					PrimitiveTypeSerializationStatementsBlockEmitter emitter = new PrimitiveTypeSerializationStatementsBlockEmitter(memberType, mi);
+					PrimitiveTypeSerializationStatementsBlockEmitter emitter = new PrimitiveTypeSerializationStatementsBlockEmitter(memberType, mi, Mode);
 					statements = statements.AddRange(emitter.CreateStatements());
 				}
 				else if (memberType == typeof(string))
 				{
-					var emitter = new StringTypeSerializationStatementsBlockEmitter(memberType, mi);
+					var emitter = new StringTypeSerializationStatementsBlockEmitter(memberType, mi, Mode);
 					statements = statements.AddRange(emitter.CreateStatements());
 				}
 				else if (memberType.IsArray)
 				{
-					var emitter = new ArrayTypeSerializationStatementsBlockEmitter(memberType, mi);
+					var emitter = new ArrayTypeSerializationStatementsBlockEmitter(memberType, mi, Mode);
 					statements = statements.AddRange(emitter.CreateStatements());
 				}
 				else if (memberType.IsEnum)
 				{
-					var emitter = new EnumTypeSerializerStatementsBlockEmitter(memberType, mi);
+					var emitter = new EnumTypeSerializerStatementsBlockEmitter(memberType, mi, Mode);
 					statements = statements.AddRange(emitter.CreateStatements());
 				}
 				else if (memberType.IsClass)
 				{
-					var emitter = new ComplexTypeSerializerStatementsBlockEmitter(memberType, mi);
+					var emitter = new ComplexTypeSerializerStatementsBlockEmitter(memberType, mi, Mode);
 					statements = statements.AddRange(emitter.CreateStatements());
 				}
 				else
