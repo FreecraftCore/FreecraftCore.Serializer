@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace FreecraftCore.Serializer
 {
-	//So it's abit confusing but these are legacy interface types that used to exist and implement
-	//the logic for serialization.
 	/// <summary>
 	/// Implementation of the serialization service.
 	/// </summary>
@@ -21,7 +17,7 @@ namespace FreecraftCore.Serializer
 		/// <returns></returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		T Read<T>(Span<byte> source, ref int offset)
-			where T : IWireMessage<T>, new();
+			where T : IWireMessage<T>;
 
 		/// <summary>
 		/// Writes a copy of <typeparamref name="T"/> <paramref name="value"/> starting at <paramref name="offset"/>
@@ -33,24 +29,5 @@ namespace FreecraftCore.Serializer
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		void Write<T>(T value, Span<byte> destination, ref int offset)
 			where T : IWireMessage<T>;
-	}
-
-	public sealed class SerializerService : ISerializerService
-	{
-		/// <inheritdoc />
-		public T Read<T>(Span<byte> source, ref int offset) 
-			where T : IWireMessage<T>, new()
-		{
-			T value = new T();
-			value.Read(source, ref offset);
-			return value;
-		}
-
-		/// <inheritdoc />
-		public void Write<T>(T value, Span<byte> destination, ref int offset) 
-			where T : IWireMessage<T>
-		{
-			value.Write(value, destination, ref offset);
-		}
 	}
 }
