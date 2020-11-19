@@ -67,5 +67,11 @@ namespace FreecraftCore.Serializer
 					throw new ArgumentOutOfRangeException(nameof(encoding), encoding, null);
 			}
 		}
+		
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void Write(Enum valueEnumStringTestValue, in Span<byte> buffer, ref int offset, EncodingType encoding, bool shouldTerminate)
+		{
+			Write(valueEnumStringTestValue.ToString(), buffer, ref offset, encoding, shouldTerminate);
+		}
 	}
 }

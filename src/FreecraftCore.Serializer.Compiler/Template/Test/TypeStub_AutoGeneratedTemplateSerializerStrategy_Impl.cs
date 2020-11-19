@@ -72,6 +72,8 @@ namespace FreecraftCore.Serializer
             if(value.OptionalBoolCheck) value.OptionalValue = GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 14 Name: TestCustomSerializerInt Type: Int32;
             value.TestCustomSerializerInt = TestCustomSerializer.Instance.Read(buffer, ref offset);
+            //Type: TypeStub Field: 15 Name: EnumStringTestValue Type: TestEnum;
+            value.EnumStringTestValue = InternalEnumExtensions.Parse<TestEnum>(DefaultStringSerializerHelper.Read(buffer, ref offset, EncodingType.ASCII, true), true);
             //Type: TypeStub Field: 99 Name: FinalArrayMemberWriteToEnd Type: Int32[];
             value.FinalArrayMemberWriteToEnd = PrimitiveArrayTypeSerializerStrategy<Int32>.Instance.Read(buffer, ref offset);
         }
@@ -117,6 +119,8 @@ namespace FreecraftCore.Serializer
             if(value.OptionalBoolCheck) GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.OptionalValue, buffer, ref offset);
             //Type: TypeStub Field: 14 Name: TestCustomSerializerInt Type: Int32;
             TestCustomSerializer.Instance.Write(value.TestCustomSerializerInt, buffer, ref offset);
+            //Type: TypeStub Field: 15 Name: EnumStringTestValue Type: TestEnum;
+            DefaultStringSerializerHelper.Write(value.EnumStringTestValue, buffer, ref offset, EncodingType.ASCII, true);
             //Type: TypeStub Field: 99 Name: FinalArrayMemberWriteToEnd Type: Int32[];
             PrimitiveArrayTypeSerializerStrategy<Int32>.Instance.Write(value.FinalArrayMemberWriteToEnd, buffer, ref offset);
         }

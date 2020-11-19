@@ -144,6 +144,10 @@ namespace FreecraftCore.Serializer
 		[WireMember(14)]
 		public int TestCustomSerializerInt { get; internal set; }
 
+		[EnumString]
+		[WireMember(15)]
+		public TestEnum EnumStringTestValue { get; internal set; }
+
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
 		public int[] FinalArrayMemberWriteToEnd { get; internal set; }

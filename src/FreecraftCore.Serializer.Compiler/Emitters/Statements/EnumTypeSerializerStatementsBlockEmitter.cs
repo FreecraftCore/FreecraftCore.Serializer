@@ -31,7 +31,20 @@ namespace FreecraftCore.Serializer
 				return generator.Create();
 			}
 			else
-				throw new NotImplementedException($"TODO: Support enum string serialization.");
+			{
+				//They want STRING serialization for the enum, so defer it to the string type serializer.
+				InvocationExpressionSyntax invocation = new StringTypeSerializationStatementsBlockEmitter(ActualType, Member, Mode)
+					.Create();
+
+				if (Mode == SerializationMode.Write)
+					return invocation;
+
+				//We need special handling when READ mode, because we need to parse back to enum
+				//which by the way is QUITE slow.
+				//Enum.Parse<TType>
+				EnumParseInvocationExpressionEmitter emitter = new EnumParseInvocationExpressionEmitter(ActualType, Member, invocation);
+				return emitter.Create();
+			}
 		}
 	}
 }
