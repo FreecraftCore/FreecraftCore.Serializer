@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -11,80 +12,69 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class RawEnumPrimitiveSerializationGenerator
+	public sealed class RawEnumPrimitiveSerializationGenerator : BaseInvokationExpressionEmitter
 	{
-		public string MemberName { get; }
-
 		public Type PrimitiveSerializationType { get; }
 
-		public Type EnumType { get; }
-
-		public SerializationMode Mode { get; }
-
-		public RawEnumPrimitiveSerializationGenerator([NotNull] string memberName, [NotNull] Type primitiveSerializationType, [NotNull] Type enumType, SerializationMode mode)
+		public RawEnumPrimitiveSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode,
+			[NotNull] Type primitiveSerializationType) 
+			: base(actualType, member, mode)
 		{
-			if (!Enum.IsDefined(typeof(SerializationMode), mode)) throw new InvalidEnumArgumentException(nameof(mode), (int) mode, typeof(SerializationMode));
-			MemberName = memberName ?? throw new ArgumentNullException(nameof(memberName));
 			PrimitiveSerializationType = primitiveSerializationType ?? throw new ArgumentNullException(nameof(primitiveSerializationType));
-			EnumType = enumType ?? throw new ArgumentNullException(nameof(enumType));
-			Mode = mode;
 		}
 
-		public StatementSyntax Create()
+		public override InvocationExpressionSyntax Create()
 		{
-			return ExpressionStatement
-			(
-				InvocationExpression
+			return InvocationExpression
+				(
+					MemberAccessExpression
 					(
+						SyntaxKind.SimpleMemberAccessExpression,
 						MemberAccessExpression
 						(
 							SyntaxKind.SimpleMemberAccessExpression,
-							MemberAccessExpression
-							(
-								SyntaxKind.SimpleMemberAccessExpression,
-								GenericName
+							GenericName
+								(
+									Identifier("GenericPrimitiveEnumTypeSerializerStrategy")
+								)
+								.WithTypeArgumentList
+								(
+									TypeArgumentList
 									(
-										Identifier("GenericPrimitiveEnumTypeSerializerStrategy")
-									)
-									.WithTypeArgumentList
-									(
-										TypeArgumentList
+										SeparatedList<TypeSyntax>
 										(
-											SeparatedList<TypeSyntax>
-											(
-												new SyntaxNodeOrToken[]
-												{
-													IdentifierName(EnumType.Name),
-													Token
+											new SyntaxNodeOrToken[]
+											{
+												IdentifierName(ActualType.Name),
+												Token
+												(
+													TriviaList(),
+													SyntaxKind.CommaToken,
+													TriviaList
 													(
-														TriviaList(),
-														SyntaxKind.CommaToken,
-														TriviaList
-														(
-															Space
-														)
-													),
-													IdentifierName(PrimitiveSerializationType.Name)
-												}
-											)
+														Space
+													)
+												),
+												IdentifierName(PrimitiveSerializationType.Name)
+											}
 										)
-									),
-								IdentifierName("Instance")
-							),
-							IdentifierName(Mode.ToString())
-						)
+									)
+								),
+							IdentifierName("Instance")
+						),
+						IdentifierName(Mode.ToString())
 					)
-					.WithArgumentList
+				)
+				.WithArgumentList
+				(
+					ArgumentList
 					(
-						ArgumentList
+						SeparatedList<ArgumentSyntax>
 						(
-							SeparatedList<ArgumentSyntax>
-							(
-								Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs()
-							)
+							Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs()
 						)
 					)
-			);
+				);
 		}
 
 		private SyntaxNodeOrToken[] ComputeReadMethodArgs()
@@ -130,7 +120,7 @@ namespace FreecraftCore.Serializer
 					Argument
 					(
 						//This is the critical part that accesses the member and passed it for serialization.
-						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{MemberName}")
+						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{Member.Name}")
 					),
 					Token
 					(

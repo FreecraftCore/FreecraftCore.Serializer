@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -11,64 +12,57 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 namespace FreecraftCore.Serializer
 {
 	//TODO: Create context and interface thingy.
-	public sealed class RawPrimitiveTypeSerializationGenerator
+	public sealed class RawPrimitiveTypeSerializationGenerator : BaseInvokationExpressionEmitter
 	{
-		public string MemberName { get; }
-
 		public string PrimitiveTypeName { get; }
 
-		public SerializationMode Mode { get; }
-
-		public RawPrimitiveTypeSerializationGenerator([NotNull] string memberName, [NotNull] string primitiveTypeName, SerializationMode mode)
+		public RawPrimitiveTypeSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, [NotNull] string primitiveTypeName) 
+			: base(actualType, member, mode)
 		{
-			MemberName = memberName ?? throw new ArgumentNullException(nameof(memberName));
-			PrimitiveTypeName = primitiveTypeName ?? throw new ArgumentNullException(nameof(primitiveTypeName));
-			Mode = mode;
+			if (string.IsNullOrEmpty(primitiveTypeName)) throw new ArgumentException("Value cannot be null or empty.", nameof(primitiveTypeName));
+			PrimitiveTypeName = primitiveTypeName;
 		}
 
-		public StatementSyntax Create()
+		public override InvocationExpressionSyntax Create()
 		{
-			return ExpressionStatement
-			(
-				InvocationExpression
+			return InvocationExpression
+				(
+					MemberAccessExpression
 					(
+						SyntaxKind.SimpleMemberAccessExpression,
 						MemberAccessExpression
 						(
 							SyntaxKind.SimpleMemberAccessExpression,
-							MemberAccessExpression
-							(
-								SyntaxKind.SimpleMemberAccessExpression,
-								GenericName
+							GenericName
+								(
+									Identifier("GenericTypePrimitiveSerializerStrategy")
+								)
+								.WithTypeArgumentList
+								(
+									TypeArgumentList
 									(
-										Identifier("GenericTypePrimitiveSerializerStrategy")
-									)
-									.WithTypeArgumentList
-									(
-										TypeArgumentList
+										SingletonSeparatedList<TypeSyntax>
 										(
-											SingletonSeparatedList<TypeSyntax>
-											(
-												//The generic type input!
-												IdentifierName(PrimitiveTypeName)
-											)
+											//The generic type input!
+											IdentifierName(PrimitiveTypeName)
 										)
-									),
-								IdentifierName("Instance")
-							),
-							IdentifierName(Mode.ToString())
-						)
+									)
+								),
+							IdentifierName("Instance")
+						),
+						IdentifierName(Mode.ToString())
 					)
-					.WithArgumentList
+				)
+				.WithArgumentList
+				(
+					ArgumentList
 					(
-						ArgumentList
+						SeparatedList<ArgumentSyntax>
 						(
-							SeparatedList<ArgumentSyntax>
-							(
-								Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs()
-							)
+							Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs()
 						)
 					)
-			);
+				);
 		}
 
 		private SyntaxNodeOrToken[] ComputeReadMethodArgs()
@@ -114,7 +108,7 @@ namespace FreecraftCore.Serializer
 					Argument
 					(
 						//This is the critical part that accesses the member and passed it for serialization.
-						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{MemberName}")
+						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{Member.Name}")
 					),
 					Token
 					(

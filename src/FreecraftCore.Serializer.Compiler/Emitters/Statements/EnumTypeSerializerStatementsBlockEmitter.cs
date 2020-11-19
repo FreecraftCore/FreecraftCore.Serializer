@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class EnumTypeSerializerStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
+	public sealed class EnumTypeSerializerStatementsBlockEmitter : BaseInvokationExpressionEmitter
 	{
 		public EnumTypeSerializerStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode) 
 			: base(actualType, member, mode)
@@ -15,10 +15,8 @@ namespace FreecraftCore.Serializer
 
 		}
 
-		public override List<StatementSyntax> CreateStatements()
+		public override InvocationExpressionSyntax Create()
 		{
-			List<StatementSyntax> statements = new List<StatementSyntax>();
-
 			EnumStringAttribute enumStringAttri = Member.GetCustomAttribute<EnumStringAttribute>();
 			EnumSizeAttribute enumSizeAttri = Member.GetCustomAttribute<EnumSizeAttribute>();
 
@@ -29,11 +27,11 @@ namespace FreecraftCore.Serializer
 				//What type to serialize the enum as
 				Type serializeAsType = enumSizeAttri == null ? ActualType.GetEnumUnderlyingType() : Type.GetType($"System.{enumSizeAttri.SizeType.ToString()}", true);
 
-				var generator = new RawEnumPrimitiveSerializationGenerator(Member.Name, serializeAsType, ActualType, Mode);
-				statements.Add(generator.Create());
+				var generator = new RawEnumPrimitiveSerializationGenerator(ActualType, Member, Mode, serializeAsType);
+				return generator.Create();
 			}
-
-			return statements;
+			else
+				throw new NotImplementedException($"TODO: Support enum string serialization.");
 		}
 	}
 }

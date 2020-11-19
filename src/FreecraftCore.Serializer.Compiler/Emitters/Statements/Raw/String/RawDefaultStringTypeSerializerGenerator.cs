@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -11,51 +12,42 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class RawDefaultStringTypeSerializerGenerator
+	public sealed class RawDefaultStringTypeSerializerGenerator : BaseInvokationExpressionEmitter
 	{
-		public string MemberName { get; }
-
 		public EncodingType Encoding { get; }
 
 		public bool ShouldTerminate { get; }
 
-		public SerializationMode Mode { get; }
-
-		public RawDefaultStringTypeSerializerGenerator([NotNull] string memberName, EncodingType encoding, bool shouldTerminate, SerializationMode mode)
+		public RawDefaultStringTypeSerializerGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, 
+			EncodingType encoding, bool shouldTerminate) 
+			: base(actualType, member, mode)
 		{
-			if (string.IsNullOrEmpty(memberName)) throw new ArgumentException("Value cannot be null or empty.", nameof(memberName));
 			if (!Enum.IsDefined(typeof(EncodingType), encoding)) throw new InvalidEnumArgumentException(nameof(encoding), (int) encoding, typeof(EncodingType));
-
-			MemberName = memberName;
 			Encoding = encoding;
 			ShouldTerminate = shouldTerminate;
-			Mode = mode;
 		}
 
-		public StatementSyntax Create()
+		public override InvocationExpressionSyntax Create()
 		{
-			return ExpressionStatement
-			(
-				InvocationExpression
+			return InvocationExpression
+				(
+					MemberAccessExpression
 					(
-						MemberAccessExpression
+						SyntaxKind.SimpleMemberAccessExpression,
+						IdentifierName(nameof(DefaultStringSerializerHelper)),
+						IdentifierName(Mode.ToString())
+					)
+				)
+				.WithArgumentList
+				(
+					ArgumentList
+					(
+						SeparatedList<ArgumentSyntax>
 						(
-							SyntaxKind.SimpleMemberAccessExpression,
-							IdentifierName(nameof(DefaultStringSerializerHelper)),
-							IdentifierName(Mode.ToString())
+							Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs()
 						)
 					)
-					.WithArgumentList
-					(
-						ArgumentList
-						(
-							SeparatedList<ArgumentSyntax>
-							(
-								Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs()
-							)
-						)
-					)
-			);
+				);
 		}
 
 		private SyntaxNodeOrToken[] ComputeReadMethodArgs()
@@ -135,7 +127,7 @@ namespace FreecraftCore.Serializer
 					Argument
 					(
 						//This is the critical part that accesses the member and passed it for serialization.
-						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{MemberName}")
+						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{Member.Name}")
 					),
 					Token
 					(

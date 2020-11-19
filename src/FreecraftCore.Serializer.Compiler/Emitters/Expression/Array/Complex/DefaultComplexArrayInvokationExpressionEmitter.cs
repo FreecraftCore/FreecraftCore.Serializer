@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -12,12 +13,9 @@ namespace FreecraftCore.Serializer
 	internal sealed class DefaultComplexArrayInvokationExpressionEmitter 
 		: BaseArraySerializationInvokationExpressionEmitter<ComplexArrayTypeSerializerStrategy>
 	{
-		public Type ElementType { get; }
-
-		public DefaultComplexArrayInvokationExpressionEmitter([NotNull] Type elementType, SerializationMode mode)
-			: base(mode)
+		public DefaultComplexArrayInvokationExpressionEmitter([NotNull] Type elementType, MemberInfo member, SerializationMode mode)
+			: base(elementType, member, mode)
 		{
-			ElementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
 		}
 
 		protected override IEnumerable<SyntaxNodeOrToken> CalculateGenericTypeParameters()

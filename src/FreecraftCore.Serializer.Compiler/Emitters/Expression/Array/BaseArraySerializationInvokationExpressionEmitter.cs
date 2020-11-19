@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -11,18 +12,18 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	internal abstract class BaseArraySerializationInvokationExpressionEmitter<TSerializerTypeNameType> : IInvokationExpressionEmittable
+	internal abstract class BaseArraySerializationInvokationExpressionEmitter<TSerializerTypeNameType> : BaseInvokationExpressionEmitter
 		where TSerializerTypeNameType : BaseArraySerializerNonGenericMarker
 	{
-		private SerializationMode Mode { get; }
+		public Type ElementType { get; }
 
-		protected BaseArraySerializationInvokationExpressionEmitter(SerializationMode mode)
+		protected BaseArraySerializationInvokationExpressionEmitter(Type elementType, [NotNull] MemberInfo member, SerializationMode mode)
+			: base(elementType.MakeArrayType(), member, mode)
 		{
-			if (!Enum.IsDefined(typeof(SerializationMode), mode)) throw new InvalidEnumArgumentException(nameof(mode), (int) mode, typeof(SerializationMode));
-			Mode = mode;
+			ElementType = elementType;
 		}
 
-		public InvocationExpressionSyntax Create()
+		public override InvocationExpressionSyntax Create()
 		{
 			return InvocationExpression
 			(

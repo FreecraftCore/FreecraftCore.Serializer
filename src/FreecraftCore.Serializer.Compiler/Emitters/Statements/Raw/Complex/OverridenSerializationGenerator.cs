@@ -12,25 +12,19 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 namespace FreecraftCore.Serializer
 {
 	//TODO: Support generics
-	public sealed class OverridenSerializationGenerator : BaseSerializationStatementsBlockEmitter
+	public sealed class OverridenSerializationGenerator : BaseInvokationExpressionEmitter
 	{
 		public Type SerializerType { get; }
 
-		public OverridenSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, [NotNull] Type serializerType)
+		public OverridenSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, [NotNull] Type serializerType) 
 			: base(actualType, member, mode)
 		{
 			SerializerType = serializerType ?? throw new ArgumentNullException(nameof(serializerType));
 		}
 
-		public override List<StatementSyntax> CreateStatements()
+		public override InvocationExpressionSyntax Create()
 		{
-			return new List<StatementSyntax>() { Create() };
-		}
-
-		public StatementSyntax Create()
-		{
-			return ExpressionStatement(
-				InvocationExpression(
+			return InvocationExpression(
 						MemberAccessExpression(
 							SyntaxKind.SimpleMemberAccessExpression,
 							MemberAccessExpression(
@@ -40,7 +34,7 @@ namespace FreecraftCore.Serializer
 							IdentifierName(Mode.ToString())))
 					.WithArgumentList(
 						ArgumentList(
-							SeparatedList<ArgumentSyntax>(Mode == SerializationMode.Read ? ComputeReadMethodArgs() : ComputeWriteMethodArgs()))));
+							SeparatedList<ArgumentSyntax>(Mode == SerializationMode.Read ? ComputeReadMethodArgs() : ComputeWriteMethodArgs())));
 		}
 
 		private SyntaxNodeOrToken[] ComputeReadMethodArgs()

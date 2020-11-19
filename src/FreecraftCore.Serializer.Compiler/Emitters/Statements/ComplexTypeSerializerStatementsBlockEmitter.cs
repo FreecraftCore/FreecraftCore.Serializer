@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class ComplexTypeSerializerStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
+	public sealed class ComplexTypeSerializerStatementsBlockEmitter : BaseInvokationExpressionEmitter
 	{
 		public ComplexTypeSerializerStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode) 
 			: base(actualType, member, mode)
@@ -15,18 +15,14 @@ namespace FreecraftCore.Serializer
 
 		}
 
-		public override List<StatementSyntax> CreateStatements()
+		public override InvocationExpressionSyntax Create()
 		{
-			List<StatementSyntax> statements = new List<StatementSyntax>();
-
 			string serializerTypeName = GeneratedSerializerNameStringBuilder
 				.Create(ActualType)
 				.BuildName();
 
-			RawComplexTypeSerializationGenerator generator = new RawComplexTypeSerializationGenerator(Member.Name, serializerTypeName, Mode);
-			statements.Add(generator.Create());
-
-			return statements;
+			RawComplexTypeSerializationGenerator generator = new RawComplexTypeSerializationGenerator(ActualType, Member, Mode, serializerTypeName);
+			return generator.Create();
 		}
 	}
 }

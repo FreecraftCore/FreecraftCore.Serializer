@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -13,14 +14,11 @@ namespace FreecraftCore.Serializer
 	internal sealed class FixedSizePrimitiveArrayInvokationExpressionEmitter
 		: BaseArraySerializationInvokationExpressionEmitter<FixedSizePrimitiveArrayTypeSerializerStrategy>
 	{
-		public Type ElementType { get; }
-
 		public int KnownSize { get; }
 
-		public FixedSizePrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, int knownSize, SerializationMode mode)
-			: base(mode)
+		public FixedSizePrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, MemberInfo member, int knownSize, SerializationMode mode)
+			: base(elementType, member, mode)
 		{
-			ElementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
 			KnownSize = knownSize;
 
 			if (!ElementType.IsPrimitive)

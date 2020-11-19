@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -11,54 +12,46 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class RawKnownSizeStringTypeSerializerGenerator
+	public sealed class RawKnownSizeStringTypeSerializerGenerator : BaseInvokationExpressionEmitter
 	{
-		public string MemberName { get; }
-
 		public EncodingType Encoding { get; }
 
 		public int FixedSizeValue { get; }
 
 		public bool ShouldTerminate { get; }
 
-		public SerializationMode Mode { get; }
-
-		public RawKnownSizeStringTypeSerializerGenerator([NotNull] string memberName, EncodingType encoding, int fixedSizeValue, bool shouldTerminate, SerializationMode mode)
+		public RawKnownSizeStringTypeSerializerGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, 
+			EncodingType encoding, int fixedSizeValue, bool shouldTerminate) 
+			: base(actualType, member, mode)
 		{
 			if (!Enum.IsDefined(typeof(EncodingType), encoding)) throw new InvalidEnumArgumentException(nameof(encoding), (int) encoding, typeof(EncodingType));
-			if (fixedSizeValue <= 0) throw new ArgumentOutOfRangeException(nameof(fixedSizeValue));
-			MemberName = memberName ?? throw new ArgumentNullException(nameof(memberName));
-
+			if (fixedSizeValue < 0) throw new ArgumentOutOfRangeException(nameof(fixedSizeValue));
 			Encoding = encoding;
 			FixedSizeValue = fixedSizeValue;
 			ShouldTerminate = shouldTerminate;
-			Mode = mode;
 		}
 
-		public StatementSyntax Create()
+		public override InvocationExpressionSyntax Create()
 		{
-			return ExpressionStatement
-			(
-				InvocationExpression
+			return InvocationExpression
+				(
+					MemberAccessExpression
 					(
-						MemberAccessExpression
+						SyntaxKind.SimpleMemberAccessExpression,
+						IdentifierName(nameof(KnownSizeStringSerializerHelper)),
+						IdentifierName(Mode.ToString())
+					)
+				)
+				.WithArgumentList
+				(
+					ArgumentList
+					(
+						SeparatedList<ArgumentSyntax>
 						(
-							SyntaxKind.SimpleMemberAccessExpression,
-							IdentifierName(nameof(KnownSizeStringSerializerHelper)),
-							IdentifierName(Mode.ToString())
+							Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs()
 						)
 					)
-					.WithArgumentList
-					(
-						ArgumentList
-						(
-							SeparatedList<ArgumentSyntax>
-							(
-								Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs()
-							)
-						)
-					)
-			);
+				);
 		}
 
 		private SyntaxNodeOrToken[] ComputeReadMethodArgs()
@@ -156,7 +149,7 @@ namespace FreecraftCore.Serializer
 					Argument
 					(
 						//This is the critical part that accesses the member and passed it for serialization.
-						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{MemberName}")
+						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{Member.Name}")
 					),
 					Token
 					(

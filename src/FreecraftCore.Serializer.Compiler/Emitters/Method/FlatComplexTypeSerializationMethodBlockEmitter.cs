@@ -87,6 +87,9 @@ namespace FreecraftCore.Serializer
 					statements = statements.AddRange(emitter.CreateStatements());
 				}
 
+
+				InvocationExpressionSyntax invokeSyntax = null;
+
 				//We know the type, but we have to do special handling depending on on its type
 				if (mi.GetCustomAttribute<CustomTypeSerializerAttribute>() != null || memberType.GetCustomAttribute<CustomTypeSerializerAttribute>() != null)
 				{
@@ -98,36 +101,39 @@ namespace FreecraftCore.Serializer
 
 					//It's DEFINITELY not null.
 					OverridenSerializationGenerator emitter = new OverridenSerializationGenerator(memberType, mi, Mode, attribute.TypeSerializerType);
-					statements = statements.AddRange(emitter.CreateStatements());
+					invokeSyntax = emitter.Create();
 				}
 				else if (memberType.IsPrimitive)
 				{
 					//Easy case of primitive serialization
 					PrimitiveTypeSerializationStatementsBlockEmitter emitter = new PrimitiveTypeSerializationStatementsBlockEmitter(memberType, mi, Mode);
-					statements = statements.AddRange(emitter.CreateStatements());
+					invokeSyntax = emitter.Create();
 				}
 				else if (memberType == typeof(string))
 				{
 					var emitter = new StringTypeSerializationStatementsBlockEmitter(memberType, mi, Mode);
-					statements = statements.AddRange(emitter.CreateStatements());
+					invokeSyntax = emitter.Create();
 				}
 				else if (memberType.IsArray)
 				{
 					var emitter = new ArrayTypeSerializationStatementsBlockEmitter(memberType, mi, Mode);
-					statements = statements.AddRange(emitter.CreateStatements());
+					invokeSyntax = emitter.Create();
 				}
 				else if (memberType.IsEnum)
 				{
 					var emitter = new EnumTypeSerializerStatementsBlockEmitter(memberType, mi, Mode);
-					statements = statements.AddRange(emitter.CreateStatements());
+					invokeSyntax = emitter.Create();
 				}
 				else if (memberType.IsClass)
 				{
 					var emitter = new ComplexTypeSerializerStatementsBlockEmitter(memberType, mi, Mode);
-					statements = statements.AddRange(emitter.CreateStatements());
+					invokeSyntax = emitter.Create();
 				}
 				else
 					throw new NotImplementedException($"TODO: Cannot handle Type: {memberType}");
+
+				if (invokeSyntax != null)
+					statements = statements.Add(invokeSyntax.ToStatement());
 
 				//TODO: These don't work!!
 				//Add 2 line breaks

@@ -10,7 +10,7 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// <see cref="IStatementsBlockEmittable"/> implementation for emitting string type serialization.
 	/// </summary>
-	public sealed class StringTypeSerializationStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
+	public sealed class StringTypeSerializationStatementsBlockEmitter : BaseInvokationExpressionEmitter
 	{
 		public StringTypeSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode)
 			: base(actualType, member, mode)
@@ -18,10 +18,8 @@ namespace FreecraftCore.Serializer
 
 		}
 
-		public override List<StatementSyntax> CreateStatements()
+		public override InvocationExpressionSyntax Create()
 		{
-			List<StatementSyntax> statements = new List<StatementSyntax>();
-
 			//Firstly, we must know if the string is sending its size
 			SendSizeAttribute sendSizeAttri = Member.GetCustomAttribute<SendSizeAttribute>();
 			KnownSizeAttribute knownSizeAttri = Member.GetCustomAttribute<KnownSizeAttribute>();
@@ -37,30 +35,30 @@ namespace FreecraftCore.Serializer
 
 			if (sendSizeAttri != null && dontTerminateAttribute == null)
 			{
-				var generator = new RawLengthPrefixedStringTypeSerializationGenerator(encodingAttri.DesiredEncodingType, Member.Name, sendSizeAttri.TypeOfSize, Mode);
-				statements.Add(generator.Create());
+				var generator = new RawLengthPrefixedStringTypeSerializationGenerator(ActualType, Member, Mode, encodingAttri.DesiredEncodingType, sendSizeAttri.TypeOfSize);
+				return generator.Create();
 			}
 			else if (sendSizeAttri != null)
 			{
 				//Dont Terminate attribute FOUND!
-				var generator = new RawDontTerminateLengthPrefixedStringTypeSerializationGenerator(encodingAttri.DesiredEncodingType, Member.Name, sendSizeAttri.TypeOfSize, Mode);
-				statements.Add(generator.Create());
+				var generator = new RawDontTerminateLengthPrefixedStringTypeSerializationGenerator(ActualType, Member, Mode, encodingAttri.DesiredEncodingType, sendSizeAttri.TypeOfSize);
+				return generator.Create();
 			}
 
 			if (knownSizeAttri != null)
 			{
-				var generator = new RawKnownSizeStringTypeSerializerGenerator(Member.Name, encodingAttri.DesiredEncodingType, knownSizeAttri.KnownSize, dontTerminateAttribute == null, Mode);
-				statements.Add(generator.Create());
+				var generator = new RawKnownSizeStringTypeSerializerGenerator(ActualType, Member, Mode, encodingAttri.DesiredEncodingType, knownSizeAttri.KnownSize, dontTerminateAttribute == null);
+				return generator.Create();
 			}
 
 			//If it's not knownsize or sendsize then let's emit the default!
 			if (sendSizeAttri == null && knownSizeAttri == null)
 			{
-				var generator = new RawDefaultStringTypeSerializerGenerator(Member.Name, encodingAttri.DesiredEncodingType, dontTerminateAttribute == null, Mode);
-				statements.Add(generator.Create());
+				var generator = new RawDefaultStringTypeSerializerGenerator(ActualType, Member, Mode, encodingAttri.DesiredEncodingType, dontTerminateAttribute == null);
+				return generator.Create();
 			}
 
-			return statements;
+			throw new InvalidOperationException($"Cannot handle Member: {Member.Name} on Type: {Member.DeclaringType.Name}.");
 		}
 	}
 }

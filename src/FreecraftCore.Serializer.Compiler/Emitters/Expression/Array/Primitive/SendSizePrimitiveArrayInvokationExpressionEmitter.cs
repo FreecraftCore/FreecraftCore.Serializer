@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -13,15 +14,12 @@ namespace FreecraftCore.Serializer
 	internal sealed class SendSizePrimitiveArrayInvokationExpressionEmitter
 		: BaseArraySerializationInvokationExpressionEmitter<SendSizePrimitiveArrayTypeSerializerStrategy>
 	{
-		public Type ElementType { get; }
-
 		public PrimitiveSizeType SizeType { get; }
 
-		public SendSizePrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, PrimitiveSizeType sizeType, SerializationMode mode)
-			: base(mode)
+		public SendSizePrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, MemberInfo member, PrimitiveSizeType sizeType, SerializationMode mode)
+			: base(elementType, member, mode)
 		{
 			if (!Enum.IsDefined(typeof(PrimitiveSizeType), sizeType)) throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(PrimitiveSizeType));
-			ElementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
 			SizeType = sizeType;
 
 			if (!ElementType.IsPrimitive)

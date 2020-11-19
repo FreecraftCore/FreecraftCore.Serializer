@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -11,28 +12,20 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class RawComplexTypeSerializationGenerator
+	public sealed class RawComplexTypeSerializationGenerator : BaseInvokationExpressionEmitter
 	{
-		public string MemberName { get; }
-
 		public string SerializerTypeName { get; }
 
-		public SerializationMode Mode { get; }
-
-		public RawComplexTypeSerializationGenerator([NotNull] string memberName, [NotNull] string serializerTypeName, SerializationMode mode)
+		public RawComplexTypeSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, [NotNull] string serializerTypeName) 
+			: base(actualType, member, mode)
 		{
-			if (string.IsNullOrWhiteSpace(memberName)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(memberName));
-			if (string.IsNullOrWhiteSpace(serializerTypeName)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(serializerTypeName));
-			if (!Enum.IsDefined(typeof(SerializationMode), mode)) throw new InvalidEnumArgumentException(nameof(mode), (int) mode, typeof(SerializationMode));
-			MemberName = memberName;
+			if (string.IsNullOrEmpty(serializerTypeName)) throw new ArgumentException("Value cannot be null or empty.", nameof(serializerTypeName));
 			SerializerTypeName = serializerTypeName;
-			Mode = mode;
 		}
 
-		public StatementSyntax Create()
+		public override InvocationExpressionSyntax Create()
 		{
-			return ExpressionStatement(
-				InvocationExpression(
+			return InvocationExpression(
 						MemberAccessExpression(
 							SyntaxKind.SimpleMemberAccessExpression,
 							MemberAccessExpression(
@@ -42,7 +35,7 @@ namespace FreecraftCore.Serializer
 							IdentifierName(Mode.ToString())))
 					.WithArgumentList(
 						ArgumentList(
-							SeparatedList<ArgumentSyntax>(Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs()))));
+							SeparatedList<ArgumentSyntax>(Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs())));
 		}
 
 		private SyntaxNodeOrToken[] ComputeReadMethodArgs()
@@ -70,7 +63,7 @@ namespace FreecraftCore.Serializer
 			return new SyntaxNodeOrToken[]
 				{
 					Argument(
-						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{MemberName}")),
+						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{Member.Name}")),
 					Token(
 						TriviaList(),
 						SyntaxKind.CommaToken,

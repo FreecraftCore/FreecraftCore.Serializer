@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -12,13 +13,9 @@ namespace FreecraftCore.Serializer
 	internal sealed class DefaultPrimitiveArrayInvokationExpressionEmitter 
 		: BaseArraySerializationInvokationExpressionEmitter<PrimitiveArrayTypeSerializerStrategy>
 	{
-		public Type ElementType { get; }
-
-		public DefaultPrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, SerializationMode mode)
-			: base(mode)
+		public DefaultPrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, MemberInfo member, SerializationMode mode)
+			: base(elementType, member, mode)
 		{
-			ElementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
-
 			if (!ElementType.IsPrimitive)
 				throw new InvalidOperationException($"Type: {elementType.Name} must be primitive.");
 		}

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -11,83 +12,74 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class RawDontTerminateLengthPrefixedStringTypeSerializationGenerator
+	public sealed class RawDontTerminateLengthPrefixedStringTypeSerializationGenerator : BaseInvokationExpressionEmitter
 	{
 		public EncodingType Encoding { get; }
 
-		public string MemberName { get; }
-
 		public PrimitiveSizeType SizeType { get; }
 
-		public SerializationMode Mode { get; }
-
-		public RawDontTerminateLengthPrefixedStringTypeSerializationGenerator(EncodingType encoding, [NotNull] string memberName, PrimitiveSizeType sizeType, SerializationMode mode)
+		public RawDontTerminateLengthPrefixedStringTypeSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, 
+			SerializationMode mode, EncodingType encoding, PrimitiveSizeType sizeType) 
+			: base(actualType, member, mode)
 		{
 			if (!Enum.IsDefined(typeof(EncodingType), encoding)) throw new InvalidEnumArgumentException(nameof(encoding), (int) encoding, typeof(EncodingType));
-			if (string.IsNullOrEmpty(memberName)) throw new ArgumentException("Value cannot be null or empty.", nameof(memberName));
 			if (!Enum.IsDefined(typeof(PrimitiveSizeType), sizeType)) throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(PrimitiveSizeType));
-
 			Encoding = encoding;
-			MemberName = memberName;
 			SizeType = sizeType;
-			Mode = mode;
 		}
 
-		public StatementSyntax Create()
+		public override InvocationExpressionSyntax Create()
 		{
-			return ExpressionStatement
-			(
-				InvocationExpression
+			return InvocationExpression
+				(
+					MemberAccessExpression
 					(
+						SyntaxKind.SimpleMemberAccessExpression,
 						MemberAccessExpression
 						(
 							SyntaxKind.SimpleMemberAccessExpression,
-							MemberAccessExpression
-							(
-								SyntaxKind.SimpleMemberAccessExpression,
-								GenericName
+							GenericName
+								(
+									Identifier("DontTerminateLengthPrefixedStringTypeSerializerStrategy")
+								)
+								.WithTypeArgumentList
+								(
+									TypeArgumentList
 									(
-										Identifier("DontTerminateLengthPrefixedStringTypeSerializerStrategy")
-									)
-									.WithTypeArgumentList
-									(
-										TypeArgumentList
+										SeparatedList<TypeSyntax>
 										(
-											SeparatedList<TypeSyntax>
-											(
-												new SyntaxNodeOrToken[]
-												{
-													IdentifierName($"{Encoding}StringTypeSerializerStrategy"),
-													Token
+											new SyntaxNodeOrToken[]
+											{
+												IdentifierName($"{Encoding}StringTypeSerializerStrategy"),
+												Token
+												(
+													TriviaList(),
+													SyntaxKind.CommaToken,
+													TriviaList
 													(
-														TriviaList(),
-														SyntaxKind.CommaToken,
-														TriviaList
-														(
-															Space
-														)
-													),
-													IdentifierName(SizeType.ToString())
-												}
-											)
+														Space
+													)
+												),
+												IdentifierName(SizeType.ToString())
+											}
 										)
-									),
-								IdentifierName("Instance")
-							),
-							IdentifierName(Mode.ToString())
-						)
+									)
+								),
+							IdentifierName("Instance")
+						),
+						IdentifierName(Mode.ToString())
 					)
-					.WithArgumentList
+				)
+				.WithArgumentList
+				(
+					ArgumentList
 					(
-						ArgumentList
+						SeparatedList<ArgumentSyntax>
 						(
-							SeparatedList<ArgumentSyntax>
-							(
-								Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs()
-							)
+							Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs()
 						)
 					)
-			);
+				);
 		}
 
 		private SyntaxNodeOrToken[] ComputeReadMethodArgs()
@@ -133,7 +125,7 @@ namespace FreecraftCore.Serializer
 					Argument
 					(
 						//This is the critical part that accesses the member and passed it for serialization.
-						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{MemberName}")
+						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{Member.Name}")
 					),
 					Token
 					(

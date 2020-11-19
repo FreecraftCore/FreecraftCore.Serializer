@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
@@ -13,7 +14,7 @@ namespace FreecraftCore.Serializer
 	/// <summary>
 	/// Strategy for emitting primitive serialization code.
 	/// </summary>
-	public sealed class PrimitiveTypeSerializationStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
+	public sealed class PrimitiveTypeSerializationStatementsBlockEmitter : BaseInvokationExpressionEmitter
 	{
 		public PrimitiveTypeSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode)
 			: base(actualType, member, mode)
@@ -22,15 +23,13 @@ namespace FreecraftCore.Serializer
 				throw new InvalidOperationException($"Type: {actualType} is not a primitive type.");
 		}
 
-		public override List<StatementSyntax> CreateStatements()
+		public override InvocationExpressionSyntax Create()
 		{
-			List<StatementSyntax> statements = new List<StatementSyntax>();
 			string typeName = new TypeNameStringBuilder(ActualType).ToString();
 
 			//GenericTypePrimitiveSerializerStrategy<int>.Instance.Write(value, buffer, ref offset);
-			statements.Add(new RawPrimitiveTypeSerializationGenerator(Member.Name, typeName, Mode).Create());
-
-			return statements;
+			return new RawPrimitiveTypeSerializationGenerator(ActualType, Member, Mode, typeName)
+				.Create();
 		}
 	}
 }
