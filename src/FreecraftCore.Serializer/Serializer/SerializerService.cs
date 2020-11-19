@@ -8,9 +8,9 @@ namespace FreecraftCore.Serializer
 	//the logic for serialization.
 	public sealed class SerializerService : ISerializerService, ISerializationPolymorphicRegister
 	{
-		public static Dictionary<Type, ITypeSerializerStrategy> PolymorphicSerializers { get; } = new Dictionary<Type, ITypeSerializerStrategy>();
+		public Dictionary<Type, ITypeSerializerStrategy> PolymorphicSerializers { get; } = new Dictionary<Type, ITypeSerializerStrategy>();
 
-		public static readonly object SyncObj = new object();
+		public readonly object SyncObj = new object();
 
 		//Do not remove!
 		static SerializerService()
