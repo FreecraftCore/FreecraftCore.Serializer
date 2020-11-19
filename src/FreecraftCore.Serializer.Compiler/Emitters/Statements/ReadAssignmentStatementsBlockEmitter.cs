@@ -12,17 +12,33 @@ namespace FreecraftCore.Serializer
 {
 	public sealed class ReadAssignmentStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		private StatementSyntax Statement { get; }
+		private ExpressionSyntax Expression { get; }
 
-		public ReadAssignmentStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, [NotNull] StatementSyntax statement) 
+		public ReadAssignmentStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, [NotNull] ExpressionSyntax expression) 
 			: base(actualType, member, mode)
 		{
-			Statement = statement ?? throw new ArgumentNullException(nameof(statement));
+			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
 		}
 
 		public override List<StatementSyntax> CreateStatements()
 		{
-			return null;
+			List<StatementSyntax> statements = new List<StatementSyntax>();
+			statements.Add(ExpressionStatement
+			(
+				AssignmentExpression
+				(
+					SyntaxKind.SimpleAssignmentExpression,
+					MemberAccessExpression
+					(
+						SyntaxKind.SimpleMemberAccessExpression,
+						IdentifierName(CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME),
+						IdentifierName(Member.Name)
+					),
+					Expression
+				)
+			));
+
+			return statements;
 		}
 	}
 }

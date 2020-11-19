@@ -133,7 +133,17 @@ namespace FreecraftCore.Serializer
 					throw new NotImplementedException($"TODO: Cannot handle Type: {memberType}");
 
 				if (invokeSyntax != null)
-					statements = statements.Add(invokeSyntax.ToStatement());
+				{
+					if (Mode == SerializationMode.Write)
+						statements = statements.Add(invokeSyntax.ToStatement());
+					else if (Mode == SerializationMode.Read)
+					{
+						//Read generation is abit more complicated.
+						//We must emit the assignment too
+						ReadAssignmentStatementsBlockEmitter emitter = new ReadAssignmentStatementsBlockEmitter(memberType, mi, Mode, invokeSyntax);
+						statements = statements.AddRange(emitter.CreateStatements());
+					}
+				}
 
 				//TODO: These don't work!!
 				//Add 2 line breaks
