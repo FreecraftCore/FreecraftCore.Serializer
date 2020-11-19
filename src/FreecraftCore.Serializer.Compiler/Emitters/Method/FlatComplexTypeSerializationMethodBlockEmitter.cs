@@ -71,7 +71,19 @@ namespace FreecraftCore.Serializer
 				}
 
 				//We know the type, but we have to do special handling depending on on its type
-				if (memberType.IsPrimitive)
+				if (mi.GetCustomAttribute<CustomTypeSerializerAttribute>() != null || memberType.GetCustomAttribute<CustomTypeSerializerAttribute>() != null)
+				{
+					//So TYPES and PROPERTIES may both reference a custom serializer.
+					//So we should prefer field/prop attributes over the type.
+					CustomTypeSerializerAttribute attribute = mi.GetCustomAttribute<CustomTypeSerializerAttribute>();
+					if (attribute == null)
+						attribute = memberType.GetCustomAttribute<CustomTypeSerializerAttribute>();
+
+					//It's DEFINITELY not null.
+					OverridenSerializationGenerator emitter = new OverridenSerializationGenerator(mi.Name, attribute.TypeSerializerType);
+					statements = statements.Add(emitter.Create());
+				}
+				else if (memberType.IsPrimitive)
 				{
 					//Easy case of primitive serialization
 					PrimitiveTypeSerializationStatementsBlockEmitter emitter = new PrimitiveTypeSerializationStatementsBlockEmitter(memberType, mi);

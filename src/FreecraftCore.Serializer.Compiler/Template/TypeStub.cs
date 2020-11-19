@@ -64,6 +64,19 @@ namespace FreecraftCore.Serializer
 		}
 	}
 
+	public sealed class TestCustomSerializer : StatelessTypeSerializerStrategy<TestCustomSerializer, int>
+	{
+		public override int Read(Span<byte> source, ref int offset)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Write(int value, Span<byte> destination, ref int offset)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
 	[WireMessageType]
 	[WireDataContract]
 	public sealed partial class TypeStub : BaseTypeStub
@@ -126,6 +139,10 @@ namespace FreecraftCore.Serializer
 		public int OptionalValue { get; internal set; }
 
 		public bool OptionalBoolCheck { get; }
+
+		[CustomTypeSerializer(typeof(TestCustomSerializer))]
+		[WireMember(14)]
+		public int TestCustomSerializerInt { get; internal set; }
 
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
