@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -92,20 +93,6 @@ namespace FreecraftCore.Serializer
 			{
 				Argument
 				(
-					//This is the critical part that accesses the member and passed it for serialization.
-					IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{MemberName}")
-				),
-				Token
-				(
-					TriviaList(),
-					SyntaxKind.CommaToken,
-					TriviaList
-					(
-						Space
-					)
-				),
-				Argument
-				(
 					IdentifierName(CompilerConstants.BUFFER_NAME)
 				),
 				Token
@@ -139,51 +126,24 @@ namespace FreecraftCore.Serializer
 		private SyntaxNodeOrToken[] ComputeWriteMethodArgs()
 		{
 			return new SyntaxNodeOrToken[]
-			{
-				Argument
-				(
-					//This is the critical part that accesses the member and passed it for serialization.
-					IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{MemberName}")
-				),
-				Token
-				(
-					TriviaList(),
-					SyntaxKind.CommaToken,
-					TriviaList
+				{
+					Argument
 					(
-						Space
-					)
-				),
-				Argument
-				(
-					IdentifierName(CompilerConstants.BUFFER_NAME)
-				),
-				Token
-				(
-					TriviaList(),
-					SyntaxKind.CommaToken,
-					TriviaList
+						//This is the critical part that accesses the member and passed it for serialization.
+						IdentifierName($"{CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME}.{MemberName}")
+					),
+					Token
 					(
-						Space
-					)
-				),
-				Argument
-					(
-						IdentifierName(CompilerConstants.OFFSET_NAME)
-					)
-					.WithRefKindKeyword
-					(
-						Token
+						TriviaList(),
+						SyntaxKind.CommaToken,
+						TriviaList
 						(
-							TriviaList(),
-							SyntaxKind.RefKeyword,
-							TriviaList
-							(
-								Space
-							)
+							Space
 						)
 					)
-			};
+				}
+				.Concat(ComputeReadMethodArgs())
+				.ToArray();
 		}
 	}
 }
