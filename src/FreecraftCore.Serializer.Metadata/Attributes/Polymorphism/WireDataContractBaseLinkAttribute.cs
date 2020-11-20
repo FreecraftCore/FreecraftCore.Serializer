@@ -18,11 +18,6 @@ namespace FreecraftCore.Serializer
 		public int Index { get; }
 
 		/// <summary>
-		/// Optional base type that can be specified for non-runtime linking.
-		/// </summary>
-		public Type BaseType { get; }
-
-		/// <summary>
 		/// Links to the basetype with the provided index at runtime.
 		/// Will requite you to manually link with the serializer before compiling.
 		/// </summary>
@@ -33,22 +28,6 @@ namespace FreecraftCore.Serializer
 				throw new ArgumentException($"Provided wire child index is less than 0. Was: {index}.");
 
 			Index = index;
-		}
-
-		/// <summary>
-		/// Links to the provided base type with the provided index.
-		/// Doesn't require you to manually link to the serializer at runtime.
-		/// </summary>
-		/// <param name="index">Unique per Type index.</param>
-		/// <param name="baseType">The base type to link to when registering.</param>
-		public WireDataContractBaseLinkAttribute(int index, [NotNull] Type baseType)
-		{
-			if(baseType == null) throw new ArgumentNullException(nameof(baseType));
-			if(index < 0)
-				throw new ArgumentException($"Provided wire child index is less than 0. Was: {index}.");
-
-			Index = index;
-			BaseType = baseType;
 		}
 	}
 }
