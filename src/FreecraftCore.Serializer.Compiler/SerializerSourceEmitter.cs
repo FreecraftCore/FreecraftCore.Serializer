@@ -69,6 +69,7 @@ namespace FreecraftCore.Serializer
 		{
 			WireDataContractAttribute wireContractAttribute = t.GetCustomAttribute<WireDataContractAttribute>();
 
+			//TODO: We don't actually support non-abstract polymorphic serialization yet
 			//Either it has a subtype value or it's NOT abstract. Abstracts can't be deserialized without base type linking
 			//so we don't generate serialization code for them.
 			return wireContractAttribute != null && (wireContractAttribute.OptionalSubTypeKeySize.HasValue || !t.IsAbstract);
@@ -96,8 +97,9 @@ namespace FreecraftCore.Serializer
 
 		private static ICompilationUnitEmittable CreateEmittableImplementationSerializerStrategy(Type type)
 		{
-			Type serializerTypeEmitter = typeof(RegularSerializerImplementationCompilationUnitEmitter<>)
-				.MakeGenericType(type);
+			Type serializerTypeEmitter = !type.IsAbstract
+				? typeof(RegularSerializerImplementationCompilationUnitEmitter<>).MakeGenericType(type)
+				: typeof(PolymorphicSerializerImplementationCompilationUnitEmitter<>).MakeGenericType(type);
 
 			return (ICompilationUnitEmittable)Activator.CreateInstance(serializerTypeEmitter);
 		}
