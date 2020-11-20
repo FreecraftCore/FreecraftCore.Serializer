@@ -214,10 +214,7 @@ namespace FreecraftCore.Serializer
 		{
 			//Here we're checking if the self serializable functionality
 			//must be implemented for the type, which requires additional code generation
-			if (typeof(TSerializableType).GetCustomAttribute<WireMessageTypeAttribute>() != null ||
-				typeof(TSerializableType).GetCustomAttribute<WireDataContractAttribute>().UsesSubTypeSize || //all polymorphic serializers need Wire Message implementation
-				typeof(TSerializableType).GetCustomAttribute<WireDataContractBaseLinkAttribute>() != null || //all polymorphic serializers need Wire Message implementation
-				typeof(ISelfSerializable).IsAssignableFrom(typeof(TSerializableType)))
+			if (TypeExtensions.IsWireMessageType<TSerializableType>())
 			{
 				return new MemberDeclarationSyntax[]
 				{
