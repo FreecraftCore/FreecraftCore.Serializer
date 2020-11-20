@@ -15,7 +15,6 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	/// <typeparam name="TSerializableType">The type to serialize.</typeparam>
 	public abstract class BaseSerializerImplementationCompilationUnitEmitter<TSerializableType> : ICompilationUnitEmittable
-		where TSerializableType : new()
 	{
 		public string SerializerTypeName { get; } = new GeneratedSerializerNameStringBuilder<TSerializableType>().ToString();
 

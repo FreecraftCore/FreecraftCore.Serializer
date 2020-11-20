@@ -10,8 +10,7 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class PolymorphicSerializerImplementationCompilationUnitEmitter<TSerializableType> : BaseSerializerImplementationCompilationUnitEmitter<TSerializableType> 
-		where TSerializableType : new()
+	public sealed class PolymorphicSerializerImplementationCompilationUnitEmitter<TSerializableType> : BaseSerializerImplementationCompilationUnitEmitter<TSerializableType>
 	{
 		protected override MemberDeclarationSyntax CreateSerializerImplementationNamespaceMember()
 		{
