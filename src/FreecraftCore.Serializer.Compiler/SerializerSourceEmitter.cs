@@ -38,10 +38,8 @@ namespace FreecraftCore.Serializer
 			//Find all serializable types that aren't abstracts.
 			Type[] serializableTypes = TargetAssembly
 				.GetTypes()
-				.Where(t => t.GetCustomAttribute<WireDataContractAttribute>() != null && !t.IsAbstract)
+				.Where(IsSerializableType)
 				.ToArray();
-
-			List<CompilationUnitSyntax> compilationUnits = new List<CompilationUnitSyntax>(serializableTypes.Length);
 
 			string rootPath = Path.Combine(OutputPath, $"Strategy");
 			if (!Directory.Exists(rootPath))
@@ -65,6 +63,15 @@ namespace FreecraftCore.Serializer
 				else
 					WriteSerializerStrategyClass(type);
 			}
+		}
+
+		private static bool IsSerializableType(Type t)
+		{
+			WireDataContractAttribute wireContractAttribute = t.GetCustomAttribute<WireDataContractAttribute>();
+
+			//Either it has a subtype value or it's NOT abstract. Abstracts can't be deserialized without base type linking
+			//so we don't generate serialization code for them.
+			return wireContractAttribute != null && (wireContractAttribute.OptionalSubTypeKeySize.HasValue || !t.IsAbstract);
 		}
 
 		private void WriteSerializerStrategyClass(Type type)
