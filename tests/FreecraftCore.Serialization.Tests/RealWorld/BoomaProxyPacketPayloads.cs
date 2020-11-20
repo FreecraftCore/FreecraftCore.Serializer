@@ -65,7 +65,7 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 	//Tethella implementation: https://github.com/justnoxx/psobb-tethealla/blob/master/patch_server/patch_server.c#L578
 	//Sylverant implementation: https://github.com/Sylverant/patch_server/blob/master/src/patch_packets.c#L237 and structure https://github.com/Sylverant/patch_server/blob/master/src/patch_packets.h#L106
 	[WireDataContract]
-	[WireDataContractBaseLink(0x05, typeof(PSOBBPatchPacketPayloadServer))]
+	[WireDataContractBaseLink(0x05)]
 	public sealed class PatchingInformationPayload : PSOBBPatchPacketPayloadServer
 	{
 		//0x0C 0x00 Size
@@ -173,7 +173,7 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 	/// The login request packet for the patching server.
 	/// </summary>
 	[WireDataContract]
-	[WireDataContractBaseLink((int)0x07, typeof(PSOBBPatchPacketPayloadClient))]
+	[WireDataContractBaseLink((int)0x07)]
 	public sealed class PatchingLoginRequestPayload : PSOBBPatchPacketPayloadClient
 	{
 		/// <summary>
@@ -225,7 +225,7 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 	}
 
 	[WireDataContract]
-	[WireDataContractBaseLink(0x99, typeof(PSOBBPatchPacketPayloadServer))]
+	[WireDataContractBaseLink(0x99)]
 	public sealed class PatchingWelcomePayload : PSOBBPatchPacketPayloadServer
 	{
 		/// <summary>
