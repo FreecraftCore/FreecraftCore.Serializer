@@ -96,7 +96,7 @@ namespace FreecraftCore.Serializer
 
 		private static ICompilationUnitEmittable CreateEmittableImplementationSerializerStrategy(Type type)
 		{
-			Type serializerTypeEmitter = typeof(SerializerImplementationCompilationUnitEmitter<>)
+			Type serializerTypeEmitter = typeof(RegularSerializerImplementationCompilationUnitEmitter<>)
 				.MakeGenericType(type);
 
 			return (ICompilationUnitEmittable)Activator.CreateInstance(serializerTypeEmitter);

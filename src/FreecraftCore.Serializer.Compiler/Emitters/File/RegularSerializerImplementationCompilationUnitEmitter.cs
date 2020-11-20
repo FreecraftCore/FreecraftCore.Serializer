@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis;
@@ -10,301 +9,99 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	/// <summary>
-	/// <see cref="ICompilationUnitEmittable"/> emitter for the implementation of the serializer for the specified type.
-	/// </summary>
-	/// <typeparam name="TSerializableType">The type to serialize.</typeparam>
-	public sealed class SerializerImplementationCompilationUnitEmitter<TSerializableType> : ICompilationUnitEmittable
+	public sealed class RegularSerializerImplementationCompilationUnitEmitter<TSerializableType> : BaseSerializerImplementationCompilationUnitEmitter<TSerializableType> 
 		where TSerializableType : new()
 	{
-		public string SerializerTypeName { get; } = new GeneratedSerializerNameStringBuilder<TSerializableType>().ToString();
-
-		public string SerializableTypeName { get; } = new SerializableTypeNameStringBuilder<TSerializableType>().ToString();
-
-		public string UnitName => SerializerTypeName;
-
 		public RootSerializationMethodBlockEmitter<TSerializableType> SerializationMethodEmitter { get; } = new RootSerializationMethodBlockEmitter<TSerializableType>();
 
-		public CompilationUnitSyntax CreateUnit()
+		private BlockSyntax CreateWriteBlock()
 		{
-			return CompilationUnit()
-				.WithUsings
-				(
-					List<UsingDirectiveSyntax>
-					(
-						new UsingDirectiveSyntax[]
-						{
-							UsingDirective
-								(
-									IdentifierName("System")
-								)
-								.WithUsingKeyword
-								(
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.UsingKeyword,
-										TriviaList
-										(
-											Space
-										)
-									)
-								)
-								.WithSemicolonToken
-								(
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.SemicolonToken,
-										TriviaList
-										(
-											CarriageReturnLineFeed
-										)
-									)
-								),
-							UsingDirective
-								(
-									QualifiedName
-									(
-										QualifiedName
-										(
-											IdentifierName("System"),
-											IdentifierName("Collections")
-										),
-										IdentifierName("Generic")
-									)
-								)
-								.WithUsingKeyword
-								(
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.UsingKeyword,
-										TriviaList
-										(
-											Space
-										)
-									)
-								)
-								.WithSemicolonToken
-								(
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.SemicolonToken,
-										TriviaList
-										(
-											CarriageReturnLineFeed
-										)
-									)
-								),
-							UsingDirective
-								(
-									QualifiedName
-									(
-										QualifiedName
-										(
-											IdentifierName("System"),
-											IdentifierName("Runtime")
-										),
-										IdentifierName("CompilerServices")
-									)
-								)
-								.WithUsingKeyword
-								(
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.UsingKeyword,
-										TriviaList
-										(
-											Space
-										)
-									)
-								)
-								.WithSemicolonToken
-								(
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.SemicolonToken,
-										TriviaList
-										(
-											CarriageReturnLineFeed
-										)
-									)
-								),
-							UsingDirective
-								(
-									QualifiedName
-									(
-										IdentifierName("System"),
-										IdentifierName("Text")
-									)
-								)
-								.WithUsingKeyword
-								(
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.UsingKeyword,
-										TriviaList
-										(
-											Space
-										)
-									)
-								)
-								.WithSemicolonToken
-								(
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.SemicolonToken,
-										TriviaList
-										(
-											CarriageReturnLineFeed
-										)
-									)
-								),
-							UsingDirective
-								(
-									QualifiedName
-									(
-										IdentifierName("FreecraftCore"),
-										IdentifierName("Serializer")
-									)
-								)
-								.WithUsingKeyword
-								(
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.UsingKeyword,
-										TriviaList
-										(
-											Space
-										)
-									)
-								)
-								.WithSemicolonToken
-								(
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.SemicolonToken,
-										TriviaList
-										(
-											CarriageReturnLineFeed
-										)
-									)
-								)
-						}
-					)
-				)
-				.WithMembers
-				(
-					List<MemberDeclarationSyntax>
-					(
-						CreateMembers()
-					)
-				);
+			SerializationMethodEmitter.Mode = SerializationMode.Write;
+			return SerializationMethodEmitter
+				.CreateBlock();
 		}
 
-		private MemberDeclarationSyntax[] CreateMembers()
+		private BlockSyntax CreateReadBlock()
 		{
-			//Here we're checking if the self serializable functionality
-			//must be implemented for the type, which requires additional code generation
-			if (TypeExtensions.IsWireMessageType<TSerializableType>())
-			{
-				return new MemberDeclarationSyntax[]
-				{
-					new WireMessageImplementationMemberDeclarationEmitter<TSerializableType>(SerializerTypeName).Create(),
-					CreateSerializerImplementationNamespaceMember(),
-				};
-			}
-			else
-			{
-				return new MemberDeclarationSyntax[]
-				{
-					CreateSerializerImplementationNamespaceMember(),
-				};
-			}
+			SerializationMethodEmitter.Mode = SerializationMode.Read;
+			return SerializationMethodEmitter
+				.CreateBlock();
 		}
 
-		private MemberDeclarationSyntax CreateSerializerImplementationNamespaceMember()
-		{
+		protected override MemberDeclarationSyntax CreateSerializerImplementationNamespaceMember()
+		{ 
 			return NamespaceDeclaration
-				(
-					QualifiedName
 					(
-						IdentifierName("FreecraftCore"),
-						IdentifierName
+						QualifiedName
 						(
-							Identifier
-							(
-								TriviaList(),
-								"Serializer",
-								TriviaList
-								(
-									CarriageReturnLineFeed
-								)
-							)
-						)
-					)
-				)
-				.WithNamespaceKeyword
-				(
-					Token
-					(
-						TriviaList
-						(
-							CarriageReturnLineFeed
-						),
-						SyntaxKind.NamespaceKeyword,
-						TriviaList
-						(
-							Space
-						)
-					)
-				)
-				.WithOpenBraceToken
-				(
-					Token
-					(
-						TriviaList(),
-						SyntaxKind.OpenBraceToken,
-						TriviaList
-						(
-							CarriageReturnLineFeed
-						)
-					)
-				)
-				.WithMembers
-				(
-					SingletonList<MemberDeclarationSyntax>
-					(
-						ClassDeclaration
+							IdentifierName("FreecraftCore"),
+							IdentifierName
 							(
 								Identifier
 								(
 									TriviaList(),
-									SerializerTypeName,
+									"Serializer",
 									TriviaList
 									(
-										new[]
-										{
-											Space,
-											CarriageReturnLineFeed
-										}
+										CarriageReturnLineFeed
 									)
 								)
 							)
-							.WithModifiers
+						)
+					)
+					.WithNamespaceKeyword
+					(
+						Token
+						(
+							TriviaList
 							(
-								TokenList
+								CarriageReturnLineFeed
+							),
+							SyntaxKind.NamespaceKeyword,
+							TriviaList
+							(
+								Space
+							)
+						)
+					)
+					.WithOpenBraceToken
+					(
+						Token
+						(
+							TriviaList(),
+							SyntaxKind.OpenBraceToken,
+							TriviaList
+							(
+								CarriageReturnLineFeed
+							)
+						)
+					)
+					.WithMembers
+					(
+						SingletonList<MemberDeclarationSyntax>
+						(
+							ClassDeclaration
 								(
-									new[]
-									{
+									Identifier
+									(
+										TriviaList(),
+										SerializerTypeName,
+										TriviaList
+										(
+											new[]
+											{
+											Space,
+											CarriageReturnLineFeed
+											}
+										)
+									)
+								)
+								.WithModifiers
+								(
+									TokenList
+									(
+										new[]
+										{
 										Token
 										(
 											TriviaList
@@ -494,41 +291,41 @@ namespace FreecraftCore.Serializer
 												Space
 											)
 										)
-									}
-								)
-							)
-							.WithKeyword
-							(
-								Token
-								(
-									TriviaList(),
-									SyntaxKind.ClassKeyword,
-									TriviaList
-									(
-										Space
+										}
 									)
 								)
-							)
-							.WithBaseList
-							(
-								BaseList
+								.WithKeyword
+								(
+									Token
 									(
-										SingletonSeparatedList<BaseTypeSyntax>
+										TriviaList(),
+										SyntaxKind.ClassKeyword,
+										TriviaList
 										(
-											SimpleBaseType
+											Space
+										)
+									)
+								)
+								.WithBaseList
+								(
+									BaseList
+										(
+											SingletonSeparatedList<BaseTypeSyntax>
 											(
-												GenericName
-													(
-														Identifier("BaseAutoGeneratedSerializerStrategy")
-													)
-													.WithTypeArgumentList
-													(
-														TypeArgumentList
-															(
-																SeparatedList<TypeSyntax>
+												SimpleBaseType
+												(
+													GenericName
+														(
+															Identifier("BaseAutoGeneratedSerializerStrategy")
+														)
+														.WithTypeArgumentList
+														(
+															TypeArgumentList
 																(
-																	new SyntaxNodeOrToken[]
-																	{
+																	SeparatedList<TypeSyntax>
+																	(
+																		new SyntaxNodeOrToken[]
+																		{
 																		IdentifierName(SerializerTypeName),
 																		Token
 																		(
@@ -540,62 +337,62 @@ namespace FreecraftCore.Serializer
 																			)
 																		),
 																		IdentifierName(SerializableTypeName)
-																	}
-																)
-															)
-															.WithGreaterThanToken
-															(
-																Token
-																(
-																	TriviaList(),
-																	SyntaxKind.GreaterThanToken,
-																	TriviaList
-																	(
-																		CarriageReturnLineFeed
+																		}
 																	)
 																)
-															)
-													)
+																.WithGreaterThanToken
+																(
+																	Token
+																	(
+																		TriviaList(),
+																		SyntaxKind.GreaterThanToken,
+																		TriviaList
+																		(
+																			CarriageReturnLineFeed
+																		)
+																	)
+																)
+														)
+												)
 											)
 										)
-									)
-									.WithColonToken
-									(
-										Token
+										.WithColonToken
 										(
-											TriviaList
+											Token
 											(
-												Whitespace("		")
-											),
-											SyntaxKind.ColonToken,
-											TriviaList
-											(
-												Space
+												TriviaList
+												(
+													Whitespace("		")
+												),
+												SyntaxKind.ColonToken,
+												TriviaList
+												(
+													Space
+												)
 											)
 										)
-									)
-							)
-							.WithOpenBraceToken
-							(
-								Token
+								)
+								.WithOpenBraceToken
 								(
-									TriviaList
+									Token
 									(
-										Tab
-									),
-									SyntaxKind.OpenBraceToken,
-									TriviaList
-									(
-										CarriageReturnLineFeed
+										TriviaList
+										(
+											Tab
+										),
+										SyntaxKind.OpenBraceToken,
+										TriviaList
+										(
+											CarriageReturnLineFeed
+										)
 									)
 								)
-							)
-							.WithMembers
-							(
-								List<MemberDeclarationSyntax>
+								.WithMembers
 								(
-									new MemberDeclarationSyntax[]
-										{
+									List<MemberDeclarationSyntax>
+									(
+										new MemberDeclarationSyntax[]
+											{
 											MethodDeclaration
 												(
 													PredefinedType
@@ -1847,54 +1644,40 @@ namespace FreecraftCore.Serializer
 															)
 														)
 												)
-										}
-										.Concat(SerializationMethodEmitter
-											.CreateClasses()) //This embeds our required classes into the Type
-								)
-							)
-							.WithCloseBraceToken
-							(
-								Token
-								(
-									TriviaList
-									(
-										Tab
-									),
-									SyntaxKind.CloseBraceToken,
-									TriviaList
-									(
-										CarriageReturnLineFeed
+											}
+											.Concat(SerializationMethodEmitter
+												.CreateClasses()) //This embeds our required classes into the Type
 									)
 								)
-							)
-					)
-				)
-				.WithCloseBraceToken
-				(
-					Token
-					(
-						TriviaList(),
-						SyntaxKind.CloseBraceToken,
-						TriviaList
-						(
-							CarriageReturnLineFeed
+								.WithCloseBraceToken
+								(
+									Token
+									(
+										TriviaList
+										(
+											Tab
+										),
+										SyntaxKind.CloseBraceToken,
+										TriviaList
+										(
+											CarriageReturnLineFeed
+										)
+									)
+								)
 						)
 					)
-				);
-		}
-
-		private BlockSyntax CreateWriteBlock()
-		{
-			SerializationMethodEmitter.Mode = SerializationMode.Write;
-			return SerializationMethodEmitter
-				.CreateBlock();
-		}
-
-		private BlockSyntax CreateReadBlock()
-		{
-			SerializationMethodEmitter.Mode = SerializationMode.Read;
-			return SerializationMethodEmitter
-				.CreateBlock();
-		}
+					.WithCloseBraceToken
+					(
+						Token
+						(
+							TriviaList(),
+							SyntaxKind.CloseBraceToken,
+							TriviaList
+							(
+								CarriageReturnLineFeed
+							)
+						)
+					);
+			}
 	}
 }
