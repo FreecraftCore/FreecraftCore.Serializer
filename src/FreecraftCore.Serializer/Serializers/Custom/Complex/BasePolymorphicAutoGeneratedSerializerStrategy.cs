@@ -63,5 +63,21 @@ namespace FreecraftCore.Serializer
 		/// <returns></returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected abstract T CreateType(int key);
+
+		//These exist and are implemented ONLY because some source code generation expected them to exist
+		//as a legacy reason.
+		//Though pretty sure this won't work AT ALL for polymorphic types since IWireMessage calls this and we call Read
+		//This will absolutely break.
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void InternalRead(T baseTypeStub, in Span<byte> buffer, ref int offset)
+		{
+			baseTypeStub.Read(buffer, ref offset);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void InternalWrite(T baseTypeStub, in Span<byte> buffer, ref int offset)
+		{
+			baseTypeStub.Write(baseTypeStub, buffer, ref offset);
+		}
 	}
 }
