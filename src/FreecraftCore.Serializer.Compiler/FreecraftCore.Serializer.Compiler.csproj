@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="3.7.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Template\Test\" />
+  </ItemGroup>
+
 </Project>
