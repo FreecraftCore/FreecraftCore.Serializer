@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FreecraftCore.Serializer
+namespace FreecraftCore.Serializer.CustomTypes
 {
 	public enum TestEnum : ulong
 	{
@@ -52,8 +52,8 @@ namespace FreecraftCore.Serializer
 		}
 	}
 
-	[WireDataContract]
-	public abstract class BaseTypeStub
+	[WireDataContract(PrimitiveSizeType.UInt16)]
+	public abstract partial class BaseTypeStub
 	{
 		[WireMember(1)]
 		public int BaseIntField { get; internal set; }
@@ -79,6 +79,7 @@ namespace FreecraftCore.Serializer
 
 	[WireMessageType]
 	[WireDataContract]
+	[WireDataContractBaseLink(1)]
 	public sealed partial class TypeStub : BaseTypeStub
 	{
 		[WireMember(1)]

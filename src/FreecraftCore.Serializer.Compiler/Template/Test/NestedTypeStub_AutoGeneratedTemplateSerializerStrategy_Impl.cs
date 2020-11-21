@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using FreecraftCore.Serializer;
+using FreecraftCore.Serializer.CustomTypes;
 
 namespace FreecraftCore.Serializer
 {
@@ -22,7 +24,6 @@ namespace FreecraftCore.Serializer
         /// <param name="offset">See external doc.</param>
         protected internal override void InternalRead(NestedTypeStub value, Span<byte> buffer, ref int offset)
         {
-            throw new NotImplementedException();
         }
 
         /// <summary>
