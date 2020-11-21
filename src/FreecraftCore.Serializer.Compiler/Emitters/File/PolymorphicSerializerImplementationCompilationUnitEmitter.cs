@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -672,7 +673,7 @@ namespace FreecraftCore.Serializer
 								(
 									ObjectCreationExpression
 										(
-											IdentifierName(childType.FullName)
+											CreateChildTypeIdentifier(childType)
 										)
 										.WithNewKeyword
 										(
@@ -815,6 +816,163 @@ namespace FreecraftCore.Serializer
 						)
 					);
 			}
+			else
+			{
+				yield return SwitchSection()
+					.WithLabels
+					(
+						SingletonList<SwitchLabelSyntax>
+						(
+							DefaultSwitchLabel()
+								.WithKeyword
+								(
+									Token
+									(
+										TriviaList
+										(
+											Whitespace("				")
+										),
+										SyntaxKind.DefaultKeyword,
+										TriviaList()
+									)
+								)
+								.WithColonToken
+								(
+									Token
+									(
+										TriviaList(),
+										SyntaxKind.ColonToken,
+										TriviaList
+										(
+											CarriageReturnLineFeed
+										)
+									)
+								)
+						)
+					)
+					.WithStatements
+					(
+						SingletonList<StatementSyntax>
+						(
+							ThrowStatement
+							(
+								ObjectCreationExpression
+								(
+									IdentifierName(nameof(NotImplementedException))
+								)
+								.WithNewKeyword
+								(
+									Token
+									(
+										TriviaList(),
+										SyntaxKind.NewKeyword,
+										TriviaList
+										(
+											Space
+										)
+									)
+								)
+								.WithArgumentList
+								(
+									ArgumentList
+									(
+										SingletonSeparatedList<ArgumentSyntax>
+										(
+											Argument
+											(
+												InterpolatedStringExpression
+												(
+													Token(SyntaxKind.InterpolatedStringStartToken)
+												)
+												.WithContents
+												(
+													List<InterpolatedStringContentSyntax>
+													(
+														new InterpolatedStringContentSyntax[]
+														{
+															InterpolatedStringText()
+															.WithTextToken
+															(
+																Token
+																(
+																	TriviaList(),
+																	SyntaxKind.InterpolatedStringTextToken,
+																	"Encountered unimplemented sub-type for Type: ",
+																	"Encountered unimplemented sub-type for Type: ",
+																	TriviaList()
+																)
+															),
+															Interpolation
+															(
+																InvocationExpression
+																(
+																	IdentifierName("nameof")
+																)
+																.WithArgumentList
+																(
+																	ArgumentList
+																	(
+																		SingletonSeparatedList<ArgumentSyntax>
+																		(
+																			Argument
+																			(
+																				IdentifierName(SerializableTypeName)
+																			)
+																		)
+																	)
+																)
+															),
+															InterpolatedStringText()
+															.WithTextToken
+															(
+																Token
+																(
+																	TriviaList(),
+																	SyntaxKind.InterpolatedStringTextToken,
+																	" with Key: ",
+																	" with Key: ",
+																	TriviaList()
+																)
+															),
+															Interpolation
+															(
+																IdentifierName("key")
+															)
+														}
+													)
+												)
+											)
+										)
+									)
+								)
+							)
+							.WithThrowKeyword
+							(
+								Token
+								(
+									TriviaList(),
+									SyntaxKind.ThrowKeyword,
+									TriviaList
+									(
+										Space
+									)
+								)
+							)
+						)
+					);
+			}
+		}
+
+		private static IdentifierNameSyntax CreateChildTypeIdentifier([NotNull] Type childType)
+		{
+			if (childType == null) throw new ArgumentNullException(nameof(childType));
+
+			string baseTypeNameSpace = typeof(TSerializableType).Namespace;
+
+			if (childType.Namespace == null || baseTypeNameSpace == null)
+				return IdentifierName(childType.FullName);
+
+			return childType.Namespace.StartsWith(baseTypeNameSpace) ? IdentifierName(childType.Name) : IdentifierName(childType.FullName);
 		}
 	}
 }
