@@ -39,6 +39,8 @@ namespace FreecraftCore.Serializer
             {
                 case 1:
                     return new TypeStub();
+                case 2:
+                    return new TypeStub2();
                 default:
                     throw new NotImplementedException($"Encountered unimplemented sub-type for Type: {nameof(BaseTypeStub)} with Key: {key}");
             }

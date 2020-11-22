@@ -4,6 +4,24 @@ using System.Text;
 
 namespace FreecraftCore.Serializer.CustomTypes
 {
+	[PrimitiveGeneric]
+	[WireDataContract]
+	public class PrimitiveGenericTypeStub<T>
+	{
+		[WireMember(1)]
+		public T Value { get; internal set; }
+
+		public PrimitiveGenericTypeStub(T value)
+		{
+			Value = value;
+		}
+
+		public PrimitiveGenericTypeStub()
+		{
+			
+		}
+	}
+
 	public enum TestEnum : ulong
 	{
 		Value1 = 0,
@@ -79,6 +97,25 @@ namespace FreecraftCore.Serializer.CustomTypes
 
 	[WireMessageType]
 	[WireDataContract]
+	[WireDataContractBaseLink(2)]
+	public sealed partial class TypeStub2 : BaseTypeStub
+	{
+		[WireMember(1)]
+		public int Hello { get; internal set; }
+
+		public TypeStub2(int hello)
+		{
+			Hello = hello;
+		}
+
+		public TypeStub2()
+		{
+			
+		}
+	}
+
+	[WireMessageType]
+	[WireDataContract]
 	[WireDataContractBaseLink(1)]
 	public sealed partial class TypeStub : BaseTypeStub
 	{
@@ -148,6 +185,9 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[EnumString]
 		[WireMember(15)]
 		public TestEnum EnumStringTestValue { get; internal set; }
+
+		[WireMember(16)]
+		public BaseTypeStub NestedPolymorphicTypeValue { get; internal set; }
 
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
