@@ -15,6 +15,10 @@ namespace FreecraftCore.Serializer
 	{
 		public Type[] GenericTypeParameters { get; }
 
+		/// <summary>
+		/// The generic parameters that created 
+		/// </summary>
+		/// <param name="genericTypeParameters"></param>
 		public KnownGenericAttribute([NotNull] params Type[] genericTypeParameters)
 		{
 			GenericTypeParameters = genericTypeParameters ?? throw new ArgumentNullException(nameof(genericTypeParameters));

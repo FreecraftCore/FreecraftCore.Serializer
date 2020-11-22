@@ -56,9 +56,10 @@ namespace FreecraftCore.Serializer
 					//a serializer for each closed generic type.
 					var knownGenericAttris = type.GetCustomAttributes<KnownGenericAttribute>();
 					foreach (var gta in knownGenericAttris)
-					{
 						WriteSerializerStrategyClass(type.MakeGenericType(gta.GenericTypeParameters));
-					}
+
+					foreach (ClosedGenericAttribute closedTypeAttri in type.GetCustomAttributes<ClosedGenericAttribute>())
+						WriteSerializerStrategyClass(closedTypeAttri.GenericTypeParameter);
 				}
 				else
 					WriteSerializerStrategyClass(type);
