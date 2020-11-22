@@ -60,6 +60,16 @@ namespace FreecraftCore.Serializer
 
 					foreach (ClosedGenericAttribute closedTypeAttri in type.GetCustomAttributes<ClosedGenericAttribute>())
 						WriteSerializerStrategyClass(closedTypeAttri.GenericTypeParameter);
+
+					//To support custom generic lists we created this open-ended base attribute
+					//and we just create combinations from it.
+					foreach (BaseGenericListAttribute genericAttri in type.GetCustomAttributes<BaseGenericListAttribute>())
+					{
+						//Iterate the generic type list and we can build.
+						//closed generic types for all variants
+						foreach(IEnumerable<Type> genericParameterList in genericAttri.Permutations(type.GetGenericParameterCount()))
+							WriteSerializerStrategyClass(type.MakeGenericType(genericParameterList.ToArray()));
+					}
 				}
 				else
 					WriteSerializerStrategyClass(type);

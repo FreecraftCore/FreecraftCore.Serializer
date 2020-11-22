@@ -32,5 +32,14 @@ namespace FreecraftCore.Serializer
 			       type.GetCustomAttribute<WireDataContractBaseLinkAttribute>() != null || //all polymorphic serializers need Wire Message implementation
 			       typeof(ISelfSerializable).IsAssignableFrom(type);
 		}
+
+		//See: https://stackoverflow.com/questions/43634808/how-can-i-get-the-number-of-type-parameters-on-an-open-generic-in-c-sharp
+		public static int GetGenericParameterCount(this Type type)
+		{
+			TypeInfo typeInfo = type.GetTypeInfo();
+			return typeInfo.IsGenericTypeDefinition
+				? typeInfo.GenericTypeParameters.Length
+				: typeInfo.GenericTypeArguments.Length;
+		}
 	}
 }
