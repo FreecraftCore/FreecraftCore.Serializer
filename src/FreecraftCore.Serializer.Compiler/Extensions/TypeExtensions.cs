@@ -27,9 +27,14 @@ namespace FreecraftCore.Serializer
 		{
 			if (type == null) throw new ArgumentNullException(nameof(type));
 
-			return type.GetCustomAttribute<WireMessageTypeAttribute>() != null ||
-			       type.GetCustomAttribute<WireDataContractAttribute>().UsesSubTypeSize || //all polymorphic serializers need Wire Message implementation
-			       type.GetCustomAttribute<WireDataContractBaseLinkAttribute>() != null || //all polymorphic serializers need Wire Message implementation
+			if (type.GetCustomAttribute<WireMessageTypeAttribute>() != null)
+				return true;
+
+			if (type.GetCustomAttribute<WireDataContractAttribute>() != null)
+				if (type.GetCustomAttribute<WireDataContractAttribute>().UsesSubTypeSize)
+					return true; //all polymorphic serializers need Wire Message implementation
+			
+			return type.GetCustomAttribute<WireDataContractBaseLinkAttribute>() != null || //all polymorphic serializers need Wire Message implementation
 			       typeof(ISelfSerializable).IsAssignableFrom(type);
 		}
 
