@@ -17,7 +17,7 @@ namespace FreecraftCore.Serializer
 		/// <returns></returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		T Read<T>(Span<byte> buffer, ref int offset)
-			where T : IWireMessage<T>;
+			where T : ITypeSerializerReadingStrategy<T>;
 
 		/// <summary>
 		/// Writes a copy of <typeparamref name="T"/> <paramref name="value"/> starting at <paramref name="offset"/>
@@ -28,6 +28,6 @@ namespace FreecraftCore.Serializer
 		/// <param name="offset">The offset to start writing the value into.</param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		void Write<T>(T value, Span<byte> buffer, ref int offset)
-			where T : IWireMessage<T>;
+			where T : ITypeSerializerWritingStrategy<T>;
 	}
 }

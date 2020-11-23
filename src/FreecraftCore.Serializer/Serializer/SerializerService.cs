@@ -20,7 +20,7 @@ namespace FreecraftCore.Serializer
 
 		/// <inheritdoc />
 		public T Read<T>(Span<byte> buffer, ref int offset) 
-			where T : IWireMessage<T>
+			where T : ITypeSerializerReadingStrategy<T>
 		{
 			//To support polymorphic serialization this hack was invented, requiring polymorphic
 			//serializers be registered with the serializer service at application startup
@@ -40,7 +40,7 @@ namespace FreecraftCore.Serializer
 
 		/// <inheritdoc />
 		public void Write<T>(T value, Span<byte> buffer, ref int offset) 
-			where T : IWireMessage<T>
+			where T : ITypeSerializerWritingStrategy<T>
 		{
 			value.Write(value, buffer, ref offset);
 		}
