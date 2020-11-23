@@ -827,16 +827,7 @@ namespace FreecraftCore.Serializer
 																	Whitespace("		")
 																}
 															),
-															SyntaxKind.ProtectedKeyword,
-															TriviaList
-															(
-																Space
-															)
-														),
-														Token
-														(
-															TriviaList(),
-															SyntaxKind.InternalKeyword,
+															SyntaxKind.PublicKeyword,
 															TriviaList
 															(
 																Space
@@ -1452,16 +1443,7 @@ namespace FreecraftCore.Serializer
 																	Whitespace("		")
 																}
 															),
-															SyntaxKind.ProtectedKeyword,
-															TriviaList
-															(
-																Space
-															)
-														),
-														Token
-														(
-															TriviaList(),
-															SyntaxKind.InternalKeyword,
+															SyntaxKind.PublicKeyword,
 															TriviaList
 															(
 																Space

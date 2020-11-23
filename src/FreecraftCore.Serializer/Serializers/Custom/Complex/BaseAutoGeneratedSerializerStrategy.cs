@@ -29,9 +29,10 @@ namespace FreecraftCore.Serializer
 			return value;
 		}
 
+		//Cannot do internal protected because we must reference it in generated WireMessages
 		//Partial externally implemented deserialization.
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected internal abstract void InternalRead(T value, Span<byte> buffer, ref int offset);
+		public abstract void InternalRead(T value, Span<byte> buffer, ref int offset);
 
 		/// <summary>
 		/// Auto-generated serialization/write code.
@@ -46,8 +47,9 @@ namespace FreecraftCore.Serializer
 			InternalWrite(value, buffer, ref offset);
 		}
 
+		//Cannot do internal protected because we must reference it in generated WireMessages
 		//Partial externally implemented serialization.
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected internal abstract void InternalWrite(T value, Span<byte> buffer, ref int offset);
+		public abstract void InternalWrite(T value, Span<byte> buffer, ref int offset);
 	}
 }
