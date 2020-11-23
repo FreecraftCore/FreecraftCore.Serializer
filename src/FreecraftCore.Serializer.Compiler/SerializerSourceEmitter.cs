@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -30,6 +31,15 @@ namespace FreecraftCore.Serializer
 		public SerializerSourceEmitter(Assembly targetAssembly, string outputPath)
 		{
 			TargetAssembly = targetAssembly ?? throw new ArgumentNullException(nameof(targetAssembly));
+			OutputPath = outputPath ?? throw new ArgumentNullException(nameof(outputPath));
+		}
+
+		public SerializerSourceEmitter([NotNull] string targetAssemblyPath, [NotNull] string outputPath)
+		{
+			if (string.IsNullOrWhiteSpace(targetAssemblyPath)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(targetAssemblyPath));
+			if (string.IsNullOrWhiteSpace(outputPath)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(outputPath));
+
+			TargetAssembly = Assembly.LoadFile(targetAssemblyPath);
 			OutputPath = outputPath ?? throw new ArgumentNullException(nameof(outputPath));
 		}
 
