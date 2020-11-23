@@ -13,6 +13,8 @@ namespace FreecraftCore.Serializer
 {
 	public sealed class PolymorphicSerializerImplementationCompilationUnitEmitter<TSerializableType> : BaseSerializerImplementationCompilationUnitEmitter<TSerializableType>
 	{
+		private PrimitiveSizeType PolymorphicKeySizeType { get; } = typeof(TSerializableType).GetCustomAttribute<WireDataContractAttribute>().OptionalSubTypeKeySize.Value;
+
 		protected override MemberDeclarationSyntax CreateSerializerImplementationNamespaceMember()
 		{
 			return NamespaceDeclaration
@@ -328,10 +330,7 @@ namespace FreecraftCore.Serializer
 																				Space
 																			)
 																		),
-																		PredefinedType
-																		(
-																			Token(SyntaxKind.IntKeyword)
-																		)
+																		IdentifierName(PolymorphicKeySizeType.ToString())
 																	}
 																)
 															)
