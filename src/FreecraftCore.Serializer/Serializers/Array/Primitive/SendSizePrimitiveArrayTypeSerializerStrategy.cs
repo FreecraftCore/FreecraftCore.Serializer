@@ -18,7 +18,7 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <typeparam name="TSizeType"></typeparam>
-	public sealed class SendSizePrimitiveArrayTypeSerializerStrategy<T, TSizeType> : BaseArrayTypeSerializerStrategy<PrimitiveArrayTypeSerializerStrategy<T>, T>
+	public sealed class SendSizePrimitiveArrayTypeSerializerStrategy<T, TSizeType> : BaseArrayTypeSerializerStrategy<SendSizePrimitiveArrayTypeSerializerStrategy<T, TSizeType>, T>
 		where T : unmanaged
 		where TSizeType : unmanaged
 	{
