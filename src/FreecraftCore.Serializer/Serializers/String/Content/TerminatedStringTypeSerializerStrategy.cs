@@ -11,7 +11,7 @@ namespace FreecraftCore.Serializer
 	/// <typeparam name="TStringSerializerType">The serializer type.</typeparam>
 	/// <typeparam name="TStringTerminatorSerializerType">The null terminator type</typeparam>
 	[KnownTypeSerializer]
-	public sealed class TerminatedStringTypeSerializerStrategy<TStringSerializerType, TStringTerminatorSerializerType> : BaseStringTypeSerializerStrategy<TStringSerializerType>
+	public sealed class TerminatedStringTypeSerializerStrategy<TStringSerializerType, TStringTerminatorSerializerType> : BaseStringTypeSerializerStrategy<TerminatedStringTypeSerializerStrategy<TStringSerializerType, TStringTerminatorSerializerType>>
 		where TStringSerializerType : BaseStringTypeSerializerStrategy<TStringSerializerType>, new()
 		where TStringTerminatorSerializerType : BaseStringTerminatorSerializerStrategy<TStringTerminatorSerializerType>, new()
 	{
