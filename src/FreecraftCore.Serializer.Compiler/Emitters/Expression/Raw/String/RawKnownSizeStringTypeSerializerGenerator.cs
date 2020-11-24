@@ -33,15 +33,7 @@ namespace FreecraftCore.Serializer
 
 		public override InvocationExpressionSyntax Create()
 		{
-			return InvocationExpression
-				(
-					MemberAccessExpression
-					(
-						SyntaxKind.SimpleMemberAccessExpression,
-						IdentifierName(nameof(KnownSizeStringSerializerHelper)),
-						IdentifierName(Mode.ToString())
-					)
-				)
+			return CreateSerializerInvocation()
 				.WithArgumentList
 				(
 					ArgumentList
@@ -52,6 +44,16 @@ namespace FreecraftCore.Serializer
 						)
 					)
 				);
+		}
+
+		private InvocationExpressionSyntax CreateSerializerInvocation()
+		{
+			string serializerTypeName = !ShouldTerminate
+				? $"FixedSizeStringTypeSerializerStrategy<{Encoding}StringTypeSerializerStrategy, {new StaticlyTypedNumericNameBuilder<int>(FixedSizeValue).BuildName()}>"
+				: $"FixedSizeStringTypeSerializerStrategy<{Encoding}StringTypeSerializerStrategy, {new StaticlyTypedNumericNameBuilder<int>(FixedSizeValue).BuildName()}, {Encoding}StringTerminatorTypeSerializerStrategy>";
+
+			return new SerializerMethodInvokationEmitter(Mode, serializerTypeName)
+				.Create();
 		}
 
 		private SyntaxNodeOrToken[] ComputeReadMethodArgs()
@@ -72,71 +74,19 @@ namespace FreecraftCore.Serializer
 					)
 				),
 				Argument
+				(
+					IdentifierName(CompilerConstants.OFFSET_NAME)
+				)
+				.WithRefKindKeyword
+				(
+					Token
 					(
-						IdentifierName(CompilerConstants.OFFSET_NAME)
-					)
-					.WithRefKindKeyword
-					(
-						Token
+						TriviaList(),
+						SyntaxKind.RefKeyword,
+						TriviaList
 						(
-							TriviaList(),
-							SyntaxKind.RefKeyword,
-							TriviaList
-							(
-								Space
-							)
+							Space
 						)
-					),
-				Token
-				(
-					TriviaList(),
-					SyntaxKind.CommaToken,
-					TriviaList
-					(
-						Space
-					)
-				),
-				Argument
-				(
-					LiteralExpression
-					(
-						SyntaxKind.NumericLiteralExpression,
-						Literal(FixedSizeValue)
-					)
-				),
-				Token
-				(
-					TriviaList(),
-					SyntaxKind.CommaToken,
-					TriviaList
-					(
-						Space
-					)
-				),
-				Argument
-				(
-					MemberAccessExpression
-					(
-						SyntaxKind.SimpleMemberAccessExpression,
-						IdentifierName(nameof(EncodingType)),
-						IdentifierName(Encoding.ToString())
-					)
-				),
-				Token
-				(
-					TriviaList(),
-					SyntaxKind.CommaToken,
-					TriviaList
-					(
-						Space
-					)
-				),
-				Argument
-				(
-					LiteralExpression
-					(
-						//Fancy pants way to indicate to the helper if we should terminate
-						ShouldTerminate ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression
 					)
 				)
 			};

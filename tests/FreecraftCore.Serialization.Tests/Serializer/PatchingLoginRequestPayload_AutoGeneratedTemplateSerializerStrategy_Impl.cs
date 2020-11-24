@@ -47,9 +47,9 @@ namespace FreecraftCore.Serializer
             //Type: PatchingLoginRequestPayload Field: 1 Name: Padding2 Type: Byte[];
             value.Padding2 = FixedSizePrimitiveArrayTypeSerializerStrategy<Byte, StaticTypedNumeric_Int32_64>.Instance.Read(buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 2 Name: UserName Type: String;
-            value.UserName = KnownSizeStringSerializerHelper.Read(buffer, ref offset, 16, EncodingType.ASCII, true);
+            value.UserName = FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_16, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 3 Name: Password Type: String;
-            value.Password = KnownSizeStringSerializerHelper.Read(buffer, ref offset, 16, EncodingType.ASCII, true);
+            value.Password = FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_16, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 4 Name: Padding Type: Byte[];
             value.Padding = FixedSizePrimitiveArrayTypeSerializerStrategy<Byte, StaticTypedNumeric_Int32_12>.Instance.Read(buffer, ref offset);
         }
@@ -68,9 +68,9 @@ namespace FreecraftCore.Serializer
             //Type: PatchingLoginRequestPayload Field: 1 Name: Padding2 Type: Byte[];
             FixedSizePrimitiveArrayTypeSerializerStrategy<Byte, StaticTypedNumeric_Int32_64>.Instance.Write(value.Padding2, buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 2 Name: UserName Type: String;
-            KnownSizeStringSerializerHelper.Write(value.UserName, buffer, ref offset, 16, EncodingType.ASCII, true);
+            FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_16, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.UserName, buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 3 Name: Password Type: String;
-            KnownSizeStringSerializerHelper.Write(value.Password, buffer, ref offset, 16, EncodingType.ASCII, true);
+            FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_16, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.Password, buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 4 Name: Padding Type: Byte[];
             FixedSizePrimitiveArrayTypeSerializerStrategy<Byte, StaticTypedNumeric_Int32_12>.Instance.Write(value.Padding, buffer, ref offset);
         }

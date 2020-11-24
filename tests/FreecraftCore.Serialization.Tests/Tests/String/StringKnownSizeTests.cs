@@ -7,8 +7,9 @@ using NUnit.Framework;
 namespace FreecraftCore.Serialization.Tests
 {
 	[TestFixture]
-	public class StringKnownSizeTests
+	public static class StringKnownSizeTests
 	{
+		[Test]
 		[TestCase("Hello", EncodingType.ASCII, false, 20)]
 		[TestCase("Hello!", EncodingType.ASCII, false, 20)]
 		[TestCase("Testing", EncodingType.ASCII, false, 20)]
@@ -32,13 +33,61 @@ namespace FreecraftCore.Serialization.Tests
 			Span<byte> buffer = new Span<byte>(new byte[1024]);
 
 			//act
-			KnownSizeStringSerializerHelper.Write(value, buffer, ref offset, fixedSize, encoding, shouldTerminate);
+			if(shouldTerminate)
+			{
+				switch(encoding)
+				{
+					case EncodingType.ASCII:
+						FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Static_Int32_20, ASCIIStringTerminatorTypeSerializerStrategy>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					case EncodingType.UTF16:
+						FixedSizeStringTypeSerializerStrategy<UTF16StringTypeSerializerStrategy, Static_Int32_20, UTF16StringTerminatorTypeSerializerStrategy>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					case EncodingType.UTF32:
+						FixedSizeStringTypeSerializerStrategy<UTF32StringTypeSerializerStrategy, Static_Int32_20, UTF32StringTerminatorTypeSerializerStrategy>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					case EncodingType.UTF8:
+						FixedSizeStringTypeSerializerStrategy<UTF8StringTypeSerializerStrategy, Static_Int32_20, UTF8StringTerminatorTypeSerializerStrategy>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+			}
+			else
+			{
+				switch(encoding)
+				{
+					case EncodingType.ASCII:
+						FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Static_Int32_20>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					case EncodingType.UTF16:
+						FixedSizeStringTypeSerializerStrategy<UTF16StringTypeSerializerStrategy, Static_Int32_20>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					case EncodingType.UTF32:
+						FixedSizeStringTypeSerializerStrategy<UTF32StringTypeSerializerStrategy, Static_Int32_20>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					case EncodingType.UTF8:
+						FixedSizeStringTypeSerializerStrategy<UTF8StringTypeSerializerStrategy, Static_Int32_20>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+			}
 
 			//assert
 			Assert.AreNotEqual(0, offset);
 			Assert.AreNotEqual(0, buffer[0]);
 		}
 
+		[Test]
 		[TestCase("Hello", EncodingType.ASCII, false, 20)]
 		[TestCase("Hello!", EncodingType.ASCII, false, 20)]
 		[TestCase("Testing", EncodingType.ASCII, false, 20)]
@@ -62,12 +111,116 @@ namespace FreecraftCore.Serialization.Tests
 			Span<byte> buffer = new Span<byte>(new byte[1024]);
 
 			//act
-			KnownSizeStringSerializerHelper.Write(value, buffer, ref offset, fixedSize, encoding, shouldTerminate);
+			if (shouldTerminate)
+			{
+				switch (encoding)
+				{
+					case EncodingType.ASCII:
+						FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Static_Int32_20, ASCIIStringTerminatorTypeSerializerStrategy>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					case EncodingType.UTF16:
+						FixedSizeStringTypeSerializerStrategy<UTF16StringTypeSerializerStrategy, Static_Int32_20, UTF16StringTerminatorTypeSerializerStrategy>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					case EncodingType.UTF32:
+						FixedSizeStringTypeSerializerStrategy<UTF32StringTypeSerializerStrategy, Static_Int32_20, UTF32StringTerminatorTypeSerializerStrategy>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					case EncodingType.UTF8:
+						FixedSizeStringTypeSerializerStrategy<UTF8StringTypeSerializerStrategy, Static_Int32_20, UTF8StringTerminatorTypeSerializerStrategy>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+			}
+			else
+			{
+				switch(encoding)
+				{
+					case EncodingType.ASCII:
+						FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Static_Int32_20>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					case EncodingType.UTF16:
+						FixedSizeStringTypeSerializerStrategy<UTF16StringTypeSerializerStrategy, Static_Int32_20>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					case EncodingType.UTF32:
+						FixedSizeStringTypeSerializerStrategy<UTF32StringTypeSerializerStrategy, Static_Int32_20>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					case EncodingType.UTF8:
+						FixedSizeStringTypeSerializerStrategy<UTF8StringTypeSerializerStrategy, Static_Int32_20>
+							.Instance.Write(value, buffer, ref offset);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+			}
+
 			offset = 0;
-			string result = KnownSizeStringSerializerHelper.Read(buffer, ref offset, fixedSize, encoding, shouldTerminate);
+			string result = null;
+
+			//act
+			if(shouldTerminate)
+			{
+				switch(encoding)
+				{
+					case EncodingType.ASCII:
+						result = FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Static_Int32_20, ASCIIStringTerminatorTypeSerializerStrategy>
+							.Instance.Read(buffer, ref offset);
+						break;
+					case EncodingType.UTF16:
+						result = FixedSizeStringTypeSerializerStrategy<UTF16StringTypeSerializerStrategy, Static_Int32_20, UTF16StringTerminatorTypeSerializerStrategy>
+							.Instance.Read(buffer, ref offset);
+						break;
+					case EncodingType.UTF32:
+						result = FixedSizeStringTypeSerializerStrategy<UTF32StringTypeSerializerStrategy, Static_Int32_20, UTF32StringTerminatorTypeSerializerStrategy>
+							.Instance.Read(buffer, ref offset);
+						break;
+					case EncodingType.UTF8:
+						result = FixedSizeStringTypeSerializerStrategy<UTF8StringTypeSerializerStrategy, Static_Int32_20, UTF8StringTerminatorTypeSerializerStrategy>
+							.Instance.Read(buffer, ref offset);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+			}
+			else
+			{
+				switch(encoding)
+				{
+					case EncodingType.ASCII:
+						result = FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Static_Int32_20>
+							.Instance.Read(buffer, ref offset);
+						break;
+					case EncodingType.UTF16:
+						result = FixedSizeStringTypeSerializerStrategy<UTF16StringTypeSerializerStrategy, Static_Int32_20>
+							.Instance.Read(buffer, ref offset);
+						break;
+					case EncodingType.UTF32:
+						result = FixedSizeStringTypeSerializerStrategy<UTF32StringTypeSerializerStrategy, Static_Int32_20>
+							.Instance.Read(buffer, ref offset);
+						break;
+					case EncodingType.UTF8:
+						result = FixedSizeStringTypeSerializerStrategy<UTF8StringTypeSerializerStrategy, Static_Int32_20>
+							.Instance.Read(buffer, ref offset);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+			}
 
 			//assert
+			Assert.NotNull(result);
 			Assert.AreEqual(value, result);
+		}
+
+		private sealed class Static_Int32_20 : StaticTypedNumeric<int>
+		{
+			public override int Value { get; } = 20;
 		}
 	}
 }
