@@ -21,7 +21,7 @@ namespace FreecraftCore.Serializer
 	/// <typeparam name="TElementSerializerType">The element type serializer.</typeparam>
 	/// <typeparam name="TStaticTypedSizeValueType">The statically typed numeric type provider.</typeparam>
 	public sealed class FixedSizeComplexArrayTypeSerializerStrategy<TElementSerializerType, T, TStaticTypedSizeValueType> 
-		: BaseArrayTypeSerializerStrategy<ComplexArrayTypeSerializerStrategy<TElementSerializerType, T>, T>
+		: BaseArrayTypeSerializerStrategy<FixedSizeComplexArrayTypeSerializerStrategy<TElementSerializerType, T, TStaticTypedSizeValueType>, T>
 		where T : class
 		where TElementSerializerType : StatelessTypeSerializerStrategy<TElementSerializerType, T>, new()
 		where TStaticTypedSizeValueType : StaticTypedNumeric<int>, new()
