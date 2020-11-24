@@ -189,6 +189,10 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[WireMember(16)]
 		public BaseTypeStub NestedPolymorphicTypeValue { get; internal set; }
 
+		[ReverseData]
+		[WireMember(17)]
+		public int BigEndianIntTestValue { get; internal set; }
+
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
 		public int[] FinalArrayMemberWriteToEnd { get; internal set; }

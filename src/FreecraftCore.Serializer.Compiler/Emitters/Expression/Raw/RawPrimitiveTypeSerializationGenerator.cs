@@ -35,7 +35,7 @@ namespace FreecraftCore.Serializer
 							SyntaxKind.SimpleMemberAccessExpression,
 							GenericName
 								(
-									Identifier("GenericTypePrimitiveSerializerStrategy")
+									ComputeSerializerBaseType()
 								)
 								.WithTypeArgumentList
 								(
@@ -63,6 +63,14 @@ namespace FreecraftCore.Serializer
 						)
 					)
 				);
+		}
+
+		private SyntaxToken ComputeSerializerBaseType()
+		{
+			//This picks between the normal and big endian version
+			return this.Member.GetCustomAttribute<ReverseDataAttribute>() == null
+				? Identifier("GenericTypePrimitiveSerializerStrategy")
+				: Identifier("BigEndianGenericTypePrimitiveSerializerStrategy");
 		}
 
 		private SyntaxNodeOrToken[] ComputeReadMethodArgs()
