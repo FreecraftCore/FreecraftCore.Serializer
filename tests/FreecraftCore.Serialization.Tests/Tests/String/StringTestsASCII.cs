@@ -138,9 +138,9 @@ namespace FreecraftCore.Serializer.Tests
 			int offset = 0;
 
 			//act
-			DefaultStringSerializerHelper.Write(value, buffer, ref offset, EncodingType.ASCII, false);
+			ASCIIStringTypeSerializerStrategy.Instance.Write(value, buffer, ref offset);
 			offset = 0;
-			string result = DefaultStringSerializerHelper.Read(buffer, ref offset, EncodingType.ASCII, false);
+			string result = ASCIIStringTypeSerializerStrategy.Instance.Read(buffer, ref offset);
 
 			//assert
 			Assert.AreEqual(value, result);

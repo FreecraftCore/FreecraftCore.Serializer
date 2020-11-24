@@ -29,15 +29,12 @@ namespace FreecraftCore.Serializer
 
 		public override InvocationExpressionSyntax Create()
 		{
-			return InvocationExpression
-				(
-					MemberAccessExpression
-					(
-						SyntaxKind.SimpleMemberAccessExpression,
-						IdentifierName(nameof(DefaultStringSerializerHelper)),
-						IdentifierName(Mode.ToString())
-					)
-				)
+			//Not suppose to do this, but we will because I am lazy right now
+			InvocationExpressionSyntax expressionSyntax = !ShouldTerminate
+				? new SerializerMethodInvokationEmitter(Mode, $"{Encoding}StringTypeSerializerStrategy").Create()
+				: new SerializerMethodInvokationEmitter(Mode, $"TerminatedStringTypeSerializerStrategy<{Encoding}StringTypeSerializerStrategy, {Encoding}StringTerminatorTypeSerializerStrategy>").Create();
+
+			return expressionSyntax
 				.WithArgumentList
 				(
 					ArgumentList
@@ -68,53 +65,19 @@ namespace FreecraftCore.Serializer
 					)
 				),
 				Argument
+				(
+					IdentifierName(CompilerConstants.OFFSET_NAME)
+				)
+				.WithRefKindKeyword
+				(
+					Token
 					(
-						IdentifierName(CompilerConstants.OFFSET_NAME)
-					)
-					.WithRefKindKeyword
-					(
-						Token
+						TriviaList(),
+						SyntaxKind.RefKeyword,
+						TriviaList
 						(
-							TriviaList(),
-							SyntaxKind.RefKeyword,
-							TriviaList
-							(
-								Space
-							)
+							Space
 						)
-					),
-				Token
-				(
-					TriviaList(),
-					SyntaxKind.CommaToken,
-					TriviaList
-					(
-						Space
-					)
-				),
-				Argument
-				(
-					MemberAccessExpression
-					(
-						SyntaxKind.SimpleMemberAccessExpression,
-						IdentifierName(nameof(EncodingType)),
-						IdentifierName(Encoding.ToString())
-					)
-				),
-				Token
-				(
-					TriviaList(),
-					SyntaxKind.CommaToken,
-					TriviaList
-					(
-						Space
-					)
-				),
-				Argument
-				(
-					LiteralExpression
-					(
-						ShouldTerminate ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression
 					)
 				)
 			};

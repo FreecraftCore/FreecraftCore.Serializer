@@ -145,12 +145,17 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[WireMember(6)]
 		public string DefaultStringTest { get; internal set; }
 
-		[SendSize(PrimitiveSizeType.Int16)]
+		[DontTerminate]
+		[Encoding(EncodingType.UTF16)]
 		[WireMember(6)]
+		public string DefaultStringTestNotTerminated { get; internal set; }
+
+		[SendSize(PrimitiveSizeType.Int16)]
+		[WireMember(97)] //don't want to shift... But there was a typo
 		public long[] LongArrayTest { get; internal set; }
 
 		[KnownSize(1337)]
-		[WireMember(7)]
+		[WireMember(98)]
 		public ushort[] KnownSizeArrayTest { get; internal set; }
 
 		[WireMember(8)]
