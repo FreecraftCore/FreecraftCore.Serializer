@@ -19,7 +19,7 @@ namespace FreecraftCore.Serializer
 	/// <typeparam name="T"></typeparam>
 	/// <typeparam name="TStaticTypedSizeValueType"></typeparam>
 	public sealed class FixedSizePrimitiveArrayTypeSerializerStrategy<T, TStaticTypedSizeValueType> 
-		: BaseArrayTypeSerializerStrategy<PrimitiveArrayTypeSerializerStrategy<T>, T>
+		: BaseArrayTypeSerializerStrategy<FixedSizePrimitiveArrayTypeSerializerStrategy<T, TStaticTypedSizeValueType>, T>
 		where T : unmanaged
 		where TStaticTypedSizeValueType : StaticTypedNumeric<int>, new()
 	{
