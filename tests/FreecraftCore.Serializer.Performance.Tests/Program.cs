@@ -48,7 +48,9 @@ namespace FreecraftCore.Serializer.Performance.Tests
 			0
 		};
 
-		static void Main(string[] args)
+		static void Main(string[] args) { }
+
+		/*static void Main(string[] args)
 		{
 			Span<byte> buffer = new Span<byte>(new byte[500]);
 			int offset = 0;
@@ -80,6 +82,6 @@ namespace FreecraftCore.Serializer.Performance.Tests
 			}
 			watch.Stop();
 			Console.WriteLine($"MS: {watch.ElapsedMilliseconds}");
-		}
+		}*/
 	}
 }
