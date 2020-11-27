@@ -8,9 +8,16 @@ namespace FreecraftCore.Serializer
 	//the logic for serialization.
 	public sealed class SerializerService : ISerializerService, ISerializationPolymorphicRegister
 	{
-		public Dictionary<Type, ITypeSerializerStrategy> PolymorphicSerializers { get; } = new Dictionary<Type, ITypeSerializerStrategy>();
-
 		public readonly object SyncObj = new object();
+
+		//WARNING: Do not change this strange implementation, 10-15% faster than mapping Type via dictionary and then casting.
+		//This is a clever hack for performance that avoids slow Dictionary key lookups
+		//and casting
+		//Realistically it should have this contraint but not required: where TWireType : IWireMessage<TWireType>
+		private class GenericPolymorphicSerializerContainer<TWireType>
+		{
+			public static ITypeSerializerReadingStrategy<TWireType> Instance { get; set; }
+		}
 
 		//Do not remove!
 		static SerializerService()
@@ -31,9 +38,10 @@ namespace FreecraftCore.Serializer
 			}
 			else
 			{
+				//HOT PATH: This is a clever hack to avoid costly lookup and casting.
 				//This is the case where we have a non-newable abstract type
 				//that actually cannot be construted and read as a WireMessage type
-				return ((ITypeSerializerStrategy<T>) PolymorphicSerializers[typeof(T)])
+				return GenericPolymorphicSerializerContainer<T>.Instance
 					.Read(buffer, ref offset);
 			}
 		}
@@ -45,13 +53,15 @@ namespace FreecraftCore.Serializer
 			value.Write(value, buffer, ref offset);
 		}
 
-		public void RegisterPolymorphicSerializer<TSerializerType>() 
-			where TSerializerType : ITypeSerializerStrategy, new()
+		public void RegisterPolymorphicSerializer<TWireType, TSerializerType>() 
+			where TSerializerType : ITypeSerializerReadingStrategy<TWireType>, new() 
+			where TWireType : IWireMessage<TWireType>
 		{
 			lock (SyncObj)
 			{
+				//WARNING: Do not change this strange implementation, 10-15% faster than mapping Type via dictionary and then casting.
 				TSerializerType serializer = new TSerializerType();
-				PolymorphicSerializers[serializer.SerializableType] = serializer;
+				GenericPolymorphicSerializerContainer<TWireType>.Instance = serializer;
 			}
 		}
 	}
