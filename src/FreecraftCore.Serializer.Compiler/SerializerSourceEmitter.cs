@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Permissions;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -23,24 +24,18 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		public Assembly TargetAssembly { get; }
 
-		/// <summary>
-		/// The output path for serializers.
-		/// </summary>
-		public string OutputPath { get; }
+		public ISerializationSourceOutputStrategy SerializationOutputStrategy { get; }
 
-		public SerializerSourceEmitter(Assembly targetAssembly, string outputPath)
+		public SerializerSourceEmitter(Assembly targetAssembly, [NotNull] ISerializationSourceOutputStrategy serializationOutputStrategy)
 		{
 			TargetAssembly = targetAssembly ?? throw new ArgumentNullException(nameof(targetAssembly));
-			OutputPath = outputPath ?? throw new ArgumentNullException(nameof(outputPath));
+			SerializationOutputStrategy = serializationOutputStrategy ?? throw new ArgumentNullException(nameof(serializationOutputStrategy));
 		}
 
-		public SerializerSourceEmitter([NotNull] string targetAssemblyPath, [NotNull] string outputPath)
+		public SerializerSourceEmitter([NotNull] string targetAssemblyPath, ISerializationSourceOutputStrategy serializationOutputStrategy)
+			: this(Assembly.LoadFile(targetAssemblyPath), serializationOutputStrategy)
 		{
 			if (string.IsNullOrWhiteSpace(targetAssemblyPath)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(targetAssemblyPath));
-			if (string.IsNullOrWhiteSpace(outputPath)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(outputPath));
-
-			TargetAssembly = Assembly.LoadFile(targetAssemblyPath);
-			OutputPath = outputPath ?? throw new ArgumentNullException(nameof(outputPath));
 		}
 
 		public void Generate()
@@ -50,10 +45,6 @@ namespace FreecraftCore.Serializer
 				.GetTypes()
 				.Where(IsSerializableType)
 				.ToArray();
-
-			string rootPath = Path.Combine(OutputPath, $"Strategy");
-			if (!Directory.Exists(rootPath))
-				Directory.CreateDirectory(rootPath);
 
 			foreach (var type in serializableTypes)
 			{
@@ -110,10 +101,7 @@ namespace FreecraftCore.Serializer
 			using (TextWriter classFileWriter = new StringWriter(sb))
 				formattedNode.WriteTo(classFileWriter);
 
-			string rootPath = Path.Combine(OutputPath, $"Strategy");
-
-			//Write the packet file out
-			File.WriteAllText(Path.Combine(rootPath, $"{emittable.UnitName}_{appendedName}.cs"), sb.ToString());
+			SerializationOutputStrategy.Output($"{emittable.UnitName}_{appendedName}", sb.ToString());
 		}
 
 		private static ICompilationUnitEmittable CreateEmittableImplementationSerializerStrategy(Type type)
