@@ -67,6 +67,10 @@ namespace FreecraftCore.Serializer
 
 		private SyntaxToken ComputeSerializerBaseType()
 		{
+			//We use a simplistic specializer serializer for byte types.
+			if (ActualType == typeof(byte))
+				return Identifier(nameof(BytePrimitiveSerializerStrategy));
+
 			//This picks between the normal and big endian version
 			return this.Member.GetCustomAttribute<ReverseDataAttribute>() == null
 				? Identifier("GenericTypePrimitiveSerializerStrategy")
