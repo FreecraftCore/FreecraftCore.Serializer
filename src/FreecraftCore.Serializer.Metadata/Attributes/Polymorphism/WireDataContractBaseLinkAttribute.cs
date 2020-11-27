@@ -12,23 +12,12 @@ namespace FreecraftCore.Serializer
 	/// However, it's required for deserialization/read to know the linking.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = false, Inherited = false)] //classes or structs can be WireDataContracts
-	public class WireDataContractBaseLinkAttribute : Attribute
+	public class WireDataContractBaseLinkAttribute : PolymorphicTypeLinkingAttribute
 	{
-		/// <summary>
-		/// Unique index/key that links the child to the base type.
-		/// </summary>
-		public int Index { get; }
-
-		/// <summary>
-		/// Links to the basetype with the provided index at runtime.
-		/// </summary>
-		/// <param name="index">Unique per Type index.</param>
-		public WireDataContractBaseLinkAttribute(int index)
+		public WireDataContractBaseLinkAttribute(int index) 
+			: base(index)
 		{
-			if (index < 0)
-				throw new ArgumentException($"Provided wire child index is less than 0. Was: {index}.");
 
-			Index = index;
 		}
 	}
 }

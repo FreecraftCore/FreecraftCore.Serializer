@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
@@ -30,12 +31,22 @@ namespace FreecraftCore.Serializer
 			if (type.GetCustomAttribute<WireMessageTypeAttribute>() != null)
 				return true;
 
-			if (type.GetCustomAttribute<WireDataContractAttribute>() != null)
-				if (type.GetCustomAttribute<WireDataContractAttribute>().UsesSubTypeSize)
+			if (type.GetCustomAttribute<WireDataContractAttribute>(false) != null)
+			{
+				if (DefinesPolymorphicContract(type))
 					return true; //all polymorphic serializers need Wire Message implementation
-			
-			return type.GetCustomAttribute<WireDataContractBaseLinkAttribute>() != null || //all polymorphic serializers need Wire Message implementation
+				else if (type.GetCustomAttributes<WireDataContractBaseTypeAttribute>(false).Any(a => a.ChildType == type))
+					return true;
+			}
+
+			return type.GetCustomAttribute<WireDataContractBaseLinkAttribute>(false) != null || //all polymorphic serializers need Wire Message implementation
 			       typeof(ISelfSerializable).IsAssignableFrom(type);
+		}
+
+		private static bool DefinesPolymorphicContract(Type type)
+		{
+			return type.GetCustomAttribute<WireDataContractAttribute>(false).UsesSubTypeSize || 
+			       (type.BaseType != null && type.BaseType.GetCustomAttribute<WireDataContractAttribute>(false) != null && type.BaseType.GetCustomAttribute<WireDataContractAttribute>(false).UsesSubTypeSize);
 		}
 
 		//See: https://stackoverflow.com/questions/43634808/how-can-i-get-the-number-of-type-parameters-on-an-open-generic-in-c-sharp

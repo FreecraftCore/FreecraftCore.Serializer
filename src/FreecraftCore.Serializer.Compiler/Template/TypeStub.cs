@@ -70,6 +70,7 @@ namespace FreecraftCore.Serializer.CustomTypes
 		}
 	}
 
+	[WireDataContractBaseType(2, typeof(TypeStub2))]
 	[WireDataContract(PrimitiveSizeType.UInt16)]
 	public abstract partial class BaseTypeStub
 	{
@@ -95,9 +96,7 @@ namespace FreecraftCore.Serializer.CustomTypes
 		}
 	}
 
-	[WireMessageType]
 	[WireDataContract]
-	[WireDataContractBaseLink(2)]
 	public sealed partial class TypeStub2 : BaseTypeStub
 	{
 		[WireMember(1)]

@@ -614,14 +614,8 @@ namespace FreecraftCore.Serializer
 		private IEnumerable<SwitchSectionSyntax> BuildSwitchStatements()
 		{
 			//Every type that is a child type in the same assembly
-			foreach (Type childType in typeof(TSerializableType)
-				.Assembly
-				.GetExportedTypes()
-				.Where(t => typeof(TSerializableType).IsAssignableFrom(t))
-				.Where(t => t.GetCustomAttribute<WireDataContractAttribute>() != null && t.GetCustomAttribute<WireDataContractBaseLinkAttribute>() != null))
+			foreach (PolymorphicTypeInfo typeInfo in GetPolymorphicChildTypes())
 			{
-				WireDataContractBaseLinkAttribute baseLinkAttribute = childType.GetCustomAttribute<WireDataContractBaseLinkAttribute>();
-
 				yield return SwitchSection()
 					.WithLabels
 					(
@@ -632,7 +626,7 @@ namespace FreecraftCore.Serializer
 									LiteralExpression
 									(
 										SyntaxKind.NumericLiteralExpression,
-										Literal(baseLinkAttribute.Index)
+										Literal(typeInfo.Index)
 									)
 								)
 								.WithKeyword
@@ -672,7 +666,7 @@ namespace FreecraftCore.Serializer
 								(
 									ObjectCreationExpression
 										(
-											CreateChildTypeIdentifier(childType)
+											CreateChildTypeIdentifier(typeInfo.ChildType)
 										)
 										.WithNewKeyword
 										(
@@ -960,6 +954,27 @@ namespace FreecraftCore.Serializer
 						)
 					);
 			}
+		}
+
+		private static IEnumerable<PolymorphicTypeInfo> GetPolymorphicChildTypes()
+		{
+			//Gets child types with link attribute
+			//and also types that are directly defined as attributed on the base type itself.
+			return typeof(TSerializableType)
+				.Assembly
+				.GetExportedTypes()
+				.Where(t => typeof(TSerializableType).IsAssignableFrom(t))
+				.Where(t => t.GetCustomAttribute<WireDataContractAttribute>() != null && t.GetCustomAttribute<WireDataContractBaseLinkAttribute>() != null)
+				.Select(t =>
+				{
+					WireDataContractBaseLinkAttribute attribute = t.GetCustomAttribute<WireDataContractBaseLinkAttribute>();
+					return new PolymorphicTypeInfo(attribute.Index, t);
+				})
+				.Concat(typeof(TSerializableType).GetCustomAttributes<WireDataContractBaseTypeAttribute>().Select(a =>
+				{
+					return new PolymorphicTypeInfo(a.Index, a.ChildType);
+				}))
+				.Distinct();
 		}
 
 		private static IdentifierNameSyntax CreateChildTypeIdentifier([NotNull] Type childType)
