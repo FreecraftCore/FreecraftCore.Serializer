@@ -10,7 +10,7 @@ namespace FreecraftCore.Serializer
 	/// Base contract for serializer type that can write null terminators.
 	/// </summary>
 	/// <typeparam name="TChildType"></typeparam>
-	public abstract class BaseStringTerminatorSerializerStrategy<TChildType> : BaseEncodableTypeSerializerStrategy<TChildType>
+	public abstract class BaseStringTerminatorSerializerStrategy<TChildType> : BaseEncodableTypeSerializerStrategy<TChildType>, IStringTypeSerializerStrategy
 		where TChildType : BaseStringTerminatorSerializerStrategy<TChildType>, new()
 	{
 		protected BaseStringTerminatorSerializerStrategy([NotNull] Encoding encodingStrategy)

@@ -12,7 +12,7 @@ namespace FreecraftCore.Serializer
 	/// Contract for base string serialization strategy.
 	/// </summary>
 	/// <typeparam name="TChildType"></typeparam>
-	public abstract class BaseStringTypeSerializerStrategy<TChildType> : BaseEncodableTypeSerializerStrategy<TChildType>
+	public abstract class BaseStringTypeSerializerStrategy<TChildType> : BaseEncodableTypeSerializerStrategy<TChildType>, IStringTypeSerializerStrategy
 		where TChildType : BaseStringTypeSerializerStrategy<TChildType>, new()
 	{
 		protected BaseStringTypeSerializerStrategy([NotNull] Encoding encodingStrategy)
