@@ -1,98 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
 
-namespace FreecraftCore.Serializer.Tests
+namespace FreecraftCore.Serializer.Perf
 {
-	[TestFixture]
-	public static class AuthLogonPacketTests
-	{
-		private static byte[] realWorldBytes = new byte[]
-		{
-			1, //opcode
-
-			0, //auth result (success)
-
-			203, //20 byte M2 response
-			164,
-			231,
-			13,
-			97,
-			45,
-			211,
-			167,
-			253,
-			241,
-			138,
-			250,
-			202,
-			47,
-			151,
-			53,
-			6,
-			192,
-			213,
-			118,
-
-			0, //auth flags 4 byte uint flags enum
-			0,
-			128,
-			0,
-
-			0, //survey id 4 byte uint
-			0,
-			0,
-			0,
-
-			0, //unk3 ushort
-			0
-		};
-
-		/*[Test]
-		public static void Test_Can_Register_AuthProofResponse()
-		{
-			//arrange
-			SerializerService serializer = new SerializerService();
-			serializer.RegisterType<AuthPacketBaseTest>();
-			serializer.Link<AuthLogonProofResponse, AuthPacketBaseTest>();
-
-			serializer.Compile();
-		}
-
-		[Test]
-		public static void Test_RealWorldBytes_Are_32Bytes()
-		{
-			//assert
-			Assert.AreEqual(32, realWorldBytes.Length);
-		}
-
-		[Test]
-		public static async Task Test_Can_Deserialize_AuthLogonProofResponse()
-		{
-			//arrange
-			SerializerService serializer = new SerializerService();
-			serializer.RegisterType<AuthPacketBaseTest>();
-			serializer.RegisterType<AuthLogonProofResponse>();
-			serializer.Link<AuthLogonProofResponse, AuthPacketBaseTest>();
-
-			serializer.Compile();
-			//act
-			AuthPacketBaseTest test = await serializer.DeserializeAsync<AuthPacketBaseTest>(new DefaultStreamReaderStrategyAsync(realWorldBytes.Skip(1).ToArray())
-				.PeekWithBufferingAsync()
-				.PreprendWithBytesAsync(new byte[] { 0x01 })
-				.PreprendWithBytesAsync(new byte[] { 2 }));
-		}*/
-	}
 
 	/// <summary>
 	/// Response payload sent in response to the <see cref="AuthLogonProofRequest"/>.
 	/// </summary>
 	[WireDataContract]
-	[WireDataContractBaseLink((0x01 << 8) + 2)]
+	[WireDataContractBaseLink(0x01)]
 	public partial class AuthLogonProofResponse : AuthPacketBaseTest
 	{
 		/// <summary>
@@ -104,7 +22,7 @@ namespace FreecraftCore.Serializer.Tests
 		//TODO: Add real ctor. Right now we only implement client stuff and this is sent by server.
 
 		public AuthLogonProofResponse()
-			: base((0x01 << 8) + 2)
+			: base(0x01)
 		{
 
 		}
@@ -213,16 +131,16 @@ namespace FreecraftCore.Serializer.Tests
 		}
 	}
 
-	[WireDataContract(PrimitiveSizeType.UInt16)]
+	[WireDataContract(PrimitiveSizeType.Byte)]
 	public abstract partial class AuthPacketBaseTest
 	{
 		[WireMember(1)]
-		public ushort OperationCode { get; internal set; }
+		public byte OperationCode { get; internal set; }
 
 		/// <summary>
 		/// Serializer ctor.
 		/// </summary>
-		public AuthPacketBaseTest(ushort operationCode)
+		public AuthPacketBaseTest(byte operationCode)
 		{
 			OperationCode = operationCode;
 		}

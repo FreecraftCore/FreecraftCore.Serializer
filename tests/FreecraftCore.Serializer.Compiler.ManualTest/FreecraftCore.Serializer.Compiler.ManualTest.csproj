@@ -8,6 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Compiler\FreecraftCore.Serializer.Compiler.csproj" />
     <ProjectReference Include="..\FreecraftCore.Serialization.Tests\FreecraftCore.Serialization.Tests.csproj" />
+    <ProjectReference Include="..\FreecraftCore.Serializer.Performance.Tests\FreecraftCore.Serializer.Performance.Tests.csproj" />
   </ItemGroup>
 
 </Project>

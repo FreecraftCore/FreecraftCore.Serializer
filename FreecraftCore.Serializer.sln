@@ -15,9 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreecraftCore.Serializer.Me
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreecraftCore.Serialization.Tests", "tests\FreecraftCore.Serialization.Tests\FreecraftCore.Serialization.Tests.csproj", "{5583F0D8-F594-4E63-878B-D1C4452A662C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Serializer.Compiler", "src\FreecraftCore.Serializer.Compiler\FreecraftCore.Serializer.Compiler.csproj", "{EA995598-1AAE-4CA7-B464-4E00CCEB4872}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreecraftCore.Serializer.Compiler", "src\FreecraftCore.Serializer.Compiler\FreecraftCore.Serializer.Compiler.csproj", "{EA995598-1AAE-4CA7-B464-4E00CCEB4872}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Serializer.Compiler.ManualTest", "tests\FreecraftCore.Serializer.Compiler.ManualTest\FreecraftCore.Serializer.Compiler.ManualTest.csproj", "{43535DB9-CE26-4E50-ACDC-8FAE56D2EFF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreecraftCore.Serializer.Compiler.ManualTest", "tests\FreecraftCore.Serializer.Compiler.ManualTest\FreecraftCore.Serializer.Compiler.ManualTest.csproj", "{43535DB9-CE26-4E50-ACDC-8FAE56D2EFF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreecraftCore.Serializer.Performance.Tests", "tests\FreecraftCore.Serializer.Performance.Tests\FreecraftCore.Serializer.Performance.Tests.csproj", "{A884F121-1D94-4C0B-966F-B91E1F295A7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,18 @@ Global
 		{43535DB9-CE26-4E50-ACDC-8FAE56D2EFF3}.Release|x64.Build.0 = Release|Any CPU
 		{43535DB9-CE26-4E50-ACDC-8FAE56D2EFF3}.Release|x86.ActiveCfg = Release|Any CPU
 		{43535DB9-CE26-4E50-ACDC-8FAE56D2EFF3}.Release|x86.Build.0 = Release|Any CPU
+		{A884F121-1D94-4C0B-966F-B91E1F295A7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A884F121-1D94-4C0B-966F-B91E1F295A7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A884F121-1D94-4C0B-966F-B91E1F295A7A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A884F121-1D94-4C0B-966F-B91E1F295A7A}.Debug|x64.Build.0 = Debug|Any CPU
+		{A884F121-1D94-4C0B-966F-B91E1F295A7A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A884F121-1D94-4C0B-966F-B91E1F295A7A}.Debug|x86.Build.0 = Debug|Any CPU
+		{A884F121-1D94-4C0B-966F-B91E1F295A7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A884F121-1D94-4C0B-966F-B91E1F295A7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A884F121-1D94-4C0B-966F-B91E1F295A7A}.Release|x64.ActiveCfg = Release|Any CPU
+		{A884F121-1D94-4C0B-966F-B91E1F295A7A}.Release|x64.Build.0 = Release|Any CPU
+		{A884F121-1D94-4C0B-966F-B91E1F295A7A}.Release|x86.ActiveCfg = Release|Any CPU
+		{A884F121-1D94-4C0B-966F-B91E1F295A7A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +126,7 @@ Global
 		{5583F0D8-F594-4E63-878B-D1C4452A662C} = {2E903AB5-E882-49A7-A612-FCCB9F11D540}
 		{EA995598-1AAE-4CA7-B464-4E00CCEB4872} = {C69D878A-A37C-4DBD-8D90-8AF30074E3C0}
 		{43535DB9-CE26-4E50-ACDC-8FAE56D2EFF3} = {2E903AB5-E882-49A7-A612-FCCB9F11D540}
+		{A884F121-1D94-4C0B-966F-B91E1F295A7A} = {2E903AB5-E882-49A7-A612-FCCB9F11D540}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {77340858-04C1-4169-93A3-121A82FA6670}
