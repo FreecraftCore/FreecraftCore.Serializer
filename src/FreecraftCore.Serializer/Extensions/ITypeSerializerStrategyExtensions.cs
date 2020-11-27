@@ -18,7 +18,7 @@ namespace FreecraftCore
 		/// <param name="offset">The starting offset into the buffer to read from.</param>
 		/// <returns></returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T Read<T>(this ITypeSerializerStrategy<T> serializer, Span<byte> buffer, int offset)
+		public static T Read<T>(this ITypeSerializerReadingStrategy<T> serializer, Span<byte> buffer, int offset)
 		{
 			return serializer.Read(buffer, ref offset);
 		}
@@ -33,7 +33,7 @@ namespace FreecraftCore
 		/// <param name="buffer">The destination buffer to write the value into.</param>
 		/// <param name="offset">The offset to start writing the value into.</param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Write<T>(this ITypeSerializerStrategy<T> serializer, T value, Span<byte> buffer, int offset)
+		public static void Write<T>(this ITypeSerializerWritingStrategy<T> serializer, T value, Span<byte> buffer, int offset)
 		{
 			serializer.Write(value, buffer, ref offset);
 		}
