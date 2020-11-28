@@ -11,6 +11,10 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public enum PrimitiveSizeType : byte
 	{
+		/// <summary>
+		/// Special case that should only be used for polymorphic serialization.
+		/// </summary>
+		Bit,
 		Byte,
 		UInt16,
 		Int16,
