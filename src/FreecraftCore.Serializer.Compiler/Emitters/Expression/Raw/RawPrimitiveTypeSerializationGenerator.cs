@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
@@ -33,21 +34,7 @@ namespace FreecraftCore.Serializer
 						MemberAccessExpression
 						(
 							SyntaxKind.SimpleMemberAccessExpression,
-							GenericName
-								(
-									ComputeSerializerBaseType()
-								)
-								.WithTypeArgumentList
-								(
-									TypeArgumentList
-									(
-										SingletonSeparatedList<TypeSyntax>
-										(
-											//The generic type input!
-											IdentifierName(PrimitiveTypeName)
-										)
-									)
-								),
+							ComputePrimitiveTypeSerializerTypeExpression(),
 							IdentifierName("Instance")
 						),
 						IdentifierName(Mode.ToString())
@@ -65,16 +52,32 @@ namespace FreecraftCore.Serializer
 				);
 		}
 
-		private SyntaxToken ComputeSerializerBaseType()
+		private NameSyntax ComputePrimitiveTypeSerializerTypeExpression()
 		{
 			//We use a simplistic specializer serializer for byte types.
 			if (ActualType.SpecialType == SpecialType.System_Byte)
-				return Identifier(nameof(BytePrimitiveSerializerStrategy));
+				return IdentifierName(nameof(BytePrimitiveSerializerStrategy));
 
 			//This picks between the normal and big endian version
-			return Member.HasAttributeExact<ReverseDataAttribute>()
+			SyntaxToken nameToken = Member.HasAttributeExact<ReverseDataAttribute>()
 				? Identifier("GenericTypePrimitiveSerializerStrategy")
 				: Identifier("BigEndianGenericTypePrimitiveSerializerStrategy");
+
+			return GenericName
+				(
+					nameToken
+				)
+				.WithTypeArgumentList
+				(
+					TypeArgumentList
+					(
+						SingletonSeparatedList<TypeSyntax>
+						(
+							//The generic type input!
+							IdentifierName(PrimitiveTypeName)
+						)
+					)
+				);
 		}
 
 		private SyntaxNodeOrToken[] ComputeReadMethodArgs()
