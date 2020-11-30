@@ -14,10 +14,10 @@ namespace FreecraftCore.Serializer
 {
 	public sealed class RawEnumPrimitiveSerializationGenerator : BaseInvokationExpressionEmitter
 	{
-		public Type PrimitiveSerializationType { get; }
+		public string PrimitiveSerializationType { get; }
 
-		public RawEnumPrimitiveSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode,
-			[NotNull] Type primitiveSerializationType) 
+		public RawEnumPrimitiveSerializationGenerator([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode,
+			[NotNull] string primitiveSerializationType) 
 			: base(actualType, member, mode)
 		{
 			PrimitiveSerializationType = primitiveSerializationType ?? throw new ArgumentNullException(nameof(primitiveSerializationType));
@@ -55,7 +55,7 @@ namespace FreecraftCore.Serializer
 														Space
 													)
 												),
-												IdentifierName(PrimitiveSerializationType.Name)
+												IdentifierName(PrimitiveSerializationType)
 											}
 										)
 									)

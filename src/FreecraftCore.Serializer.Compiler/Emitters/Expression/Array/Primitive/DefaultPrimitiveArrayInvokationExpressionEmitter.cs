@@ -13,11 +13,11 @@ namespace FreecraftCore.Serializer
 	internal sealed class DefaultPrimitiveArrayInvokationExpressionEmitter 
 		: BaseArraySerializationInvokationExpressionEmitter<PrimitiveArrayTypeSerializerStrategy>
 	{
-		public DefaultPrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, MemberInfo member, SerializationMode mode)
-			: base(elementType, member, mode)
+		public DefaultPrimitiveArrayInvokationExpressionEmitter([NotNull] IArrayTypeSymbol arraySymbol, ISymbol member, SerializationMode mode)
+			: base(arraySymbol, member, mode)
 		{
-			if (!ElementType.IsPrimitive)
-				throw new InvalidOperationException($"Type: {elementType.Name} must be primitive.");
+			if (!arraySymbol.ElementType.IsPrimitive())
+				throw new InvalidOperationException($"Type: {arraySymbol.ElementType.Name} must be primitive.");
 		}
 
 		protected override IEnumerable<SyntaxNodeOrToken> CalculateGenericTypeParameters()

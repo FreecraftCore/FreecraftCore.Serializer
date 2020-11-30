@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
@@ -12,7 +13,7 @@ namespace FreecraftCore.Serializer
 {
 	public sealed class FieldDocumentationStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		public FieldDocumentationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member)
+		public FieldDocumentationStatementsBlockEmitter([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member)
 			: base(actualType, member, SerializationMode.None)
 		{
 
@@ -22,13 +23,13 @@ namespace FreecraftCore.Serializer
 		{
 			List<StatementSyntax> statements = new List<StatementSyntax>();
 
-			int fieldId = Member.GetCustomAttribute<WireMemberAttribute>().MemberOrder;
+			int fieldId = int.Parse(Member.GetAttributeExact<WireMemberAttribute>().ConstructorArguments.First().ToCSharpString());
 
 			//Gather all field MetaData to document it.
 
 			//This is a HACK (including the slashes) but I am too dumb to figure out another way lol.
 			statements.Add(EmptyStatement()
-				.WithLeadingTrivia(Comment($"//Type: {Member.DeclaringType.Name} Field: {fieldId} Name: {Member.Name} Type: {ActualType.Name}")));
+				.WithLeadingTrivia(Comment($"//Type: {Member.ContainingType.Name} Field: {fieldId} Name: {Member.Name} Type: {ActualType.Name}")));
 
 			return statements;
 		}

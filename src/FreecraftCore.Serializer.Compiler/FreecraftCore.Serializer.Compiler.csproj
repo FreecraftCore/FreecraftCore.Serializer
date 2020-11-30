@@ -19,15 +19,41 @@
     <Product>FreecraftCore.Serializer.Compiler</Product>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" />
-    <ProjectReference Include="..\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj" />
+  <!-- See: https://github.com/dotnet/roslyn-sdk/blob/master/samples/CSharp/SourceGenerators/SourceGeneratorSamples/SourceGeneratorSamples.csproj -->
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <!-- Generates a package at build -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <!-- Do not include the generator as a lib dependency -->
+    <langversion>preview</langversion>
+  </PropertyGroup>
 
-    <PackageReference Include="Microsoft.CodeAnalysis.Compilers" Version="3.8.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.8.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="3.8.0" />
+  <PropertyGroup>
+    <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" GeneratePathProperty="true" />
+    <ProjectReference Include="..\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj" GeneratePathProperty="true" />
+
+    <PackageReference Include="Microsoft.CodeAnalysis.Compilers" Version="3.8.0" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.8.0" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="3.8.0" PrivateAssets="all" GeneratePathProperty="true" />
+
+    <!-- Package the generator in the analyzer directory of the nuget package -->
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
+
+  <Target Name="GetDependencyTargetPaths">
+    <ItemGroup>
+      <!-- Puts private nuget dependencies into the generator -->
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_Compilers)\lib\netstandard2.0\*.dll" Pack="true" IncludeRuntimeDependency="false" />
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_CSharp)\lib\netstandard2.0\*.dll" Pack="true" IncludeRuntimeDependency="false" />
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_CSharp_Workspaces)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_Compilers_Workspaces_Common)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+    </ItemGroup>
+  </Target>
 
   <ItemGroup>
     <Folder Include="Template\Test\" />

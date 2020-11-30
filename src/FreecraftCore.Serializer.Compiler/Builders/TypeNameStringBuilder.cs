@@ -1,44 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using JetBrains.Annotations;
+using Microsoft.CodeAnalysis;
 
 namespace FreecraftCore.Serializer
 {
 	public sealed class TypeNameStringBuilder
 	{
-		public Type ActualType { get; }
+		public ITypeSymbol ActualType { get; }
 
-		public TypeNameStringBuilder(Type actualType)
+		public TypeNameStringBuilder([NotNull] ITypeSymbol actualType)
 		{
-			ActualType = actualType;
+			ActualType = actualType ?? throw new ArgumentNullException(nameof(actualType));
 		}
 
 		public override string ToString()
 		{
-			return GetFriendlyName(ActualType);
-		}
-
-		private static string GetFriendlyName(Type type)
-		{
-			string friendlyName = type.Name;
-			if(type.IsGenericType)
-			{
-				int iBacktick = friendlyName.IndexOf('`');
-				if(iBacktick > 0)
-				{
-					friendlyName = friendlyName.Remove(iBacktick);
-				}
-				friendlyName += "<";
-				Type[] typeParameters = type.GetGenericArguments();
-				for(int i = 0; i < typeParameters.Length; ++i)
-				{
-					string typeParamName = GetFriendlyName(typeParameters[i]);
-					friendlyName += (i == 0 ? typeParamName : "," + typeParamName);
-				}
-				friendlyName += ">";
-			}
-
-			return friendlyName;
+			if (ActualType is INamedTypeSymbol namedTypeSymbol)
+				return namedTypeSymbol.GetFriendlyName();
+			else
+				throw new NotImplementedException($"TODO: Support {ActualType.GetType().Name} in {nameof(TypeNameStringBuilder)}");
 		}
 	}
 }

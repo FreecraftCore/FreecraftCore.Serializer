@@ -27,5 +27,13 @@ namespace FreecraftCore.Serializer
 
 			SizeType = sizeType;
 		}
+
+		internal static PrimitiveSizeType Parse(params string[] args)
+		{
+			if (args.Length != 1)
+				throw new InvalidOperationException($"{nameof(EnumSizeAttribute)} requires updated handling.");
+
+			return (PrimitiveSizeType)Enum.Parse(typeof(PrimitiveSizeType), args[0], true);
+		}
 	}
 }

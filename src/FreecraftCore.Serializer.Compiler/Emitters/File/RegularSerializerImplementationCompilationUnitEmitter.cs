@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -9,10 +10,15 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class RegularSerializerImplementationCompilationUnitEmitter<TSerializableType> : BaseSerializerImplementationCompilationUnitEmitter<TSerializableType> 
-		where TSerializableType : new()
+	public sealed class RegularSerializerImplementationCompilationUnitEmitter : BaseSerializerImplementationCompilationUnitEmitter
 	{
-		public RootSerializationMethodBlockEmitter<TSerializableType> SerializationMethodEmitter { get; } = new RootSerializationMethodBlockEmitter<TSerializableType>();
+		public RootSerializationMethodBlockEmitter SerializationMethodEmitter { get; }
+
+		public RegularSerializerImplementationCompilationUnitEmitter([NotNull] INamedTypeSymbol typeSymbol)
+			: base(typeSymbol)
+		{
+			SerializationMethodEmitter = new RootSerializationMethodBlockEmitter(typeSymbol);
+		}
 
 		private BlockSyntax CreateWriteBlock()
 		{

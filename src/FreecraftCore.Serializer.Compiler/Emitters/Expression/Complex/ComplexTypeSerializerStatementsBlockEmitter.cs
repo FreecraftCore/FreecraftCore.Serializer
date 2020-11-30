@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class ComplexTypeSerializerStatementsBlockEmitter : BaseInvokationExpressionEmitter
+	public sealed class ComplexTypeSerializerStatementsBlockEmitter : BaseInvokationExpressionEmitter<INamedTypeSymbol>
 	{
-		public ComplexTypeSerializerStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode) 
+		public ComplexTypeSerializerStatementsBlockEmitter([NotNull] INamedTypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode) 
 			: base(actualType, member, mode)
 		{
 

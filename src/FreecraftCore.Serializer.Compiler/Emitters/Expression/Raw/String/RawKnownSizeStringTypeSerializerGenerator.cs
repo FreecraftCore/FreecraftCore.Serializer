@@ -20,7 +20,7 @@ namespace FreecraftCore.Serializer
 
 		public bool ShouldTerminate { get; }
 
-		public RawKnownSizeStringTypeSerializerGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, 
+		public RawKnownSizeStringTypeSerializerGenerator([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode, 
 			EncodingType encoding, int fixedSizeValue, bool shouldTerminate) 
 			: base(actualType, member, mode)
 		{

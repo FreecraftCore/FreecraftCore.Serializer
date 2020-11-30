@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FreecraftCore.Serializer
@@ -12,7 +15,7 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public sealed class StringTypeSerializationStatementsBlockEmitter : BaseInvokationExpressionEmitter
 	{
-		public StringTypeSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode)
+		public StringTypeSerializationStatementsBlockEmitter([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode)
 			: base(actualType, member, mode)
 		{
 
@@ -20,45 +23,42 @@ namespace FreecraftCore.Serializer
 
 		public override InvocationExpressionSyntax Create()
 		{
-			//Firstly, we must know if the string is sending its size
-			SendSizeAttribute sendSizeAttri = Member.GetCustomAttribute<SendSizeAttribute>();
-			KnownSizeAttribute knownSizeAttri = Member.GetCustomAttribute<KnownSizeAttribute>();
-			EncodingAttribute encodingAttri = Member.GetCustomAttribute<EncodingAttribute>();
-			DontTerminateAttribute dontTerminateAttribute = Member.GetCustomAttribute<DontTerminateAttribute>();
-
 			//Default to ASCII if no encoding specified
-			if (encodingAttri == null)
-				encodingAttri = new EncodingAttribute(EncodingType.ASCII);
+			EncodingType encodingType = EncodingType.ASCII;
 
-			if (knownSizeAttri != null && sendSizeAttri != null)
-				throw new InvalidOperationException($"Emit failed for Member: {ActualType} in Type: {Member.DeclaringType}. Cannot use Attributes: {nameof(SendSizeAttribute)} and {nameof(KnownSizeAttribute)} together.");
+			if (Member.HasAttributeExact<EncodingAttribute>())
+				encodingType = EncodingAttribute.Parse(Member.GetAttributeExact<EncodingAttribute>().ConstructorArguments.First().ToCSharpString());
 
-			if (sendSizeAttri != null && dontTerminateAttribute == null)
+			if (Member.HasAttributeExact<KnownSizeAttribute>() && Member.HasAttributeExact<SendSizeAttribute>())
+				throw new InvalidOperationException($"Emit failed for Member: {ActualType} in Type: {Member.ContainingType.Name}. Cannot use Attributes: {nameof(SendSizeAttribute)} and {nameof(KnownSizeAttribute)} together.");
+			
+			if (Member.HasAttributeExact<SendSizeAttribute>() && !Member.HasAttributeExact<DontTerminateAttribute>())
 			{
-				var generator = new RawLengthPrefixedStringTypeSerializationGenerator(ActualType, Member, Mode, encodingAttri.DesiredEncodingType, sendSizeAttri.TypeOfSize);
+				PrimitiveSizeType sendSize = SendSizeAttribute.Parse(Member.GetAttributeExact<SendSizeAttribute>().ConstructorArguments.First().ToCSharpString());
+				var generator = new RawLengthPrefixedStringTypeSerializationGenerator(ActualType, Member, Mode, encodingType, sendSize);
 				return generator.Create();
 			}
-			else if (sendSizeAttri != null)
+			else if (Member.HasAttributeExact<SendSizeAttribute>())
 			{
 				//Dont Terminate attribute FOUND!
-				var generator = new RawDontTerminateLengthPrefixedStringTypeSerializationGenerator(ActualType, Member, Mode, encodingAttri.DesiredEncodingType, sendSizeAttri.TypeOfSize);
+				PrimitiveSizeType sendSize = SendSizeAttribute.Parse(Member.GetAttributeExact<SendSizeAttribute>().ConstructorArguments.First().ToCSharpString());
+
+				var generator = new RawDontTerminateLengthPrefixedStringTypeSerializationGenerator(ActualType, Member, Mode, encodingType, sendSize);
 				return generator.Create();
 			}
-
-			if (knownSizeAttri != null)
+			else if (Member.HasAttributeExact<KnownSizeAttribute>())
 			{
-				var generator = new RawKnownSizeStringTypeSerializerGenerator(ActualType, Member, Mode, encodingAttri.DesiredEncodingType, knownSizeAttri.KnownSize, dontTerminateAttribute == null);
+				int size = KnownSizeAttribute.Parse(Member.GetAttributeExact<KnownSizeAttribute>().ConstructorArguments.First().ToCSharpString());
+
+				var generator = new RawKnownSizeStringTypeSerializerGenerator(ActualType, Member, Mode, encodingType, size, !Member.HasAttributeExact<DontTerminateAttribute>());
 				return generator.Create();
 			}
-
-			//If it's not knownsize or sendsize then let's emit the default!
-			if (sendSizeAttri == null && knownSizeAttri == null)
+			else
 			{
-				var generator = new RawDefaultStringTypeSerializerGenerator(ActualType, Member, Mode, encodingAttri.DesiredEncodingType, dontTerminateAttribute == null);
+				//If it's not knownsize or sendsize then let's emit the default!
+				var generator = new RawDefaultStringTypeSerializerGenerator(ActualType, Member, Mode, encodingType, !Member.HasAttributeExact<DontTerminateAttribute>());
 				return generator.Create();
 			}
-
-			throw new InvalidOperationException($"Cannot handle Member: {Member.Name} on Type: {Member.DeclaringType.Name}.");
 		}
 	}
 }

@@ -11,9 +11,8 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-	public class ReverseDataAttribute : Attribute
+	public sealed class ReverseDataAttribute : Attribute
 	{
-
 		public ReverseDataAttribute()
 		{
 			//Don't need to do anything.

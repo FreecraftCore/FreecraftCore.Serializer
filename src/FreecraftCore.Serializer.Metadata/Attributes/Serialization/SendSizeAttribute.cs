@@ -11,39 +11,25 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-	public class SendSizeAttribute : Attribute
+	public sealed class SendSizeAttribute : Attribute
 	{
 		/// <summary>
 		/// Indicates the type of size to send.
 		/// </summary>
 		public PrimitiveSizeType TypeOfSize { get; }
 
-		/// <summary>
-		/// Indicates the size to be added when read/written.
-		/// For example, if protocols send N but only say N - 1 you can
-		/// initialize this to 1 to support that.
-		/// </summary>
-		public sbyte AddedSize { get; }
-
 		public SendSizeAttribute(PrimitiveSizeType sizeType)
-			: this(sizeType, 0)
 		{
-			
+			if (!Enum.IsDefined(typeof(PrimitiveSizeType), sizeType)) throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(PrimitiveSizeType));
+			TypeOfSize = sizeType;
 		}
 
-		/// <summary>
-		/// Initializes the metadata with the optional added size offset.
-		/// This sill increase or decrease the sent size by the provided value <see cref="AddedSize"/>.
-		/// </summary>
-		/// <param name="sizeType"></param>
-		/// <param name="addedSize"></param>
-		public SendSizeAttribute(PrimitiveSizeType sizeType, sbyte addedSize)
+		internal static PrimitiveSizeType Parse(params string[] args)
 		{
-			if(!Enum.IsDefined(typeof(PrimitiveSizeType), sizeType))
-				throw new ArgumentException($"Provided enum argument {nameof(sizeType)} of Type {typeof(PrimitiveSizeType)} with value {sizeType} was not in valid range.", nameof(sizeType));
+			if (args.Length != 1)
+				throw new InvalidOperationException($"Must update {nameof(SendSizeAttribute)} handling.");
 
-			TypeOfSize = sizeType;
-			AddedSize = addedSize;
+			return (PrimitiveSizeType)Enum.Parse(typeof(PrimitiveSizeType), args[0], true);
 		}
 	}
 }

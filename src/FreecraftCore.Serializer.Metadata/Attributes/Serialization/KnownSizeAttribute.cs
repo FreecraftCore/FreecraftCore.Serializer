@@ -12,7 +12,7 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)] //members can be fields or props
-	public class KnownSizeAttribute : Attribute
+	public sealed class KnownSizeAttribute : Attribute
 	{
 		/// <summary>
 		/// Indicates the known size/length of the member.
@@ -25,6 +25,14 @@ namespace FreecraftCore.Serializer
 				throw new ArgumentException($"Provided argument {nameof(size)} must be positive.", nameof(size));
 
 			KnownSize = size;
+		}
+
+		internal static int Parse(params string[] args)
+		{
+			if (args.Length != 1)
+				throw new InvalidOperationException($"{nameof(KnownSizeAttribute)} handling must be updated.");
+
+			return int.Parse(args[0]);
 		}
 	}
 }

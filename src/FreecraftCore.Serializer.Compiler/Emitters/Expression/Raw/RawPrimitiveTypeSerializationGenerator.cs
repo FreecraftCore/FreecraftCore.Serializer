@@ -16,7 +16,7 @@ namespace FreecraftCore.Serializer
 	{
 		public string PrimitiveTypeName { get; }
 
-		public RawPrimitiveTypeSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, [NotNull] string primitiveTypeName) 
+		public RawPrimitiveTypeSerializationGenerator([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode, [NotNull] string primitiveTypeName) 
 			: base(actualType, member, mode)
 		{
 			if (string.IsNullOrEmpty(primitiveTypeName)) throw new ArgumentException("Value cannot be null or empty.", nameof(primitiveTypeName));
@@ -68,11 +68,11 @@ namespace FreecraftCore.Serializer
 		private SyntaxToken ComputeSerializerBaseType()
 		{
 			//We use a simplistic specializer serializer for byte types.
-			if (ActualType == typeof(byte))
+			if (ActualType.SpecialType == SpecialType.System_Byte)
 				return Identifier(nameof(BytePrimitiveSerializerStrategy));
 
 			//This picks between the normal and big endian version
-			return this.Member.GetCustomAttribute<ReverseDataAttribute>() == null
+			return Member.HasAttributeExact<ReverseDataAttribute>()
 				? Identifier("GenericTypePrimitiveSerializerStrategy")
 				: Identifier("BigEndianGenericTypePrimitiveSerializerStrategy");
 		}

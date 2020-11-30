@@ -14,7 +14,7 @@ namespace FreecraftCore.Serializer
 	{
 		private ExpressionSyntax Expression { get; }
 
-		public ReadAssignmentStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, [NotNull] ExpressionSyntax expression) 
+		public ReadAssignmentStatementsBlockEmitter([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode, [NotNull] ExpressionSyntax expression) 
 			: base(actualType, member, mode)
 		{
 			Expression = expression ?? throw new ArgumentNullException(nameof(expression));

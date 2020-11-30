@@ -18,7 +18,7 @@ namespace FreecraftCore.Serializer
 
 		public bool ShouldTerminate { get; }
 
-		public RawDefaultStringTypeSerializerGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, 
+		public RawDefaultStringTypeSerializerGenerator([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode, 
 			EncodingType encoding, bool shouldTerminate) 
 			: base(actualType, member, mode)
 		{

@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FreecraftCore.Serializer
 {
 	public sealed class EnumTypeSerializerStatementsBlockEmitter : BaseInvokationExpressionEmitter
 	{
-		public EnumTypeSerializerStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode) 
+		public EnumTypeSerializerStatementsBlockEmitter([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode) 
 			: base(actualType, member, mode)
 		{
 
@@ -17,15 +20,12 @@ namespace FreecraftCore.Serializer
 
 		public override InvocationExpressionSyntax Create()
 		{
-			EnumStringAttribute enumStringAttri = Member.GetCustomAttribute<EnumStringAttribute>();
-			EnumSizeAttribute enumSizeAttri = Member.GetCustomAttribute<EnumSizeAttribute>();
-
 			//TODO: Support custom primitivie specifier.
 			//Primitive serialization YAY
-			if (enumStringAttri == null)
+			if (Member.HasAttributeExact<EnumStringAttribute>())
 			{
 				//What type to serialize the enum as
-				Type serializeAsType = enumSizeAttri == null ? ActualType.GetEnumUnderlyingType() : Type.GetType($"System.{enumSizeAttri.SizeType.ToString()}", true);
+				string serializeAsType = ComputeTypeToSerializeTo();
 
 				var generator = new RawEnumPrimitiveSerializationGenerator(ActualType, Member, Mode, serializeAsType);
 				return generator.Create();
@@ -44,6 +44,19 @@ namespace FreecraftCore.Serializer
 				//Enum.Parse<TType>
 				EnumParseInvocationExpressionEmitter emitter = new EnumParseInvocationExpressionEmitter(ActualType, Member, invocation);
 				return emitter.Create();
+			}
+		}
+
+		private string ComputeTypeToSerializeTo()
+		{
+			if (Member.HasAttributeExact<EnumSizeAttribute>())
+			{
+				PrimitiveSizeType sizeType = EnumSizeAttribute.Parse(Member.GetAttributeExact<EnumSizeAttribute>().ConstructorArguments.First().ToCSharpString());
+				return sizeType.ToString();
+			}
+			else
+			{
+				return ActualType.GetEnumUnderlyingType().Name;
 			}
 		}
 	}

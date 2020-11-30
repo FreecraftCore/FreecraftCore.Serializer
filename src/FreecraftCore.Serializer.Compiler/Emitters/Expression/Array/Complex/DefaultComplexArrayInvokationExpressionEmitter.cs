@@ -13,8 +13,8 @@ namespace FreecraftCore.Serializer
 	internal sealed class DefaultComplexArrayInvokationExpressionEmitter 
 		: BaseArraySerializationInvokationExpressionEmitter<ComplexArrayTypeSerializerStrategy>
 	{
-		public DefaultComplexArrayInvokationExpressionEmitter([NotNull] Type elementType, MemberInfo member, SerializationMode mode)
-			: base(elementType, member, mode)
+		public DefaultComplexArrayInvokationExpressionEmitter([NotNull] IArrayTypeSymbol arrayType, ISymbol member, SerializationMode mode)
+			: base(arrayType, member, mode)
 		{
 		}
 

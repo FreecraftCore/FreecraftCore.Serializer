@@ -13,7 +13,7 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
-	public class OptionalAttribute : Attribute
+	public sealed class OptionalAttribute : Attribute
 	{
 		/// <summary>
 		/// The name of the member that contains the bool

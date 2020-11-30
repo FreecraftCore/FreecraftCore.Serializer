@@ -2,12 +2,16 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.1;net462</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" />
     <ProjectReference Include="..\..\src\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Compiler\FreecraftCore.Serializer.Compiler.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

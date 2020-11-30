@@ -12,11 +12,11 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class ArraySerializerGenerator : BaseInvokationExpressionEmitter
+	public sealed class ArraySerializerGenerator : BaseInvokationExpressionEmitter<IArrayTypeSymbol>
 	{
 		private IInvokationExpressionEmittable InvokationEmitter { get; }
 
-		public ArraySerializerGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode,
+		public ArraySerializerGenerator([NotNull] IArrayTypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode,
 			[NotNull] IInvokationExpressionEmittable invokationEmitter) 
 			: base(actualType, member, mode)
 		{

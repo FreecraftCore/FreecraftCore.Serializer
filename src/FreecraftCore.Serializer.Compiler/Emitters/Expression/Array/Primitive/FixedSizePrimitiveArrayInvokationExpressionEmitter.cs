@@ -16,13 +16,13 @@ namespace FreecraftCore.Serializer
 	{
 		public int KnownSize { get; }
 
-		public FixedSizePrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, MemberInfo member, int knownSize, SerializationMode mode)
-			: base(elementType, member, mode)
+		public FixedSizePrimitiveArrayInvokationExpressionEmitter([NotNull] IArrayTypeSymbol arraySymbol, ISymbol member, int knownSize, SerializationMode mode)
+			: base(arraySymbol, member, mode)
 		{
 			KnownSize = knownSize;
 
-			if (!ElementType.IsPrimitive)
-				throw new InvalidOperationException($"Type: {elementType.Name} must be primitive.");
+			if (!arraySymbol.ElementType.IsPrimitive())
+				throw new InvalidOperationException($"Type: {arraySymbol.ElementType.Name} must be primitive.");
 		}
 
 		protected override IEnumerable<SyntaxNodeOrToken> CalculateGenericTypeParameters()

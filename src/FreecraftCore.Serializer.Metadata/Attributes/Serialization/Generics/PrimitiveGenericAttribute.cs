@@ -14,6 +14,17 @@ namespace FreecraftCore.Serializer
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public sealed class PrimitiveGenericAttribute : BaseGenericListAttribute
 	{
+		/// <summary>
+		/// Roslyn compiler exposed instace of the property.
+		/// </summary>
+		internal static PrimitiveGenericAttribute Instance { get; } = new PrimitiveGenericAttribute();
+
+		//Do not remove.
+		static PrimitiveGenericAttribute()
+		{
+			
+		}
+
 		public PrimitiveGenericAttribute()
 		{
 		}

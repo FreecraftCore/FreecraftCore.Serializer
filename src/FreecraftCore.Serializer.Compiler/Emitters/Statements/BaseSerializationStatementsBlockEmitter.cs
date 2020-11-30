@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FreecraftCore.Serializer
@@ -13,19 +14,19 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// The actual type to emit serialization for.
 		/// </summary>
-		public Type ActualType { get; }
+		public ITypeSymbol ActualType { get; }
 
 		/// <summary>
 		/// The member to serialize.
 		/// </summary>
-		public MemberInfo Member { get; }
+		public ISymbol Member { get; }
 
 		/// <summary>
 		/// Indicates the serialization mode to emit for.
 		/// </summary>
 		protected SerializationMode Mode { get; }
 
-		protected BaseSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode)
+		protected BaseSerializationStatementsBlockEmitter([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode)
 		{
 			if (!Enum.IsDefined(typeof(SerializationMode), mode)) throw new InvalidEnumArgumentException(nameof(mode), (int) mode, typeof(SerializationMode));
 			ActualType = actualType ?? throw new ArgumentNullException(nameof(actualType));

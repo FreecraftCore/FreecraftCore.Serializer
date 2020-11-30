@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
 {
@@ -24,6 +25,18 @@ namespace FreecraftCore.Serializer
 			if(!Enum.IsDefined(typeof(EncodingType), desiredEncodingType)) throw new ArgumentOutOfRangeException(nameof(desiredEncodingType), "Value should be defined in the EncodingType enum.");
 
 			DesiredEncodingType = desiredEncodingType;
+		}
+
+		/// <summary>
+		/// Internal compiler use.
+		/// </summary>
+		/// <param name="attributeParameterData"></param>
+		/// <returns></returns>
+		internal static EncodingType Parse([NotNull] string attributeParameterData)
+		{
+			if (attributeParameterData == null) throw new ArgumentNullException(nameof(attributeParameterData));
+
+			return (EncodingType)Enum.Parse(typeof(EncodingType), attributeParameterData, true);
 		}
 	}
 }

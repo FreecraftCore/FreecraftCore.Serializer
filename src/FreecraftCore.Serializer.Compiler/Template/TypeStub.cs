@@ -160,7 +160,7 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[WireMember(8)]
 		public TestEnum EnumTestValue { get; internal set; }
 
-		[SendSize(PrimitiveSizeType.Int16, 3)]
+		[SendSize(PrimitiveSizeType.Int16)]
 		[WireMember(9)]
 		public long[] LongArrayTestAddedSize { get; internal set; }
 

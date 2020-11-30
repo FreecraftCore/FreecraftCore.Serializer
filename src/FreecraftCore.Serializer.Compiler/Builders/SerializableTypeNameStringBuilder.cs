@@ -1,9 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
+using Microsoft.CodeAnalysis;
 
 namespace FreecraftCore.Serializer
 {
+	public sealed class SerializableTypeNameStringBuilder
+	{
+		public INamedTypeSymbol Symbol { get; }
+
+		public SerializableTypeNameStringBuilder([NotNull] INamedTypeSymbol symbol)
+		{
+			Symbol = symbol ?? throw new ArgumentNullException(nameof(symbol));
+		}
+
+		public override string ToString()
+		{
+			return Symbol.GetFriendlyName();
+		}
+	}
+
 	public sealed class SerializableTypeNameStringBuilder<TSerializableType>
 	{
 		public override string ToString()

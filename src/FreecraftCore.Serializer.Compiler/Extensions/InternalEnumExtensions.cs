@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -13,6 +14,15 @@ namespace FreecraftCore.Serializer
 		public static TEnumType Parse<TEnumType>(string input, bool ignoreCase)
 		{
 			return (TEnumType) Enum.Parse(typeof(TEnumType), input, ignoreCase);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static TEnumType ParseFull<TEnumType>(string input, bool ignoreCase)
+		{
+			if (input.Contains("."))
+				return (TEnumType)Enum.Parse(typeof(TEnumType), input.Split('.').Last(), ignoreCase);
+			else
+				return (TEnumType)Enum.Parse(typeof(TEnumType), input, ignoreCase);
 		}
 	}
 }

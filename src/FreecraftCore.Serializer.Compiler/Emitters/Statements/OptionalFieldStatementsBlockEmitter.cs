@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
@@ -12,7 +13,7 @@ namespace FreecraftCore.Serializer
 {
 	public sealed class OptionalFieldStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
-		public OptionalFieldStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member) 
+		public OptionalFieldStatementsBlockEmitter([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member) 
 			: base(actualType, member, SerializationMode.None)
 		{
 
@@ -20,7 +21,7 @@ namespace FreecraftCore.Serializer
 
 		public override List<StatementSyntax> CreateStatements()
 		{
-			OptionalAttribute attribute = Member.GetCustomAttribute<OptionalAttribute>();
+			AttributeData attribute = Member.GetAttributeExact<OptionalAttribute>();
 
 			IfStatementSyntax statement = IfStatement
 				(
@@ -28,7 +29,7 @@ namespace FreecraftCore.Serializer
 					(
 						SyntaxKind.SimpleMemberAccessExpression,
 						IdentifierName(CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME),
-						IdentifierName(attribute.MemberName)
+						IdentifierName(attribute.ConstructorArguments.First().ToCSharpString())
 					),
 					ExpressionStatement
 						(

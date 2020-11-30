@@ -10,7 +10,7 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)] //members can be fields or props
-	public class WireMemberAttribute : Attribute
+	public sealed class WireMemberAttribute : Attribute
 	{
 		/// <summary>
 		/// Unique integer value (per Type) that indicates the order the member
@@ -29,6 +29,14 @@ namespace FreecraftCore.Serializer
 				throw new ArgumentException($"Provider argument {nameof(memberOrder)} must be greater than or equal to 0.", nameof(memberOrder));
 
 			MemberOrder = memberOrder;
+		}
+
+		internal static object Parse(params string[] args)
+		{
+			if (args.Length != 1)
+				throw new InvalidOperationException($"{nameof(WireMemberAttribute)} update handling.");
+
+			return int.Parse(args[0]);
 		}
 	}
 }

@@ -10,7 +10,7 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-	public class EnumStringAttribute : Attribute
+	public sealed class EnumStringAttribute : Attribute
 	{
 		public EnumStringAttribute()
 		{

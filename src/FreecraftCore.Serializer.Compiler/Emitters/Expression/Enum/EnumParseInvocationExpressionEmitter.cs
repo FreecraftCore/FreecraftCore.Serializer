@@ -14,10 +14,10 @@ namespace FreecraftCore.Serializer
 	{
 		private InvocationExpressionSyntax Invokable { get; }
 
-		public EnumParseInvocationExpressionEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, [NotNull] InvocationExpressionSyntax invokable) 
+		public EnumParseInvocationExpressionEmitter([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, [NotNull] InvocationExpressionSyntax invokable) 
 			: base(actualType, member, SerializationMode.None)
 		{
-			if (!actualType.IsEnum)
+			if (actualType.SpecialType != SpecialType.System_Enum)
 				throw new InvalidOperationException($"Cannot use non-Enum Type: {actualType.Name} in {nameof(EnumParseInvocationExpressionEmitter)}");
 			Invokable = invokable ?? throw new ArgumentNullException(nameof(invokable));
 		}

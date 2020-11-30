@@ -12,11 +12,11 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class RawComplexTypeSerializationGenerator : BaseInvokationExpressionEmitter
+	public sealed class RawComplexTypeSerializationGenerator : BaseInvokationExpressionEmitter<INamedTypeSymbol>
 	{
 		public string SerializerTypeName { get; }
 
-		public RawComplexTypeSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, [NotNull] string serializerTypeName) 
+		public RawComplexTypeSerializationGenerator([NotNull] INamedTypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode, [NotNull] string serializerTypeName) 
 			: base(actualType, member, mode)
 		{
 			if (string.IsNullOrEmpty(serializerTypeName)) throw new ArgumentException("Value cannot be null or empty.", nameof(serializerTypeName));

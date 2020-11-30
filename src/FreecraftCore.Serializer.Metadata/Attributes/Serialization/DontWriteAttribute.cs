@@ -9,7 +9,7 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	[SerializationAttribute]
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-	public class DontWriteAttribute : Attribute
+	public sealed class DontWriteAttribute : Attribute
 	{
 
 	}

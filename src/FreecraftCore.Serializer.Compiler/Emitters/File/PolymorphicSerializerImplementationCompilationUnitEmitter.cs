@@ -11,9 +11,18 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class PolymorphicSerializerImplementationCompilationUnitEmitter<TSerializableType> : BaseSerializerImplementationCompilationUnitEmitter<TSerializableType>
+	public sealed class PolymorphicSerializerImplementationCompilationUnitEmitter : BaseSerializerImplementationCompilationUnitEmitter
 	{
-		private PrimitiveSizeType PolymorphicKeySizeType { get; } = typeof(TSerializableType).GetCustomAttribute<WireDataContractAttribute>().OptionalSubTypeKeySize.Value;
+		private PrimitiveSizeType PolymorphicKeySizeType { get; }
+
+		private Compilation CompilationUnit { get; }
+
+		public PolymorphicSerializerImplementationCompilationUnitEmitter([NotNull] INamedTypeSymbol typeSymbol, [NotNull] Compilation compilationUnit)
+			: base(typeSymbol)
+		{
+			CompilationUnit = compilationUnit ?? throw new ArgumentNullException(nameof(compilationUnit));
+			PolymorphicKeySizeType = InternalEnumExtensions.ParseFull<PrimitiveSizeType>(TypeSymbol.GetAttributeExact<WireDataContractAttribute>().ConstructorArguments.First().ToCSharpString(), true);
+		}
 
 		protected override MemberDeclarationSyntax CreateSerializerImplementationNamespaceMember()
 		{
@@ -625,8 +634,8 @@ namespace FreecraftCore.Serializer
 								(
 									LiteralExpression
 									(
-										SyntaxKind.NumericLiteralExpression,
-										Literal(typeInfo.Index)
+										SyntaxKind.NumericLiteralToken,
+										Literal(typeInfo.Index.ToCSharpString())
 									)
 								)
 								.WithKeyword
@@ -716,10 +725,9 @@ namespace FreecraftCore.Serializer
 					);
 			}
 
-			DefaultChildAttribute defaultChildAttribute = typeof(TSerializableType).GetCustomAttribute<DefaultChildAttribute>();
-
-			if (defaultChildAttribute != null)
+			if (TypeSymbol.HasAttributeExact<DefaultChildAttribute>())
 			{
+				ITypeSymbol childTypeSymbol = (ITypeSymbol)TypeSymbol.GetAttributeExact<DefaultChildAttribute>().ConstructorArguments.First().Value;
 				yield return SwitchSection()
 					.WithLabels
 					(
@@ -760,7 +768,7 @@ namespace FreecraftCore.Serializer
 								(
 									ObjectCreationExpression
 										(
-											IdentifierName(defaultChildAttribute.ChildType.FullName)
+											IdentifierName(childTypeSymbol.Name)
 										)
 										.WithNewKeyword
 										(
@@ -883,54 +891,54 @@ namespace FreecraftCore.Serializer
 													(
 														new InterpolatedStringContentSyntax[]
 														{
-															InterpolatedStringText()
-															.WithTextToken
+														InterpolatedStringText()
+														.WithTextToken
+														(
+															Token
 															(
-																Token
-																(
-																	TriviaList(),
-																	SyntaxKind.InterpolatedStringTextToken,
-																	"Encountered unimplemented sub-type for Type: ",
-																	"Encountered unimplemented sub-type for Type: ",
-																	TriviaList()
-																)
-															),
-															Interpolation
+																TriviaList(),
+																SyntaxKind.InterpolatedStringTextToken,
+																"Encountered unimplemented sub-type for Type: ",
+																"Encountered unimplemented sub-type for Type: ",
+																TriviaList()
+															)
+														),
+														Interpolation
+														(
+															InvocationExpression
 															(
-																InvocationExpression
+																IdentifierName("nameof")
+															)
+															.WithArgumentList
+															(
+																ArgumentList
 																(
-																	IdentifierName("nameof")
-																)
-																.WithArgumentList
-																(
-																	ArgumentList
+																	SingletonSeparatedList<ArgumentSyntax>
 																	(
-																		SingletonSeparatedList<ArgumentSyntax>
+																		Argument
 																		(
-																			Argument
-																			(
-																				IdentifierName(SerializableTypeName)
-																			)
+																			IdentifierName(SerializableTypeName)
 																		)
 																	)
 																)
-															),
-															InterpolatedStringText()
-															.WithTextToken
-															(
-																Token
-																(
-																	TriviaList(),
-																	SyntaxKind.InterpolatedStringTextToken,
-																	" with Key: ",
-																	" with Key: ",
-																	TriviaList()
-																)
-															),
-															Interpolation
-															(
-																IdentifierName("key")
 															)
+														),
+														InterpolatedStringText()
+														.WithTextToken
+														(
+															Token
+															(
+																TriviaList(),
+																SyntaxKind.InterpolatedStringTextToken,
+																" with Key: ",
+																" with Key: ",
+																TriviaList()
+															)
+														),
+														Interpolation
+														(
+															IdentifierName("key")
+														)
 														}
 													)
 												)
@@ -956,37 +964,36 @@ namespace FreecraftCore.Serializer
 			}
 		}
 
-		private static IEnumerable<PolymorphicTypeInfo> GetPolymorphicChildTypes()
+		private IEnumerable<PolymorphicTypeInfo> GetPolymorphicChildTypes()
 		{
 			//Gets child types with link attribute
 			//and also types that are directly defined as attributed on the base type itself.
-			return typeof(TSerializableType)
-				.Assembly
-				.GetExportedTypes()
-				.Where(t => typeof(TSerializableType).IsAssignableFrom(t))
-				.Where(t => t.GetCustomAttribute<WireDataContractAttribute>() != null && t.GetCustomAttribute<WireDataContractBaseLinkAttribute>() != null)
+			return CompilationUnit
+				.GetAllTypes()
+				.Where(t => !t.Equals(TypeSymbol, SymbolEqualityComparer.Default) && t.BaseType != null && t.BaseType.Equals(TypeSymbol, SymbolEqualityComparer.Default))
+				.Where(t => t.HasAttributeExact<WireDataContractAttribute>() && t.HasAttributeLike<WireDataContractBaseLinkAttribute>())
 				.Select(t =>
 				{
-					WireDataContractBaseLinkAttribute attribute = t.GetCustomAttribute<WireDataContractBaseLinkAttribute>();
-					return new PolymorphicTypeInfo(attribute.Index, t);
+					AttributeData attribute = t.GetAttributeLike<WireDataContractBaseLinkAttribute>();
+					return new PolymorphicTypeInfo(attribute.ConstructorArguments.First(), t);
 				})
-				.Concat(typeof(TSerializableType).GetCustomAttributes<WireDataContractBaseTypeAttribute>().Select(a =>
+				.Concat(TypeSymbol.GetAttributesLike<WireDataContractBaseTypeAttribute>().Select(a =>
 				{
-					return new PolymorphicTypeInfo(a.Index, a.ChildType);
+					return new PolymorphicTypeInfo(a.ConstructorArguments.First(), (ITypeSymbol)a.ConstructorArguments.First().Value);
 				}))
 				.Distinct();
 		}
 
-		private static IdentifierNameSyntax CreateChildTypeIdentifier([NotNull] Type childType)
+		private IdentifierNameSyntax CreateChildTypeIdentifier([NotNull] ITypeSymbol childType)
 		{
 			if (childType == null) throw new ArgumentNullException(nameof(childType));
 
-			string baseTypeNameSpace = typeof(TSerializableType).Namespace;
+			string baseTypeNameSpace = TypeSymbol.ContainingNamespace?.Name;
 
-			if (childType.Namespace == null || baseTypeNameSpace == null)
-				return IdentifierName(childType.FullName);
+			if (childType.ContainingNamespace == null || baseTypeNameSpace == null)
+				return IdentifierName(childType.Name);
 
-			return childType.Namespace.StartsWith(baseTypeNameSpace) ? IdentifierName(childType.Name) : IdentifierName(childType.FullName);
+			return childType.ContainingNamespace.Name.StartsWith(baseTypeNameSpace) ? IdentifierName(childType.Name) : IdentifierName($"{childType.ContainingNamespace.Name}.{childType.Name}");
 		}
 	}
 }

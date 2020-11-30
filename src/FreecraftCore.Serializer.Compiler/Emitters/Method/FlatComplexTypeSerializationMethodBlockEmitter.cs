@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,16 +15,17 @@ namespace FreecraftCore.Serializer
 	/// <see cref="IMethodBlockEmittable"/> strategy for Types that are "simple" and flat.
 	/// That is that they have no polymorphic or complex serialization and are self-contained.
 	/// </summary>
-	/// <typeparam name="TSerializableType">The serializable type.</typeparam>
-	public sealed class FlatComplexTypeSerializationMethodBlockEmitter<TSerializableType> : IMethodBlockEmittable
-		where TSerializableType : new()
+	public sealed class FlatComplexTypeSerializationMethodBlockEmitter : IMethodBlockEmittable
 	{
 		private SerializationMode Mode { get; }
 
-		public FlatComplexTypeSerializationMethodBlockEmitter(SerializationMode mode)
+		private ITypeSymbol Symbol { get; }
+
+		public FlatComplexTypeSerializationMethodBlockEmitter(SerializationMode mode, [NotNull] ITypeSymbol symbol)
 		{
 			if (!Enum.IsDefined(typeof(SerializationMode), mode)) throw new InvalidEnumArgumentException(nameof(mode), (int) mode, typeof(SerializationMode));
 			Mode = mode;
+			Symbol = symbol ?? throw new ArgumentNullException(nameof(symbol));
 		}
 
 		public BlockSyntax CreateBlock()
@@ -31,21 +33,15 @@ namespace FreecraftCore.Serializer
 			//Create a method scope, and insert statements into it.
 			SyntaxList<StatementSyntax> statements = new SyntaxList<StatementSyntax>();
 
-			List<Type> typeList = new List<Type>();
-			typeList.Add(typeof(TSerializableType));
-			Type currentType = typeof(TSerializableType).BaseType;
-
-			while (currentType != null && currentType != typeof(System.Object))
-			{
-				typeList.Add(currentType);
-				currentType = currentType.BaseType;
-			}
+			List<ITypeSymbol> typeList = new List<ITypeSymbol>(2);
+			typeList.Add(Symbol);
+			typeList.AddRange(Symbol.GetAllBaseTypes());
 
 			//Iterate backwards from top to bottom first.
-			foreach (Type t in typeList
+			foreach (ITypeSymbol t in typeList
 				.AsEnumerable()
 				.Reverse()
-				.Where(t => t.GetCustomAttribute<WireDataContractAttribute>() != null))
+				.Where(t => t.HasAttributeExact<WireDataContractAttribute>()))
 			{
 				statements = EmitTypesMemberSerialization(t, statements);
 			}
@@ -53,17 +49,21 @@ namespace FreecraftCore.Serializer
 			return SyntaxFactory.Block(statements);
 		}
 
-		private SyntaxList<StatementSyntax> EmitTypesMemberSerialization(Type currentType, SyntaxList<StatementSyntax> statements)
+		private SyntaxList<StatementSyntax> EmitTypesMemberSerialization(ITypeSymbol currentType, SyntaxList<StatementSyntax> statements)
 		{
 			//Conceptually, we need to find ALL serializable members
-			foreach (MemberInfo mi in currentType
-				.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly)
-				.Where(m => m.GetCustomAttribute<WireMemberAttribute>() != null)
-				.OrderBy(m => m.GetCustomAttribute<WireMemberAttribute>().MemberOrder)) //order is important, we must emit in order!!
+			foreach (ISymbol mi in currentType
+				.GetMembers()
+				.Where(m => !m.IsStatic)
+				.Where(m => m.HasAttributeExact<WireMemberAttribute>())
+				.OrderBy(m =>
+				{
+					return WireMemberAttribute.Parse(m.GetAttributeExact<WireMemberAttribute>().ConstructorArguments.First().ToCSharpString());
+				})) //order is important, we must emit in order!!
 			{
 				//Basically doesn't matter if it's a field or property, we just wanna know the Type
 				//The reason is, setting and getting fields vs members are same syntax
-				Type memberType = mi.GetType() == typeof(FieldInfo) ? ((FieldInfo) mi).FieldType : ((PropertyInfo) mi).PropertyType;
+				ITypeSymbol memberType = GetMemberTypeInfo(mi);
 
 				FieldDocumentationStatementsBlockEmitter commentEmitter = new FieldDocumentationStatementsBlockEmitter(memberType, mi);
 				statements = statements.AddRange(commentEmitter.CreateStatements());
@@ -71,17 +71,17 @@ namespace FreecraftCore.Serializer
 				//The serializer is requesting we DON'T WRITE THIS! So we skip
 				if (Mode == SerializationMode.Write)
 				{
-					if(mi.GetCustomAttribute<DontWriteAttribute>() != null)
+					if(mi.HasAttributeExact<DontWriteAttribute>())
 						continue;
 				}
 				else if (Mode == SerializationMode.Read)
 				{
-					if(mi.GetCustomAttribute<DontReadAttribute>() != null)
+					if(mi.HasAttributeExact<DontReadAttribute>())
 						continue;
 				}
 				
 				//This handles OPTIONAL fields that may or may not be included
-				if (mi.GetCustomAttribute<OptionalAttribute>() != null)
+				if (mi.HasAttributeExact<OptionalAttribute>())
 				{
 					OptionalFieldStatementsBlockEmitter emitter = new OptionalFieldStatementsBlockEmitter(memberType, mi);
 					statements = statements.AddRange(emitter.CreateStatements());
@@ -91,42 +91,42 @@ namespace FreecraftCore.Serializer
 				InvocationExpressionSyntax invokeSyntax = null;
 
 				//We know the type, but we have to do special handling depending on on its type
-				if (mi.GetCustomAttribute<CustomTypeSerializerAttribute>() != null || memberType.GetCustomAttribute<CustomTypeSerializerAttribute>() != null)
+				if (mi.HasAttributeExact<CustomTypeSerializerAttribute>() || memberType.HasAttributeExact<CustomTypeSerializerAttribute>())
 				{
 					//So TYPES and PROPERTIES may both reference a custom serializer.
 					//So we should prefer field/prop attributes over the type.
-					CustomTypeSerializerAttribute attribute = mi.GetCustomAttribute<CustomTypeSerializerAttribute>();
+					AttributeData attribute = mi.GetAttributeExact<CustomTypeSerializerAttribute>();
 					if (attribute == null)
-						attribute = memberType.GetCustomAttribute<CustomTypeSerializerAttribute>();
+						attribute = memberType.GetAttributeExact<CustomTypeSerializerAttribute>();
 
 					//It's DEFINITELY not null.
-					OverridenSerializationGenerator emitter = new OverridenSerializationGenerator(memberType, mi, Mode, attribute.TypeSerializerType);
+					OverridenSerializationGenerator emitter = new OverridenSerializationGenerator(memberType, mi, Mode, (INamedTypeSymbol)attribute.ConstructorArguments.First().Value);
 					invokeSyntax = emitter.Create();
 				}
-				else if (memberType.IsPrimitive)
+				else if (memberType.IsPrimitive())
 				{
 					//Easy case of primitive serialization
 					PrimitiveTypeSerializationStatementsBlockEmitter emitter = new PrimitiveTypeSerializationStatementsBlockEmitter(memberType, mi, Mode);
 					invokeSyntax = emitter.Create();
 				}
-				else if (memberType == typeof(string))
+				else if (memberType.SpecialType == SpecialType.System_String)
 				{
 					var emitter = new StringTypeSerializationStatementsBlockEmitter(memberType, mi, Mode);
 					invokeSyntax = emitter.Create();
 				}
-				else if (memberType.IsArray)
+				else if (memberType.SpecialType == SpecialType.System_Array)
 				{
-					var emitter = new ArrayTypeSerializationStatementsBlockEmitter(memberType, mi, Mode);
+					var emitter = new ArrayTypeSerializationStatementsBlockEmitter((IArrayTypeSymbol)memberType, mi, Mode);
 					invokeSyntax = emitter.Create();
 				}
-				else if (memberType.IsEnum)
+				else if (memberType.SpecialType == SpecialType.System_Enum)
 				{
 					var emitter = new EnumTypeSerializerStatementsBlockEmitter(memberType, mi, Mode);
 					invokeSyntax = emitter.Create();
 				}
-				else if (memberType.IsClass)
+				else if (memberType.IsReferenceType)
 				{
-					var emitter = new ComplexTypeSerializerStatementsBlockEmitter(memberType, mi, Mode);
+					var emitter = new ComplexTypeSerializerStatementsBlockEmitter((INamedTypeSymbol)memberType, mi, Mode);
 					invokeSyntax = emitter.Create();
 				}
 				else
@@ -152,6 +152,11 @@ namespace FreecraftCore.Serializer
 			}
 
 			return statements;
+		}
+
+		private static ITypeSymbol GetMemberTypeInfo(ISymbol mi)
+		{
+			return (mi.GetType() == typeof(IFieldSymbol) ? ((IFieldSymbol) mi).Type : ((IPropertySymbol) mi).Type);
 		}
 	}
 }

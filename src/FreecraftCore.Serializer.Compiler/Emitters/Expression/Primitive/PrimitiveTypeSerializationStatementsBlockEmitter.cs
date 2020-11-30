@@ -16,10 +16,10 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public sealed class PrimitiveTypeSerializationStatementsBlockEmitter : BaseInvokationExpressionEmitter
 	{
-		public PrimitiveTypeSerializationStatementsBlockEmitter([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode)
+		public PrimitiveTypeSerializationStatementsBlockEmitter([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode)
 			: base(actualType, member, mode)
 		{
-			if (!actualType.IsPrimitive)
+			if (!actualType.IsPrimitive())
 				throw new InvalidOperationException($"Type: {actualType} is not a primitive type.");
 		}
 

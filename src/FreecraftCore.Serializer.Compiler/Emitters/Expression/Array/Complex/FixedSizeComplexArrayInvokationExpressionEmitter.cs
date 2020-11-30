@@ -16,8 +16,8 @@ namespace FreecraftCore.Serializer
 	{
 		public int KnownSize { get; }
 
-		public FixedSizeComplexArrayInvokationExpressionEmitter([NotNull] Type elementType, MemberInfo member, int knownSize, SerializationMode mode)
-			: base(elementType, member, mode)
+		public FixedSizeComplexArrayInvokationExpressionEmitter([NotNull] IArrayTypeSymbol arraySymbol, ISymbol member, int knownSize, SerializationMode mode)
+			: base(arraySymbol, member, mode)
 		{
 			KnownSize = knownSize;
 		}

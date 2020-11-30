@@ -16,14 +16,14 @@ namespace FreecraftCore.Serializer
 	{
 		public PrimitiveSizeType SizeType { get; }
 
-		public SendSizePrimitiveArrayInvokationExpressionEmitter([NotNull] Type elementType, MemberInfo member, PrimitiveSizeType sizeType, SerializationMode mode)
-			: base(elementType, member, mode)
+		public SendSizePrimitiveArrayInvokationExpressionEmitter([NotNull] IArrayTypeSymbol arraySymbol, ISymbol member, PrimitiveSizeType sizeType, SerializationMode mode)
+			: base(arraySymbol, member, mode)
 		{
 			if (!Enum.IsDefined(typeof(PrimitiveSizeType), sizeType)) throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(PrimitiveSizeType));
 			SizeType = sizeType;
 
-			if (!ElementType.IsPrimitive)
-				throw new InvalidOperationException($"Type: {elementType.Name} must be primitive.");
+			if (!arraySymbol.ElementType.IsPrimitive())
+				throw new InvalidOperationException($"Type: {arraySymbol.ElementType.Name} must be primitive.");
 		}
 
 		protected override IEnumerable<SyntaxNodeOrToken> CalculateGenericTypeParameters()

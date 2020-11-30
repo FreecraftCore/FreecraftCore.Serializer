@@ -18,7 +18,7 @@ namespace FreecraftCore.Serializer
 
 		public PrimitiveSizeType SizeType { get; }
 
-		public RawDontTerminateLengthPrefixedStringTypeSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, 
+		public RawDontTerminateLengthPrefixedStringTypeSerializationGenerator([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, 
 			SerializationMode mode, EncodingType encoding, PrimitiveSizeType sizeType) 
 			: base(actualType, member, mode)
 		{

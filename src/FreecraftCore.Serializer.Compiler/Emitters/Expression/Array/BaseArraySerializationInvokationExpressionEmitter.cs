@@ -12,15 +12,15 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	internal abstract class BaseArraySerializationInvokationExpressionEmitter<TSerializerTypeNameType> : BaseInvokationExpressionEmitter
+	internal abstract class BaseArraySerializationInvokationExpressionEmitter<TSerializerTypeNameType> : BaseInvokationExpressionEmitter<IArrayTypeSymbol>
 		where TSerializerTypeNameType : BaseArraySerializerNonGenericMarker
 	{
-		public Type ElementType { get; }
+		public ITypeSymbol ElementType { get; }
 
-		protected BaseArraySerializationInvokationExpressionEmitter(Type elementType, [NotNull] MemberInfo member, SerializationMode mode)
-			: base(elementType.MakeArrayType(), member, mode)
+		protected BaseArraySerializationInvokationExpressionEmitter(IArrayTypeSymbol arrayType, [NotNull] ISymbol member, SerializationMode mode)
+			: base(arrayType, member, mode)
 		{
-			ElementType = elementType;
+			ElementType = arrayType.ElementType;
 		}
 
 		public override InvocationExpressionSyntax Create()

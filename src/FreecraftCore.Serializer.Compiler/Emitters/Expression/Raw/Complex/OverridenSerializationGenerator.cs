@@ -14,9 +14,9 @@ namespace FreecraftCore.Serializer
 	//TODO: Support generics
 	public sealed class OverridenSerializationGenerator : BaseInvokationExpressionEmitter
 	{
-		public Type SerializerType { get; }
+		public INamedTypeSymbol SerializerType { get; }
 
-		public OverridenSerializationGenerator([NotNull] Type actualType, [NotNull] MemberInfo member, SerializationMode mode, [NotNull] Type serializerType) 
+		public OverridenSerializationGenerator([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode, [NotNull] INamedTypeSymbol serializerType) 
 			: base(actualType, member, mode)
 		{
 			SerializerType = serializerType ?? throw new ArgumentNullException(nameof(serializerType));
