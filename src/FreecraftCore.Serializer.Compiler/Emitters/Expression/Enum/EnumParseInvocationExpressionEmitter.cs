@@ -17,7 +17,7 @@ namespace FreecraftCore.Serializer
 		public EnumParseInvocationExpressionEmitter([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, [NotNull] InvocationExpressionSyntax invokable) 
 			: base(actualType, member, SerializationMode.None)
 		{
-			if (actualType.SpecialType != SpecialType.System_Enum)
+			if (!actualType.IsEnumType())
 				throw new InvalidOperationException($"Cannot use non-Enum Type: {actualType.Name} in {nameof(EnumParseInvocationExpressionEmitter)}");
 			Invokable = invokable ?? throw new ArgumentNullException(nameof(invokable));
 		}

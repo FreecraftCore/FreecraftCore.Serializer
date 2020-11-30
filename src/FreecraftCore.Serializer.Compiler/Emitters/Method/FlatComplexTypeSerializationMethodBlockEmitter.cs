@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -58,7 +59,11 @@ namespace FreecraftCore.Serializer
 				.Where(m => m.HasAttributeExact<WireMemberAttribute>())
 				.OrderBy(m =>
 				{
-					return WireMemberAttribute.Parse(m.GetAttributeExact<WireMemberAttribute>().ConstructorArguments.First().ToCSharpString());
+					//Seperated lines for debugging purposes.
+					AttributeData attri = m.GetAttributeExact<WireMemberAttribute>();
+					ImmutableArray<TypedConstant> attriArgs = attri.ConstructorArguments;
+					string value = attriArgs.First().ToCSharpString();
+					return WireMemberAttribute.Parse(value);
 				})) //order is important, we must emit in order!!
 			{
 				//Basically doesn't matter if it's a field or property, we just wanna know the Type
@@ -114,17 +119,17 @@ namespace FreecraftCore.Serializer
 					var emitter = new StringTypeSerializationStatementsBlockEmitter(memberType, mi, Mode);
 					invokeSyntax = emitter.Create();
 				}
-				else if (memberType.SpecialType == SpecialType.System_Array)
+				else if (memberType.SpecialType == SpecialType.System_Array || memberType is IArrayTypeSymbol)
 				{
 					var emitter = new ArrayTypeSerializationStatementsBlockEmitter((IArrayTypeSymbol)memberType, mi, Mode);
 					invokeSyntax = emitter.Create();
 				}
-				else if (memberType.SpecialType == SpecialType.System_Enum)
+				else if (memberType.IsEnumType()) //Enum type
 				{
 					var emitter = new EnumTypeSerializerStatementsBlockEmitter(memberType, mi, Mode);
 					invokeSyntax = emitter.Create();
 				}
-				else if (memberType.IsReferenceType)
+				else if (memberType.IsReferenceType && memberType.TypeKind == TypeKind.Class)
 				{
 					var emitter = new ComplexTypeSerializerStatementsBlockEmitter((INamedTypeSymbol)memberType, mi, Mode);
 					invokeSyntax = emitter.Create();

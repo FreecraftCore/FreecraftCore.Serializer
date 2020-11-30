@@ -625,6 +625,9 @@ namespace FreecraftCore.Serializer
 			//Every type that is a child type in the same assembly
 			foreach (PolymorphicTypeInfo typeInfo in GetPolymorphicChildTypes())
 			{
+				if (!int.TryParse(typeInfo.Index.ToCSharpString(), out int index))
+					throw new NotSupportedException($"TODO: Implement support for non-int polymorphic registering.");
+
 				yield return SwitchSection()
 					.WithLabels
 					(
@@ -634,8 +637,8 @@ namespace FreecraftCore.Serializer
 								(
 									LiteralExpression
 									(
-										SyntaxKind.NumericLiteralToken,
-										Literal(typeInfo.Index.ToCSharpString())
+										SyntaxKind.NumericLiteralExpression,
+										Literal(index)
 									)
 								)
 								.WithKeyword

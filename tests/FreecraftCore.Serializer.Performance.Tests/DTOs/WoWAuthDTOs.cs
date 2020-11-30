@@ -5,7 +5,6 @@ using System.Text;
 
 namespace FreecraftCore.Serializer.Perf
 {
-
 	/// <summary>
 	/// Response payload sent in response to the <see cref="AuthLogonProofRequest"/>.
 	/// </summary>

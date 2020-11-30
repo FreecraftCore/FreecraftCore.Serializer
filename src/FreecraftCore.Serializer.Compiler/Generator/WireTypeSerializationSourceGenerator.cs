@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -31,6 +32,7 @@ namespace FreecraftCore.Serializer
 			}
 			catch (Exception e)
 			{
+				File.WriteAllText("Error.txt", e.ToString());
 				context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("FCC001", "Compiler Failure", $"Error: {e.GetType().Name}. Failed: {e.Message} Stack: {{0}}", "Error", DiagnosticSeverity.Error, true), Location.None, BuildStackTrace(e)));
 			}
 		}
@@ -41,7 +43,7 @@ namespace FreecraftCore.Serializer
 				.Replace('{', ' ')
 				.Replace('}', ' ')
 				.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-				.Skip(2)
+				.Skip(5)
 				.Aggregate((s1, s2) => $"{s1} {s2}");
 		}
 	}

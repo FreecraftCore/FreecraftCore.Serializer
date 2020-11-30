@@ -350,6 +350,11 @@ namespace FreecraftCore.Serializer
 			return (type is INamedTypeSymbol namedType) ? namedType.EnumUnderlyingType : null;
 		}
 
+		public static bool IsEnumType(this ITypeSymbol type)
+		{
+			return type.GetEnumUnderlyingType() != null;
+		}
+
 		//See: https://stackoverflow.com/questions/37327056/retrieve-all-types-with-roslyn-within-a-solution
 		public static IEnumerable<INamedTypeSymbol> GetAllTypes(this Compilation compilation) =>
 			GetAllTypes(compilation.GlobalNamespace);
