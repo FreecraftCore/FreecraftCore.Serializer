@@ -12,7 +12,7 @@ namespace FreecraftCore.Serializer
 {
 	public static class ISymbolExtensions
 	{
-		public static bool IsTypeExact<T>(this INamedTypeSymbol symbol)
+		public static bool IsTypeExact<T>(this ITypeSymbol symbol)
 		{
 			if (symbol.ContainingNamespace != null)
 				return $"{symbol.ContainingNamespace.FullNamespaceString()}.{symbol.Name}" == typeof(T).FullName;
@@ -20,7 +20,7 @@ namespace FreecraftCore.Serializer
 				return $"{symbol.Name}" == typeof(T).FullName;
 		}
 
-		public static bool IsTypeLike<T>(this INamedTypeSymbol symbol)
+		public static bool IsTypeLike<T>(this ITypeSymbol symbol)
 		{
 			string symbolName = symbol.ContainingNamespace != null 
 				? $"{symbol.ContainingNamespace.FullNamespaceString()}.{symbol.Name}"
@@ -217,7 +217,10 @@ namespace FreecraftCore.Serializer
 		{
 			if(type == null) throw new ArgumentNullException(nameof(type));
 
-			if(type.HasAttributeLike<WireMessageTypeAttribute>(true))
+			if (type.IsTypeExact<System.Object>())
+				return false;
+
+			if(type.HasAttributeLike<WireMessageTypeAttribute>())
 				return true;
 
 			if(type.HasAttributeLike<WireDataContractAttribute>())
