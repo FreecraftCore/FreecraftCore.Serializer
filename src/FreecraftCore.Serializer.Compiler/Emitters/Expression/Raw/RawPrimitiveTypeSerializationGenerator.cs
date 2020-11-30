@@ -59,7 +59,7 @@ namespace FreecraftCore.Serializer
 				return IdentifierName(nameof(BytePrimitiveSerializerStrategy));
 
 			//This picks between the normal and big endian version
-			SyntaxToken nameToken = Member.HasAttributeExact<ReverseDataAttribute>()
+			SyntaxToken nameToken = !Member.HasAttributeExact<ReverseDataAttribute>()
 				? Identifier("GenericTypePrimitiveSerializerStrategy")
 				: Identifier("BigEndianGenericTypePrimitiveSerializerStrategy");
 
