@@ -92,7 +92,7 @@ namespace FreecraftCore.Serializer.Tests
 	/// Response payload sent in response to the <see cref="AuthLogonProofRequest"/>.
 	/// </summary>
 	[WireDataContract]
-	[WireDataContractBaseLink((0x01 << 8) + 2)]
+	[WireDataContractBaseLink(0x01)]
 	public partial class AuthLogonProofResponse : AuthPacketBaseTest
 	{
 		/// <summary>
@@ -104,7 +104,7 @@ namespace FreecraftCore.Serializer.Tests
 		//TODO: Add real ctor. Right now we only implement client stuff and this is sent by server.
 
 		public AuthLogonProofResponse()
-			: base((0x01 << 8) + 2)
+			: base(0x01)
 		{
 
 		}
@@ -213,16 +213,16 @@ namespace FreecraftCore.Serializer.Tests
 		}
 	}
 
-	[WireDataContract(PrimitiveSizeType.UInt16)]
+	[WireDataContract(PrimitiveSizeType.Byte)]
 	public abstract partial class AuthPacketBaseTest
 	{
 		[WireMember(1)]
-		public ushort OperationCode { get; internal set; }
+		public byte OperationCode { get; internal set; }
 
 		/// <summary>
 		/// Serializer ctor.
 		/// </summary>
-		public AuthPacketBaseTest(ushort operationCode)
+		public AuthPacketBaseTest(byte operationCode)
 		{
 			OperationCode = operationCode;
 		}
