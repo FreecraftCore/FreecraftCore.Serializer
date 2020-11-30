@@ -14,12 +14,17 @@ namespace FreecraftCore.Serializer
 	{
 		public static bool IsTypeExact<T>(this INamedTypeSymbol symbol)
 		{
-			return $"{symbol.ContainingNamespace}.{symbol.Name}" == typeof(T).FullName;
+			if (symbol.ContainingNamespace != null)
+				return $"{symbol.ContainingNamespace.FullNamespaceString()}.{symbol.Name}" == typeof(T).FullName;
+			else
+				return $"{symbol.Name}" == typeof(T).FullName;
 		}
 
 		public static bool IsTypeLike<T>(this INamedTypeSymbol symbol)
 		{
-			string symbolName = $"{symbol.ContainingNamespace}.{symbol.Name}";
+			string symbolName = symbol.ContainingNamespace != null 
+				? $"{symbol.ContainingNamespace.FullNamespaceString()}.{symbol.Name}"
+				: $"{symbol.Name}";
 
 			if (symbolName == typeof(T).FullName)
 				return true;
@@ -348,6 +353,13 @@ namespace FreecraftCore.Serializer
 		public static INamedTypeSymbol GetEnumUnderlyingType(this ITypeSymbol type)
 		{
 			return (type is INamedTypeSymbol namedType) ? namedType.EnumUnderlyingType : null;
+		}
+
+		public static string FullNamespaceString([NotNull] this INamespaceSymbol namespaceSymbol)
+		{
+			if (namespaceSymbol == null) throw new ArgumentNullException(nameof(namespaceSymbol));
+
+			return namespaceSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Replace("global::", "");
 		}
 
 		public static bool IsEnumType(this ITypeSymbol type)
