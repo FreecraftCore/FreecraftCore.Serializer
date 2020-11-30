@@ -29,9 +29,22 @@ namespace FreecraftCore.Serializer
 
 			//This is a HACK (including the slashes) but I am too dumb to figure out another way lol.
 			statements.Add(EmptyStatement()
-				.WithLeadingTrivia(Comment($"//Type: {Member.ContainingType.Name} Field: {fieldId} Name: {Member.Name} Type: {ActualType.Name}")));
+				.WithLeadingTrivia(Comment($"//Type: {Member.ContainingType.Name} Field: {fieldId} Name: {Member.Name} Type: {CalculateTypeName(ActualType)}")));
 
 			return statements;
+		}
+
+		private static string CalculateTypeName(ITypeSymbol symbol)
+		{
+			if (String.IsNullOrWhiteSpace(symbol.Name))
+			{
+				if (symbol is IArrayTypeSymbol arrayTypeSymbol)
+					return $"{CalculateTypeName(arrayTypeSymbol.ElementType)}[]";
+				else
+					throw new InvalidOperationException($"Cannot create comment TypeName for Type: {symbol.ToDisplayString()}");
+			}
+			else
+				return symbol.Name;
 		}
 	}
 }
