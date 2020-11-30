@@ -123,11 +123,10 @@ namespace FreecraftCore.Serializer
 		private void WriteSerializerStrategyClass(INamedTypeSymbol typeSymbol)
 		{
 			ICompilationUnitEmittable implementationEmittable = CreateEmittableImplementationSerializerStrategy(typeSymbol);
-
 			//This cased issues in Analyzer/Generator due to dependency loading
-			//SyntaxNode implementationFormattedNode = Formatter.Format(implementationEmittable.CreateUnit(), new WorkSpace);
+			SyntaxNode implementationFormattedNode = Formatter.Format(implementationEmittable.CreateUnit(), new AdhocWorkspace());
 
-			WriteEmittedFile(implementationEmittable.CreateUnit(), implementationEmittable, "Impl");
+			WriteEmittedFile(implementationFormattedNode, implementationEmittable, "Impl");
 		}
 
 		private void WriteEmittedFile(SyntaxNode formattedNode, ICompilationUnitEmittable emittable, string appendedName)
