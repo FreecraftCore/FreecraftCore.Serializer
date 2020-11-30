@@ -41,7 +41,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.8.0" PrivateAssets="all" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="3.8.0" PrivateAssets="all" GeneratePathProperty="true" />
 
-
+    <!-- Workspaces hacky dependency requirements -->
     <PackageReference Include="System.Composition" Version="1.0.31" PrivateAssets="all" GeneratePathProperty="true" />
     <PackageReference Include="System.Composition.Hosting" Version="1.0.31" PrivateAssets="all" GeneratePathProperty="true" />
     <PackageReference Include="System.Composition.Runtime" Version="1.0.31" PrivateAssets="all" GeneratePathProperty="true" />
