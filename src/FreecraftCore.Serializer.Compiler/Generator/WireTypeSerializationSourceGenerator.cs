@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -29,6 +30,10 @@ namespace FreecraftCore.Serializer
 
 				foreach(var entry in outputStrategy.Content)
 					context.AddSource(entry.Key, entry.Value);
+			}
+			catch (System.Reflection.ReflectionTypeLoadException e)
+			{
+				File.WriteAllText("Error.txt", $"{e}\n\nLoader: {e.LoaderExceptions.Select(ex => ex.ToString()).Aggregate((s1, s2) => $"{s1}\n{s2}")}");
 			}
 			catch (Exception e)
 			{

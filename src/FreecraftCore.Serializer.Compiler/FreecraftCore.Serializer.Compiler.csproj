@@ -41,6 +41,14 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.8.0" PrivateAssets="all" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="3.8.0" PrivateAssets="all" GeneratePathProperty="true" />
 
+
+    <PackageReference Include="System.Composition" Version="1.0.31" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="System.Composition.Hosting" Version="1.0.31" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="System.Composition.Runtime" Version="1.0.31" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="System.Composition.TypedParts" Version="1.0.31" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="System.Composition.AttributedModel" Version="1.0.31" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.1" PrivateAssets="all" GeneratePathProperty="true" />
+
     <!-- Package the generator in the analyzer directory of the nuget package -->
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
@@ -52,6 +60,15 @@
       <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_CSharp)\lib\netstandard2.0\*.dll" Pack="true" IncludeRuntimeDependency="false" />
       <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_CSharp_Workspaces)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
       <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_Compilers_Workspaces_Common)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_Workspaces_Common)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="true" />
+
+
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgSystem_Composition)\lib\netstandard1.0\*.dll" IncludeRuntimeDependency="true" />
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgSystem_Composition_TypedParts)\lib\netstandard1.0\*.dll" IncludeRuntimeDependency="false" />
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgSystem_Composition_Hosting)\lib\netstandard1.0\*.dll" IncludeRuntimeDependency="false" />
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgSystem_Composition_Runtime)\lib\netstandard1.0\*.dll" IncludeRuntimeDependency="false" />
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgSystem_Composition_AttributedModel)\lib\netstandard1.0\*.dll" IncludeRuntimeDependency="false" />
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_Bcl_AsyncInterfaces)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
     </ItemGroup>
   </Target>
 
