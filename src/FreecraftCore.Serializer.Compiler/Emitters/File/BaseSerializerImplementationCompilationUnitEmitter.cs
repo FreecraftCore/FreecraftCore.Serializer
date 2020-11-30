@@ -56,41 +56,14 @@ namespace FreecraftCore.Serializer
 				yield return u;
 
 			if (TypeSymbol.ContainingNamespace != null)
-				yield return UsingDirective(IdentifierName(TypeSymbol.ContainingNamespace.Name));
+				yield return CreateUsingStatement(TypeSymbol.ContainingNamespace.Name);
 		}
 
 		private static IEnumerable<UsingDirectiveSyntax> CreateDefaultUsings()
 		{
 			return new UsingDirectiveSyntax[]
 			{
-				UsingDirective
-					(
-						IdentifierName("System")
-					)
-					.WithUsingKeyword
-					(
-						Token
-						(
-							TriviaList(),
-							SyntaxKind.UsingKeyword,
-							TriviaList
-							(
-								Space
-							)
-						)
-					)
-					.WithSemicolonToken
-					(
-						Token
-						(
-							TriviaList(),
-							SyntaxKind.SemicolonToken,
-							TriviaList
-							(
-								CarriageReturnLineFeed
-							)
-						)
-					),
+				CreateUsingStatement("System"),
 				UsingDirective
 					(
 						QualifiedName
@@ -228,6 +201,38 @@ namespace FreecraftCore.Serializer
 						)
 					)
 			};
+		}
+
+		private static UsingDirectiveSyntax CreateUsingStatement(string content)
+		{
+			return UsingDirective
+				(
+					IdentifierName(content)
+				)
+				.WithUsingKeyword
+				(
+					Token
+					(
+						TriviaList(),
+						SyntaxKind.UsingKeyword,
+						TriviaList
+						(
+							Space
+						)
+					)
+				)
+				.WithSemicolonToken
+				(
+					Token
+					(
+						TriviaList(),
+						SyntaxKind.SemicolonToken,
+						TriviaList
+						(
+							CarriageReturnLineFeed
+						)
+					)
+				);
 		}
 
 		private MemberDeclarationSyntax[] CreateMembers()
