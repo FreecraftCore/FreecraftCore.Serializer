@@ -991,12 +991,13 @@ namespace FreecraftCore.Serializer
 		{
 			if (childType == null) throw new ArgumentNullException(nameof(childType));
 
-			string baseTypeNameSpace = TypeSymbol.ContainingNamespace?.Name;
+			string baseTypeNameSpace = TypeSymbol
+				.ContainingNamespace?.FullNamespaceString();
 
 			if (childType.ContainingNamespace == null || baseTypeNameSpace == null)
 				return IdentifierName(childType.Name);
 
-			return childType.ContainingNamespace.Name.StartsWith(baseTypeNameSpace) ? IdentifierName(childType.Name) : IdentifierName($"{childType.ContainingNamespace.Name}.{childType.Name}");
+			return childType.ContainingNamespace.FullNamespaceString().StartsWith(baseTypeNameSpace) ? IdentifierName(childType.Name) : IdentifierName($"{childType.ContainingNamespace.FullNamespaceString()}.{childType.Name}");
 		}
 	}
 }

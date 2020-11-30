@@ -56,7 +56,7 @@ namespace FreecraftCore.Serializer
 				yield return u;
 
 			if (TypeSymbol.ContainingNamespace != null)
-				yield return CreateUsingStatement(TypeSymbol.ContainingNamespace.Name);
+				yield return CreateUsingStatement(TypeSymbol.ContainingNamespace.FullNamespaceString());
 		}
 
 		private static IEnumerable<UsingDirectiveSyntax> CreateDefaultUsings()

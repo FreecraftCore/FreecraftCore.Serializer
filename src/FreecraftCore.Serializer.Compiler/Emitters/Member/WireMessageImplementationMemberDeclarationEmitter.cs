@@ -45,7 +45,7 @@ namespace FreecraftCore.Serializer
 					Identifier
 					(
 						TriviaList(),
-						wireMessageType.Name,
+						TypeSymbol.Name,
 						TriviaList
 						(
 							Space
@@ -255,7 +255,7 @@ namespace FreecraftCore.Serializer
 										(
 											TypeOfExpression
 											(
-												IdentifierName(wireMessageType.Name)
+												IdentifierName(TypeSymbol.Name)
 											)
 										)
 										.WithArrowToken
@@ -1016,7 +1016,7 @@ namespace FreecraftCore.Serializer
 
 			NamespaceDeclarationSyntax member = NamespaceDeclaration
 				(
-					IdentifierName(wireMessageType.ContainingNamespace.Name)
+					IdentifierName(wireMessageType.ContainingNamespace.FullNamespaceString())
 				)
 				.WithNamespaceKeyword
 				(
