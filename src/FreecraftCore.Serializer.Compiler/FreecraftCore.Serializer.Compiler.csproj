@@ -17,6 +17,7 @@
     <PackageTags>WorldofWarcraft WoW Blizzard JAM Packet Protocol Serialization Serializer Freecraft FreecraftCore</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Product>FreecraftCore.Serializer.Compiler</Product>
+    <Version>4.0.11</Version>
   </PropertyGroup>
 
   <!-- See: https://github.com/dotnet/roslyn-sdk/blob/master/samples/CSharp/SourceGenerators/SourceGeneratorSamples/SourceGeneratorSamples.csproj -->
@@ -26,6 +27,7 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <!-- Do not include the generator as a lib dependency -->
     <langversion>preview</langversion>
+    <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -33,8 +35,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" GeneratePathProperty="true" />
-    <ProjectReference Include="..\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj" GeneratePathProperty="true" />
+    <PackageReference Include="FreecraftCore.Serializer.Metadata" Version="4.0.10" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="FreecraftCore.Serializer" Version="4.0.10" PrivateAssets="all" GeneratePathProperty="true" />
 
     <PackageReference Include="Microsoft.CodeAnalysis.Compilers" Version="3.8.0" PrivateAssets="all" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" PrivateAssets="all" GeneratePathProperty="true" />
@@ -56,19 +58,22 @@
   <Target Name="GetDependencyTargetPaths">
     <ItemGroup>
       <!-- Puts private nuget dependencies into the generator -->
-      <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_Compilers)\lib\netstandard2.0\*.dll" Pack="true" IncludeRuntimeDependency="false" />
-      <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_CSharp)\lib\netstandard2.0\*.dll" Pack="true" IncludeRuntimeDependency="false" />
-      <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_CSharp_Workspaces)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
-      <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_Compilers_Workspaces_Common)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
-      <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_Workspaces_Common)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="true" />
+      <None Include="$(PkgMicrosoft_CodeAnalysis_Compilers)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
+      <None Include="$(PkgMicrosoft_CodeAnalysis_CSharp)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
+      <None Include="$(PkgMicrosoft_CodeAnalysis_CSharp_Workspaces)\lib\netstandard2.0\*.dll" PackagePath="analyzers/dotnet/cs" Pack="true" IncludeRuntimeDependency="false" />
+      <None Include="$(PkgMicrosoft_CodeAnalysis_Compilers_Workspaces_Common)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
+      <None Include="$(PkgMicrosoft_CodeAnalysis_Workspaces_Common)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
 
 
-      <TargetPathWithTargetPlatformMoniker Include="$(PkgSystem_Composition)\lib\netstandard1.0\*.dll" IncludeRuntimeDependency="true" />
-      <TargetPathWithTargetPlatformMoniker Include="$(PkgSystem_Composition_TypedParts)\lib\netstandard1.0\*.dll" IncludeRuntimeDependency="false" />
-      <TargetPathWithTargetPlatformMoniker Include="$(PkgSystem_Composition_Hosting)\lib\netstandard1.0\*.dll" IncludeRuntimeDependency="false" />
-      <TargetPathWithTargetPlatformMoniker Include="$(PkgSystem_Composition_Runtime)\lib\netstandard1.0\*.dll" IncludeRuntimeDependency="false" />
-      <TargetPathWithTargetPlatformMoniker Include="$(PkgSystem_Composition_AttributedModel)\lib\netstandard1.0\*.dll" IncludeRuntimeDependency="false" />
-      <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_Bcl_AsyncInterfaces)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+      <None Include="$(PkgSystem_Composition)\lib\netstandard1.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
+      <None Include="$(PkgSystem_Composition_TypedParts)\lib\netstandard1.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
+      <None Include="$(PkgSystem_Composition_Hosting)\lib\netstandard1.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
+      <None Include="$(PkgSystem_Composition_Runtime)\lib\netstandard1.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
+      <None Include="$(PkgSystem_Composition_AttributedModel)\lib\netstandard1.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
+      <None Include="$(PkgMicrosoft_Bcl_AsyncInterfaces)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
+
+      <None Include="$(PkgFreecraftCore_Serializer_Metadata)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
+      <None Include="$(PkgFreecraftCore_Serializer)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
     </ItemGroup>
   </Target>
 
