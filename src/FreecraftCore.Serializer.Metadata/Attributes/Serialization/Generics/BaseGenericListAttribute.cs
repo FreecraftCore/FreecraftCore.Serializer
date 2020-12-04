@@ -10,6 +10,11 @@ namespace FreecraftCore.Serializer
 	{
 		public abstract IEnumerator<Type> GetEnumerator();
 
+		internal BaseGenericListAttribute()
+		{
+
+		}
+
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
