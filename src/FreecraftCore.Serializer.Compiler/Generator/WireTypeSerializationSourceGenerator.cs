@@ -25,7 +25,7 @@ namespace FreecraftCore.Serializer
 			try
 			{
 				var outputStrategy = new ExternalContentCollectorSerializationSourceOutputStrategy();
-				SerializerSourceEmitter emitter = new SerializerSourceEmitter(context.Compilation.GetAllTypes(), outputStrategy, context.Compilation);
+				SerializerSourceEmitter emitter = new SerializerSourceEmitter(context.Compilation.GetAllTypes(), new WriteToFileSerializationSourceOutputStrategy(""), context.Compilation);
 				emitter.Generate();
 
 				foreach(var entry in outputStrategy.Content)

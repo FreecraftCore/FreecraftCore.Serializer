@@ -22,4 +22,8 @@
     <ProjectReference Include="..\..\src\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Compiler\FreecraftCore.Serializer.Compiler.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
 </Project>
