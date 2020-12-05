@@ -29,7 +29,9 @@ namespace FreecraftCore.Serializer
 					(
 						SyntaxKind.SimpleMemberAccessExpression,
 						IdentifierName(CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME),
-						IdentifierName(attribute.ConstructorArguments.First().ToCSharpString())
+
+						//Important to remove quotes because nameof does this
+						IdentifierName(attribute.ConstructorArguments.First().ToCSharpString().Replace("\"", ""))
 					),
 					ExpressionStatement
 						(
