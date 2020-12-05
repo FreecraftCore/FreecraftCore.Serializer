@@ -107,6 +107,10 @@ namespace FreecraftCore.Serializer
 
 		private static bool IsSerializableType(INamedTypeSymbol symbol)
 		{
+			//We don't serialize enums!
+			if (symbol.IsEnumType())
+				return false;
+
 			//TODO: We don't actually support non-abstract polymorphic serialization yet
 			//Either it has a subtype value or it's NOT abstract. Abstracts can't be deserialized without base type linking
 			//so we don't generate serialization code for them.
