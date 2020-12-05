@@ -1,0 +1,30 @@
+System.IO.FileNotFoundException: Could not load file or assembly 'FreecraftCore.Serializer.Metadata, Version=4.0.13.0, Culture=neutral, PublicKeyToken=null' or one of its dependencies. The system cannot find the file specified.
+File name: 'FreecraftCore.Serializer.Metadata, Version=4.0.13.0, Culture=neutral, PublicKeyToken=null'
+   at FreecraftCore.Serializer.SerializerSourceEmitter.Generate()
+   at FreecraftCore.Serializer.WireTypeSerializationSourceGenerator.Execute(GeneratorExecutionContext context) in C:\Users\Glader\Documents\Github\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Compiler\Generator\WireTypeSerializationSourceGenerator.cs:line 29
+
+Assembly manager loaded from:  C:\Windows\Microsoft.NET\Framework64\v4.0.30319\clr.dll
+Running under executable  C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\Roslyn\csc.exe
+--- A detailed error log follows. 
+
+=== Pre-bind state information ===
+LOG: DisplayName = FreecraftCore.Serializer.Metadata, Version=4.0.13.0, Culture=neutral, PublicKeyToken=null
+ (Fully-specified)
+LOG: Appbase = file:///C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/Roslyn/
+LOG: Initial PrivatePath = NULL
+Calling assembly : FreecraftCore.Serializer.Compiler, Version=4.0.14.0, Culture=neutral, PublicKeyToken=null.
+===
+LOG: This bind starts in LoadFrom load context.
+WRN: Native image will not be probed in LoadFrom context. Native image will only be probed in default load context, like with Assembly.Load().
+LOG: Using application configuration file: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\Roslyn\csc.exe.Config
+LOG: Using host configuration file: 
+LOG: Using machine configuration file from C:\Windows\Microsoft.NET\Framework64\v4.0.30319\config\machine.config.
+LOG: Policy not being applied to reference at this time (private, custom, partial, or location-based assembly bind).
+LOG: Attempting download of new URL file:///C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/Roslyn/FreecraftCore.Serializer.Metadata.DLL.
+LOG: Attempting download of new URL file:///C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/Roslyn/FreecraftCore.Serializer.Metadata/FreecraftCore.Serializer.Metadata.DLL.
+LOG: Attempting download of new URL file:///C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/Roslyn/FreecraftCore.Serializer.Metadata.EXE.
+LOG: Attempting download of new URL file:///C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/Roslyn/FreecraftCore.Serializer.Metadata/FreecraftCore.Serializer.Metadata.EXE.
+LOG: Attempting download of new URL file:///C:/Users/Glader/Documents/Github/FreecraftCore/FreecraftCore.Serializer/src/FreecraftCore.Serializer.Compiler/bin/Release/netstandard2.0/FreecraftCore.Serializer.Metadata.DLL.
+LOG: Attempting download of new URL file:///C:/Users/Glader/Documents/Github/FreecraftCore/FreecraftCore.Serializer/src/FreecraftCore.Serializer.Compiler/bin/Release/netstandard2.0/FreecraftCore.Serializer.Metadata/FreecraftCore.Serializer.Metadata.DLL.
+LOG: Attempting download of new URL file:///C:/Users/Glader/Documents/Github/FreecraftCore/FreecraftCore.Serializer/src/FreecraftCore.Serializer.Compiler/bin/Release/netstandard2.0/FreecraftCore.Serializer.Metadata.EXE.
+LOG: Attempting download of new URL file:///C:/Users/Glader/Documents/Github/FreecraftCore/FreecraftCore.Serializer/src/FreecraftCore.Serializer.Compiler/bin/Release/netstandard2.0/FreecraftCore.Serializer.Metadata/FreecraftCore.Serializer.Metadata.EXE.
