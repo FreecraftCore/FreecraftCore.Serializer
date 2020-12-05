@@ -36,6 +36,10 @@ namespace FreecraftCore.Serializer
 		{
 			if (attributeParameterData == null) throw new ArgumentNullException(nameof(attributeParameterData));
 
+			//This covers case where source generator provides fully qualified version.
+			if (attributeParameterData.Contains('.'))
+				attributeParameterData = attributeParameterData.Split('.').Last();
+
 			return (EncodingType)Enum.Parse(typeof(EncodingType), attributeParameterData, true);
 		}
 	}

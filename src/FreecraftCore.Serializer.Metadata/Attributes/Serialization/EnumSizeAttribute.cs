@@ -33,6 +33,10 @@ namespace FreecraftCore.Serializer
 			if (args.Length != 1)
 				throw new InvalidOperationException($"{nameof(EnumSizeAttribute)} requires updated handling.");
 
+			//This covers case where source generator provides fully qualified version.
+			if(args[0].Contains('.'))
+				args[0] = args[0].Split('.').Last();
+
 			return (PrimitiveSizeType)Enum.Parse(typeof(PrimitiveSizeType), args[0], true);
 		}
 	}
