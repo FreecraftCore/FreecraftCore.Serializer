@@ -126,11 +126,19 @@ namespace FreecraftCore.Serializer
 
 		private void WriteSerializerStrategyClass(INamedTypeSymbol typeSymbol)
 		{
-			ICompilationUnitEmittable implementationEmittable = CreateEmittableImplementationSerializerStrategy(typeSymbol);
-			//This cased issues in Analyzer/Generator due to dependency loading
-			SyntaxNode implementationFormattedNode = Formatter.Format(implementationEmittable.CreateUnit(), new AdhocWorkspace());
+			try
+			{
+				ICompilationUnitEmittable implementationEmittable = CreateEmittableImplementationSerializerStrategy(typeSymbol);
+				//This cased issues in Analyzer/Generator due to dependency loading
+				SyntaxNode implementationFormattedNode = Formatter.Format(implementationEmittable.CreateUnit(), new AdhocWorkspace());
 
-			WriteEmittedFile(implementationFormattedNode, implementationEmittable, "Impl");
+				WriteEmittedFile(implementationFormattedNode, implementationEmittable, "Impl");
+			}
+			catch (Exception e)
+			{
+				//We should hint to end user what Type failed and where.
+				throw new InvalidOperationException($"Type: {typeSymbol.Name} encountered compilation failure. Reason: {e}", e);
+			}
 		}
 
 		private void WriteEmittedFile(SyntaxNode formattedNode, ICompilationUnitEmittable emittable, string appendedName)
