@@ -39,7 +39,15 @@ namespace FreecraftCore.Serializer
 
 		public override string ToString()
 		{
-			return $"{ComputeName(Symbol)}_{SERIALIZER_NAME}";
+			try
+			{
+				return $"{ComputeName(Symbol)}_{SERIALIZER_NAME}";
+
+			}
+			catch (Exception e)
+			{
+				throw new InvalidOperationException($"Failed to compute SerializerName for Type: {Symbol.Name}", e);
+			}
 		}
 
 		public string BuildName()
@@ -51,7 +59,10 @@ namespace FreecraftCore.Serializer
 		{
 			if(type is INamedTypeSymbol namedSymbol && namedSymbol.IsGenericType)
 			{
-				string baseName = type.Name.Remove(type.Name.IndexOf('`'));
+				//Soooo, when it comes to TypeSymbols it's not like Reflection where
+				//the name will contain a backtick `. It's just the generic type name
+				//and we'll need to fill in the type arg values still.
+				string baseName = type.Name;
 				StringBuilder builder = new StringBuilder(baseName);
 				builder.Append('_');
 
