@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace FreecraftCore.Serializer
@@ -14,7 +15,7 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// The literal/constant value.
 		/// </summary>
-		public abstract TNumericType Value { get; }
+		public abstract TNumericType Value { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
 
 		protected StaticTypedNumeric()
 		{

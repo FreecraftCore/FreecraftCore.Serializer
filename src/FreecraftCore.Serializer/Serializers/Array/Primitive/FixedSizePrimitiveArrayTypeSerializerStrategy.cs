@@ -26,7 +26,7 @@ namespace FreecraftCore.Serializer
 		/// <summary>
 		/// The fixed size value provider.
 		/// </summary>
-		private static TStaticTypedSizeValueType FixedSize { get; } = new TStaticTypedSizeValueType();
+		private static TStaticTypedSizeValueType FixedSize { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; } = new TStaticTypedSizeValueType();
 
 		/// <inheritdoc />
 		public sealed override unsafe T[] Read(Span<byte> buffer, ref int offset)
