@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
-using FreecraftCore.Serializer.CustomTypes;
 
 namespace FreecraftCore.Serializer
 {
