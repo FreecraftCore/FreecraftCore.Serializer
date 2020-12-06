@@ -1,4 +1,0 @@
-System.IO.FileNotFoundException: Could not load file or assembly 'FreecraftCore.Serializer.Metadata, Version=4.0.16.0, Culture=neutral, PublicKeyToken=null'. The system cannot find the file specified.
-File name: 'FreecraftCore.Serializer.Metadata, Version=4.0.16.0, Culture=neutral, PublicKeyToken=null'
-   at FreecraftCore.Serializer.SerializerSourceEmitter.Generate()
-   at FreecraftCore.Serializer.WireTypeSerializationSourceGenerator.Execute(GeneratorExecutionContext context) in C:\Users\Glader\Documents\Github\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Compiler\Generator\WireTypeSerializationSourceGenerator.cs:line 29
