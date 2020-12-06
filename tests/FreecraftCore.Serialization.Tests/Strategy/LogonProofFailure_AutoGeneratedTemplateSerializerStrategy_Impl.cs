@@ -42,7 +42,7 @@ namespace FreecraftCore.Serializer
         public override void InternalRead(LogonProofFailure value, Span<byte> buffer, ref int offset)
         {
             //Type: BaseLogonProofResult Field: 1 Name: Result Type: AuthenticationResult;
-            value.Result = InternalEnumExtensions.Parse<AuthenticationResult>(TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset), true);
+            value.Result = GenericPrimitiveEnumTypeSerializerStrategy<AuthenticationResult, Byte>.Instance.Read(buffer, ref offset);
             //Type: LogonProofFailure Field: 1 Name: UnknownOne Type: Byte;
             value.UnknownOne = BytePrimitiveSerializerStrategy.Instance.Read(buffer, ref offset);
             //Type: LogonProofFailure Field: 2 Name: UnknownTwo Type: Byte;
@@ -59,7 +59,7 @@ namespace FreecraftCore.Serializer
         public override void InternalWrite(LogonProofFailure value, Span<byte> buffer, ref int offset)
         {
             //Type: BaseLogonProofResult Field: 1 Name: Result Type: AuthenticationResult;
-            TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.Result, buffer, ref offset);
+            GenericPrimitiveEnumTypeSerializerStrategy<AuthenticationResult, Byte>.Instance.Write(value.Result, buffer, ref offset);
             //Type: LogonProofFailure Field: 1 Name: UnknownOne Type: Byte;
             BytePrimitiveSerializerStrategy.Instance.Write(value.UnknownOne, buffer, ref offset);
             //Type: LogonProofFailure Field: 2 Name: UnknownTwo Type: Byte;

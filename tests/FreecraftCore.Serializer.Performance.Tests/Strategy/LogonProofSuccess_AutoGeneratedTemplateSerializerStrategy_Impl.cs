@@ -42,11 +42,11 @@ namespace FreecraftCore.Serializer
         public override void InternalRead(LogonProofSuccess value, Span<byte> buffer, ref int offset)
         {
             //Type: BaseLogonProofResult Field: 1 Name: Result Type: AuthenticationResult;
-            value.Result = InternalEnumExtensions.Parse<AuthenticationResult>(TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset), true);
+            value.Result = GenericPrimitiveEnumTypeSerializerStrategy<AuthenticationResult, Byte>.Instance.Read(buffer, ref offset);
             //Type: LogonProofSuccess Field: 1 Name: M2 Type: Byte[];
             value.M2 = FixedSizePrimitiveArrayTypeSerializerStrategy<Byte, StaticTypedNumeric_Int32_20>.Instance.Read(buffer, ref offset);
             //Type: LogonProofSuccess Field: 2 Name: AccountAuthorization Type: AccountAuthorizationFlags;
-            value.AccountAuthorization = InternalEnumExtensions.Parse<AccountAuthorizationFlags>(TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset), true);
+            value.AccountAuthorization = GenericPrimitiveEnumTypeSerializerStrategy<AccountAuthorizationFlags, UInt32>.Instance.Read(buffer, ref offset);
             //Type: LogonProofSuccess Field: 3 Name: SurveyId Type: UInt32;
             value.SurveyId = GenericTypePrimitiveSerializerStrategy<UInt32>.Instance.Read(buffer, ref offset);
             //Type: LogonProofSuccess Field: 4 Name: unk3 Type: UInt16;
@@ -63,11 +63,11 @@ namespace FreecraftCore.Serializer
         public override void InternalWrite(LogonProofSuccess value, Span<byte> buffer, ref int offset)
         {
             //Type: BaseLogonProofResult Field: 1 Name: Result Type: AuthenticationResult;
-            TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.Result, buffer, ref offset);
+            GenericPrimitiveEnumTypeSerializerStrategy<AuthenticationResult, Byte>.Instance.Write(value.Result, buffer, ref offset);
             //Type: LogonProofSuccess Field: 1 Name: M2 Type: Byte[];
             FixedSizePrimitiveArrayTypeSerializerStrategy<Byte, StaticTypedNumeric_Int32_20>.Instance.Write(value.M2, buffer, ref offset);
             //Type: LogonProofSuccess Field: 2 Name: AccountAuthorization Type: AccountAuthorizationFlags;
-            TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.AccountAuthorization, buffer, ref offset);
+            GenericPrimitiveEnumTypeSerializerStrategy<AccountAuthorizationFlags, UInt32>.Instance.Write(value.AccountAuthorization, buffer, ref offset);
             //Type: LogonProofSuccess Field: 3 Name: SurveyId Type: UInt32;
             GenericTypePrimitiveSerializerStrategy<UInt32>.Instance.Write(value.SurveyId, buffer, ref offset);
             //Type: LogonProofSuccess Field: 4 Name: unk3 Type: UInt16;
