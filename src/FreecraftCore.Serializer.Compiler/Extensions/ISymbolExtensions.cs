@@ -236,7 +236,7 @@ namespace FreecraftCore.Serializer
 					return true;
 			}
 
-			return true;
+			return false;
 		}
 
 		private static bool DefinesPolymorphicContract(ITypeSymbol type)
