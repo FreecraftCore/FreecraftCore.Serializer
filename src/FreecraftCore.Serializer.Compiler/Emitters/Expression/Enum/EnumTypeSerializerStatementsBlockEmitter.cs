@@ -22,7 +22,7 @@ namespace FreecraftCore.Serializer
 		{
 			//TODO: Support custom primitivie specifier.
 			//Primitive serialization YAY
-			if (Member.HasAttributeExact<EnumStringAttribute>())
+			if (!Member.HasAttributeExact<EnumStringAttribute>())
 			{
 				//What type to serialize the enum as
 				string serializeAsType = ComputeTypeToSerializeTo();
