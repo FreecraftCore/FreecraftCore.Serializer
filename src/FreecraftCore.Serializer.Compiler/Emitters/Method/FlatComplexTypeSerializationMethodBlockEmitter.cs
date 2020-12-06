@@ -52,6 +52,10 @@ namespace FreecraftCore.Serializer
 
 		private SyntaxList<StatementSyntax> EmitTypesMemberSerialization(ITypeSymbol currentType, SyntaxList<StatementSyntax> statements)
 		{
+			if (currentType is INamedTypeSymbol namedSymbol)
+				if (namedSymbol.IsUnboundGenericType)
+					throw new InvalidOperationException($"Cannot emit member serialization for open generic Type: {namedSymbol.Name}");
+
 			//Conceptually, we need to find ALL serializable members
 			foreach (ISymbol mi in currentType
 				.GetMembers()
@@ -135,7 +139,12 @@ namespace FreecraftCore.Serializer
 					invokeSyntax = emitter.Create();
 				}
 				else
-					throw new NotImplementedException($"TODO: Cannot handle Type: {memberType}");
+				{
+					bool isGenericType = currentType is INamedTypeSymbol n && n.IsGenericType;
+					bool isUnboundedGenericType = currentType is INamedTypeSymbol n2 && n2.IsUnboundGenericType;
+					throw new NotImplementedException($"TODO: Cannot handle Type: {memberType} ContainingType: {currentType} MetadataType: {currentType.GetType().Name} Generic: {isGenericType} UnboundGeneric: {isUnboundedGenericType}");
+				}
+					
 
 				if (invokeSyntax != null)
 				{

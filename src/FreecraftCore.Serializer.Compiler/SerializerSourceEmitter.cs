@@ -44,10 +44,14 @@ namespace FreecraftCore.Serializer
 
 			foreach (INamedTypeSymbol type in serializableTypes)
 			{
+				//THIS SHOULD NEVER HAPPEN!
+				//if (type.IsGenericType && !type.IsUnboundGenericType)
+				//	throw new InvalidOperationException($"Encountered unbound generic Type: {type.Name} in top-level search.");
+
 				//This is for GENERIC types.
 				//We can only realistically support closed generic forward declared types
 				//AND also primitive generic type support.
-				if (type.IsGenericType && type.IsUnboundGenericType)
+				if (type.IsGenericType)
 				{
 					if (type.HasAttributeExact<PrimitiveGenericAttribute>())
 					{
@@ -78,7 +82,7 @@ namespace FreecraftCore.Serializer
 
 							//TODO: Does this work? Arrays may work different with API
 							//create types for each tuple of generic attributes
-							INamedTypeSymbol boundGenericType = type.Construct(data.ConstructorArguments.Select(a => (ITypeSymbol)a.Value).ToArray());
+							INamedTypeSymbol boundGenericType = type.Construct(data.ConstructorArguments.First().Values.Select(v => v.Value).Cast<ITypeSymbol>().ToArray());
 							WriteSerializerStrategyClass(boundGenericType);
 						}
 					}
