@@ -28,6 +28,9 @@
     <!-- Do not include the generator as a lib dependency -->
     <langversion>preview</langversion>
     <IncludeSymbols>true</IncludeSymbols>
+
+    <!-- This makes output folder HUGE but it includes ALL assemblies which are needed when you want to actually do local testing -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <PropertyGroup>

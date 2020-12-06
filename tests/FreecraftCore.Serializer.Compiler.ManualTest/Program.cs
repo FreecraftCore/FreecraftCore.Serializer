@@ -13,7 +13,7 @@ namespace FreecraftCore.Serializer.Compiler.ManualTest
 		{
 			CSharpCompilation compilation = CSharpCompilation.Create("Test", new Microsoft.CodeAnalysis.SyntaxTree[]
 			{
-				CSharpSyntaxTree.ParseText(File.ReadAllText(@"C:\Users\Glader\Documents\Github\FreecraftCore\FreecraftCore.Serializer\tests\FreecraftCore.Serializer.Performance.Tests\DTOs\WoWAuthDTOs.cs"))
+				CSharpSyntaxTree.ParseText(File.ReadAllText(@"C:\Users\Glader\Documents\Github\FreecraftCore\FreecraftCore.Serializer\tests\FreecraftCore.Serializer.Compiler.ManualTest\WoWAuthDTOs.cs"))
 			}, new MetadataReference[]
 			{
 				MetadataReference.CreateFromFile(typeof(WireDataContractAttribute).Assembly.Location),

@@ -1,0 +1,6 @@
+System.InvalidCastException: Unable to cast object of type 'Microsoft.CodeAnalysis.TypedConstant' to type 'Microsoft.CodeAnalysis.ITypeSymbol'.
+   at System.Linq.Enumerable.<CastIterator>d__97`1.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at FreecraftCore.Serializer.SerializerSourceEmitter.Generate() in C:\Users\Glader\Documents\Github\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Compiler\SerializerSourceEmitter.cs:line 41
+   at FreecraftCore.Serializer.WireTypeSerializationSourceGenerator.Execute(GeneratorExecutionContext context) in C:\Users\Glader\Documents\Github\FreecraftCore\FreecraftCore.Serializer\src\FreecraftCore.Serializer.Compiler\Generator\WireTypeSerializationSourceGenerator.cs:line 29
