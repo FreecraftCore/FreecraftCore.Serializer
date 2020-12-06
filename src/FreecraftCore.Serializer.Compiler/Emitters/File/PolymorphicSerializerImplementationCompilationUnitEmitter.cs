@@ -982,7 +982,7 @@ namespace FreecraftCore.Serializer
 				})
 				.Concat(TypeSymbol.GetAttributesLike<WireDataContractBaseTypeAttribute>().Select(a =>
 				{
-					return new PolymorphicTypeInfo(a.ConstructorArguments.First(), (ITypeSymbol)a.ConstructorArguments.First().Value);
+					return new PolymorphicTypeInfo(a.ConstructorArguments.First(), (ITypeSymbol)a.ConstructorArguments.Last().Value);
 				}))
 				.Distinct();
 		}
