@@ -38,8 +38,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FreecraftCore.Serializer.Metadata" Version="4.0.17" PrivateAssets="all" GeneratePathProperty="true" />
-    <PackageReference Include="FreecraftCore.Serializer" Version="4.0.17" PrivateAssets="all" GeneratePathProperty="true" />
+    <ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" PrivateAssets="all" GeneratePathProperty="true" />
+    <ProjectReference Include="..\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj" PrivateAssets="all" GeneratePathProperty="true" />
   </ItemGroup>
 
   <ItemGroup>
