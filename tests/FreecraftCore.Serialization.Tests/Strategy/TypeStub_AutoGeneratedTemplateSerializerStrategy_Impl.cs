@@ -70,7 +70,7 @@ namespace FreecraftCore.Serializer
             //Type: TypeStub Field: 13 Name: OptionalValue Type: Int32;
             if (value.OptionalBoolCheck)value.OptionalValue = GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 14 Name: TestCustomSerializerInt Type: Int32;
-            value.TestCustomSerializerInt = TestCustomSerializer.Instance.Read(buffer, ref offset);
+            value.TestCustomSerializerInt = FreecraftCore.Serializer.CustomTypes.TestCustomSerializer.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 15 Name: EnumStringTestValue Type: TestEnum;
             value.EnumStringTestValue = InternalEnumExtensions.Parse<TestEnum>(TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset), true);
             //Type: TypeStub Field: 16 Name: NestedPolymorphicTypeValue Type: BaseTypeStub;
@@ -80,7 +80,7 @@ namespace FreecraftCore.Serializer
             //Type: TypeStub Field: 18 Name: EnumStringTestValueReversed Type: TestEnum;
             value.EnumStringTestValueReversed = InternalEnumExtensions.Parse<TestEnum>(TerminatedStringTypeSerializerStrategy<ReversedASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset), true);
             //Type: TypeStub Field: 19 Name: CustomTypeSerializerTest Type: TestCustomSerializerReferenceType;
-            value.CustomTypeSerializerTest = TestCustomSerializerReferenceTypeSerializer.Instance.Read(buffer, ref offset);
+            value.CustomTypeSerializerTest = MyNamespace.TestCustomSerializerReferenceTypeSerializer.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 20 Name: FieldTest Type: Int32;
             value.FieldTest = GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 97 Name: LongArrayTest Type: Int64[];
@@ -129,7 +129,7 @@ namespace FreecraftCore.Serializer
             //Type: TypeStub Field: 13 Name: OptionalValue Type: Int32;
             if (value.OptionalBoolCheck)GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.OptionalValue, buffer, ref offset);
             //Type: TypeStub Field: 14 Name: TestCustomSerializerInt Type: Int32;
-            TestCustomSerializer.Instance.Write(value.TestCustomSerializerInt, buffer, ref offset);
+            FreecraftCore.Serializer.CustomTypes.TestCustomSerializer.Instance.Write(value.TestCustomSerializerInt, buffer, ref offset);
             //Type: TypeStub Field: 15 Name: EnumStringTestValue Type: TestEnum;
             TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.EnumStringTestValue, buffer, ref offset);
             //Type: TypeStub Field: 16 Name: NestedPolymorphicTypeValue Type: BaseTypeStub;
@@ -139,7 +139,7 @@ namespace FreecraftCore.Serializer
             //Type: TypeStub Field: 18 Name: EnumStringTestValueReversed Type: TestEnum;
             TerminatedStringTypeSerializerStrategy<ReversedASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.EnumStringTestValueReversed, buffer, ref offset);
             //Type: TypeStub Field: 19 Name: CustomTypeSerializerTest Type: TestCustomSerializerReferenceType;
-            TestCustomSerializerReferenceTypeSerializer.Instance.Write(value.CustomTypeSerializerTest, buffer, ref offset);
+            MyNamespace.TestCustomSerializerReferenceTypeSerializer.Instance.Write(value.CustomTypeSerializerTest, buffer, ref offset);
             //Type: TypeStub Field: 20 Name: FieldTest Type: Int32;
             GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.FieldTest, buffer, ref offset);
             //Type: TypeStub Field: 97 Name: LongArrayTest Type: Int64[];

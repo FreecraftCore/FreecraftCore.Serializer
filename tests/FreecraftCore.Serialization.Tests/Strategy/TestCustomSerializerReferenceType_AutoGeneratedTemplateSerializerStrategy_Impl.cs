@@ -12,12 +12,12 @@ namespace FreecraftCore.Serializer.CustomTypes
         public Type SerializableType => typeof(TestCustomSerializerReferenceType);
         public TestCustomSerializerReferenceType Read(Span<byte> buffer, ref int offset)
         {
-            FreecraftCore.Serializer.CustomTypes.TestCustomSerializerReferenceTypeSerializer.Instance.InternalRead(this, buffer, ref offset);
+            MyNamespace.TestCustomSerializerReferenceTypeSerializer.Instance.InternalRead(this, buffer, ref offset);
             return this;
         }
         public void Write(TestCustomSerializerReferenceType value, Span<byte> buffer, ref int offset)
         {
-            FreecraftCore.Serializer.CustomTypes.TestCustomSerializerReferenceTypeSerializer.Instance.InternalWrite(this, buffer, ref offset);
+            MyNamespace.TestCustomSerializerReferenceTypeSerializer.Instance.InternalWrite(this, buffer, ref offset);
         }
     }
 }

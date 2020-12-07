@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FreecraftCore.Serializer;
+using FreecraftCore.Serializer.CustomTypes;
+using MyNamespace;
 
 namespace FreecraftCore.Serializer.CustomTypes
 {
@@ -110,19 +113,6 @@ namespace FreecraftCore.Serializer.CustomTypes
 		public TypeStub2()
 		{
 			
-		}
-	}
-
-	public sealed class TestCustomSerializerReferenceTypeSerializer : CustomTypeSerializerStrategy<TestCustomSerializerReferenceTypeSerializer, TestCustomSerializerReferenceType>
-	{
-		public override void InternalRead(TestCustomSerializerReferenceType value, Span<byte> buffer, ref int offset)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void InternalWrite(TestCustomSerializerReferenceType value, Span<byte> buffer, ref int offset)
-		{
-			throw new NotImplementedException();
 		}
 	}
 
@@ -242,6 +232,22 @@ namespace FreecraftCore.Serializer.CustomTypes
 		public TypeStub()
 		{
 			
+		}
+	}
+}
+
+namespace MyNamespace
+{
+	public sealed class TestCustomSerializerReferenceTypeSerializer : CustomTypeSerializerStrategy<TestCustomSerializerReferenceTypeSerializer, TestCustomSerializerReferenceType>
+	{
+		public override void InternalRead(TestCustomSerializerReferenceType value, Span<byte> buffer, ref int offset)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void InternalWrite(TestCustomSerializerReferenceType value, Span<byte> buffer, ref int offset)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
