@@ -170,7 +170,7 @@ namespace FreecraftCore.Serializer
 
 		private static ITypeSymbol GetMemberTypeInfo(ISymbol mi)
 		{
-			return (mi.GetType() == typeof(IFieldSymbol) ? ((IFieldSymbol) mi).Type : ((IPropertySymbol) mi).Type);
+			return (mi is IFieldSymbol symbol) ? symbol.Type : ((IPropertySymbol) mi).Type;
 		}
 	}
 }

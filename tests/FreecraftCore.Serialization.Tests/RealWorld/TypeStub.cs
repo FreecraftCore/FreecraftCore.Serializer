@@ -231,6 +231,9 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[WireMember(19)]
 		public TestCustomSerializerReferenceType CustomTypeSerializerTest { get; internal set; }
 
+		[WireMember(20)]
+		public int FieldTest;
+
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
 		public int[] FinalArrayMemberWriteToEnd { get; internal set; }
