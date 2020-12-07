@@ -322,10 +322,10 @@ namespace FreecraftCore.Serializer
 			}
 		}
 
-		public static string GetFriendlyName(this INamedTypeSymbol type)
+		public static string GetFriendlyName(this ITypeSymbol type)
 		{
 			string friendlyName = type.Name;
-			if(type.IsGenericType && !type.IsUnboundGenericType)
+			if(type is INamedTypeSymbol namedTypeSymbolRef && namedTypeSymbolRef.IsGenericType && !namedTypeSymbolRef.IsUnboundGenericType)
 			{
 				int iBacktick = friendlyName.IndexOf('`');
 				if(iBacktick > 0)
@@ -333,7 +333,7 @@ namespace FreecraftCore.Serializer
 					friendlyName = friendlyName.Remove(iBacktick);
 				}
 				friendlyName += "<";
-				ImmutableArray<ITypeSymbol> typeParameters = type.TypeArguments;
+				ImmutableArray<ITypeSymbol> typeParameters = namedTypeSymbolRef.TypeArguments;
 				friendlyName = ConcatArgs(typeParameters, friendlyName);
 				friendlyName += ">";
 			}
@@ -356,6 +356,16 @@ namespace FreecraftCore.Serializer
 		public static INamedTypeSymbol GetEnumUnderlyingType(this ITypeSymbol type)
 		{
 			return (type is INamedTypeSymbol namedType) ? namedType.EnumUnderlyingType : null;
+		}
+
+		public static string ToFullName([NotNull] this ITypeSymbol type)
+		{
+			if (type == null) throw new ArgumentNullException(nameof(type));
+
+			if (type.ContainingNamespace != null)
+				return $"{type.ContainingNamespace.FullNamespaceString()}.{type.GetFriendlyName()}";
+			else
+				return type.GetFriendlyName();
 		}
 
 		public static string FullNamespaceString([NotNull] this INamespaceSymbol namespaceSymbol)

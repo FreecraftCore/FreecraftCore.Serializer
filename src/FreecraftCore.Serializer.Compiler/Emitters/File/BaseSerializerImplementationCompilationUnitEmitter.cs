@@ -237,23 +237,35 @@ namespace FreecraftCore.Serializer
 
 		private MemberDeclarationSyntax[] CreateMembers()
 		{
+			//This check is VERY important because we shouldn't emit serializers for Types that
+			//indicate they EXCUSIVELY use custom type serializers.
+			bool usesCustomTypeSerializer = TypeSymbol.HasAttributeExact<CustomTypeSerializerAttribute>();
+
 			//Here we're checking if the self serializable functionality
 			//must be implemented for the type, which requires additional code generation
 			if (TypeSymbol.IsWireMessageType())
 			{
-				return new MemberDeclarationSyntax[]
-				{
-					new WireMessageImplementationMemberDeclarationEmitter(SerializerTypeName, TypeSymbol).Create(),
-					CreateSerializerImplementationNamespaceMember(),
-				};
+				if (!usesCustomTypeSerializer)
+					return new MemberDeclarationSyntax[]
+					{
+						new WireMessageImplementationMemberDeclarationEmitter(SerializerTypeName, TypeSymbol).Create(),
+						CreateSerializerImplementationNamespaceMember(),
+					};
+				else
+					return new MemberDeclarationSyntax[]
+					{
+						new WireMessageImplementationMemberDeclarationEmitter(SerializerTypeName, TypeSymbol).Create()
+					};
 			}
-			else
+			else if (!usesCustomTypeSerializer)
 			{
 				return new MemberDeclarationSyntax[]
 				{
 					CreateSerializerImplementationNamespaceMember(),
 				};
 			}
+			else
+				return new MemberDeclarationSyntax[0];
 		}
 
 		protected abstract MemberDeclarationSyntax CreateSerializerImplementationNamespaceMember();

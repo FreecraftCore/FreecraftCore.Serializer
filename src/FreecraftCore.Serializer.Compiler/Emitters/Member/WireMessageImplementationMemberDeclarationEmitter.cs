@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
@@ -19,8 +20,18 @@ namespace FreecraftCore.Serializer
 		public WireMessageImplementationMemberDeclarationEmitter([NotNull] string serializerTypeName, INamedTypeSymbol typeSymbol)
 		{
 			if (string.IsNullOrWhiteSpace(serializerTypeName)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(serializerTypeName));
-			SerializerTypeName = serializerTypeName;
+
 			TypeSymbol = typeSymbol;
+
+			bool usesCustomTypeSerializer = TypeSymbol.HasAttributeExact<CustomTypeSerializerAttribute>();
+
+			if(!usesCustomTypeSerializer)
+				SerializerTypeName = serializerTypeName;
+			else
+			{
+				AttributeData data = TypeSymbol.GetAttributeExact<CustomTypeSerializerAttribute>();
+				SerializerTypeName = ((ITypeSymbol)data.ConstructorArguments.First().Value).ToFullName();
+			}
 		}
 
 		//TODO: Assumes the class is partial
