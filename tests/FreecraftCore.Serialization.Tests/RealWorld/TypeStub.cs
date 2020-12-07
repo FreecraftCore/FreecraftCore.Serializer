@@ -126,9 +126,10 @@ namespace FreecraftCore.Serializer.CustomTypes
 		}
 	}
 
+	[WireMessageType]
 	[CustomTypeSerializer(typeof(TestCustomSerializerReferenceTypeSerializer))]
 	[WireDataContract]
-	public partial class TestCustomSerializerReferenceType
+	public sealed partial class TestCustomSerializerReferenceType
 	{
 		[WireMember(1)]
 		public int Value { get; internal set; }

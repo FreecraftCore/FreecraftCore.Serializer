@@ -198,55 +198,7 @@ namespace FreecraftCore.Serializer
 								(
 									TokenList
 									(
-										requiresOverride
-											? new[]
-											{
-												Token
-												(
-													TriviaList
-													(
-														Whitespace("		")
-													),
-													SyntaxKind.PublicKeyword,
-													TriviaList
-													(
-														Space
-													)
-												),
-												Token
-												(
-													TriviaList(),
-													SyntaxKind.OverrideKeyword,
-													TriviaList
-													(
-														Space
-													)
-												)
-											}
-											: new[]
-											{
-												Token
-												(
-													TriviaList
-													(
-														Whitespace("		")
-													),
-													SyntaxKind.PublicKeyword,
-													TriviaList
-													(
-														Space
-													)
-												),
-												Token
-												(
-													TriviaList(),
-													SyntaxKind.VirtualKeyword,
-													TriviaList
-													(
-														Space
-													)
-												)
-											}
+										ComputeModifiers(requiresOverride)
 									)
 								)
 								.WithExpressionBody
@@ -303,55 +255,7 @@ namespace FreecraftCore.Serializer
 								(
 									TokenList
 									(
-										requiresOverride
-											? new[]
-											{
-												Token
-												(
-													TriviaList
-													(
-														Whitespace("		")
-													),
-													SyntaxKind.PublicKeyword,
-													TriviaList
-													(
-														Space
-													)
-												),
-												Token
-												(
-													TriviaList(),
-													SyntaxKind.OverrideKeyword,
-													TriviaList
-													(
-														Space
-													)
-												)
-											}
-											: new[]
-											{
-												Token
-												(
-													TriviaList
-													(
-														Whitespace("		")
-													),
-													SyntaxKind.PublicKeyword,
-													TriviaList
-													(
-														Space
-													)
-												),
-												Token
-												(
-													TriviaList(),
-													SyntaxKind.VirtualKeyword,
-													TriviaList
-													(
-														Space
-													)
-												)
-											}
+										ComputeModifiers(requiresOverride)
 									)
 								)
 								.WithParameterList
@@ -638,55 +542,7 @@ namespace FreecraftCore.Serializer
 								(
 									TokenList
 									(
-										requiresOverride
-											? new[]
-											{
-												Token
-												(
-													TriviaList
-													(
-														Whitespace("		")
-													),
-													SyntaxKind.PublicKeyword,
-													TriviaList
-													(
-														Space
-													)
-												),
-												Token
-												(
-													TriviaList(),
-													SyntaxKind.OverrideKeyword,
-													TriviaList
-													(
-														Space
-													)
-												)
-											}
-											: new[]
-											{
-												Token
-												(
-													TriviaList
-													(
-														Whitespace("		")
-													),
-													SyntaxKind.PublicKeyword,
-													TriviaList
-													(
-														Space
-													)
-												),
-												Token
-												(
-													TriviaList(),
-													SyntaxKind.VirtualKeyword,
-													TriviaList
-													(
-														Space
-													)
-												)
-											}
+										ComputeModifiers(requiresOverride)
 									)
 								)
 								.WithParameterList
@@ -1051,6 +907,84 @@ namespace FreecraftCore.Serializer
 				);
 
 			return member;
+		}
+
+		private SyntaxToken[] ComputeModifiers(bool requiresOverride)
+		{
+			if (requiresOverride)
+				return new[]
+				{
+					Token
+					(
+						TriviaList
+						(
+							Whitespace("		")
+						),
+						SyntaxKind.PublicKeyword,
+						TriviaList
+						(
+							Space
+						)
+					),
+					Token
+					(
+						TriviaList(),
+						SyntaxKind.OverrideKeyword,
+						TriviaList
+						(
+							Space
+						)
+					)
+				};
+			else
+			{
+				//Case where it's a sealed type, we CANNOT have virtuals
+				if (TypeSymbol.IsSealed)
+				{
+					return new[]
+					{
+						Token
+						(
+							TriviaList
+							(
+								Whitespace("		")
+							),
+							SyntaxKind.PublicKeyword,
+							TriviaList
+							(
+								Space
+							)
+						)
+					};
+				}
+				else
+				{
+					return new[]
+					{
+						Token
+						(
+							TriviaList
+							(
+								Whitespace("		")
+							),
+							SyntaxKind.PublicKeyword,
+							TriviaList
+							(
+								Space
+							)
+						),
+						Token
+						(
+							TriviaList(),
+							SyntaxKind.VirtualKeyword,
+							TriviaList
+							(
+								Space
+							)
+						)
+					};
+				}
+			}
 		}
 
 		private ITypeSymbol GetRootWireMessageType()
