@@ -12,18 +12,14 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class RawDefaultStringTypeSerializerGenerator : BaseInvokationExpressionEmitter
+	public sealed class RawDefaultStringTypeSerializerGenerator : BaseStringInvokationExpressionEmitter
 	{
-		public EncodingType Encoding { get; }
-
 		public bool ShouldTerminate { get; }
 
 		public RawDefaultStringTypeSerializerGenerator([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode, 
 			EncodingType encoding, bool shouldTerminate) 
-			: base(actualType, member, mode)
+			: base(actualType, member, mode, encoding)
 		{
-			if (!Enum.IsDefined(typeof(EncodingType), encoding)) throw new InvalidEnumArgumentException(nameof(encoding), (int) encoding, typeof(EncodingType));
-			Encoding = encoding;
 			ShouldTerminate = shouldTerminate;
 		}
 
@@ -31,8 +27,8 @@ namespace FreecraftCore.Serializer
 		{
 			//Not suppose to do this, but we will because I am lazy right now
 			InvocationExpressionSyntax expressionSyntax = !ShouldTerminate
-				? new SerializerMethodInvokationEmitter(Mode, $"{Encoding}StringTypeSerializerStrategy").Create()
-				: new SerializerMethodInvokationEmitter(Mode, $"TerminatedStringTypeSerializerStrategy<{Encoding}StringTypeSerializerStrategy, {Encoding}StringTerminatorTypeSerializerStrategy>").Create();
+				? new SerializerMethodInvokationEmitter(Mode, CalculateBaseSerializerTypeName()).Create()
+				: new SerializerMethodInvokationEmitter(Mode, $"TerminatedStringTypeSerializerStrategy<{CalculateBaseSerializerTypeName()}, {CalculateBaseSerializerTerminatorTypeName()}>").Create();
 
 			return expressionSyntax
 				.WithArgumentList

@@ -12,19 +12,16 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class RawDontTerminateLengthPrefixedStringTypeSerializationGenerator : BaseInvokationExpressionEmitter
+	public sealed class RawDontTerminateLengthPrefixedStringTypeSerializationGenerator : BaseStringInvokationExpressionEmitter
 	{
-		public EncodingType Encoding { get; }
 
 		public PrimitiveSizeType SizeType { get; }
 
 		public RawDontTerminateLengthPrefixedStringTypeSerializationGenerator([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, 
 			SerializationMode mode, EncodingType encoding, PrimitiveSizeType sizeType) 
-			: base(actualType, member, mode)
+			: base(actualType, member, mode, encoding)
 		{
-			if (!Enum.IsDefined(typeof(EncodingType), encoding)) throw new InvalidEnumArgumentException(nameof(encoding), (int) encoding, typeof(EncodingType));
 			if (!Enum.IsDefined(typeof(PrimitiveSizeType), sizeType)) throw new InvalidEnumArgumentException(nameof(sizeType), (int) sizeType, typeof(PrimitiveSizeType));
-			Encoding = encoding;
 			SizeType = sizeType;
 		}
 
@@ -50,7 +47,7 @@ namespace FreecraftCore.Serializer
 										(
 											new SyntaxNodeOrToken[]
 											{
-												IdentifierName($"{Encoding}StringTypeSerializerStrategy"),
+												IdentifierName(CalculateBaseSerializerTypeName()),
 												Token
 												(
 													TriviaList(),

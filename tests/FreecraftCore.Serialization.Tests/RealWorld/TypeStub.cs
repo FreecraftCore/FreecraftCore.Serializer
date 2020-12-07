@@ -197,6 +197,11 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[WireMember(17)]
 		public int BigEndianIntTestValue { get; internal set; }
 
+		[ReverseData]
+		[EnumString]
+		[WireMember(18)]
+		public TestEnum EnumStringTestValueReversed { get; internal set; }
+
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
 		public int[] FinalArrayMemberWriteToEnd { get; internal set; }

@@ -12,21 +12,17 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	public sealed class RawKnownSizeStringTypeSerializerGenerator : BaseInvokationExpressionEmitter
+	public sealed class RawKnownSizeStringTypeSerializerGenerator : BaseStringInvokationExpressionEmitter
 	{
-		public EncodingType Encoding { get; }
-
 		public int FixedSizeValue { get; }
 
 		public bool ShouldTerminate { get; }
 
 		public RawKnownSizeStringTypeSerializerGenerator([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member, SerializationMode mode, 
 			EncodingType encoding, int fixedSizeValue, bool shouldTerminate) 
-			: base(actualType, member, mode)
+			: base(actualType, member, mode, encoding)
 		{
-			if (!Enum.IsDefined(typeof(EncodingType), encoding)) throw new InvalidEnumArgumentException(nameof(encoding), (int) encoding, typeof(EncodingType));
 			if (fixedSizeValue < 0) throw new ArgumentOutOfRangeException(nameof(fixedSizeValue));
-			Encoding = encoding;
 			FixedSizeValue = fixedSizeValue;
 			ShouldTerminate = shouldTerminate;
 		}
@@ -49,8 +45,8 @@ namespace FreecraftCore.Serializer
 		private InvocationExpressionSyntax CreateSerializerInvocation()
 		{
 			string serializerTypeName = !ShouldTerminate
-				? $"FixedSizeStringTypeSerializerStrategy<{Encoding}StringTypeSerializerStrategy, {new StaticlyTypedNumericNameBuilder<int>(FixedSizeValue).BuildName()}>"
-				: $"FixedSizeStringTypeSerializerStrategy<{Encoding}StringTypeSerializerStrategy, {new StaticlyTypedNumericNameBuilder<int>(FixedSizeValue).BuildName()}, {Encoding}StringTerminatorTypeSerializerStrategy>";
+				? $"FixedSizeStringTypeSerializerStrategy<{CalculateBaseSerializerTypeName()}, {new StaticlyTypedNumericNameBuilder<int>(FixedSizeValue).BuildName()}>"
+				: $"FixedSizeStringTypeSerializerStrategy<{CalculateBaseSerializerTypeName()}, {new StaticlyTypedNumericNameBuilder<int>(FixedSizeValue).BuildName()}, {CalculateBaseSerializerTerminatorTypeName()}>";
 
 			return new SerializerMethodInvokationEmitter(Mode, serializerTypeName)
 				.Create();
