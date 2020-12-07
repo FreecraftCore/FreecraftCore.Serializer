@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -68,8 +69,21 @@ namespace FreecraftCore.Serializer
 
 				//Shift forward by offset, otherwise we read wrong data!!
 				offset += trueStringSize;
-				return EncodingStrategy.GetString(bytes, trueStringSize);
+				return ReadEncodedString(bytes, trueStringSize);
 			}
+		}
+
+		/// <summary>
+		/// Gets an allocated string from the encoding strategy.
+		/// Reads <see cref="trueStringSize"/> many bytes into the unsafe <see cref="bytes"/> buffer.
+		/// </summary>
+		/// <param name="bytes">Unsafe pointer buffer.</param>
+		/// <param name="trueStringSize">The true string size in bytes./</param>
+		/// <returns>An allocated string.</returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		protected virtual unsafe string ReadEncodedString(byte* bytes, int trueStringSize)
+		{
+			return EncodingStrategy.GetString(bytes, trueStringSize);
 		}
 
 		public override unsafe void Write(string value, Span<byte> buffer, ref int offset)
@@ -88,9 +102,15 @@ namespace FreecraftCore.Serializer
 				{
 					//Shift forward by offset, otherwise we read wrong data!!
 					//Wrote string so NOW we need to shift the offset
-					offset += EncodingStrategy.GetBytes(chars, value.Length, bytes, buffer.Length);
+					offset += WriteEncodedString(chars, value.Length, bytes, buffer.Length);
 				}
 			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		protected virtual unsafe int WriteEncodedString(char* chars, int charsLength, byte* bytes, int byteLength)
+		{
+			return EncodingStrategy.GetBytes(chars, charsLength, bytes, byteLength);
 		}
 	}
 }

@@ -1,0 +1,169 @@
+﻿using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+
+namespace FreecraftCore.Serializer.Tests
+{
+	[TestFixture]
+	public class ReverseStringTestsASCII
+	{
+		private static IBaseEncodableTypeSerializerStrategy Serializer { get; } = ReversedASCIIStringTypeSerializerStrategy.Instance;
+
+		[Test]
+		public static void Test_String_Serializer_Serializes()
+		{
+			//arrange
+			Span<byte> buffer = new Span<byte>(new byte[1024 * Serializer.CharacterSize]);
+			int offset = 0;
+
+			//act
+			Serializer.Write("Hello!", buffer, ref offset);
+			buffer = buffer.Slice(0, offset);
+			offset = 0;
+			string value = Serializer.Read(buffer, ref offset);
+
+			//assert
+			Assert.AreEqual(value, "Hello!");
+		}
+
+		[Test]
+		public static void Test_String_Serializer_Can_Serialize_Empty_String()
+		{
+			//arrange
+			Span<byte> buffer = new Span<byte>(new byte[1024 * Serializer.CharacterSize]);
+			int offset = 0;
+
+			//act
+			Serializer.Write(String.Empty, buffer, ref offset);
+			buffer = buffer.Slice(0, offset);
+			offset = 0;
+			string value = Serializer.Read(buffer, ref offset);
+
+			//Change was made here that makes null strings empty strings
+			//This seems preferable and easier to deal with. Nullrefs are bad
+			//and also serializing null is harder than serializing empty
+			//this is overall less error prone.
+			//assert
+			Assert.NotNull(value);
+		}
+
+		[Test]
+		public static void Test_Fixed_String_Can_Write()
+		{
+			//arrange
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
+			int offset = 0;
+
+			//act
+			Serializer.Write("hello", buffer, ref offset);
+		}
+
+		[Test]
+		public static void Test_Fixed_String_Can_Write_Proper_Length()
+		{
+			//arrange
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
+			int offset = 0;
+
+			//act
+			Serializer.Write("hello", buffer, ref offset);
+
+			//WARNING: Old test assumed serializer wrote null terminator by default. That's done at source generation time now!!
+			//assert
+			Assert.AreEqual(5 * Serializer.CharacterSize, offset);
+		}
+
+		[Test]
+		public static void Test_Fixed_String_Can_Read()
+		{
+			//arrange
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
+			int offset = 0;
+
+			//act
+			Serializer.Write("hello", buffer, ref offset);
+			offset = 0;
+			string value = Serializer.Read(buffer, ref offset);
+
+			//assert
+			Assert.NotNull(value);
+			Assert.IsNotEmpty(value);
+			Assert.AreEqual("hello", value);
+		}
+
+		[Test]
+		[TestCase("Hello")]
+		[TestCase("Yo!")]
+		[TestCase("Phantasy")]
+		[TestCase("Warcraft")]
+		[TestCase("warcraft")]
+		public static void Test_Deserialization_Matches_With_Helper(string value)
+		{
+			//arrange
+			Span<byte> buffer = new Span<byte>(new byte[value.Length * Serializer.CharacterSize + 100]);
+			int offset = 0;
+
+			//act
+			Serializer.Write(value, buffer, ref offset);
+			offset = 0;
+			string result = Serializer.Read(buffer, ref offset);
+
+			//assert
+			Assert.AreEqual(value, result);
+		}
+
+		[Test]
+		[TestCase("Hello")]
+		[TestCase("Yo!")]
+		[TestCase("Phantasy")]
+		[TestCase("Warcraft")]
+		[TestCase("warcraft")]
+		public static void Test_Serialization_Matches_ReversedString(string value)
+		{
+			//arrange
+			Span<byte> buffer = new Span<byte>(new byte[value.Length * Serializer.CharacterSize + 100]);
+			int offset = 0;
+
+			//act
+			Serializer.Write(value, buffer, ref offset);
+			offset = 0;
+			string result = ASCIIStringTypeSerializerStrategy.Instance.Read(buffer, ref offset);
+
+			//assert
+			Assert.AreEqual(value, new string(result.Reverse().ToArray()));
+		}
+
+		[Test]
+		public static void Test_Can_Deserialize_To_String_With_Only_Null_Terminator()
+		{
+			//arrange
+			int offset = 0;
+
+			//act
+			string value = Serializer.Read(new Span<byte>(new byte[Serializer.CharacterSize]), ref offset);
+
+			//assert
+			Assert.NotNull(value, "String was null.");
+			Assert.True(value.Length == 0);
+		}
+
+		[Test]
+		public static void Test_Can_Serialize_To_String_With_Only_Null_Terminator()
+		{
+			//arrange
+			var serializer = Serializer;
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
+			int offset = 0;
+
+			//act
+			serializer.Write(String.Empty, buffer, ref offset);
+
+			//assert
+			Assert.True(offset == 0);
+			Assert.True(buffer[0] == 0);
+		}
+	}
+}
