@@ -40,5 +40,11 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public abstract void Write(T value, Span<byte> buffer, ref int offset);
+
+		//This prevents anyone from deriving from this externally.
+		protected internal StatelessTypeSerializerStrategy()
+		{
+			
+		}
 	}
 }

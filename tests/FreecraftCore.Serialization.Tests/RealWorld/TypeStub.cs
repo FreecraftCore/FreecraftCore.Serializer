@@ -113,14 +113,14 @@ namespace FreecraftCore.Serializer.CustomTypes
 		}
 	}
 
-	public sealed class TestCustomSerializerReferenceTypeSerializer : StatelessTypeSerializerStrategy<TestCustomSerializerReferenceTypeSerializer, TestCustomSerializerReferenceType>
+	public sealed class TestCustomSerializerReferenceTypeSerializer : CustomTypeSerializerStrategy<TestCustomSerializerReferenceTypeSerializer, TestCustomSerializerReferenceType>
 	{
-		public override TestCustomSerializerReferenceType Read(Span<byte> buffer, ref int offset)
+		public override void InternalRead(TestCustomSerializerReferenceType value, Span<byte> buffer, ref int offset)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void Write(TestCustomSerializerReferenceType value, Span<byte> buffer, ref int offset)
+		public override void InternalWrite(TestCustomSerializerReferenceType value, Span<byte> buffer, ref int offset)
 		{
 			throw new NotImplementedException();
 		}
