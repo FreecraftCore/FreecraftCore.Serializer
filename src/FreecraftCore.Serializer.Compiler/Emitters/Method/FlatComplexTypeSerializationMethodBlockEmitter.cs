@@ -104,12 +104,12 @@ namespace FreecraftCore.Serializer
 				{
 					//So TYPES and PROPERTIES may both reference a custom serializer.
 					//So we should prefer field/prop attributes over the type.
-					AttributeData attribute = mi.GetAttributeExact<CustomTypeSerializerAttribute>();
-					if (attribute == null)
-						attribute = memberType.GetAttributeExact<CustomTypeSerializerAttribute>();
+					AttributeData attribute = mi.HasAttributeExact<CustomTypeSerializerAttribute>()
+						? mi.GetAttributeExact<CustomTypeSerializerAttribute>()
+						: memberType.GetAttributeExact<CustomTypeSerializerAttribute>();
 
 					//It's DEFINITELY not null.
-					OverridenSerializationGenerator emitter = new OverridenSerializationGenerator(memberType, mi, Mode, (INamedTypeSymbol)attribute.ConstructorArguments.First().Value);
+					OverridenSerializationGenerator emitter = new OverridenSerializationGenerator(memberType, mi, Mode, (ITypeSymbol)attribute.ConstructorArguments.First().Value);
 					invokeSyntax = emitter.Create();
 				}
 				else if (memberType.IsPrimitive())
