@@ -79,6 +79,8 @@ namespace FreecraftCore.Serializer
             value.BigEndianIntTestValue = BigEndianGenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 18 Name: EnumStringTestValueReversed Type: TestEnum;
             value.EnumStringTestValueReversed = InternalEnumExtensions.Parse<TestEnum>(TerminatedStringTypeSerializerStrategy<ReversedASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset), true);
+            //Type: TypeStub Field: 19 Name: CustomTypeSerializerTest Type: TestCustomSerializerReferenceType;
+            value.CustomTypeSerializerTest = TestCustomSerializerReferenceTypeSerializer.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 97 Name: LongArrayTest Type: Int64[];
             value.LongArrayTest = SendSizePrimitiveArrayTypeSerializerStrategy<Int64, Int16>.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 98 Name: KnownSizeArrayTest Type: UInt16[];
@@ -134,6 +136,8 @@ namespace FreecraftCore.Serializer
             BigEndianGenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.BigEndianIntTestValue, buffer, ref offset);
             //Type: TypeStub Field: 18 Name: EnumStringTestValueReversed Type: TestEnum;
             TerminatedStringTypeSerializerStrategy<ReversedASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.EnumStringTestValueReversed, buffer, ref offset);
+            //Type: TypeStub Field: 19 Name: CustomTypeSerializerTest Type: TestCustomSerializerReferenceType;
+            TestCustomSerializerReferenceTypeSerializer.Instance.Write(value.CustomTypeSerializerTest, buffer, ref offset);
             //Type: TypeStub Field: 97 Name: LongArrayTest Type: Int64[];
             SendSizePrimitiveArrayTypeSerializerStrategy<Int64, Int16>.Instance.Write(value.LongArrayTest, buffer, ref offset);
             //Type: TypeStub Field: 98 Name: KnownSizeArrayTest Type: UInt16[];

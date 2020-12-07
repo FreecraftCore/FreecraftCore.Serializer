@@ -113,6 +113,32 @@ namespace FreecraftCore.Serializer.CustomTypes
 		}
 	}
 
+	public sealed class TestCustomSerializerReferenceTypeSerializer : StatelessTypeSerializerStrategy<TestCustomSerializerReferenceTypeSerializer, TestCustomSerializerReferenceType>
+	{
+		public override TestCustomSerializerReferenceType Read(Span<byte> buffer, ref int offset)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Write(TestCustomSerializerReferenceType value, Span<byte> buffer, ref int offset)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+	[CustomTypeSerializer(typeof(TestCustomSerializerReferenceTypeSerializer))]
+	[WireDataContract]
+	public partial class TestCustomSerializerReferenceType
+	{
+		[WireMember(1)]
+		public int Value { get; internal set; }
+
+		public TestCustomSerializerReferenceType()
+		{
+			
+		}
+	}
+
 	[WireMessageType]
 	[WireDataContract]
 	[WireDataContractBaseLink(1)]
@@ -201,6 +227,9 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[EnumString]
 		[WireMember(18)]
 		public TestEnum EnumStringTestValueReversed { get; internal set; }
+
+		[WireMember(19)]
+		public TestCustomSerializerReferenceType CustomTypeSerializerTest { get; internal set; }
 
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
