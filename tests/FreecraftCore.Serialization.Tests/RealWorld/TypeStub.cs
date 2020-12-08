@@ -130,6 +130,22 @@ namespace FreecraftCore.Serializer.CustomTypes
 		}
 	}
 
+	[KnownGeneric(typeof(byte))]
+	[WireDataContract]
+	public partial class OpenGenericVector<T>
+	{
+		[WireMember(1)]
+		public T Value1 { get; internal set; }
+
+		[WireMember(2)]
+		public T Value2 { get; internal set; }
+
+		public OpenGenericVector()
+		{
+			
+		}
+	}
+
 	[WireMessageType]
 	[WireDataContract]
 	[WireDataContractBaseLink(1)]
@@ -224,6 +240,15 @@ namespace FreecraftCore.Serializer.CustomTypes
 
 		[WireMember(20)]
 		public int FieldTest;
+
+		[WireMember(21)]
+		public OpenGenericVector<int> OpenGenericTest1 { get; internal set; }
+
+		[WireMember(22)]
+		public OpenGenericVector<long> OpenGenericTest2 { get; internal set; }
+
+		[WireMember(22)]
+		public OpenGenericVector<byte> OpenGenericTest3 { get; internal set; }
 
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
