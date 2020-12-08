@@ -24,7 +24,7 @@ namespace FreecraftCore.Serializer
 
 		protected override IEnumerable<SyntaxNodeOrToken> CalculateGenericTypeParameters()
 		{
-			yield return IdentifierName(GeneratedSerializerNameStringBuilder.Create(ElementType).BuildName());
+			yield return IdentifierName(GeneratedSerializerNameStringBuilder.Create(ElementType).BuildName(Member));
 			yield return IdentifierName(ElementType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
 			yield return IdentifierName(new StaticlyTypedNumericNameBuilder<Int32>(KnownSize).BuildName());
 		}

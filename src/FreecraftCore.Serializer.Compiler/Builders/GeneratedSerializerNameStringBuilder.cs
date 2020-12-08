@@ -24,7 +24,7 @@ namespace FreecraftCore.Serializer
 			return (INameBuildable) Activator.CreateInstance(typeof(GeneratedSerializerNameStringBuilder<>).MakeGenericType(serializableType));
 		}
 
-		public static INameBuildable Create([NotNull] ITypeSymbol serializableType)
+		public static GeneratedSerializerNameStringBuilder Create([NotNull] ITypeSymbol serializableType)
 		{
 			if(serializableType == null) throw new ArgumentNullException(nameof(serializableType));
 
@@ -46,14 +46,7 @@ namespace FreecraftCore.Serializer
 				//Special case of overriden Type serializer
 				if(Symbol.HasAttributeExact<CustomTypeSerializerAttribute>())
 				{
-					//Get the type specified on the type itself\
-					//and return full name due to namespacing issues with custom serializers
-					return Symbol.GetAttributeExact<CustomTypeSerializerAttribute>()
-						.ConstructorArguments
-						.Select(a => a.Value)
-						.Cast<ITypeSymbol>()
-						.First()
-						.ToFullName();
+					return GetCustomSerializerName(Symbol);
 				}
 				else
 					return $"{ComputeName(Symbol)}_{SERIALIZER_NAME}";
@@ -64,8 +57,32 @@ namespace FreecraftCore.Serializer
 			}
 		}
 
+		private string GetCustomSerializerName([NotNull] ISymbol symbolToAnalyze)
+		{
+			if (symbolToAnalyze == null) throw new ArgumentNullException(nameof(symbolToAnalyze));
+
+			//Get the type specified on the type itself\
+			//and return full name due to namespacing issues with custom serializers
+			return symbolToAnalyze.GetAttributeExact<CustomTypeSerializerAttribute>()
+				.ConstructorArguments
+				.Select(a => a.Value)
+				.Cast<ITypeSymbol>()
+				.First()
+				.ToFullName();
+		}
+
 		public string BuildName()
 		{
+			return ToString();
+		}
+
+		public string BuildName([NotNull] ISymbol memberContext)
+		{
+			if (memberContext == null) throw new ArgumentNullException(nameof(memberContext));
+
+			if (memberContext.HasAttributeExact<CustomTypeSerializerAttribute>())
+				return GetCustomSerializerName(memberContext);
+
 			return ToString();
 		}
 

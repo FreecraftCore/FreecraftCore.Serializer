@@ -256,6 +256,10 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[WireMember(24)]
 		public TestCustomSerializerReferenceType[] CustomTypeSerializerTestArray { get; internal set; }
 
+		[CustomTypeSerializer(typeof(TestCustomSerializerReferenceTypeSerializerForPropertyTest))]
+		[WireMember(25)]
+		public TestCustomSerializerReferenceType CustomTypeSerializerPropertyAttri { get; internal set; }
+
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
 		public int[] FinalArrayMemberWriteToEnd { get; internal set; }
@@ -270,6 +274,20 @@ namespace FreecraftCore.Serializer.CustomTypes
 namespace MyNamespace
 {
 	public sealed class TestCustomSerializerReferenceTypeSerializer : CustomTypeSerializerStrategy<TestCustomSerializerReferenceTypeSerializer, TestCustomSerializerReferenceType>
+	{
+		public override void InternalRead(TestCustomSerializerReferenceType value, Span<byte> buffer, ref int offset)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void InternalWrite(TestCustomSerializerReferenceType value, Span<byte> buffer, ref int offset)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+
+	public sealed class TestCustomSerializerReferenceTypeSerializerForPropertyTest : CustomTypeSerializerStrategy<TestCustomSerializerReferenceTypeSerializerForPropertyTest, TestCustomSerializerReferenceType>
 	{
 		public override void InternalRead(TestCustomSerializerReferenceType value, Span<byte> buffer, ref int offset)
 		{
