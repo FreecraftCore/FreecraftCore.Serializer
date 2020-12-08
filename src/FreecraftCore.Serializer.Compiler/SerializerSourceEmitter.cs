@@ -136,7 +136,7 @@ namespace FreecraftCore.Serializer
 				//This cased issues in Analyzer/Generator due to dependency loading
 				SyntaxNode implementationFormattedNode = Formatter.Format(implementationEmittable.CreateUnit(), new AdhocWorkspace());
 
-				WriteEmittedFile(implementationFormattedNode, implementationEmittable, "Impl");
+				WriteEmittedFile(implementationFormattedNode, implementationEmittable, "");
 			}
 			catch (Exception e)
 			{
@@ -151,7 +151,10 @@ namespace FreecraftCore.Serializer
 			using (TextWriter classFileWriter = new StringWriter(sb))
 				formattedNode.WriteTo(classFileWriter);
 
-			SerializationOutputStrategy.Output($"{emittable.UnitName}_{appendedName}", sb.ToString());
+			if (!String.IsNullOrWhiteSpace(appendedName))
+				SerializationOutputStrategy.Output($"{emittable.UnitName}_{appendedName}", sb.ToString());
+			else
+				SerializationOutputStrategy.Output($"{emittable.UnitName}", sb.ToString());
 		}
 
 		private ICompilationUnitEmittable CreateEmittableImplementationSerializerStrategy(INamedTypeSymbol type)
