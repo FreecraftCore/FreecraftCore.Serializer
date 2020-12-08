@@ -44,13 +44,13 @@ namespace FreecraftCore.Serializer
             //Type: PSOBBPatchPacketPayloadClient Field: 1 Name: OperationCode Type: Int16;
             value.OperationCode = GenericTypePrimitiveSerializerStrategy<Int16>.Instance.Read(buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 1 Name: Padding2 Type: Byte[];
-            value.Padding2 = FixedSizePrimitiveArrayTypeSerializerStrategy<Byte, StaticTypedNumeric_Int32_64>.Instance.Read(buffer, ref offset);
+            value.Padding2 = FixedSizePrimitiveArrayTypeSerializerStrategy<byte, StaticTypedNumeric_Int32_64>.Instance.Read(buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 2 Name: UserName Type: String;
             value.UserName = FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_16, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 3 Name: Password Type: String;
             value.Password = FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_16, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 4 Name: Padding Type: Byte[];
-            value.Padding = FixedSizePrimitiveArrayTypeSerializerStrategy<Byte, StaticTypedNumeric_Int32_12>.Instance.Read(buffer, ref offset);
+            value.Padding = FixedSizePrimitiveArrayTypeSerializerStrategy<byte, StaticTypedNumeric_Int32_12>.Instance.Read(buffer, ref offset);
         }
 
         /// <summary>
@@ -65,13 +65,13 @@ namespace FreecraftCore.Serializer
             //Type: PSOBBPatchPacketPayloadClient Field: 1 Name: OperationCode Type: Int16;
             GenericTypePrimitiveSerializerStrategy<Int16>.Instance.Write(value.OperationCode, buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 1 Name: Padding2 Type: Byte[];
-            FixedSizePrimitiveArrayTypeSerializerStrategy<Byte, StaticTypedNumeric_Int32_64>.Instance.Write(value.Padding2, buffer, ref offset);
+            FixedSizePrimitiveArrayTypeSerializerStrategy<byte, StaticTypedNumeric_Int32_64>.Instance.Write(value.Padding2, buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 2 Name: UserName Type: String;
             FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_16, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.UserName, buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 3 Name: Password Type: String;
             FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_16, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.Password, buffer, ref offset);
             //Type: PatchingLoginRequestPayload Field: 4 Name: Padding Type: Byte[];
-            FixedSizePrimitiveArrayTypeSerializerStrategy<Byte, StaticTypedNumeric_Int32_12>.Instance.Write(value.Padding, buffer, ref offset);
+            FixedSizePrimitiveArrayTypeSerializerStrategy<byte, StaticTypedNumeric_Int32_12>.Instance.Write(value.Padding, buffer, ref offset);
         }
         private sealed class StaticTypedNumeric_Int32_16 : StaticTypedNumeric<Int32> { public sealed override Int32 Value => 16; }
         private sealed class StaticTypedNumeric_Int32_64 : StaticTypedNumeric<Int32> { public sealed override Int32 Value => 64; }

@@ -46,7 +46,7 @@ namespace FreecraftCore.Serializer
             //Type: PatchingWelcomePayload Field: 1 Name: PatchCopyrightMessage Type: String;
             value.PatchCopyrightMessage = FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_44>.Instance.Read(buffer, ref offset);
             //Type: PatchingWelcomePayload Field: 2 Name: Padding Type: Byte[];
-            value.Padding = FixedSizePrimitiveArrayTypeSerializerStrategy<Byte, StaticTypedNumeric_Int32_20>.Instance.Read(buffer, ref offset);
+            value.Padding = FixedSizePrimitiveArrayTypeSerializerStrategy<byte, StaticTypedNumeric_Int32_20>.Instance.Read(buffer, ref offset);
             //Type: PatchingWelcomePayload Field: 3 Name: ServerVector Type: UInt32;
             value.ServerVector = GenericTypePrimitiveSerializerStrategy<UInt32>.Instance.Read(buffer, ref offset);
             //Type: PatchingWelcomePayload Field: 4 Name: ClientVector Type: UInt32;
@@ -67,7 +67,7 @@ namespace FreecraftCore.Serializer
             //Type: PatchingWelcomePayload Field: 1 Name: PatchCopyrightMessage Type: String;
             FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_44>.Instance.Write(value.PatchCopyrightMessage, buffer, ref offset);
             //Type: PatchingWelcomePayload Field: 2 Name: Padding Type: Byte[];
-            FixedSizePrimitiveArrayTypeSerializerStrategy<Byte, StaticTypedNumeric_Int32_20>.Instance.Write(value.Padding, buffer, ref offset);
+            FixedSizePrimitiveArrayTypeSerializerStrategy<byte, StaticTypedNumeric_Int32_20>.Instance.Write(value.Padding, buffer, ref offset);
             //Type: PatchingWelcomePayload Field: 3 Name: ServerVector Type: UInt32;
             GenericTypePrimitiveSerializerStrategy<UInt32>.Instance.Write(value.ServerVector, buffer, ref offset);
             //Type: PatchingWelcomePayload Field: 4 Name: ClientVector Type: UInt32;

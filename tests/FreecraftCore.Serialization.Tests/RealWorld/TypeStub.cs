@@ -253,6 +253,9 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[WireMember(23)]
 		public OpenGenericVector<byte>[] OpenGenericArray { get; internal set; }
 
+		[WireMember(24)]
+		public TestCustomSerializerReferenceType[] CustomTypeSerializerTestArray { get; internal set; }
+
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
 		public int[] FinalArrayMemberWriteToEnd { get; internal set; }

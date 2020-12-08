@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
@@ -41,8 +42,21 @@ namespace FreecraftCore.Serializer
 		{
 			try
 			{
-				return $"{ComputeName(Symbol)}_{SERIALIZER_NAME}";
-
+				//TODO: This causes weirdly named WireMessageType files to be generated for Types with this attribute
+				//Special case of overriden Type serializer
+				if(Symbol.HasAttributeExact<CustomTypeSerializerAttribute>())
+				{
+					//Get the type specified on the type itself\
+					//and return full name due to namespacing issues with custom serializers
+					return Symbol.GetAttributeExact<CustomTypeSerializerAttribute>()
+						.ConstructorArguments
+						.Select(a => a.Value)
+						.Cast<ITypeSymbol>()
+						.First()
+						.ToFullName();
+				}
+				else
+					return $"{ComputeName(Symbol)}_{SERIALIZER_NAME}";
 			}
 			catch (Exception e)
 			{

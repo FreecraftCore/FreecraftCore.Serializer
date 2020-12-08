@@ -44,7 +44,7 @@ namespace FreecraftCore.Serializer
             //Type: PSOBBPatchPacketPayloadServer Field: 1 Name: OperationCode Type: UInt16;
             value.OperationCode = GenericTypePrimitiveSerializerStrategy<UInt16>.Instance.Read(buffer, ref offset);
             //Type: UnknownPatchPacket Field: 1 Name: UnknownBytes Type: Byte[];
-            value.UnknownBytes = PrimitiveArrayTypeSerializerStrategy<Byte>.Instance.Read(buffer, ref offset);
+            value.UnknownBytes = PrimitiveArrayTypeSerializerStrategy<byte>.Instance.Read(buffer, ref offset);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace FreecraftCore.Serializer
             //Type: PSOBBPatchPacketPayloadServer Field: 1 Name: OperationCode Type: UInt16;
             GenericTypePrimitiveSerializerStrategy<UInt16>.Instance.Write(value.OperationCode, buffer, ref offset);
             //Type: UnknownPatchPacket Field: 1 Name: UnknownBytes Type: Byte[];
-            PrimitiveArrayTypeSerializerStrategy<Byte>.Instance.Write(value.UnknownBytes, buffer, ref offset);
+            PrimitiveArrayTypeSerializerStrategy<byte>.Instance.Write(value.UnknownBytes, buffer, ref offset);
         }
     }
 }
