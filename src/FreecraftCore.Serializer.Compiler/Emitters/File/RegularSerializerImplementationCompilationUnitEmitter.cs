@@ -1667,5 +1667,10 @@ namespace FreecraftCore.Serializer
 						)
 					);
 			}
+
+		public override IEnumerable<ITypeSymbol> GetRequestedGenericTypes()
+		{
+			return this.SerializationMethodEmitter.RequestedGenericTypes;
+		}
 	}
 }

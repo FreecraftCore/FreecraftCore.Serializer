@@ -620,6 +620,11 @@ namespace FreecraftCore.Serializer
 				);
 		}
 
+		public override IEnumerable<ITypeSymbol> GetRequestedGenericTypes()
+		{
+			return Array.Empty<ITypeSymbol>();
+		}
+
 		private IEnumerable<SwitchSectionSyntax> BuildSwitchStatements()
 		{
 			//Every type that is a child type in the same assembly

@@ -269,5 +269,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		protected abstract MemberDeclarationSyntax CreateSerializerImplementationNamespaceMember();
+
+		public abstract IEnumerable<ITypeSymbol> GetRequestedGenericTypes();
 	}
 }

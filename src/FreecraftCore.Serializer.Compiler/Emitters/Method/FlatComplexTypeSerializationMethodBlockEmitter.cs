@@ -22,6 +22,8 @@ namespace FreecraftCore.Serializer
 
 		private ITypeSymbol Symbol { get; }
 
+		public IList<ITypeSymbol> RequestedGenericTypes { get; } = new List<ITypeSymbol>();
+
 		public FlatComplexTypeSerializationMethodBlockEmitter(SerializationMode mode, [NotNull] ITypeSymbol symbol)
 		{
 			if (!Enum.IsDefined(typeof(SerializationMode), mode)) throw new InvalidEnumArgumentException(nameof(mode), (int) mode, typeof(SerializationMode));
@@ -74,6 +76,10 @@ namespace FreecraftCore.Serializer
 				//The reason is, setting and getting fields vs members are same syntax
 				ITypeSymbol memberType = GetMemberTypeInfo(mi);
 
+				if (memberType is INamedTypeSymbol nts)
+					if (nts.IsGenericType)
+						RequestedGenericTypes.Add(nts);
+
 				FieldDocumentationStatementsBlockEmitter commentEmitter = new FieldDocumentationStatementsBlockEmitter(memberType, mi);
 				statements = statements.AddRange(commentEmitter.CreateStatements());
 
@@ -95,7 +101,6 @@ namespace FreecraftCore.Serializer
 					OptionalFieldStatementsBlockEmitter emitter = new OptionalFieldStatementsBlockEmitter(memberType, mi);
 					statements = statements.AddRange(emitter.CreateStatements());
 				}
-
 
 				InvocationExpressionSyntax invokeSyntax = null;
 

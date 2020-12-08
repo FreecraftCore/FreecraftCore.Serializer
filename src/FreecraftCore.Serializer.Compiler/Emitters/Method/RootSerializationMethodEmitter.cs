@@ -19,6 +19,8 @@ namespace FreecraftCore.Serializer
 
 		public INamedTypeSymbol Symbol { get; }
 
+		public List<ITypeSymbol> RequestedGenericTypes { get; } = new List<ITypeSymbol>();
+
 		public RootSerializationMethodBlockEmitter([NotNull] INamedTypeSymbol symbol)
 		{
 			Symbol = symbol ?? throw new ArgumentNullException(nameof(symbol));
@@ -28,8 +30,12 @@ namespace FreecraftCore.Serializer
 		{
 			//TODO: Figure out how we should decide which strategy to use, right now only simple and flat are supported.
 			//TSerializableType
-			return new FlatComplexTypeSerializationMethodBlockEmitter(Mode, Symbol)
+			var emitter = new FlatComplexTypeSerializationMethodBlockEmitter(Mode, Symbol);
+			BlockSyntax block = emitter
 				.CreateBlock();
+
+			RequestedGenericTypes.AddRange(emitter.RequestedGenericTypes);
+			return block;
 		}
 
 		public IEnumerable<ClassDeclarationSyntax> CreateClasses()

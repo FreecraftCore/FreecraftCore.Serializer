@@ -28,6 +28,10 @@ namespace FreecraftCore.Serializer
 
 		public ISerializationSourceOutputStrategy SerializationOutputStrategy { get; }
 
+		private List<string> GeneratedTypeNames { get; } = new List<string>();
+
+		private List<ITypeSymbol> RequiredGenericSerializers { get; } = new List<ITypeSymbol>();
+
 		public SerializerSourceEmitter(IEnumerable<INamedTypeSymbol> targetAssembly, [NotNull] ISerializationSourceOutputStrategy serializationOutputStrategy, [NotNull] Compilation compilationUnit)
 		{
 			TargetAssembly = targetAssembly ?? throw new ArgumentNullException(nameof(targetAssembly));
@@ -107,6 +111,30 @@ namespace FreecraftCore.Serializer
 				else
 					WriteSerializerStrategyClass(type);
 			}
+
+			//It's important that we dynamically emit generic serializers
+			//if none are found in refences or soon-to-be emitted serializers
+			foreach (ITypeSymbol genericTypeSymbol in RequiredGenericSerializers.ToArray()) //copy because something will modify this array
+			{
+				GeneratedSerializerNameStringBuilder builder = new GeneratedSerializerNameStringBuilder(genericTypeSymbol);
+				string genericSerializerName = builder.BuildName();
+
+				//If an emitted serializer name matches the expected generic serializer name
+				//then one is going to be emitted so we should not do anything.
+				if (this.GeneratedTypeNames.Any(t => genericSerializerName == t))
+					continue;
+
+				//TODO: Don't hardcore default namespace!!
+				//Now we check if one exists in the compilation unit or references
+				INamedTypeSymbol symbol = CompilationUnit.GetTypeByMetadataName($"FreecraftCore.Serializer.{genericSerializerName}");
+				if (symbol != null)
+					continue;
+
+				//TODO: Calling this may end up having us require MORE generic serializers but this case isn't handled yet.
+				//At this point we don't have a generic serializer defined for the closed generic type
+				//and we should just emit one otherwise compilation will fail.
+				WriteSerializerStrategyClass((INamedTypeSymbol) genericTypeSymbol);
+			}
 		}
 
 		private static bool IsSerializableType(INamedTypeSymbol symbol)
@@ -137,6 +165,8 @@ namespace FreecraftCore.Serializer
 				SyntaxNode implementationFormattedNode = Formatter.Format(implementationEmittable.CreateUnit(), new AdhocWorkspace());
 
 				WriteEmittedFile(implementationFormattedNode, implementationEmittable, "");
+
+				RequiredGenericSerializers.AddRange(implementationEmittable.GetRequestedGenericTypes());
 			}
 			catch (Exception e)
 			{
@@ -155,6 +185,8 @@ namespace FreecraftCore.Serializer
 				SerializationOutputStrategy.Output($"{emittable.UnitName}_{appendedName}", sb.ToString());
 			else
 				SerializationOutputStrategy.Output($"{emittable.UnitName}", sb.ToString());
+
+			GeneratedTypeNames.Add(emittable.UnitName);
 		}
 
 		private ICompilationUnitEmittable CreateEmittableImplementationSerializerStrategy(INamedTypeSymbol type)

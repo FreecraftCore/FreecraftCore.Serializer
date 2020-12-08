@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FreecraftCore
@@ -21,5 +22,12 @@ namespace FreecraftCore
 		/// </summary>
 		/// <returns>A complete compilation unit.</returns>
 		CompilationUnitSyntax CreateUnit();
+
+		/// <summary>
+		/// Provides the <see cref="ITypeSymbol"/>s of generic types
+		/// that were requested for serialization.
+		/// </summary>
+		/// <returns></returns>
+		IEnumerable<ITypeSymbol> GetRequestedGenericTypes();
 	}
 }
