@@ -382,7 +382,7 @@ namespace FreecraftCore.Serializer
 
 		//See: https://stackoverflow.com/questions/37327056/retrieve-all-types-with-roslyn-within-a-solution
 		public static IEnumerable<INamedTypeSymbol> GetAllTypes(this Compilation compilation) =>
-			GetAllTypes(compilation.GlobalNamespace);
+			GetAllTypes(compilation.Assembly.GlobalNamespace);
 
 		static IEnumerable<INamedTypeSymbol> GetAllTypes(INamespaceSymbol @namespace)
 		{
