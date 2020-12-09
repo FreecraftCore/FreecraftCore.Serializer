@@ -11,17 +11,12 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 namespace FreecraftCore.Serializer
 {
 	internal sealed class DefaultComplexArrayInvokationExpressionEmitter 
-		: BaseArraySerializationInvokationExpressionEmitter<ComplexArrayTypeSerializerStrategy>
+		: BaseComplexArrayInvokationExpressionEmitter<ComplexArrayTypeSerializerStrategy>
 	{
 		public DefaultComplexArrayInvokationExpressionEmitter([NotNull] IArrayTypeSymbol arrayType, ISymbol member, SerializationMode mode)
 			: base(arrayType, member, mode)
 		{
-		}
 
-		protected override IEnumerable<SyntaxNodeOrToken> CalculateGenericTypeParameters()
-		{
-			yield return IdentifierName(GeneratedSerializerNameStringBuilder.Create(ElementType).BuildName(Member));
-			yield return IdentifierName(ElementType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
 		}
 	}
 }

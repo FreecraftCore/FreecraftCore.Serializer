@@ -12,7 +12,7 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 namespace FreecraftCore.Serializer
 {
 	internal sealed class SendSizeComplexArrayInvokationExpressionEmitter
-		: BaseArraySerializationInvokationExpressionEmitter<SendSizeComplexArrayTypeSerializerStrategy>
+		: BaseComplexArrayInvokationExpressionEmitter<SendSizeComplexArrayTypeSerializerStrategy>
 	{
 		public PrimitiveSizeType SizeType { get; }
 
@@ -25,8 +25,9 @@ namespace FreecraftCore.Serializer
 
 		protected override IEnumerable<SyntaxNodeOrToken> CalculateGenericTypeParameters()
 		{
-			yield return IdentifierName(GeneratedSerializerNameStringBuilder.Create(ElementType).BuildName(Member));
-			yield return IdentifierName(ElementType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
+			foreach(var baseYield in base.CalculateGenericTypeParameters())
+				yield return baseYield;
+
 			yield return IdentifierName(SizeType.ToString());
 		}
 	}

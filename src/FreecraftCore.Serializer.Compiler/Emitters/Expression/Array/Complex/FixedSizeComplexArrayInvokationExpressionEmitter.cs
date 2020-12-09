@@ -12,7 +12,7 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 namespace FreecraftCore.Serializer
 {
 	internal sealed class FixedSizeComplexArrayInvokationExpressionEmitter
-		: BaseArraySerializationInvokationExpressionEmitter<FixedSizeComplexArrayTypeSerializerStrategy>
+		: BaseComplexArrayInvokationExpressionEmitter<FixedSizeComplexArrayTypeSerializerStrategy>
 	{
 		public int KnownSize { get; }
 
@@ -24,8 +24,9 @@ namespace FreecraftCore.Serializer
 
 		protected override IEnumerable<SyntaxNodeOrToken> CalculateGenericTypeParameters()
 		{
-			yield return IdentifierName(GeneratedSerializerNameStringBuilder.Create(ElementType).BuildName(Member));
-			yield return IdentifierName(ElementType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
+			foreach (var baseYield in base.CalculateGenericTypeParameters())
+				yield return baseYield;
+
 			yield return IdentifierName(new StaticlyTypedNumericNameBuilder<Int32>(KnownSize).BuildName());
 		}
 	}
