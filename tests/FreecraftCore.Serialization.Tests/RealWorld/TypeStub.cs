@@ -260,6 +260,9 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[WireMember(25)]
 		public TestCustomSerializerReferenceType CustomTypeSerializerPropertyAttri { get; internal set; }
 
+		[WireMember(26)]
+		public string[] StringArrayTest { get; internal set; }
+
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
 		public int[] FinalArrayMemberWriteToEnd { get; internal set; }
