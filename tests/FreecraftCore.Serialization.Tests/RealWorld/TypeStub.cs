@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using FreecraftCore.Serializer;
 using FreecraftCore.Serializer.CustomTypes;
+using JetBrains.Annotations;
 using MyNamespace;
 
 namespace FreecraftCore.Serializer.CustomTypes
@@ -141,6 +142,42 @@ namespace FreecraftCore.Serializer.CustomTypes
 		public T Value2 { get; internal set; }
 
 		public OpenGenericVector()
+		{
+			
+		}
+	}
+
+	public enum BaseEnumType
+	{
+		Test1 = 1,
+	}
+
+	public class TestEnumAttribute : WireDataContractBaseLinkAttribute
+	{
+		public TestEnumAttribute(BaseEnumType uniqueIndex) 
+			: base((int)uniqueIndex)
+		{
+
+		}
+	}
+
+	[WireDataContract]
+	[TestEnumAttribute(BaseEnumType.Test1)]
+	public sealed partial class ChildEnumWireContractTestType : BaseEnumWireContractTestType
+	{
+		[WireMember(1)]
+		public int Value { get; internal set; }
+
+		public ChildEnumWireContractTestType()
+		{
+			
+		}
+	}
+
+	[WireDataContract(PrimitiveSizeType.Int32)]
+	public abstract partial class BaseEnumWireContractTestType
+	{
+		public BaseEnumWireContractTestType()
 		{
 			
 		}

@@ -630,9 +630,6 @@ namespace FreecraftCore.Serializer
 			//Every type that is a child type in the same assembly
 			foreach (PolymorphicTypeInfo typeInfo in GetPolymorphicChildTypes())
 			{
-				if (!int.TryParse(typeInfo.Index.ToCSharpString(), out int index))
-					throw new NotSupportedException($"TODO: Implement support for non-int polymorphic registering.");
-
 				yield return SwitchSection()
 					.WithLabels
 					(
@@ -640,11 +637,7 @@ namespace FreecraftCore.Serializer
 						(
 							CaseSwitchLabel
 								(
-									LiteralExpression
-									(
-										SyntaxKind.NumericLiteralExpression,
-										Literal(index)
-									)
+									CreateSwitchCase(typeInfo)
 								)
 								.WithKeyword
 								(
@@ -969,6 +962,29 @@ namespace FreecraftCore.Serializer
 							)
 						)
 					);
+			}
+		}
+
+		private static ExpressionSyntax CreateSwitchCase(PolymorphicTypeInfo typeInfo)
+		{
+			if (int.TryParse(typeInfo.Index.ToCSharpString(), out int index))
+			{
+				return LiteralExpression
+				(
+					SyntaxKind.NumericLiteralExpression,
+					Literal(index)
+				);
+			}
+			else
+			{
+				return CastExpression
+				(
+					PredefinedType
+					(
+						Token(SyntaxKind.IntKeyword)
+					),
+					IdentifierName(typeInfo.Index.ToCSharpString())
+				);
 			}
 		}
 
