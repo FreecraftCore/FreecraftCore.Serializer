@@ -56,7 +56,13 @@ namespace FreecraftCore.Serializer
 			}
 			else
 			{
-				return ActualType.GetEnumUnderlyingType().Name;
+				//This is hacky but covers the case that enum array types can use this emitter.
+				if (ActualType.IsEnumType())
+					return ActualType.GetEnumUnderlyingType().Name;
+				else if (ActualType is IArrayTypeSymbol arraySymbol)
+					return arraySymbol.ElementType.GetEnumUnderlyingType().Name;
+				else
+					throw new NotSupportedException($"Type: {ActualType.Name} cannot emit enum serialization.");
 			}
 		}
 	}

@@ -11,13 +11,19 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
 {
-	internal class GenericNameTypeCollector : CSharpSyntaxWalker
+	internal class TypeNameTypeCollector : CSharpSyntaxWalker
 	{
-		public List<IdentifierNameSyntax> Types { get; } = new List<IdentifierNameSyntax>();
+		public List<NameSyntax> Types { get; } = new List<NameSyntax>();
 
 		public override void VisitIdentifierName(IdentifierNameSyntax node)
 		{
 			if (node.ToFullString().ToLower().Contains("serializer"))
+				Types.Add(node);
+		}
+
+		public override void VisitGenericName(GenericNameSyntax node)
+		{
+			if(node.ToFullString().ToLower().Contains("serializer"))
 				Types.Add(node);
 		}
 	}
@@ -46,10 +52,23 @@ namespace FreecraftCore.Serializer
 				StringTypeSerializationStatementsBlockEmitter stringSerializerEmitter = new StringTypeSerializationStatementsBlockEmitter(ActualType, Member, Mode);
 				InvocationExpressionSyntax expressionSyntax = stringSerializerEmitter.Create();
 
-				GenericNameTypeCollector genericNameCollector = new GenericNameTypeCollector();
+				TypeNameTypeCollector genericNameCollector = new TypeNameTypeCollector();
 				genericNameCollector.Visit(expressionSyntax);
 
 				//Now we analyze the expression to determine the string type information
+				return genericNameCollector.Types.First();
+			}
+			else if (ElementType.IsEnumType())
+			{
+				//TODO: Enum string arrays aren't supported. This will break if they send EnumString
+				//Send element type instead of array type, it's SO much easier that way! But kinda hacky
+				EnumTypeSerializerStatementsBlockEmitter emitter = new EnumTypeSerializerStatementsBlockEmitter(ActualType.ElementType, Member, Mode);
+				InvocationExpressionSyntax invokeSyntax = emitter.Create();
+
+				TypeNameTypeCollector genericNameCollector = new TypeNameTypeCollector();
+				genericNameCollector.Visit(invokeSyntax);
+
+				//Now we analyze the expression to determine the Enum serializer type.
 				return genericNameCollector.Types.First();
 			}
 			else

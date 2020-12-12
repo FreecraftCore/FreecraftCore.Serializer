@@ -17,11 +17,10 @@ namespace FreecraftCore.Serializer
 	/// Contract for generic complex/custom array element type serializer.
 	/// Includes a length-prefixed size.
 	/// </summary>
-	/// <typeparam name="T">The element type.</typeparam>
 	/// <typeparam name="TElementSerializerType">The element type serializer.</typeparam>
 	/// <typeparam name="TSizeType">The type of the length-perfixed size.</typeparam>
+	/// <typeparam name="T"></typeparam>
 	public sealed class SendSizeComplexArrayTypeSerializerStrategy<TElementSerializerType, T, TSizeType> : BaseArrayTypeSerializerStrategy<ComplexArrayTypeSerializerStrategy<TElementSerializerType, T>, T>
-		where T : class //closest to primitive constraints we can get
 		where TElementSerializerType : StatelessTypeSerializerStrategy<TElementSerializerType, T>, new()
 		where TSizeType : unmanaged
 	{

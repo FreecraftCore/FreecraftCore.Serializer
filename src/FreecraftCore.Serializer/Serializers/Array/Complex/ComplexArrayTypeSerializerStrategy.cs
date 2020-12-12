@@ -19,7 +19,6 @@ namespace FreecraftCore.Serializer
 	/// <typeparam name="T">The element type.</typeparam>
 	/// <typeparam name="TElementSerializerType">The element type serializer.</typeparam>
 	public sealed class ComplexArrayTypeSerializerStrategy<TElementSerializerType, T> : BaseArrayTypeSerializerStrategy<ComplexArrayTypeSerializerStrategy<TElementSerializerType, T>, T>
-		where T : class //closest to primitive constraints we can get
 		where TElementSerializerType : StatelessTypeSerializerStrategy<TElementSerializerType, T>, new()
 	{
 		/// <summary>

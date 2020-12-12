@@ -300,6 +300,10 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[WireMember(26)]
 		public string[] StringArrayTest { get; internal set; }
 
+		[SendSize(PrimitiveSizeType.Int64)]
+		[WireMember(27)]
+		public TestEnum[] EnumArrayTest { get; internal set; }
+
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
 		public int[] FinalArrayMemberWriteToEnd { get; internal set; }
