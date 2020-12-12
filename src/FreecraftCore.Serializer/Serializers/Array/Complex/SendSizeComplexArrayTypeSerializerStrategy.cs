@@ -60,7 +60,7 @@ namespace FreecraftCore.Serializer
 			int size = value != null ? value.Length : 0;
 			GenericTypePrimitiveSerializerStrategy<TSizeType>.Instance.Write(Unsafe.As<int, TSizeType>(ref size), buffer, ref offset);
 
-			if(size == 0)
+			if(size == 0 || value == null)
 				return;
 
 			for(int i = 0; i < value.Length; i++)
