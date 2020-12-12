@@ -183,6 +183,15 @@ namespace FreecraftCore.Serializer.CustomTypes
 		}
 	}
 
+	[WireDataContract(PrimitiveSizeType.Bit)]
+	public abstract partial class BaseBitPolymorphicTestType
+	{
+		public BaseBitPolymorphicTestType()
+		{
+
+		}
+	}
+
 	[WireMessageType]
 	[WireDataContract]
 	[WireDataContractBaseLink(1)]

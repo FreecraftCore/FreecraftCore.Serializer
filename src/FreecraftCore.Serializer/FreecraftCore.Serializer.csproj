@@ -49,4 +49,8 @@ Can be extended for use outside of World of Warcraft too!</Description>
     <ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Types\" />
+  </ItemGroup>
+
 </Project>
