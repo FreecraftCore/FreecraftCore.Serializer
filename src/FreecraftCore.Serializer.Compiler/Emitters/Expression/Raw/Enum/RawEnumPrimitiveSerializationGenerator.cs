@@ -45,7 +45,7 @@ namespace FreecraftCore.Serializer
 										(
 											new SyntaxNodeOrToken[]
 											{
-												IdentifierName(ActualType.Name),
+												ComputerEnumTypeName(),
 												Token
 												(
 													TriviaList(),
@@ -75,6 +75,16 @@ namespace FreecraftCore.Serializer
 						)
 					)
 				);
+		}
+
+		private IdentifierNameSyntax ComputerEnumTypeName()
+		{
+			//Some enums are nested. To support serializing them we need to consider 
+			//that they may be nested and fully qualify them.
+			if (ActualType.ContainingType == null)
+				return IdentifierName(ActualType.Name);
+			else
+				return IdentifierName(ActualType.ToFullName()); //non fully qualified, because of global::
 		}
 
 		private SyntaxNodeOrToken[] ComputeReadMethodArgs()

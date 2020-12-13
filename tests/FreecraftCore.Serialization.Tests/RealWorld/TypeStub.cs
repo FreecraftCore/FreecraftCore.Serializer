@@ -192,6 +192,17 @@ namespace FreecraftCore.Serializer.CustomTypes
 		}
 	}
 
+	public class NestedTestType
+	{
+		public enum TestEnumNested : ulong
+		{
+			Value1 = 0,
+			Value2 = 1,
+			Value3 = 2
+		}
+	}
+
+
 	[WireMessageType]
 	[WireDataContract]
 	[WireDataContractBaseLink(1)]
@@ -312,6 +323,9 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[SendSize(PrimitiveSizeType.Int64)]
 		[WireMember(27)]
 		public TestEnum[] EnumArrayTest { get; internal set; }
+
+		[WireMember(28)]
+		public NestedTestType.TestEnumNested NestedEnumTest { get; internal set; }
 
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]

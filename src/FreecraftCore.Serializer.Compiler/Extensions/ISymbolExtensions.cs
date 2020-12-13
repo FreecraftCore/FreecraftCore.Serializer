@@ -363,9 +363,17 @@ namespace FreecraftCore.Serializer
 			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			if (type.ContainingNamespace != null)
-				return $"{type.ContainingNamespace.FullNamespaceString()}.{type.GetFriendlyName()}";
+				if (type.ContainingType == null)
+					return $"{type.ContainingNamespace.FullNamespaceString()}.{type.GetFriendlyName()}";
+				else
+					return type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Replace("global::", "");
 			else
-				return type.GetFriendlyName();
+			{
+				if(type.ContainingType == null)
+					return type.GetFriendlyName();
+				else
+					return type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Replace("global::", "");
+			}
 		}
 
 		public static string FullNamespaceString([NotNull] this INamespaceSymbol namespaceSymbol)
