@@ -107,6 +107,7 @@ namespace FreecraftCore.Serializer
             value.KnownSizeArrayTest = FixedSizePrimitiveArrayTypeSerializerStrategy<ushort, StaticTypedNumeric_Int32_1337>.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 99 Name: FinalArrayMemberWriteToEnd Type: Int32[];
             value.FinalArrayMemberWriteToEnd = PrimitiveArrayTypeSerializerStrategy<int>.Instance.Read(buffer, ref offset);
+            value.OnAfterDeserialization();
         }
 
         /// <summary>
@@ -118,6 +119,7 @@ namespace FreecraftCore.Serializer
         /// <param name="offset">See external doc.</param>
         public override void InternalWrite(TypeStub value, Span<byte> buffer, ref int offset)
         {
+            value.OnBeforeSerialization();
             //Type: BaseTypeStub Field: 1 Name: BaseIntField Type: Int32;
             GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.BaseIntField, buffer, ref offset);
             //Type: TypeStub Field: 1 Name: Hello Type: Int32;

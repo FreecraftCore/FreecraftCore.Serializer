@@ -40,6 +40,11 @@ namespace FreecraftCore.Serializer
 			typeList.Add(Symbol);
 			typeList.AddRange(Symbol.GetAllBaseTypes());
 
+			//Here we do the ole legacy serialization callback events.
+			bool isSerializationCallbackRegistered = Symbol.ImplementsInterface<ISerializationEventListener>();
+			if(isSerializationCallbackRegistered && Mode == SerializationMode.Write)
+				statements = statements.Add(new SerializationCallbackInvokationExpressionEmitter(Mode).Create().ToStatement());
+
 			//Iterate backwards from top to bottom first.
 			foreach (ITypeSymbol t in typeList
 				.AsEnumerable()
@@ -49,6 +54,10 @@ namespace FreecraftCore.Serializer
 				statements = EmitTypesMemberSerialization(t, statements);
 			}
 
+			//If they register Serialization Callbacks then on READ we do an After Deserialization call
+			if(isSerializationCallbackRegistered && Mode == SerializationMode.Read)
+				statements = statements.Add(new SerializationCallbackInvokationExpressionEmitter(Mode).Create().ToStatement());
+
 			return SyntaxFactory.Block(statements);
 		}
 
@@ -57,6 +66,8 @@ namespace FreecraftCore.Serializer
 			if (currentType is INamedTypeSymbol namedSymbol)
 				if (namedSymbol.IsUnboundGenericType)
 					throw new InvalidOperationException($"Cannot emit member serialization for open generic Type: {namedSymbol.Name}");
+
+
 
 			//Conceptually, we need to find ALL serializable members
 			foreach (ISymbol mi in currentType

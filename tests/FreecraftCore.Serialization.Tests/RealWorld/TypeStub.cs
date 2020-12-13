@@ -206,7 +206,7 @@ namespace FreecraftCore.Serializer.CustomTypes
 	[WireMessageType]
 	[WireDataContract]
 	[WireDataContractBaseLink(1)]
-	public sealed partial class TypeStub : BaseTypeStub
+	public sealed partial class TypeStub : BaseTypeStub, ISerializationEventListener
 	{
 		[WireMember(1)]
 		public int Hello { get; internal set; }
@@ -334,6 +334,16 @@ namespace FreecraftCore.Serializer.CustomTypes
 		public TypeStub()
 		{
 			
+		}
+
+		public void OnBeforeSerialization()
+		{
+
+		}
+
+		public void OnAfterDeserialization()
+		{
+
 		}
 	}
 }
