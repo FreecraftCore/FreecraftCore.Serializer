@@ -16,7 +16,7 @@ Can be extended for use outside of World of Warcraft too!</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Product>FreecraftCore.Serializer</Product>
     <DocumentationFile>bin\Release\net46\FreecraftCore.Serializer.xml</DocumentationFile>
-    <Version>4.0.29</Version>
+    <Version>4.0.30</Version>
   </PropertyGroup>
 
   <ItemGroup>

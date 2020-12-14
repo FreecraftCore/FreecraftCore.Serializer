@@ -12,7 +12,7 @@
     <Authors>Andrew Blakely, HelloKitty</Authors>
     <Company />
     <Product>FreecraftCore.Serializer</Product>
-    <Version>4.0.29</Version>
+    <Version>4.0.30</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net46|AnyCPU'">
