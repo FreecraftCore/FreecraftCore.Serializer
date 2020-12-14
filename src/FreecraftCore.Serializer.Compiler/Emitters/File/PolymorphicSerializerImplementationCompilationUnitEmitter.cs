@@ -756,225 +756,238 @@ namespace FreecraftCore.Serializer
 
 			if (TypeSymbol.HasAttributeExact<DefaultChildAttribute>())
 			{
+				//TODO: We need a way to WARN consumers of the library about this.
+				//We cannot emit a creation for default child if they're not marked as serializable via the WireDataContract
+				//This will produce code that dangerously recurrs into a stack overflow since base WireMessage won't be overrided.
 				ITypeSymbol childTypeSymbol = (ITypeSymbol)TypeSymbol.GetAttributeExact<DefaultChildAttribute>().ConstructorArguments.First().Value;
-				yield return SwitchSection()
-					.WithLabels
-					(
-						SingletonList<SwitchLabelSyntax>
+
+				if (childTypeSymbol.HasAttributeLike<WireDataContractAttribute>())
+					yield return SwitchSection()
+						.WithLabels
 						(
-							DefaultSwitchLabel()
-								.WithKeyword
-								(
-									Token
+							SingletonList<SwitchLabelSyntax>
+							(
+								DefaultSwitchLabel()
+									.WithKeyword
 									(
-										TriviaList
+										Token
 										(
-											Whitespace("				")
-										),
-										SyntaxKind.DefaultKeyword,
-										TriviaList()
-									)
-								)
-								.WithColonToken
-								(
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.ColonToken,
-										TriviaList
-										(
-											CarriageReturnLineFeed
-										)
-									)
-								)
-						)
-					)
-					.WithStatements
-					(
-						SingletonList<StatementSyntax>
-						(
-							ReturnStatement
-								(
-									ObjectCreationExpression
-										(
-											IdentifierName(childTypeSymbol.Name)
-										)
-										.WithNewKeyword
-										(
-											Token
+											TriviaList
 											(
-												TriviaList(),
-												SyntaxKind.NewKeyword,
-												TriviaList
-												(
-													Space
-												)
+												Whitespace("				")
+											),
+											SyntaxKind.DefaultKeyword,
+											TriviaList()
+										)
+									)
+									.WithColonToken
+									(
+										Token
+										(
+											TriviaList(),
+											SyntaxKind.ColonToken,
+											TriviaList
+											(
+												CarriageReturnLineFeed
 											)
 										)
-										.WithArgumentList
-										(
-											ArgumentList()
-										)
-								)
-								.WithReturnKeyword
-								(
-									Token
-									(
-										TriviaList
-										(
-											Whitespace("					")
-										),
-										SyntaxKind.ReturnKeyword,
-										TriviaList
-										(
-											Space
-										)
 									)
-								)
-								.WithSemicolonToken
-								(
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.SemicolonToken,
-										TriviaList
-										(
-											CarriageReturnLineFeed
-										)
-									)
-								)
+							)
 						)
-					);
-			}
-			else
-			{
-				yield return SwitchSection()
-					.WithLabels
-					(
-						SingletonList<SwitchLabelSyntax>
+						.WithStatements
 						(
-							DefaultSwitchLabel()
-								.WithKeyword
-								(
-									Token
-									(
-										TriviaList
-										(
-											Whitespace("				")
-										),
-										SyntaxKind.DefaultKeyword,
-										TriviaList()
-									)
-								)
-								.WithColonToken
-								(
-									Token
-									(
-										TriviaList(),
-										SyntaxKind.ColonToken,
-										TriviaList
-										(
-											CarriageReturnLineFeed
-										)
-									)
-								)
-						)
-					)
-					.WithStatements
-					(
-						SingletonList<StatementSyntax>
-						(
-							ThrowStatement
+							SingletonList<StatementSyntax>
 							(
-								ObjectCreationExpression
-								(
-									IdentifierName(nameof(NotImplementedException))
-								)
-								.WithNewKeyword
-								(
-									Token
+								ReturnStatement
 									(
-										TriviaList(),
-										SyntaxKind.NewKeyword,
-										TriviaList
-										(
-											Space
-										)
-									)
-								)
-								.WithArgumentList
-								(
-									ArgumentList
-									(
-										SingletonSeparatedList<ArgumentSyntax>
-										(
-											Argument
+										ObjectCreationExpression
 											(
-												InterpolatedStringExpression
+												IdentifierName(childTypeSymbol.Name)
+											)
+											.WithNewKeyword
+											(
+												Token
 												(
-													Token(SyntaxKind.InterpolatedStringStartToken)
-												)
-												.WithContents
-												(
-													List<InterpolatedStringContentSyntax>
+													TriviaList(),
+													SyntaxKind.NewKeyword,
+													TriviaList
 													(
-														new InterpolatedStringContentSyntax[]
-														{
-														InterpolatedStringText()
-														.WithTextToken
-														(
-															Token
-															(
-																TriviaList(),
-																SyntaxKind.InterpolatedStringTextToken,
-																"Encountered unimplemented sub-type for Type: ",
-																"Encountered unimplemented sub-type for Type: ",
-																TriviaList()
-															)
-														),
-														Interpolation
-														(
-															InvocationExpression
-															(
-																IdentifierName("nameof")
-															)
-															.WithArgumentList
-															(
-																ArgumentList
-																(
-																	SingletonSeparatedList<ArgumentSyntax>
-																	(
-																		Argument
-																		(
-																			IdentifierName(SerializableTypeName)
-																		)
-																	)
-																)
-															)
-														),
-														InterpolatedStringText()
-														.WithTextToken
-														(
-															Token
-															(
-																TriviaList(),
-																SyntaxKind.InterpolatedStringTextToken,
-																" with Key: ",
-																" with Key: ",
-																TriviaList()
-															)
-														),
-														Interpolation
-														(
-															IdentifierName("key")
-														)
-														}
+														Space
 													)
 												)
 											)
+											.WithArgumentList
+											(
+												ArgumentList()
+											)
+									)
+									.WithReturnKeyword
+									(
+										Token
+										(
+											TriviaList
+											(
+												Whitespace("					")
+											),
+											SyntaxKind.ReturnKeyword,
+											TriviaList
+											(
+												Space
+											)
 										)
 									)
+									.WithSemicolonToken
+									(
+										Token
+										(
+											TriviaList(),
+											SyntaxKind.SemicolonToken,
+											TriviaList
+											(
+												CarriageReturnLineFeed
+											)
+										)
+									)
+							)
+						);
+				else
+					yield return EmitNoDefaultChildThrow();
+			}
+			else
+			{
+				yield return EmitNoDefaultChildThrow();
+			}
+		}
+
+		private SwitchSectionSyntax EmitNoDefaultChildThrow()
+		{
+			return SwitchSection()
+				.WithLabels
+				(
+					SingletonList<SwitchLabelSyntax>
+					(
+						DefaultSwitchLabel()
+							.WithKeyword
+							(
+								Token
+								(
+									TriviaList
+									(
+										Whitespace("				")
+									),
+									SyntaxKind.DefaultKeyword,
+									TriviaList()
 								)
+							)
+							.WithColonToken
+							(
+								Token
+								(
+									TriviaList(),
+									SyntaxKind.ColonToken,
+									TriviaList
+									(
+										CarriageReturnLineFeed
+									)
+								)
+							)
+					)
+				)
+				.WithStatements
+				(
+					SingletonList<StatementSyntax>
+					(
+						ThrowStatement
+							(
+								ObjectCreationExpression
+									(
+										IdentifierName(nameof(NotImplementedException))
+									)
+									.WithNewKeyword
+									(
+										Token
+										(
+											TriviaList(),
+											SyntaxKind.NewKeyword,
+											TriviaList
+											(
+												Space
+											)
+										)
+									)
+									.WithArgumentList
+									(
+										ArgumentList
+										(
+											SingletonSeparatedList<ArgumentSyntax>
+											(
+												Argument
+												(
+													InterpolatedStringExpression
+														(
+															Token(SyntaxKind.InterpolatedStringStartToken)
+														)
+														.WithContents
+														(
+															List<InterpolatedStringContentSyntax>
+															(
+																new InterpolatedStringContentSyntax[]
+																{
+																	InterpolatedStringText()
+																		.WithTextToken
+																		(
+																			Token
+																			(
+																				TriviaList(),
+																				SyntaxKind.InterpolatedStringTextToken,
+																				"Encountered unimplemented sub-type for Type: ",
+																				"Encountered unimplemented sub-type for Type: ",
+																				TriviaList()
+																			)
+																		),
+																	Interpolation
+																	(
+																		InvocationExpression
+																			(
+																				IdentifierName("nameof")
+																			)
+																			.WithArgumentList
+																			(
+																				ArgumentList
+																				(
+																					SingletonSeparatedList<ArgumentSyntax>
+																					(
+																						Argument
+																						(
+																							IdentifierName(SerializableTypeName)
+																						)
+																					)
+																				)
+																			)
+																	),
+																	InterpolatedStringText()
+																		.WithTextToken
+																		(
+																			Token
+																			(
+																				TriviaList(),
+																				SyntaxKind.InterpolatedStringTextToken,
+																				" with Key: ",
+																				" with Key: ",
+																				TriviaList()
+																			)
+																		),
+																	Interpolation
+																	(
+																		IdentifierName("key")
+																	)
+																}
+															)
+														)
+												)
+											)
+										)
+									)
 							)
 							.WithThrowKeyword
 							(
@@ -988,9 +1001,8 @@ namespace FreecraftCore.Serializer
 									)
 								)
 							)
-						)
-					);
-			}
+					)
+				);
 		}
 
 		private static ExpressionSyntax CreateSwitchCase(PolymorphicTypeInfo typeInfo)
