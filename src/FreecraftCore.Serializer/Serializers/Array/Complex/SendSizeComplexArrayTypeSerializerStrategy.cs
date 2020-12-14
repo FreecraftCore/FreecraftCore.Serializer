@@ -20,7 +20,7 @@ namespace FreecraftCore.Serializer
 	/// <typeparam name="TElementSerializerType">The element type serializer.</typeparam>
 	/// <typeparam name="TSizeType">The type of the length-perfixed size.</typeparam>
 	/// <typeparam name="T"></typeparam>
-	public sealed class SendSizeComplexArrayTypeSerializerStrategy<TElementSerializerType, T, TSizeType> : BaseArrayTypeSerializerStrategy<ComplexArrayTypeSerializerStrategy<TElementSerializerType, T>, T>
+	public sealed class SendSizeComplexArrayTypeSerializerStrategy<TElementSerializerType, T, TSizeType> : BaseArrayTypeSerializerStrategy<SendSizeComplexArrayTypeSerializerStrategy<TElementSerializerType, T, TSizeType>, T>
 		where TElementSerializerType : StatelessTypeSerializerStrategy<TElementSerializerType, T>, new()
 		where TSizeType : unmanaged
 	{
