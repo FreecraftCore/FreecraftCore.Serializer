@@ -15,6 +15,7 @@ namespace FreecraftCore.Serializer
 		public static readonly byte[] MaxCompressionByteHeader = new byte[2] { 0x78, 0xDA };
 
 		//WRITE
+		/// <inheritdoc />
 		public sealed override unsafe void Mutate(Span<byte> source, ref int sourceOffset, Span<byte> destination, ref int destinationOffset)
 		{
 			//Offset
@@ -36,7 +37,8 @@ namespace FreecraftCore.Serializer
 				fixed(byte* inputPtr = &tempInputBuffer[0])
 				fixed(byte* trueInputPtr = &sourceAdjusted.GetPinnableReference())
 				{
-					Unsafe.CopyBlock(inputPtr, trueInputPtr, (uint)tempInputBuffer.Length);
+					//DO NOT USE tempInputBuffer length!! It's not ACTUALLY the correct size always
+					Unsafe.CopyBlock(inputPtr, trueInputPtr, (uint)sourceAdjusted.Length);
 				}
 
 				ZlibCodec stream = new ZlibCodec(CompressionMode.Compress)
@@ -79,6 +81,7 @@ namespace FreecraftCore.Serializer
 		}
 
 		//READ
+		/// <inheritdoc />
 		public sealed override unsafe void UnMutate(Span<byte> source, ref int sourceOffset, Span<byte> destination, ref int destinationOffset)
 		{
 			//UPDATE: We can now use it for something
@@ -87,8 +90,8 @@ namespace FreecraftCore.Serializer
 			int sizeValue = (int)GenericTypePrimitiveSerializerStrategy<uint>.Instance.Read(source, ref sourceOffset);
 
 			//Temp shift the dest buffer
-			var destinationAdjusted = destination.Slice(destinationOffset);
-			var sourceAdjusted = source.Slice(sourceOffset);
+			Span<byte> destinationAdjusted = destination.Slice(destinationOffset);
+			Span<byte> sourceAdjusted = source.Slice(sourceOffset);
 
 			if (sizeValue >= destinationAdjusted.Length)
 				ThrowDestinationBufferTooSmall(sizeValue, destinationAdjusted.Length);
@@ -105,7 +108,8 @@ namespace FreecraftCore.Serializer
 				fixed(byte* inputPtr = &tempInputBuffer[0])
 				fixed(byte* trueInputPtr = &sourceAdjusted.GetPinnableReference())
 				{
-					Unsafe.CopyBlock(inputPtr, trueInputPtr, (uint)tempInputBuffer.Length);
+					//DO NOT USE tempInputBuffer length!! It's not ACTUALLY the correct size always
+					Unsafe.CopyBlock(inputPtr, trueInputPtr, (uint)sourceAdjusted.Length);
 				}
 
 				ZlibCodec stream = new ZlibCodec(CompressionMode.Decompress)
