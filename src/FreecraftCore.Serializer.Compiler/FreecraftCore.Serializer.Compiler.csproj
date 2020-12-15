@@ -17,7 +17,7 @@
     <PackageTags>WorldofWarcraft WoW Blizzard JAM Packet Protocol Serialization Serializer Freecraft FreecraftCore</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Product>FreecraftCore.Serializer.Compiler</Product>
-    <Version>4.0.32</Version>
+    <Version>4.0.33</Version>
   </PropertyGroup>
 
   <!-- See: https://github.com/dotnet/roslyn-sdk/blob/master/samples/CSharp/SourceGenerators/SourceGeneratorSamples/SourceGeneratorSamples.csproj -->
@@ -81,9 +81,5 @@
       <None Include="$(PkgFreecraftCore_Serializer)$(BaseOutputPath)$(Configuration)\$(TargetFramework)\FreecraftCore.Serializer.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
     </ItemGroup>
   </Target>
-
-  <ItemGroup>
-    <Folder Include="Template\Test\" />
-  </ItemGroup>
 
 </Project>
