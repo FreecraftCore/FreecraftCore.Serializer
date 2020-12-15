@@ -13,7 +13,7 @@ namespace FreecraftCore.Serializer
 	/// of the serializer.
 	/// </summary>
 	/// <typeparam name="TChildType">The child type to construct a singleton instance for.</typeparam>
-	public abstract class StatelessBinaryMutatorStrategy<TChildType> : IBinaryMutatorStrategy
+	public abstract class StatelessBinaryMutatorStrategy<TChildType> : IBinaryMutatorStrategy, ISingletonInstanceProvidable<TChildType>
 		where TChildType : StatelessBinaryMutatorStrategy<TChildType>, new()
 	{
 		/// <summary>
@@ -36,5 +36,12 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public abstract void UnMutate(Span<byte> source, ref int sourceOffset, Span<byte> destination, ref int destinationOffset);
+
+		/// <inheritdoc />
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public TChildType GetInstance()
+		{
+			return Instance;
+		}
 	}
 }

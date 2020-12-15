@@ -14,7 +14,7 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	/// <typeparam name="TChildType">The child type to construct a singleton instance for.</typeparam>
 	/// <typeparam name="T">The serialized type.</typeparam>
-	public abstract class StatelessTypeSerializerStrategy<TChildType, T> : ITypeSerializerStrategy<T>
+	public abstract class StatelessTypeSerializerStrategy<TChildType, T> : ITypeSerializerStrategy<T>, ISingletonInstanceProvidable<TChildType>
 		where TChildType : StatelessTypeSerializerStrategy<TChildType, T>, new()
 	{
 		/// <summary>
@@ -45,6 +45,13 @@ namespace FreecraftCore.Serializer
 		protected internal StatelessTypeSerializerStrategy()
 		{
 			
+		}
+
+		/// <inheritdoc />
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public TChildType GetInstance()
+		{
+			return Instance;
 		}
 	}
 }
