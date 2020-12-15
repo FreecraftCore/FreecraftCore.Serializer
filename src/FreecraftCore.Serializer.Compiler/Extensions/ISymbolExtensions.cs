@@ -217,6 +217,12 @@ namespace FreecraftCore.Serializer
 		{
 			if(type == null) throw new ArgumentNullException(nameof(type));
 
+			//Generic types cannot be marked as wire messages because they lack
+			//the ability to implement proper dispatching to their closed generic serializer.
+			if (type is INamedTypeSymbol nts)
+				if (nts.IsGenericType)
+					return false;
+
 			if (type.IsTypeExact<System.Object>())
 				return false;
 
