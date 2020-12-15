@@ -114,7 +114,27 @@ namespace FreecraftCore.Serializer
 
 			//It's important that we dynamically emit generic serializers
 			//if none are found in refences or soon-to-be emitted serializers
-			foreach (ITypeSymbol genericTypeSymbol in RequiredGenericSerializers.ToArray()) //copy because something will modify this array
+
+			//copy because something will modify this array and then we need to continue until it's empty
+			//because we could have an object graph that goes deep into multiple generics.
+			int genericDepth = 0;
+			do
+			{
+				ITypeSymbol[] genericTypeSymbols = RequiredGenericSerializers.ToArray();
+				RequiredGenericSerializers.Clear();
+				EmitRequestedGenericTypeSerializers(genericTypeSymbols);
+				genericDepth++;
+
+				//This loop is kinda dangerous, but we assume it'll eventually terminate.
+			} while (RequiredGenericSerializers.Any() && genericDepth < 10);
+
+			if (genericDepth >= 10)
+				throw new InvalidOperationException($"Automatic generic type serialization depth exceed maximum depth.");
+		}
+
+		private void EmitRequestedGenericTypeSerializers(ITypeSymbol[] genericTypeSymbols)
+		{
+			foreach (ITypeSymbol genericTypeSymbol in genericTypeSymbols)
 			{
 				GeneratedSerializerNameStringBuilder builder = new GeneratedSerializerNameStringBuilder(genericTypeSymbol);
 				string genericSerializerName = builder.BuildName();
