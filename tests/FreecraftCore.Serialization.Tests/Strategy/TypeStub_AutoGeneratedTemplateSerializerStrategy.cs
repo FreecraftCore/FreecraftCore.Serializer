@@ -96,7 +96,7 @@ namespace FreecraftCore.Serializer
             //Type: TypeStub Field: 25 Name: CustomTypeSerializerPropertyAttri Type: TestCustomSerializerReferenceType;
             value.CustomTypeSerializerPropertyAttri = MyNamespace.TestCustomSerializerReferenceTypeSerializerForPropertyTest.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 26 Name: StringArrayTest Type: String[];
-            value.StringArrayTest = ComplexArrayTypeSerializerStrategy<TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>, string>.Instance.Read(buffer, ref offset);
+            value.StringArrayTest = SendSizeComplexArrayTypeSerializerStrategy<TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>, string, Int32>.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 27 Name: EnumArrayTest Type: TestEnum[];
             value.EnumArrayTest = SendSizeComplexArrayTypeSerializerStrategy<GenericPrimitiveEnumTypeSerializerStrategy<TestEnum, UInt64>, TestEnum, Int64>.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 28 Name: NestedEnumTest Type: TestEnumNested;
@@ -175,7 +175,7 @@ namespace FreecraftCore.Serializer
             //Type: TypeStub Field: 25 Name: CustomTypeSerializerPropertyAttri Type: TestCustomSerializerReferenceType;
             MyNamespace.TestCustomSerializerReferenceTypeSerializerForPropertyTest.Instance.Write(value.CustomTypeSerializerPropertyAttri, buffer, ref offset);
             //Type: TypeStub Field: 26 Name: StringArrayTest Type: String[];
-            ComplexArrayTypeSerializerStrategy<TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>, string>.Instance.Write(value.StringArrayTest, buffer, ref offset);
+            SendSizeComplexArrayTypeSerializerStrategy<TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>, string, Int32>.Instance.Write(value.StringArrayTest, buffer, ref offset);
             //Type: TypeStub Field: 27 Name: EnumArrayTest Type: TestEnum[];
             SendSizeComplexArrayTypeSerializerStrategy<GenericPrimitiveEnumTypeSerializerStrategy<TestEnum, UInt64>, TestEnum, Int64>.Instance.Write(value.EnumArrayTest, buffer, ref offset);
             //Type: TypeStub Field: 28 Name: NestedEnumTest Type: TestEnumNested;

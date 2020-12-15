@@ -32,13 +32,13 @@ namespace FreecraftCore.Serializer
 			if (Member.HasAttributeExact<KnownSizeAttribute>() && Member.HasAttributeExact<SendSizeAttribute>())
 				throw new InvalidOperationException($"Emit failed for Member: {ActualType} in Type: {Member.ContainingType.Name}. Cannot use Attributes: {nameof(SendSizeAttribute)} and {nameof(KnownSizeAttribute)} together.");
 			
-			if (Member.HasAttributeExact<SendSizeAttribute>() && !Member.HasAttributeExact<DontTerminateAttribute>())
+			if (IsSendSizeString() && !Member.HasAttributeExact<DontTerminateAttribute>())
 			{
 				PrimitiveSizeType sendSize = SendSizeAttribute.Parse(Member.GetAttributeExact<SendSizeAttribute>().ConstructorArguments.First().ToCSharpString());
 				var generator = new RawLengthPrefixedStringTypeSerializationGenerator(ActualType, Member, Mode, encodingType, sendSize);
 				return generator.Create();
 			}
-			else if (Member.HasAttributeExact<SendSizeAttribute>())
+			else if (IsSendSizeString())
 			{
 				//Dont Terminate attribute FOUND!
 				PrimitiveSizeType sendSize = SendSizeAttribute.Parse(Member.GetAttributeExact<SendSizeAttribute>().ConstructorArguments.First().ToCSharpString());
@@ -46,7 +46,7 @@ namespace FreecraftCore.Serializer
 				var generator = new RawDontTerminateLengthPrefixedStringTypeSerializationGenerator(ActualType, Member, Mode, encodingType, sendSize);
 				return generator.Create();
 			}
-			else if (Member.HasAttributeExact<KnownSizeAttribute>())
+			else if (IsKnownSizeString())
 			{
 				int size = KnownSizeAttribute.Parse(Member.GetAttributeExact<KnownSizeAttribute>().ConstructorArguments.First().ToCSharpString());
 
@@ -59,6 +59,24 @@ namespace FreecraftCore.Serializer
 				var generator = new RawDefaultStringTypeSerializerGenerator(ActualType, Member, Mode, encodingType, !Member.HasAttributeExact<DontTerminateAttribute>());
 				return generator.Create();
 			}
+		}
+
+		private bool IsKnownSizeString()
+		{
+			//TODO: We currently have no way to support KnownSize metadata when using string arrays.
+			if (ActualType is IArrayTypeSymbol)
+				return false;
+			else
+				return Member.HasAttributeExact<KnownSizeAttribute>();
+		}
+
+		private bool IsSendSizeString()
+		{
+			//TODO: We currently have no way to support KnownSize metadata when using string arrays.
+			if(ActualType is IArrayTypeSymbol)
+				return false;
+			else
+				return Member.HasAttributeExact<SendSizeAttribute>();
 		}
 	}
 }

@@ -317,6 +317,7 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[WireMember(25)]
 		public TestCustomSerializerReferenceType CustomTypeSerializerPropertyAttri { get; internal set; }
 
+		[SendSize(PrimitiveSizeType.Int32)]
 		[WireMember(26)]
 		public string[] StringArrayTest { get; internal set; }
 
