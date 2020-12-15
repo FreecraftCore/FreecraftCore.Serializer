@@ -67,8 +67,6 @@ namespace FreecraftCore.Serializer
 				if (namedSymbol.IsUnboundGenericType)
 					throw new InvalidOperationException($"Cannot emit member serialization for open generic Type: {namedSymbol.Name}");
 
-
-
 			//Conceptually, we need to find ALL serializable members
 			foreach (ISymbol mi in currentType
 				.GetMembers()
@@ -87,9 +85,7 @@ namespace FreecraftCore.Serializer
 				//The reason is, setting and getting fields vs members are same syntax
 				ITypeSymbol memberType = GetMemberTypeInfo(mi);
 
-				if (memberType is INamedTypeSymbol nts)
-					if (nts.IsGenericType)
-						RequestedGenericTypes.Add(nts);
+				AnalyzeMemberTypeForGenerics(memberType);
 
 				FieldDocumentationStatementsBlockEmitter commentEmitter = new FieldDocumentationStatementsBlockEmitter(memberType, mi);
 				statements = statements.AddRange(commentEmitter.CreateStatements());
@@ -182,6 +178,27 @@ namespace FreecraftCore.Serializer
 			}
 
 			return statements;
+		}
+
+		private void AnalyzeMemberTypeForGenerics([NotNull] ITypeSymbol memberType)
+		{
+			if (memberType == null) throw new ArgumentNullException(nameof(memberType));
+
+			//This is the part responsible for auto-discovering generic types
+			//this allows generation of serialization for generics that haven't been defined as
+			//closed types. It also supports generic element type of arrays.
+			//TODO: If more generic auto-discovery is needed it should probably go here.
+			if (memberType is INamedTypeSymbol nts)
+			{
+				if (nts.IsGenericType)
+					RequestedGenericTypes.Add(nts);
+			}
+			else if (memberType is IArrayTypeSymbol arrayTypeSymbol)
+			{
+				if (arrayTypeSymbol.ElementType is INamedTypeSymbol nts2)
+					if (nts2.IsGenericType)
+						RequestedGenericTypes.Add(nts2);
+			}
 		}
 
 		private static ITypeSymbol GetMemberTypeInfo(ISymbol mi)
