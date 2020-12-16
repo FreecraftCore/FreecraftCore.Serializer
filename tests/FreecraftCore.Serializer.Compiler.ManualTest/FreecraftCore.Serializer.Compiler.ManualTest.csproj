@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="SerializerDebug\**" />
+    <None Include="SerializerDebug\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Compiler\FreecraftCore.Serializer.Compiler.csproj" />
     <ProjectReference Include="..\FreecraftCore.Serialization.Tests\FreecraftCore.Serialization.Tests.csproj" />
 

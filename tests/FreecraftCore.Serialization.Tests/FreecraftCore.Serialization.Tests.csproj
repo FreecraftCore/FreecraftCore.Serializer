@@ -2,9 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="SerializerDebug\**" />
+    <None Include="SerializerDebug\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="nunit" Version="3.12.0" />

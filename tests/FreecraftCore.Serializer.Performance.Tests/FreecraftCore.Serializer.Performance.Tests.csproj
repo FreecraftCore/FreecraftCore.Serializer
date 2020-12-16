@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="SerializerDebug\**" />
+    <None Include="SerializerDebug\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FreecraftCore.Serializer" Version="4.0.17" />
     <PackageReference Include="FreecraftCore.Serializer.Metadata" Version="4.0.17" />
   </ItemGroup>
