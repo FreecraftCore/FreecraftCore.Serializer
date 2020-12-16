@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.29728.190
-MinimumVisualStudioVersion = 10.0.40219.1
+VisualStudioVersion = 16.4.30802.185
+MinimumVisualStudioVersion = 16.0.28803.584
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarshalPerfTest", "tests\PerfTests\MarshalPerfTest\MarshalPerfTest.csproj", "{8C0F46F2-0136-4510-ACC9-D7A583ABDDD2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2E903AB5-E882-49A7-A612-FCCB9F11D540}"
