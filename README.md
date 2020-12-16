@@ -28,9 +28,9 @@ serializer.Read<MessageType>(buffer, ref offset);
 
 ## Implementation
 
-The Serializer reflects on Types for attributes (looks at metadata) marked on wire types to build serializers at compile time. The built-in primitive datatype serialization is based on Trinitycore's [ByteBuffer](https://github.com/TrinityCore/TrinityCore/blob/3.3.5/src/server/shared/Packets/ByteBuffer.h). All serialization is an decorated and/or object graph-like structure around the primitive datatype serialization strategies. 
+The Serializer reflects on Types for attributes (looks at metadata) marked on wire types to build serializers at compile time. The built-in primitive datatype serialization is based on Trinitycore's [ByteBuffer](https://github.com/TrinityCore/TrinityCore/blob/3.3.5/src/server/shared/Packets/ByteBuffer.h). All serialization is like a graph/tree like structure mirroing an object/type graph with the bottom of the tree nodes essentially being basic primitive type serializers.
 
-In short, FreecraftCore.Serializer knows how to serialize primitives in the fashion that the WoW protocol expects. However it supports common binary serialization patterns which allows it to be used for general binary DTO/Model building and serialization.
+In short, FreecraftCore.Serializer knows how to serialize primitives in the fashion that the WoW protocol expects. However it supports common binary serialization patterns which allows it to be used for general binary DTO/Model building and serialization. This library can be and is used for binary message serialization for multiple games.
 
 To understand how the attributes for this serializer work I'd recommend reading the documentation for a similar project called Protobuf-Net [here](https://www.codeproject.com/articles/642677/protobuf-net-the-unofficial-manual).
 
