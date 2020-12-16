@@ -1,5 +1,4 @@
-﻿using FreecraftCore.Serializer.KnownTypes;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +10,20 @@ namespace FreecraftCore.Serializer.Tests
 	[TestFixture]
 	public class StringTestsASCII
 	{
+		private static IBaseEncodableTypeSerializerStrategy Serializer { get; } = ASCIIStringTypeSerializerStrategy.Instance;
+
 		[Test]
 		public static void Test_String_Serializer_Serializes()
 		{
 			//arrange
-			SerializerService serializer = new SerializerService();
-			serializer.Compile();
+			Span<byte> buffer = new Span<byte>(new byte[1024 * Serializer.CharacterSize]);
+			int offset = 0;
 
 			//act
-			string value = serializer.Deserialize<string>(serializer.Serialize("Hello!"));
+			Serializer.Write("Hello!", buffer, ref offset);
+			buffer = buffer.Slice(0, offset);
+			offset = 0;
+			string value = Serializer.Read(buffer, ref offset);
 
 			//assert
 			Assert.AreEqual(value, "Hello!");
@@ -29,11 +33,14 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_String_Serializer_Can_Serialize_Empty_String()
 		{
 			//arrange
-			SerializerService serializer = new SerializerService();
-			serializer.Compile();
+			Span<byte> buffer = new Span<byte>(new byte[1024 * Serializer.CharacterSize]);
+			int offset = 0;
 
 			//act
-			string value = serializer.Deserialize<string>(serializer.Serialize(""));
+			Serializer.Write(String.Empty, buffer, ref offset);
+			buffer = buffer.Slice(0, offset);
+			offset = 0;
+			string value = Serializer.Read(buffer, ref offset);
 
 			//Change was made here that makes null strings empty strings
 			//This seems preferable and easier to deal with. Nullrefs are bad
@@ -56,35 +63,39 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Fixed_String_Can_Write()
 		{
 			//arrange
-			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy(), Encoding.ASCII);
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
+			int offset = 0;
 
-			stringSerializer.Write("hello", new DefaultStreamWriterStrategy());
+			//act
+			Serializer.Write("hello", buffer, ref offset);
 		}
 
 		[Test]
 		public static void Test_Fixed_String_Can_Write_Proper_Length()
 		{
 			//arrange
-			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy(), Encoding.ASCII);
-			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
+			int offset = 0;
 
 			//act
-			stringSerializer.Write("hello", writer);
+			Serializer.Write("hello", buffer, ref offset);
 
+			//WARNING: Old test assumed serializer wrote null terminator by default. That's done at source generation time now!!
 			//assert
-			Assert.AreEqual(6, writer.GetBytes().Length);
+			Assert.AreEqual(5 * Serializer.CharacterSize, offset);
 		}
 
 		[Test]
 		public static void Test_Fixed_String_Can_Read()
 		{
 			//arrange
-			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new FixedSizeStringSizeStrategy(5), new StringSerializerStrategy(), Encoding.ASCII);
-			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
+			int offset = 0;
 
 			//act
-			stringSerializer.Write("hello", writer);
-			string value = stringSerializer.Read(new DefaultStreamReaderStrategy(writer.GetBytes()));
+			Serializer.Write("hello", buffer, ref offset);
+			offset = 0;
+			string value = Serializer.Read(buffer, ref offset);
 
 			//assert
 			Assert.NotNull(value);
@@ -93,142 +104,76 @@ namespace FreecraftCore.Serializer.Tests
 		}
 
 		[Test]
-		public static void Test_Reverse_Decorator_Can_Reverse_Strings()
+		[TestCase("Hello")]
+		[TestCase("Yo!")]
+		[TestCase("Phantasy")]
+		[TestCase("Warcraft")]
+		[TestCase("warcraft")]
+		public static void Test_Reverse_Decorator_Can_Reverse_Strings(string value)
 		{
 			//arrange
-			ReverseStringSerializerDecorator serializer = new ReverseStringSerializerDecorator(new StringSerializerStrategy());
-			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
+			Span<byte> buffer = new Span<byte>(new byte[value.Length * Serializer.CharacterSize + 100]);
+			int offset = 0;
 
 			//act
-			serializer.Write("Hello", writer);
+			Serializer.Write(value, buffer, ref offset);
+			buffer = buffer.Slice(0, offset);
+			offset = 0;
+			ReverseBinaryMutatorStrategy.Instance.Mutate(buffer, ref offset, buffer, ref offset);
 
-			Assert.AreEqual("olleH\0", new string(Encoding.ASCII.GetChars(writer.GetBytes())));
+			//WARNING: Old test assumed serializer wrote null terminator by default. That's done at source generation time now!!
+			Assert.AreEqual(value, new string(new string(Serializer.EncodingStrategy.GetChars(buffer.ToArray())).Reverse().ToArray()));
 		}
 
 		[Test]
-		public static void Test_Send_With_Size_Can_Read()
+		[TestCase("Hello")]
+		[TestCase("Yo!")]
+		[TestCase("Phantasy")]
+		[TestCase("Warcraft")]
+		[TestCase("warcraft")]
+		public static void Test_Deserialization_Matches_With_Helper(string value)
 		{
 			//arrange
-			SizeStringSerializerDecorator stringSerializer = new SizeStringSerializerDecorator(new SizeIncludedStringSizeStrategy<byte>(new GenericTypePrimitiveSharedBufferSerializerStrategy<byte>(), true), new StringSerializerStrategy(), Encoding.ASCII);
-			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
+			Span<byte> buffer = new Span<byte>(new byte[value.Length * Serializer.CharacterSize + 100]);
+			int offset = 0;
 
 			//act
-			stringSerializer.Write("Hello", writer);
-			string value = stringSerializer.Read(new DefaultStreamReaderStrategy(writer.GetBytes()));
+			ASCIIStringTypeSerializerStrategy.Instance.Write(value, buffer, ref offset);
+			offset = 0;
+			string result = ASCIIStringTypeSerializerStrategy.Instance.Read(buffer, ref offset);
 
 			//assert
-			Assert.NotNull(value);
-			Assert.IsNotEmpty(value);
-			Assert.AreEqual("Hello", value);
-		}
-
-		[Test]
-		public static void Test_DontTerminate_Serializer_Doesnt_Add_Terminator()
-		{
-			//arrange
-			DontTerminateStringSerializerDecorator serializer = new DontTerminateStringSerializerDecorator(new StringSerializerStrategy(), Encoding.ASCII);
-			DefaultStreamWriterStrategy writer = new DefaultStreamWriterStrategy();
-
-			//act
-			serializer.Write("Hello", writer);
-			byte[] bytes = writer.GetBytes();
-
-			//assert
-			Assert.NotNull(bytes);
-			Assert.IsNotEmpty(bytes);
-
-			Assert.False(bytes[bytes.Length - 1] == 0);
-			Assert.True(bytes.Length == 5);
-		}
-
-		[Test]
-		public static void Test_SerializerService_Can_Handle_DontTerminate_Marked_Data()
-		{
-			SerializerService serializer = new SerializerService();
-			serializer.RegisterType<TestDontTerminateString>();
-
-			serializer.Compile();
-
-			//act
-			byte[] bytes = serializer.Serialize(new TestDontTerminateString("Hello"));
-
-			//assert
-			Assert.NotNull(bytes);
-			Assert.IsNotEmpty(bytes);
-
-			Assert.False(bytes[bytes.Length - 1] == 0);
-			Assert.True(bytes.Length == 5);
+			Assert.AreEqual(value, result);
 		}
 
 		[Test]
 		public static void Test_Can_Deserialize_To_String_With_Only_Null_Terminator()
 		{
 			//arrange
-			SerializerService serializer = new SerializerService();
-			serializer.RegisterType<TestOnlyNullTerminatorString>();
-			serializer.Compile();
+			int offset = 0;
 
 			//act
-			TestOnlyNullTerminatorString obj = serializer.Deserialize<TestOnlyNullTerminatorString>(new byte[1] {0});
+			string value = Serializer.Read(new Span<byte>(new byte[Serializer.CharacterSize]), ref offset);
 
 			//assert
-			Assert.NotNull(obj, "Object was null.");
-			Assert.NotNull(obj.TestString, "String was null.");
-			Assert.True(obj.TestString.Length == 0);
+			Assert.NotNull(value, "String was null.");
+			Assert.True(value.Length == 0);
 		}
 
 		[Test]
 		public static void Test_Can_Serialize_To_String_With_Only_Null_Terminator()
 		{
 			//arrange
-			SerializerService serializer = new SerializerService();
-			serializer.RegisterType<TestOnlyNullTerminatorString>();
-			serializer.Compile();
+			var serializer = ASCIIStringTypeSerializerStrategy.Instance;
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
+			int offset = 0;
 
 			//act
-			byte[] bytes = serializer.Serialize(new TestOnlyNullTerminatorString(""));
+			serializer.Write(String.Empty, buffer, ref offset);
 
 			//assert
-			Assert.NotNull(bytes, "bytes array was null.");
-			Assert.True(bytes.Length == 1);
-			Assert.True(bytes[0] == 0);
-		}
-
-		[WireDataContract]
-		public class TestOnlyNullTerminatorString
-		{
-			[Encoding(EncodingType.ASCII)]
-			[WireMember(1)]
-			public string TestString { get; }
-
-			/// <inheritdoc />
-			public TestOnlyNullTerminatorString(string testString)
-			{
-				TestString = testString;
-			}
-
-			public TestOnlyNullTerminatorString()
-			{
-				
-			}
-		}
-
-		[WireDataContract]
-		public class TestDontTerminateString
-		{
-			[DontTerminate]
-			[WireMember(1)]
-			public string Test;
-
-			public TestDontTerminateString(string test)
-			{
-				Test = test;
-			}
-
-			public TestDontTerminateString()
-			{
-				
-			}
+			Assert.True(offset == 0);
+			Assert.True(buffer[0] == 0);
 		}
 	}
 }

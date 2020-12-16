@@ -9,7 +9,7 @@ namespace FreecraftCore.Serializer
 	/// Indicates the default child to deserialize if no flags were found.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = false)]
-	public class DefaultChildAttribute : Attribute
+	public sealed class DefaultChildAttribute : Attribute
 	{
 		/// <summary>
 		/// Indicates the default child type to deserialize to.

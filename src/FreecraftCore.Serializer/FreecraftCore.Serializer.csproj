@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <Authors>Andrew Blakely, HelloKitty</Authors>
     <Company />
     <Description>Metadata based serializer for World of Warcraft packets. Design inspired from Blizzard's JAM and Marc Gravell's Protobuf-Net. Uses attributes to annotate DTOs that are made serializable according to the Blizzard JAM packet protocol.
@@ -15,7 +15,26 @@ Can be extended for use outside of World of Warcraft too!</Description>
     <PackageTags>WorldofWarcraft WoW Blizzard JAM Packet Protocol Serialization Serializer Freecraft FreecraftCore</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Product>FreecraftCore.Serializer</Product>
+    <DocumentationFile>bin\Release\net46\FreecraftCore.Serializer.xml</DocumentationFile>
+    <Version>4.0.39</Version>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Properties\**" />
+    <EmbeddedResource Remove="Properties\**" />
+    <None Remove="Properties\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>FreecraftCore.Serializer.Compiler</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -25,45 +44,14 @@ Can be extended for use outside of World of Warcraft too!</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net46|AnyCPU'">
-    <DocumentationFile>bin\Release\net46\FreecraftCore.Serializer.xml</DocumentationFile>
-    <LangVersion>7.2</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net46|AnyCPU'">
-    <LangVersion>7.2</LangVersion>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="DotNetZip" Version="1.11.0" />
-    <PackageReference Include="JetBrains.Annotations" Version="10.2.1" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-    <PackageReference Include="Generic.Math" Version="1.0.2" />
-  </ItemGroup>
-  
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Generic.Math" Version="1.0.2" />
-    <PackageReference Include="Reflect.Extent" Version="1.0.7" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
+    <PackageReference Include="DotNetZip" Version="1.14.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
+    <PackageReference Include="System.Memory" Version="4.5.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Properties\" />
-    <Folder Include="Serializers\Async\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Reflect.Extent" Version="1.0.7" />
-    <PackageReference Include="Reinterpret.Net" Version="2.0.7" />
-    <PackageReference Include="System.Memory" Version="4.5.0-preview1-26216-02" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\FreecraftCore.Serializer.API\FreecraftCore.Serializer.API.csproj" />
     <ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" />
-    <ProjectReference Include="..\FreecraftCore.Serializer.Stream\FreecraftCore.Serializer.Stream.csproj" />
   </ItemGroup>
 
 </Project>

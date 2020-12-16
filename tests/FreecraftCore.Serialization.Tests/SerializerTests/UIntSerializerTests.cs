@@ -1,5 +1,4 @@
-﻿using FreecraftCore.Serializer.KnownTypes;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +16,10 @@ namespace FreecraftCore.Serializer.Tests
 		[TestCase((uint)28532)]
 		public void Test_Int_Serializer_Doesnt_Throw_On_Serialize(uint data)
 		{
-			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSharedBufferSerializerStrategy<uint>();
+			var strategy = GenericTypePrimitiveSerializerStrategy<uint>.Instance;
+			int offset = 0;
 
-			Assert.DoesNotThrow(() => strategy.Write(data, new TestStorageWriterMock()));
+			Assert.DoesNotThrow(() => strategy.Write(data, new Span<byte>(new byte[sizeof(uint)]), ref offset));
 		}
 
 		[Test]
@@ -29,14 +29,15 @@ namespace FreecraftCore.Serializer.Tests
 		public void Test_Int_Serializer_Writes_Ints_Into_WriterStream(uint data)
 		{
 			//arrange
-			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSharedBufferSerializerStrategy<uint>();
-			TestStorageWriterMock writer = new TestStorageWriterMock();
+			var strategy = GenericTypePrimitiveSerializerStrategy<uint>.Instance;
+			Span<byte> buffer = new Span<byte>(new byte[sizeof(uint)]);
+			int offset = 0;
 
 			//act
-			strategy.Write(data, writer);
+			strategy.Write(data, buffer, ref offset);
 
 			//assert
-			Assert.False(writer.WriterStream.Length == 0);
+			Assert.False(offset == 0);
 		}
 
 		[Test]
@@ -46,37 +47,17 @@ namespace FreecraftCore.Serializer.Tests
 		public void Test_Byte_Serializer_Writes_And_Reads_Same_Byte(uint data)
 		{
 			//arrange
-			ITypeSerializerStrategy strategy = new GenericTypePrimitiveSharedBufferSerializerStrategy<uint>();
-			TestStorageWriterMock writer = new TestStorageWriterMock();
-			TestStorageReaderMock reader = new TestStorageReaderMock(writer.WriterStream);
+			var strategy = GenericTypePrimitiveSerializerStrategy<uint>.Instance;
+			Span<byte> buffer = new Span<byte>(new byte[sizeof(uint)]);
+			int offset = 0;
 
 			//act
-			strategy.Write(data, writer);
-			writer.WriterStream.Position = 0;
-			uint intvalue = (uint)strategy.Read(reader);
+			strategy.Write(data, buffer, ref offset);
+			offset = 0;
+			uint intvalue = (uint)strategy.Read(buffer, ref offset);
 
 			//assert
 			Assert.AreEqual(data, intvalue);
 		}
-
-		/*[Test]
-		[TestCase(0,1,2,3)]
-		[TestCase(255,0,255,0)]
-		[TestCase(1,1,1,1)]
-		public void Test_Byte_Serializer_Writes_And_Reads_Same_ByteArray(params byte[] data)
-		{
-			//arrange
-			ByteSerializerStrategy strategy = new ByteSerializerStrategy();
-			TestStorageWriterMock writer = new TestStorageWriterMock();
-			TestStorageReaderMock reader = new TestStorageReaderMock(writer.WriterStream);
-
-			//act
-			strategy.Write(data, writer);
-			writer.WriterStream.Position = 0;
-			byte b = reader.ReadByte();
-
-			//assert
-			Assert.AreEqual(data, b);
-		}*/
 	}
 }

@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using JetBrains.Annotations;
+using Microsoft.CodeAnalysis;
+
+namespace FreecraftCore.Serializer
+{
+	/// <summary>
+	/// Encapsulates the information of a polymorphic child type linking.
+	/// </summary>
+	public sealed class PolymorphicTypeInfo
+	{
+		/// <inheritdoc />
+		public TypedConstant Index { get; }
+
+		/// <summary>
+		/// The child type.
+		/// </summary>
+		public ITypeSymbol ChildType { get; }
+
+		public PolymorphicTypeInfo(TypedConstant index, [NotNull] ITypeSymbol childType)
+		{
+			Index = index;
+			ChildType = childType ?? throw new ArgumentNullException(nameof(childType));
+		}
+	}
+}

@@ -12,71 +12,44 @@ namespace FreecraftCore.Serializer.Tests
 	public static class FixedReverseByteSerializerTests
 	{
 		[Test]
-		public static void Test_Can_Register_ReverseFixedByteArray_Type()
+		[TestCase(3)]
+		[TestCase(4)]
+		[TestCase(5)]
+		[TestCase(1)]
+		public static void Test_Can_Serialize_ReverseFixedByteArray_Type(int size)
 		{
 			//arrange
-			SerializerService serializer = new SerializerService();
-
-			//assert
-			Assert.DoesNotThrow(() => serializer.RegisterType<ReverseArrayByteTest>());
-		}
-
-		[Test]
-		public static void Test_Can_Serialize_ReverseFixedByteArray_Type()
-		{
-			//arrange
-			SerializerService serializer = new SerializerService();
-			serializer.RegisterType<ReverseArrayByteTest>();
-			serializer.Compile();
-			ReverseArrayByteTest test = new ReverseArrayByteTest(new byte[] { 1, 2, 3});
-
+			var mutator = ReverseBinaryMutatorStrategy.Instance;
+			Span<byte> buffer = new Span<byte>(new byte[size]);
+			int offset = 0;
 
 			//arrange
-			byte[] bytes = serializer.Serialize(test);
+			mutator.Mutate(buffer, ref offset, buffer, ref offset);
+			byte[] bytes = buffer.ToArray();
 
 			//assert
 			Assert.NotNull(bytes);
-			Assert.True(bytes.Length == 3);
+			Assert.AreEqual(size, bytes.Length);
 		}
 
 		[Test]
 		public static void Test_Serialized_ReverseArrayBytes_Are_Reversed()
 		{
-			//arrange
-			SerializerService serializer = new SerializerService();
-			serializer.RegisterType<ReverseArrayByteTest>();
-			serializer.Compile();
-			ReverseArrayByteTest test = new ReverseArrayByteTest(new byte[] { 1, 2, 3 });
-
+			var mutator = ReverseBinaryMutatorStrategy.Instance;
+			byte[] values = new byte[] {1, 2, 3};
+			Span<byte> buffer = new Span<byte>(values.ToArray()); //Important to copy!
+			int offset = 0;
 
 			//arrange
-			byte[] bytes = serializer.Serialize(test);
+			mutator.Mutate(buffer, ref offset, buffer, ref offset);
+			byte[] bytes = buffer.Slice(0, values.Length).ToArray();
 
 			//assert
 			Assert.NotNull(bytes);
 			Assert.True(bytes.Length == 3);
 
 			for(int i = 0; i < 3; i++)
-				Assert.AreEqual(test.Bytes[3 - i - 1], bytes[i], $"The {i}th index was incorrect.");
-		}
-
-		[WireDataContract]
-		public class ReverseArrayByteTest
-		{
-			[ReverseData]
-			[KnownSize(3)]
-			[WireMember(1)]
-			public byte[] Bytes { get; }
-
-			public ReverseArrayByteTest(byte[] bytes)
-			{
-				Bytes = bytes;
-			}
-
-			public ReverseArrayByteTest()
-			{
-				
-			}
+				Assert.AreEqual(values[3 - i - 1], bytes[i], $"The {i}th index was incorrect.");
 		}
 	}
 }

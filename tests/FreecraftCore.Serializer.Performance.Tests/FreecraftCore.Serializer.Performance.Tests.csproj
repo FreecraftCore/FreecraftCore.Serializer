@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="SerializerDebug\**" />
+    <None Include="SerializerDebug\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FreecraftCore.Serializer" Version="4.0.17" />
+    <PackageReference Include="FreecraftCore.Serializer.Metadata" Version="4.0.17" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Compiler\FreecraftCore.Serializer.Compiler.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>
