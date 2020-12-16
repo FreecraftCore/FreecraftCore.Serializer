@@ -15,24 +15,17 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Can_Serialize_Compression_Marked_Class()
 		{
 			//arrange
-			int[] values = new int[] { 0,0,0,0,0,0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
+			int[] values = new int[] { 0,0,0,0,0,0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0 };
 			Span<byte> buffer = new Span<byte>(new byte[1024]);
-			Span<byte> bufferOutput = new Span<byte>(new byte[1024]);
 			int offset = 0;
-			int offsetOutput = 0;
 
 			//act
-			PrimitiveArrayTypeSerializerStrategy<int>.Instance.Write(values, buffer, ref offset);
-
-			buffer = buffer.Slice(0, offset);
-			offset = 0;
-
-			ZLibCompressionBinaryMutatorStrategy.Instance.Mutate(buffer, ref offset, bufferOutput, ref offsetOutput);
-			byte[] bytes = bufferOutput.Slice(0, offsetOutput).ToArray();
+			WoWZLibCompressionTypeSerializerDecorator<PrimitiveArrayTypeSerializerStrategy<int>, int[]>.Instance.Write(values, buffer, ref offset);
+			byte[] bytes = buffer.Slice(0, offset).ToArray();
 
 			//assert
 			Assert.NotNull(bytes);
-			Assert.IsTrue(bytes.Length < ((values.Length - 1) * sizeof(int)));
+			Assert.IsTrue(bytes.Length < (values.Length - 1) * sizeof(int), $"ValuesSize: {(values.Length - 1) * sizeof(int)} Bytes: {bytes.Length}");
 		}
 
 		[Test]
@@ -41,24 +34,13 @@ namespace FreecraftCore.Serializer.Tests
 			//arrange
 			int[] values = new int[] { 1, 5, 7, 1, 1, 1, 1, 1, 1, 5, 1, 5, 6 };
 			Span<byte> buffer = new Span<byte>(new byte[1024]);
-			Span<byte> bufferOutput = new Span<byte>(new byte[1024]);
 			int offset = 0;
-			int offsetOutput = 0;
 
 			//act
-			PrimitiveArrayTypeSerializerStrategy<int>.Instance.Write(values, buffer, ref offset);
-			int bufferSize = offset;
-			offset = 0;
-			ZLibCompressionBinaryMutatorStrategy.Instance.Mutate(buffer.Slice(0, bufferSize), ref offset, bufferOutput, ref offsetOutput);
+			WoWZLibCompressionTypeSerializerDecorator<PrimitiveArrayTypeSerializerStrategy<int>, int[]>.Instance.Write(values, buffer, ref offset);
 
 			//Reverse it!
-			bufferSize = offsetOutput;
-			offset = 0;
-			offsetOutput = 0;
-			ZLibCompressionBinaryMutatorStrategy.Instance.UnMutate(bufferOutput.Slice(0, bufferSize), ref offsetOutput, buffer, ref offset);
-			buffer = buffer.Slice(0, offset);
-			offset = 0;
-			int[] values2 = PrimitiveArrayTypeSerializerStrategy<int>.Instance.Read(buffer, ref offset);
+			int[] values2 = WoWZLibCompressionTypeSerializerDecorator<PrimitiveArrayTypeSerializerStrategy<int>, int[]>.Instance.Read(buffer, 0);
 
 			//assert
 			Assert.NotNull(values2);

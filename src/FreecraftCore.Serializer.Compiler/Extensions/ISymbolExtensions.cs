@@ -330,6 +330,9 @@ namespace FreecraftCore.Serializer
 
 		public static string GetFriendlyName(this ITypeSymbol type)
 		{
+			if (type is IArrayTypeSymbol arrayTypeSymbol)
+				return $"{arrayTypeSymbol.ElementType.GetFriendlyName()}[]";
+
 			string friendlyName = type.Name;
 			if(type is INamedTypeSymbol namedTypeSymbolRef && namedTypeSymbolRef.IsGenericType && !namedTypeSymbolRef.IsUnboundGenericType)
 			{

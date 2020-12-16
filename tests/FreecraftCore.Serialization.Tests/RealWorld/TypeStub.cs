@@ -328,6 +328,11 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[WireMember(28)]
 		public NestedTestType.TestEnumNested NestedEnumTest { get; internal set; }
 
+		[Compress]
+		[SendSize(PrimitiveSizeType.Int16)]
+		[WireMember(29)]
+		public TestCustomSerializerReferenceType[] CustomTypeSerializerTestArrayCompressed { get; internal set; }
+
 		//ALWAYS LAST, USES REMAINING BUFFER!
 		[WireMember(99)]
 		public int[] FinalArrayMemberWriteToEnd { get; internal set; }

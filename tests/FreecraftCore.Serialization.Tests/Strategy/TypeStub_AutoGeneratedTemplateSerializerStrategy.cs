@@ -101,6 +101,8 @@ namespace FreecraftCore.Serializer
             value.EnumArrayTest = SendSizeComplexArrayTypeSerializerStrategy<GenericPrimitiveEnumTypeSerializerStrategy<TestEnum, UInt64>, TestEnum, Int64>.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 28 Name: NestedEnumTest Type: TestEnumNested;
             value.NestedEnumTest = GenericPrimitiveEnumTypeSerializerStrategy<FreecraftCore.Serializer.CustomTypes.NestedTestType.TestEnumNested, UInt64>.Instance.Read(buffer, ref offset);
+            //Type: TypeStub Field: 29 Name: CustomTypeSerializerTestArrayCompressed Type: TestCustomSerializerReferenceType[];
+            value.CustomTypeSerializerTestArrayCompressed = WoWZLibCompressionTypeSerializerDecorator<SendSizeComplexArrayTypeSerializerStrategy<MyNamespace.TestCustomSerializerReferenceTypeSerializer,TestCustomSerializerReferenceType,Int16>, TestCustomSerializerReferenceType[]>.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 97 Name: LongArrayTest Type: Int64[];
             value.LongArrayTest = SendSizePrimitiveArrayTypeSerializerStrategy<long, Int16>.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 98 Name: KnownSizeArrayTest Type: UInt16[];
@@ -180,6 +182,8 @@ namespace FreecraftCore.Serializer
             SendSizeComplexArrayTypeSerializerStrategy<GenericPrimitiveEnumTypeSerializerStrategy<TestEnum, UInt64>, TestEnum, Int64>.Instance.Write(value.EnumArrayTest, buffer, ref offset);
             //Type: TypeStub Field: 28 Name: NestedEnumTest Type: TestEnumNested;
             GenericPrimitiveEnumTypeSerializerStrategy<FreecraftCore.Serializer.CustomTypes.NestedTestType.TestEnumNested, UInt64>.Instance.Write(value.NestedEnumTest, buffer, ref offset);
+            //Type: TypeStub Field: 29 Name: CustomTypeSerializerTestArrayCompressed Type: TestCustomSerializerReferenceType[];
+            WoWZLibCompressionTypeSerializerDecorator<SendSizeComplexArrayTypeSerializerStrategy<MyNamespace.TestCustomSerializerReferenceTypeSerializer,TestCustomSerializerReferenceType,Int16>, TestCustomSerializerReferenceType[]>.Instance.Write(value.CustomTypeSerializerTestArrayCompressed, buffer, ref offset);
             //Type: TypeStub Field: 97 Name: LongArrayTest Type: Int64[];
             SendSizePrimitiveArrayTypeSerializerStrategy<long, Int16>.Instance.Write(value.LongArrayTest, buffer, ref offset);
             //Type: TypeStub Field: 98 Name: KnownSizeArrayTest Type: UInt16[];

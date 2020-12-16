@@ -156,7 +156,17 @@ namespace FreecraftCore.Serializer
 					bool isUnboundedGenericType = currentType is INamedTypeSymbol n2 && n2.IsUnboundGenericType;
 					throw new NotImplementedException($"TODO: Cannot handle Type: {memberType} ContainingType: {currentType} MetadataType: {currentType.GetType().Name} Generic: {isGenericType} UnboundGeneric: {isUnboundedGenericType}");
 				}
-					
+
+				//Now we check if compression was requested
+				if (invokeSyntax != null && mi.HasAttributeExact<CompressAttribute>())
+				{
+					TypeNameTypeCollector collector = new TypeNameTypeCollector();
+					collector.Visit(invokeSyntax);
+
+					//Replace the invokcation with an invokation to the compression decorator.
+					FullSerializerMethodInvokationEmitter emitter = new FullSerializerMethodInvokationEmitter(Mode, $"{WoWZLibCompressionTypeSerializerDecorator.TYPE_NAME}<{collector.Types.First().ToFullString()}, {memberType.ToFullName()}>", mi);
+					invokeSyntax = emitter.Create();
+				}
 
 				if (invokeSyntax != null)
 				{
