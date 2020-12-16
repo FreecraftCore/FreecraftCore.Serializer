@@ -13,6 +13,8 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		public string OutputPath { get; }
 
+		public IReadOnlyDictionary<string, string> Content { get; } = new Dictionary<string, string>();
+
 		public WriteToFileSerializationSourceOutputStrategy([NotNull] string outputPath)
 		{
 			if (outputPath == null) throw new ArgumentException("Value cannot be null or whitespace.", nameof(outputPath));

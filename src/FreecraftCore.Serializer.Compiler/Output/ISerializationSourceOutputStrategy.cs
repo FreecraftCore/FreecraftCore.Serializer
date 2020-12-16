@@ -10,6 +10,8 @@ namespace FreecraftCore.Serializer
 	/// </summary>
 	public interface ISerializationSourceOutputStrategy
 	{
+		IReadOnlyDictionary<string, string> Content { get; }
+
 		/// <summary>
 		/// Outputs serialization source.
 		/// </summary>

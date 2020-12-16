@@ -24,8 +24,16 @@ namespace FreecraftCore.Serializer
 		{
 			try
 			{
-				var outputStrategy = new ExternalContentCollectorSerializationSourceOutputStrategy();
-				SerializerSourceEmitter emitter = new SerializerSourceEmitter(context.Compilation.GetAllTypes(), new WriteToFileSerializationSourceOutputStrategy(""), context.Compilation);
+				INamedTypeSymbol[] symbols = context
+					.Compilation
+					.Assembly
+					.GlobalNamespace
+					.GetAllTypes()
+					.Where(t => t.ContainingAssembly != null && t.ContainingAssembly.Equals(context.Compilation.Assembly, SymbolEqualityComparer.Default))
+					.ToArray();
+
+				ISerializationSourceOutputStrategy outputStrategy = new ExternalContentCollectorSerializationSourceOutputStrategy();
+				SerializerSourceEmitter emitter = new SerializerSourceEmitter(symbols, outputStrategy, context.Compilation);
 				emitter.Generate();
 
 				foreach(var entry in outputStrategy.Content)

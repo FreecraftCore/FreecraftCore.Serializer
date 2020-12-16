@@ -6,11 +6,13 @@ namespace FreecraftCore.Serializer
 {
 	public sealed class ExternalContentCollectorSerializationSourceOutputStrategy : ISerializationSourceOutputStrategy
 	{
-		public Dictionary<string, string> Content { get; } = new Dictionary<string, string>();
+		private readonly Dictionary<string, string> _content = new Dictionary<string, string>();
+
+		public IReadOnlyDictionary<string, string> Content => _content;
 
 		public void Output(string name, string content)
 		{
-			Content.Add(name, content);
+			_content.Add(name, content);
 		}
 	}
 }
