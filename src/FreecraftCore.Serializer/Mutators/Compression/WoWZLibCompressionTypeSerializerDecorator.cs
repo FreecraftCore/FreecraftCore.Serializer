@@ -47,12 +47,7 @@ namespace FreecraftCore.Serializer
 			try
 			{
 				//So dumb, but we MUST copy bytes
-				fixed(byte* inputPtr = &tempInputBuffer[0])
-				fixed(byte* trueInputPtr = &sourceAdjusted.GetPinnableReference())
-				{
-					//DO NOT USE tempInputBuffer length!! It's not ACTUALLY the correct size always
-					Unsafe.CopyBlock(inputPtr, trueInputPtr, (uint)sourceAdjusted.Length);
-				}
+				sourceAdjusted.CopyTo(tempInputBuffer);
 
 				ZlibCodec stream = new ZlibCodec(CompressionMode.Decompress)
 				{
@@ -76,10 +71,6 @@ namespace FreecraftCore.Serializer
 				//and read the uncompressed data from it.
 				return DecoratedSerializer.Read(new Span<byte>(tempOutputBuffer, 0, (int) stream.TotalBytesOut), 0);
 			}
-			catch(Exception)
-			{
-				throw;
-			}
 			finally
 			{
 				ArrayPool<byte>.Shared.Return(tempOutputBuffer);
@@ -89,7 +80,7 @@ namespace FreecraftCore.Serializer
 
 		/// <inheritdoc />
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public override unsafe void Write(T value, Span<byte> buffer, ref int offset)
+		public override void Write(T value, Span<byte> buffer, ref int offset)
 		{
 			int originalOffset = offset;
 			DecoratedSerializer.Write(value, buffer, ref offset);
@@ -108,12 +99,8 @@ namespace FreecraftCore.Serializer
 			try
 			{
 				//So dumb, but we MUST copy bytes
-				fixed(byte* inputPtr = &tempInputBuffer[0])
-				fixed(byte* trueInputPtr = &writtenDataBuffer.GetPinnableReference())
-				{
-					//DO NOT USE tempInputBuffer length!! It's not ACTUALLY the correct size always
-					Unsafe.CopyBlock(inputPtr, trueInputPtr, (uint)totalUncompressedSize);
-				}
+				//DO NOT USE tempInputBuffer length!! It's not ACTUALLY the correct size always
+				writtenDataBuffer.CopyTo(tempInputBuffer);
 
 				ZlibCodec stream = new ZlibCodec(CompressionMode.Compress)
 				{
@@ -133,19 +120,14 @@ namespace FreecraftCore.Serializer
 				//WoW expects to know the uncomrpessed length
 				GenericTypePrimitiveSerializerStrategy<uint>.Instance.Write((uint) totalUncompressedSize, buffer, originalOffset);
 
-				fixed(byte* outputPtr = &tempOutputBuffer[0])
-				fixed(byte* trueDestPtr = &buffer.Slice(originalOffset + sizeof(uint)).GetPinnableReference()) //4 bytes after unit size is written
-					Unsafe.CopyBlock(trueDestPtr, outputPtr, (uint)stream.TotalBytesOut);
+				//4 bytes after unit size is written
+				new Span<byte>(tempOutputBuffer).CopyTo(buffer.Slice(originalOffset + sizeof(uint)));
 
 				// Initial Offset + Bytes Read (Compression + 4 Byte Size
 				//At first it might seem like we should use BytesIn but actually we shouldn't
 				//because we override the buffer data with the tempe output buffer meaning
 				//we want the size of "output" bytes.
 				offset = originalOffset + (int) stream.TotalBytesOut + sizeof(uint);
-			}
-			catch(Exception)
-			{
-				throw;
 			}
 			finally
 			{
