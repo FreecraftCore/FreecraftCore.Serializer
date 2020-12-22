@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FreecraftCore.Serializer.Internal;
 using JetBrains.Annotations;
 
-namespace FreecraftCore
+namespace FreecraftCore.Serializer
 {
 	/// <summary>
 	/// Mark on Types to indicate to the serializer you want to use a custom type

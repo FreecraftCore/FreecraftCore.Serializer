@@ -1,4 +1,5 @@
 ﻿using System;
+using FreecraftCore.Serializer.Internal;
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer

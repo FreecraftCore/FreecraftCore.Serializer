@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using FreecraftCore.Serializer.Internal;
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FreecraftCore.Serializer.Internal;
 using JetBrains.Annotations;
 
 namespace FreecraftCore.Serializer
