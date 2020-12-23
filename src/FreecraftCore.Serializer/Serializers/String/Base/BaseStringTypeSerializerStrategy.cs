@@ -23,6 +23,7 @@ namespace FreecraftCore.Serializer
 
 		}
 
+		/// <inheritdoc />
 		public override unsafe string Read(Span<byte> buffer, ref int offset)
 		{
 			//Review the source for Trinitycore's string reading for their ByteBuffer (payload/packet) Type.
@@ -87,6 +88,7 @@ namespace FreecraftCore.Serializer
 			return EncodingStrategy.GetString(bytes, trueStringSize);
 		}
 
+		/// <inheritdoc />
 		public override unsafe void Write(string value, Span<byte> buffer, ref int offset)
 		{
 			//Review the source for Trinitycore's string reading for their ByteBuffer (payload/packet) Type.

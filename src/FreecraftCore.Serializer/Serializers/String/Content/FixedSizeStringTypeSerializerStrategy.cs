@@ -34,6 +34,7 @@ namespace FreecraftCore.Serializer
 
 		}
 
+		/// <inheritdoc />
 		public sealed override unsafe string Read(Span<byte> buffer, ref int offset)
 		{
 			string value = FixedSizeStringTypeSerializerStrategy<TStringSerializerType, TStaticTypedSizeValueType>.Instance.Read(buffer, ref offset);
@@ -43,6 +44,7 @@ namespace FreecraftCore.Serializer
 			return value;
 		}
 
+		/// <inheritdoc />
 		public sealed override unsafe void Write(string value, Span<byte> buffer, ref int offset)
 		{
 			FixedSizeStringTypeSerializerStrategy<TStringSerializerType, TStaticTypedSizeValueType>.Instance.Write(value, buffer, ref offset);
@@ -83,22 +85,49 @@ namespace FreecraftCore.Serializer
 
 		}
 
-		public sealed override unsafe string Read(Span<byte> buffer, ref int offset)
+		/// <inheritdoc />
+		public sealed override string Read(Span<byte> buffer, ref int offset)
 		{
+			int lastOffset = offset;
 			int fixedSizeLength = this.CharacterSize * FixedSize.Value;
-			return base.Read(buffer.Slice(0, offset + fixedSizeLength + offset), ref offset);
+			string value = base.Read(buffer.Slice(0, offset + fixedSizeLength + offset), ref offset);
+
+			//Important that we determine if the fixed length isn't complete.
+			//WARNING: THIS ONLY WORKS WITH FIXED-WIDTH CHARACTER ENCODING!!
+			int missingByteCount = ComputeMissingByteCount(offset, lastOffset, fixedSizeLength);
+
+			//We don't have to clear the buffer or zero it out. We just skip reading.
+			if(missingByteCount != 0)
+				offset += missingByteCount;
+
+			return value;
 		}
 
-		public sealed override unsafe void Write(string value, Span<byte> buffer, ref int offset)
+		/// <inheritdoc />
+		public sealed override void Write(string value, Span<byte> buffer, ref int offset)
 		{
 			int fixedSizeLength = this.CharacterSize * FixedSize.Value;
 
 			int lastOffset = offset;
 			base.Write(value, buffer.Slice(0, fixedSizeLength + offset), ref offset);
 
-			//Force the fixed length buffer write, and null the buffer out (could be data in it otherwise)
-			while(offset < lastOffset)
+			//Important that we determine if the fixed length isn't complete.
+			//WARNING: THIS ONLY WORKS WITH FIXED-WIDTH CHARACTER ENCODING!!
+			int missingByteCount = ComputeMissingByteCount(offset, lastOffset, fixedSizeLength);
+
+			if (missingByteCount == 0)
+				return;
+
+			//Important to zero out the buffer, it may not be 0. Never assume it's 0.
+			for(int i = 0; i < missingByteCount; i++)
 				GenericTypePrimitiveSerializerStrategy<byte>.Instance.Write(0, buffer, ref offset);
+		}
+
+		private static int ComputeMissingByteCount(int offset, int lastOffset, int fixedSizeLength)
+		{
+			int bytesWritten = offset - lastOffset;
+			int missingByteCount = Math.Max(0, fixedSizeLength - bytesWritten);
+			return missingByteCount;
 		}
 	}
 }
