@@ -90,7 +90,8 @@ namespace FreecraftCore.Serializer
 		{
 			int lastOffset = offset;
 			int fixedSizeLength = this.CharacterSize * FixedSize.Value;
-			string value = base.Read(buffer.Slice(0, offset + fixedSizeLength + offset), ref offset);
+
+			string value = base.Read(buffer.Slice(0, offset + fixedSizeLength), ref offset);
 
 			//Important that we determine if the fixed length isn't complete.
 			//WARNING: THIS ONLY WORKS WITH FIXED-WIDTH CHARACTER ENCODING!!
