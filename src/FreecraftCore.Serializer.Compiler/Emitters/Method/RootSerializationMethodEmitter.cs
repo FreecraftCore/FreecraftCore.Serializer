@@ -41,8 +41,21 @@ namespace FreecraftCore.Serializer
 
 		public IEnumerable<ClassDeclarationSyntax> CreateClasses()
 		{
+			//We need to emit for both the current type symbol
+			foreach(var newClass in EnumerateTypeSymbolRequiredClassGenerators(Symbol))
+				yield return newClass;
+
+			//and also for all its base types. If we don't, we may have missing locally scoped classes
+			//that require being referenced by the serialization code.
+			foreach (var baseType in Symbol.GetAllBaseTypes())
+				foreach(var newClass in EnumerateTypeSymbolRequiredClassGenerators(baseType))
+					yield return newClass;
+		}
+
+		private IEnumerable<ClassDeclarationSyntax> EnumerateTypeSymbolRequiredClassGenerators(ITypeSymbol typeSymbol)
+		{
 			//Find all KnownSize types and emit classes for each one
-			foreach (var mi in Symbol.GetMembers()
+			foreach(var mi in typeSymbol.GetMembers()
 				.Where(m => !m.IsStatic))
 			{
 				if (!mi.HasAttributeExact<KnownSizeAttribute>())

@@ -43,6 +43,8 @@ namespace FreecraftCore.Serializer
         {
             //Type: BaseTypeStub Field: 1 Name: BaseIntField Type: Int32;
             value.BaseIntField = GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset);
+            //Type: BaseTypeStub Field: 2 Name: BaseIntFieldArray Type: Int32[];
+            value.BaseIntFieldArray = FixedSizePrimitiveArrayTypeSerializerStrategy<int, StaticTypedNumeric_Int32_2>.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 1 Name: Hello Type: Int32;
             value.Hello = GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset);
             //Type: TypeStub Field: 2 Name: TestString Type: String;
@@ -124,6 +126,8 @@ namespace FreecraftCore.Serializer
             value.OnBeforeSerialization();
             //Type: BaseTypeStub Field: 1 Name: BaseIntField Type: Int32;
             GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.BaseIntField, buffer, ref offset);
+            //Type: BaseTypeStub Field: 2 Name: BaseIntFieldArray Type: Int32[];
+            FixedSizePrimitiveArrayTypeSerializerStrategy<int, StaticTypedNumeric_Int32_2>.Instance.Write(value.BaseIntFieldArray, buffer, ref offset);
             //Type: TypeStub Field: 1 Name: Hello Type: Int32;
             GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.Hello, buffer, ref offset);
             //Type: TypeStub Field: 2 Name: TestString Type: String;
@@ -194,5 +198,6 @@ namespace FreecraftCore.Serializer
         private sealed class StaticTypedNumeric_Int32_1337 : StaticTypedNumeric<Int32> { public sealed override Int32 Value => 1337; }
         private sealed class StaticTypedNumeric_Int32_69 : StaticTypedNumeric<Int32> { public sealed override Int32 Value => 69; }
         private sealed class StaticTypedNumeric_Int32_1776 : StaticTypedNumeric<Int32> { public sealed override Int32 Value => 1776; }
+        private sealed class StaticTypedNumeric_Int32_2 : StaticTypedNumeric<Int32> { public sealed override Int32 Value => 2; }
     }
 }

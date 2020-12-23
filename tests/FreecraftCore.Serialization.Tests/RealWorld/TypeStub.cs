@@ -81,6 +81,10 @@ namespace FreecraftCore.Serializer.CustomTypes
 		[WireMember(1)]
 		public int BaseIntField { get; internal set; }
 
+		[KnownSize(2)]
+		[WireMember(2)]
+		public int[] BaseIntFieldArray { get; internal set; }
+
 		protected BaseTypeStub()
 		{
 

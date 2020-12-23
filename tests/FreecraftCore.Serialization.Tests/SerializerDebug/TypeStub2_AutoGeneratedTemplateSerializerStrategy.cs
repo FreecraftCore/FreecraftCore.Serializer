@@ -43,6 +43,8 @@ namespace FreecraftCore.Serializer
         {
             //Type: BaseTypeStub Field: 1 Name: BaseIntField Type: Int32;
             value.BaseIntField = GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset);
+            //Type: BaseTypeStub Field: 2 Name: BaseIntFieldArray Type: Int32[];
+            value.BaseIntFieldArray = FixedSizePrimitiveArrayTypeSerializerStrategy<int, StaticTypedNumeric_Int32_2>.Instance.Read(buffer, ref offset);
             //Type: TypeStub2 Field: 1 Name: Hello Type: Int32;
             value.Hello = GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset);
         }
@@ -58,8 +60,11 @@ namespace FreecraftCore.Serializer
         {
             //Type: BaseTypeStub Field: 1 Name: BaseIntField Type: Int32;
             GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.BaseIntField, buffer, ref offset);
+            //Type: BaseTypeStub Field: 2 Name: BaseIntFieldArray Type: Int32[];
+            FixedSizePrimitiveArrayTypeSerializerStrategy<int, StaticTypedNumeric_Int32_2>.Instance.Write(value.BaseIntFieldArray, buffer, ref offset);
             //Type: TypeStub2 Field: 1 Name: Hello Type: Int32;
             GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.Hello, buffer, ref offset);
         }
+        private sealed class StaticTypedNumeric_Int32_2 : StaticTypedNumeric<Int32> { public sealed override Int32 Value => 2; }
     }
 }
