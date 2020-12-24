@@ -74,21 +74,327 @@ namespace FreecraftCore.Serializer
 				(
 					SingletonList<MemberDeclarationSyntax>
 					(
-						ClassDeclaration
-							(
-								Identifier
+						BuildClassDefinition()
+							.WithAttributeLists(List<AttributeListSyntax>
 								(
-									TriviaList(),
-									SerializerTypeName,
-									TriviaList
-									(
-										new[]
-										{
-											Space,
-											CarriageReturnLineFeed
-										}
-									)
+									new AttributeListSyntax[]
+									{
+										AttributeList
+										(
+											SingletonSeparatedList<AttributeSyntax>
+											(
+												new HideTypeAttributeBuilder().Create()
+											)
+										)
+									}
 								)
+							)
+					)
+				)
+				.WithCloseBraceToken
+				(
+					Token
+					(
+						TriviaList(),
+						SyntaxKind.CloseBraceToken,
+						TriviaList
+						(
+							CarriageReturnLineFeed
+						)
+					)
+				);
+		}
+
+		private ClassDeclarationSyntax BuildClassDefinition()
+		{
+			return ClassDeclaration
+				(
+					Identifier
+					(
+						TriviaList(),
+						SerializerTypeName,
+						TriviaList
+						(
+							new[]
+							{
+								Space,
+								CarriageReturnLineFeed
+							}
+						)
+					)
+				)
+				.WithModifiers
+				(
+					TokenList
+					(
+						new[]
+						{
+							Token
+							(
+								TriviaList
+								(
+									new[]
+									{
+										Tab,
+										Comment("//THIS CODE IS FOR AUTO-GENERATED SERIALIZERS! DO NOT MODIFY UNLESS YOU KNOW WELL!"),
+										CarriageReturnLineFeed,
+										Tab,
+										Trivia
+										(
+											DocumentationCommentTrivia
+											(
+												SyntaxKind.SingleLineDocumentationCommentTrivia,
+												List<XmlNodeSyntax>
+												(
+													new XmlNodeSyntax[]
+													{
+														XmlText()
+															.WithTextTokens
+															(
+																TokenList
+																(
+																	XmlTextLiteral
+																	(
+																		TriviaList
+																		(
+																			DocumentationCommentExterior("///")
+																		),
+																		" ",
+																		" ",
+																		TriviaList()
+																	)
+																)
+															),
+														XmlExampleElement
+															(
+																XmlText()
+																	.WithTextTokens
+																	(
+																		TokenList
+																		(
+																			new[]
+																			{
+																				XmlTextNewLine
+																				(
+																					TriviaList(),
+																					Environment.NewLine,
+																					Environment.NewLine,
+																					TriviaList()
+																				),
+																				XmlTextLiteral
+																				(
+																					TriviaList
+																					(
+																						DocumentationCommentExterior("	///")
+																					),
+																					" FreecraftCore.Serializer's AUTO-GENERATED (do not edit) serialization",
+																					" FreecraftCore.Serializer's AUTO-GENERATED (do not edit) serialization",
+																					TriviaList()
+																				),
+																				XmlTextNewLine
+																				(
+																					TriviaList(),
+																					Environment.NewLine,
+																					Environment.NewLine,
+																					TriviaList()
+																				),
+																				XmlTextLiteral
+																				(
+																					TriviaList
+																					(
+																						DocumentationCommentExterior("	///")
+																					),
+																					" code for the Type: ",
+																					" code for the Type: ",
+																					TriviaList()
+																				)
+																			}
+																		)
+																	),
+																XmlNullKeywordElement()
+																	.WithAttributes
+																	(
+																		SingletonList<XmlAttributeSyntax>
+																		(
+																			XmlCrefAttribute
+																			(
+																				NameMemberCref
+																				(
+																					IdentifierName(SerializableTypeName)
+																				)
+																			)
+																		)
+																	),
+																XmlText()
+																	.WithTextTokens
+																	(
+																		TokenList
+																		(
+																			new[]
+																			{
+																				XmlTextNewLine
+																				(
+																					TriviaList(),
+																					Environment.NewLine,
+																					Environment.NewLine,
+																					TriviaList()
+																				),
+																				XmlTextLiteral
+																				(
+																					TriviaList
+																					(
+																						DocumentationCommentExterior("	///")
+																					),
+																					" ",
+																					" ",
+																					TriviaList()
+																				)
+																			}
+																		)
+																	)
+															)
+															.WithStartTag
+															(
+																XmlElementStartTag
+																(
+																	XmlName
+																	(
+																		Identifier("summary")
+																	)
+																)
+															)
+															.WithEndTag
+															(
+																XmlElementEndTag
+																(
+																	XmlName
+																	(
+																		Identifier("summary")
+																	)
+																)
+															),
+														XmlText()
+															.WithTextTokens
+															(
+																TokenList
+																(
+																	XmlTextNewLine
+																	(
+																		TriviaList(),
+																		Environment.NewLine,
+																		Environment.NewLine,
+																		TriviaList()
+																	)
+																)
+															)
+													}
+												)
+											)
+										),
+										Tab
+									}
+								),
+								SyntaxKind.PublicKeyword,
+								TriviaList
+								(
+									Space
+								)
+							),
+							Token
+							(
+								TriviaList(),
+								SyntaxKind.SealedKeyword,
+								TriviaList
+								(
+									Space
+								)
+							),
+							Token
+							(
+								TriviaList(),
+								SyntaxKind.PartialKeyword,
+								TriviaList
+								(
+									Space
+								)
+							)
+						}
+					)
+				)
+				.WithKeyword
+				(
+					Token
+					(
+						TriviaList(),
+						SyntaxKind.ClassKeyword,
+						TriviaList
+						(
+							Space
+						)
+					)
+				)
+				.WithBaseList
+				(
+					BaseList
+						(
+							SingletonSeparatedList<BaseTypeSyntax>
+							(
+								SimpleBaseType
+								(
+									ComputePolymorphicBaseType()
+								)
+							)
+						)
+						.WithColonToken
+						(
+							Token
+							(
+								TriviaList
+								(
+									Whitespace("		")
+								),
+								SyntaxKind.ColonToken,
+								TriviaList
+								(
+									Space
+								)
+							)
+						)
+				)
+				.WithOpenBraceToken
+				(
+					Token
+					(
+						TriviaList
+						(
+							Tab
+						),
+						SyntaxKind.OpenBraceToken,
+						TriviaList
+						(
+							CarriageReturnLineFeed
+						)
+					)
+				)
+				.WithMembers
+				(
+					SingletonList<MemberDeclarationSyntax>
+					(
+						MethodDeclaration
+							(
+								IdentifierName
+								(
+									Identifier
+									(
+										TriviaList(),
+										SerializableTypeName,
+										TriviaList
+										(
+											Space
+										)
+									)
+								),
+								Identifier("CreateType")
 							)
 							.WithModifiers
 							(
@@ -100,168 +406,9 @@ namespace FreecraftCore.Serializer
 										(
 											TriviaList
 											(
-												new[]
-												{
-													Tab,
-													Comment("//THIS CODE IS FOR AUTO-GENERATED SERIALIZERS! DO NOT MODIFY UNLESS YOU KNOW WELL!"),
-													CarriageReturnLineFeed,
-													Tab,
-													Trivia
-													(
-														DocumentationCommentTrivia
-														(
-															SyntaxKind.SingleLineDocumentationCommentTrivia,
-															List<XmlNodeSyntax>
-															(
-																new XmlNodeSyntax[]
-																{
-																	XmlText()
-																		.WithTextTokens
-																		(
-																			TokenList
-																			(
-																				XmlTextLiteral
-																				(
-																					TriviaList
-																					(
-																						DocumentationCommentExterior("///")
-																					),
-																					" ",
-																					" ",
-																					TriviaList()
-																				)
-																			)
-																		),
-																	XmlExampleElement
-																		(
-																			XmlText()
-																				.WithTextTokens
-																				(
-																					TokenList
-																					(
-																						new[]
-																						{
-																							XmlTextNewLine
-																							(
-																								TriviaList(),
-																								Environment.NewLine,
-																								Environment.NewLine,
-																								TriviaList()
-																							),
-																							XmlTextLiteral
-																							(
-																								TriviaList
-																								(
-																									DocumentationCommentExterior("	///")
-																								),
-																								" FreecraftCore.Serializer's AUTO-GENERATED (do not edit) serialization",
-																								" FreecraftCore.Serializer's AUTO-GENERATED (do not edit) serialization",
-																								TriviaList()
-																							),
-																							XmlTextNewLine
-																							(
-																								TriviaList(),
-																								Environment.NewLine,
-																								Environment.NewLine,
-																								TriviaList()
-																							),
-																							XmlTextLiteral
-																							(
-																								TriviaList
-																								(
-																									DocumentationCommentExterior("	///")
-																								),
-																								" code for the Type: ",
-																								" code for the Type: ",
-																								TriviaList()
-																							)
-																						}
-																					)
-																				),
-																			XmlNullKeywordElement()
-																				.WithAttributes
-																				(
-																					SingletonList<XmlAttributeSyntax>
-																					(
-																						XmlCrefAttribute
-																						(
-																							NameMemberCref
-																							(
-																								IdentifierName(SerializableTypeName)
-																							)
-																						)
-																					)
-																				),
-																			XmlText()
-																				.WithTextTokens
-																				(
-																					TokenList
-																					(
-																						new[]
-																						{
-																							XmlTextNewLine
-																							(
-																								TriviaList(),
-																								Environment.NewLine,
-																								Environment.NewLine,
-																								TriviaList()
-																							),
-																							XmlTextLiteral
-																							(
-																								TriviaList
-																								(
-																									DocumentationCommentExterior("	///")
-																								),
-																								" ",
-																								" ",
-																								TriviaList()
-																							)
-																						}
-																					)
-																				)
-																		)
-																		.WithStartTag
-																		(
-																			XmlElementStartTag
-																			(
-																				XmlName
-																				(
-																					Identifier("summary")
-																				)
-																			)
-																		)
-																		.WithEndTag
-																		(
-																			XmlElementEndTag
-																			(
-																				XmlName
-																				(
-																					Identifier("summary")
-																				)
-																			)
-																		),
-																	XmlText()
-																		.WithTextTokens
-																		(
-																			TokenList
-																			(
-																				XmlTextNewLine
-																				(
-																					TriviaList(),
-																					Environment.NewLine,
-																					Environment.NewLine,
-																					TriviaList()
-																				)
-																			)
-																		)
-																}
-															)
-														)
-													),
-													Tab
-												}
+												Whitespace("		")
 											),
-											SyntaxKind.PublicKeyword,
+											SyntaxKind.ProtectedKeyword,
 											TriviaList
 											(
 												Space
@@ -270,16 +417,7 @@ namespace FreecraftCore.Serializer
 										Token
 										(
 											TriviaList(),
-											SyntaxKind.SealedKeyword,
-											TriviaList
-											(
-												Space
-											)
-										),
-										Token
-										(
-											TriviaList(),
-											SyntaxKind.PartialKeyword,
+											SyntaxKind.OverrideKeyword,
 											TriviaList
 											(
 												Space
@@ -288,136 +426,69 @@ namespace FreecraftCore.Serializer
 									}
 								)
 							)
-							.WithKeyword
+							.WithParameterList
 							(
-								Token
-								(
-									TriviaList(),
-									SyntaxKind.ClassKeyword,
-									TriviaList
+								ParameterList
 									(
-										Space
-									)
-								)
-							)
-							.WithBaseList
-							(
-								BaseList
-									(
-										SingletonSeparatedList<BaseTypeSyntax>
+										SingletonSeparatedList<ParameterSyntax>
 										(
-											SimpleBaseType
-											(
-												ComputePolymorphicBaseType()
-											)
+											Parameter
+												(
+													Identifier("key")
+												)
+												.WithType
+												(
+													PredefinedType
+													(
+														Token
+														(
+															TriviaList(),
+															SyntaxKind.IntKeyword,
+															TriviaList
+															(
+																Space
+															)
+														)
+													)
+												)
 										)
 									)
-									.WithColonToken
+									.WithCloseParenToken
 									(
 										Token
 										(
+											TriviaList(),
+											SyntaxKind.CloseParenToken,
 											TriviaList
 											(
-												Whitespace("		")
-											),
-											SyntaxKind.ColonToken,
-											TriviaList
-											(
-												Space
+												CarriageReturnLineFeed
 											)
 										)
 									)
 							)
-							.WithOpenBraceToken
+							.WithBody
 							(
-								Token
-								(
-									TriviaList
+								Block
 									(
-										Tab
-									),
-									SyntaxKind.OpenBraceToken,
-									TriviaList
-									(
-										CarriageReturnLineFeed
-									)
-								)
-							)
-							.WithMembers
-							(
-								SingletonList<MemberDeclarationSyntax>
-								(
-									MethodDeclaration
+										SingletonList<StatementSyntax>
 										(
-											IdentifierName
-											(
-												Identifier
+											SwitchStatement
 												(
-													TriviaList(),
-													SerializableTypeName,
-													TriviaList
-													(
-														Space
-													)
+													IdentifierName("key")
 												)
-											),
-											Identifier("CreateType")
-										)
-										.WithModifiers
-										(
-											TokenList
-											(
-												new[]
-												{
-													Token
-													(
-														TriviaList
-														(
-															Whitespace("		")
-														),
-														SyntaxKind.ProtectedKeyword,
-														TriviaList
-														(
-															Space
-														)
-													),
-													Token
-													(
-														TriviaList(),
-														SyntaxKind.OverrideKeyword,
-														TriviaList
-														(
-															Space
-														)
-													)
-												}
-											)
-										)
-										.WithParameterList
-										(
-											ParameterList
+												.WithSwitchKeyword
 												(
-													SingletonSeparatedList<ParameterSyntax>
+													Token
 													(
-														Parameter
-															(
-																Identifier("key")
-															)
-															.WithType
-															(
-																PredefinedType
-																(
-																	Token
-																	(
-																		TriviaList(),
-																		SyntaxKind.IntKeyword,
-																		TriviaList
-																		(
-																			Space
-																		)
-																	)
-																)
-															)
+														TriviaList
+														(
+															Whitespace("			")
+														),
+														SyntaxKind.SwitchKeyword,
+														TriviaList
+														(
+															Space
+														)
 													)
 												)
 												.WithCloseParenToken
@@ -432,90 +503,13 @@ namespace FreecraftCore.Serializer
 														)
 													)
 												)
-										)
-										.WithBody
-										(
-											Block
-												(
-													SingletonList<StatementSyntax>
-													(
-														SwitchStatement
-															(
-																IdentifierName("key")
-															)
-															.WithSwitchKeyword
-															(
-																Token
-																(
-																	TriviaList
-																	(
-																		Whitespace("			")
-																	),
-																	SyntaxKind.SwitchKeyword,
-																	TriviaList
-																	(
-																		Space
-																	)
-																)
-															)
-															.WithCloseParenToken
-															(
-																Token
-																(
-																	TriviaList(),
-																	SyntaxKind.CloseParenToken,
-																	TriviaList
-																	(
-																		CarriageReturnLineFeed
-																	)
-																)
-															)
-															.WithOpenBraceToken
-															(
-																Token
-																(
-																	TriviaList
-																	(
-																		Whitespace("			")
-																	),
-																	SyntaxKind.OpenBraceToken,
-																	TriviaList
-																	(
-																		CarriageReturnLineFeed
-																	)
-																)
-															)
-															.WithSections
-															(
-																List<SwitchSectionSyntax>
-																(
-																	BuildSwitchStatements()
-																)
-															)
-															.WithCloseBraceToken
-															(
-																Token
-																(
-																	TriviaList
-																	(
-																		Whitespace("			")
-																	),
-																	SyntaxKind.CloseBraceToken,
-																	TriviaList
-																	(
-																		CarriageReturnLineFeed
-																	)
-																)
-															)
-													)
-												)
 												.WithOpenBraceToken
 												(
 													Token
 													(
 														TriviaList
 														(
-															Whitespace("		")
+															Whitespace("			")
 														),
 														SyntaxKind.OpenBraceToken,
 														TriviaList
@@ -524,13 +518,20 @@ namespace FreecraftCore.Serializer
 														)
 													)
 												)
+												.WithSections
+												(
+													List<SwitchSectionSyntax>
+													(
+														BuildSwitchStatements()
+													)
+												)
 												.WithCloseBraceToken
 												(
 													Token
 													(
 														TriviaList
 														(
-															Whitespace("		")
+															Whitespace("			")
 														),
 														SyntaxKind.CloseBraceToken,
 														TriviaList
@@ -540,22 +541,37 @@ namespace FreecraftCore.Serializer
 													)
 												)
 										)
-								)
-							)
-							.WithCloseBraceToken
-							(
-								Token
-								(
-									TriviaList
-									(
-										Tab
-									),
-									SyntaxKind.CloseBraceToken,
-									TriviaList
-									(
-										CarriageReturnLineFeed
 									)
-								)
+									.WithOpenBraceToken
+									(
+										Token
+										(
+											TriviaList
+											(
+												Whitespace("		")
+											),
+											SyntaxKind.OpenBraceToken,
+											TriviaList
+											(
+												CarriageReturnLineFeed
+											)
+										)
+									)
+									.WithCloseBraceToken
+									(
+										Token
+										(
+											TriviaList
+											(
+												Whitespace("		")
+											),
+											SyntaxKind.CloseBraceToken,
+											TriviaList
+											(
+												CarriageReturnLineFeed
+											)
+										)
+									)
 							)
 					)
 				)
@@ -563,7 +579,10 @@ namespace FreecraftCore.Serializer
 				(
 					Token
 					(
-						TriviaList(),
+						TriviaList
+						(
+							Tab
+						),
 						SyntaxKind.CloseBraceToken,
 						TriviaList
 						(

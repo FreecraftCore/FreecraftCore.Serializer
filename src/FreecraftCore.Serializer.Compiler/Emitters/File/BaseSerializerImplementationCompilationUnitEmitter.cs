@@ -250,7 +250,7 @@ namespace FreecraftCore.Serializer
 					return new MemberDeclarationSyntax[]
 					{
 						new WireMessageImplementationMemberDeclarationEmitter(SerializerTypeName, TypeSymbol).Create(),
-						CreateSerializerImplementationNamespaceMember(),
+						CreateSerializerImplementationNamespaceMember()
 					};
 				else
 					return new MemberDeclarationSyntax[]
@@ -262,7 +262,7 @@ namespace FreecraftCore.Serializer
 			{
 				return new MemberDeclarationSyntax[]
 				{
-					CreateSerializerImplementationNamespaceMember(),
+					CreateSerializerImplementationNamespaceMember()
 				};
 			}
 			else
