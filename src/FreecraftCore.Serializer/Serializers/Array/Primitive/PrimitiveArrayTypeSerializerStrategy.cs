@@ -68,13 +68,21 @@ namespace FreecraftCore.Serializer
 			if (elementSize == 0)
 				return;
 
+			if (buffer.Length < elementsByteSize)
+				ThrowBufferTooSmall(buffer.Length, elementsByteSize);
+
 			fixed(byte* bytes = &buffer.GetPinnableReference())
 			fixed(void* pinnedArray = &value[0]) //This pin is VERY important, otherwise GC could maybe move it.
 			{
 				Unsafe.CopyBlock(bytes, pinnedArray, (uint)elementsByteSize);
 			}
 
-			offset += elementSize * value.Length;
+			offset += elementsByteSize;
+		}
+
+		private void ThrowBufferTooSmall(int bufferLength, int elementsByteSize)
+		{
+			throw new InvalidOperationException($"Buffer too small to write to. Length: {bufferLength} Requested: {elementsByteSize}");
 		}
 	}
 }

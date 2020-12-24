@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using FreecraftCore.Serializer.Perf;
 
@@ -50,7 +51,13 @@ namespace FreecraftCore.Serializer.Performance.Tests
 
 		static void Main(string[] args)
 		{
-			Span<byte> buffer = new Span<byte>(new byte[500]);
+			realWorldBytes = realWorldBytes
+				.Take(1)
+				.Concat(new byte[5000])
+				.Concat(realWorldBytes.Skip(1))
+				.ToArray();
+
+			Span<byte> buffer = new Span<byte>(new byte[10000]);
 			int offset = 0;
 
 			SerializerService serializer = new SerializerService();
@@ -68,7 +75,7 @@ namespace FreecraftCore.Serializer.Performance.Tests
 		private static void BenchMarkMethod(SerializerService serializer)
 		{
 			Stopwatch watch = new Stopwatch();
-			Span<byte> buffer = new Span<byte>(new byte[500]);
+			Span<byte> buffer = new Span<byte>(new byte[10000]);
 			int offset = 0;
 
 			watch.Start();

@@ -136,6 +136,10 @@ namespace FreecraftCore.Serializer.Perf
 		[WireMember(1)]
 		public byte OperationCode { get; internal set; }
 
+		[KnownSize(5000)]
+		[WireMember(2)]
+		public byte[] TestKnownSizeByteArrayLargePerf { get; internal set; } = new byte[5000];
+
 		/// <summary>
 		/// Serializer ctor.
 		/// </summary>
