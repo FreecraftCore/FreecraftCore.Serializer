@@ -47,10 +47,33 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public sealed override unsafe void Write(T[] value, Span<byte> buffer, ref int offset)
 		{
+			//Special handling for primitive null arrays.
+			//write the full size of defaults
+			//It's a useful optimization for no allocation.
+			if (value == null || value.Length == 0 && FixedSize.Value != 0)
+			{
+				WriteEmptyArray(buffer, ref offset);
+				return;
+			}
+
 			if(value.Length != FixedSize.Value)
 				ThrowNotCorrectSize(value.Length, FixedSize.Value);
 
 			PrimitiveArrayTypeSerializerStrategy<T>.Instance.Write(value, buffer, ref offset);
+		}
+
+		private static void WriteEmptyArray(Span<byte> buffer, ref int offset)
+		{
+			int elementsByteSize = MarshalSizeOf<T>.SizeOf * FixedSize.Value;
+
+			//TODO: This is leaking how we write arrays into this decorator.
+			//We could ArrayPool, initialize and then write but we opt for no allocation
+			//We assume default is block of 0 values but this could be wrong, but right in
+			//all primitive cases.
+			for (int i = 0; i < elementsByteSize; i++)
+				buffer[offset + i] = 0;
+
+			offset += elementsByteSize;
 		}
 
 		private static void ThrowNotCorrectSize(int actualSize, int expectedSize)
