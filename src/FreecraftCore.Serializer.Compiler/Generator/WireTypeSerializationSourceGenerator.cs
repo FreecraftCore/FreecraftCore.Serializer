@@ -60,7 +60,15 @@ namespace FreecraftCore.Serializer
 			catch (Exception e)
 			{
 				File.WriteAllText("Error.txt", e.ToString());
-				context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("FCC001", "Compiler Failure", $"Error: {e.GetType().Name}. Failed: {e.Message} Stack: {{0}}", "Error", DiagnosticSeverity.Error, true), Location.None, BuildStackTrace(e)));
+
+				try
+				{
+					context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("FCC001", "Compiler Failure", $"Error: {e.GetType().Name}. Failed: {e.Message} Stack: {{0}}", "Error", DiagnosticSeverity.Error, true), Location.None, BuildStackTrace(e)));
+				}
+				catch (Exception)
+				{
+					throw e;
+				}
 			}
 		}
 
