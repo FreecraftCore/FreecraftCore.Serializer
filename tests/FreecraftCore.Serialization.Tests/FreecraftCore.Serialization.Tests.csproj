@@ -3,19 +3,24 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>false</IsPackable>
+    <features>IOperation</features>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="SerializerDebug\**" />
-    <None Include="SerializerDebug\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
+    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="3.9.0-2.final">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="nunit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
     <PackageReference Include="Reinterpret.Net" Version="2.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="SerializerDebug\**" />
+    <None Include="SerializerDebug\**" />
   </ItemGroup>
 
   <ItemGroup>
