@@ -13,6 +13,11 @@ The library originally used introspection/reflection at runtime to build object-
 2. Include the nuget package **[FreecraftCore.Serializer.Compiler](https://www.nuget.org/packages/FreecraftCore.Serializer.Compiler)** on any csproj that requires serialization code be generated. Usually you'll want to include both the Metadata and Compiler (C# source generator) together but for special scenarios you may not want to. Including this nuget package will insert the **serialization source code** into the compilation step in Visual Studio. It'll also generate a debug folder which should **not** be included in the compilation of the assembly. It will conflict with the hidden source generated. Include the following in your csproj to exclude this debug source from the compilation:
 
 ```
+  <PropertyGroup>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>SerializerDebug</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="SerializerDebug\**" />
     <None Include="SerializerDebug\**" />
