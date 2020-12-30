@@ -185,7 +185,7 @@ namespace FreecraftCore.Serializer
 				//This cased issues in Analyzer/Generator due to dependency loading
 				SyntaxNode implementationFormattedNode = Formatter.Format(implementationEmittable.CreateUnit(), new AdhocWorkspace());
 
-				WriteEmittedFile(implementationFormattedNode, implementationEmittable, "");
+				WriteEmittedFile(implementationFormattedNode, implementationEmittable);
 
 				RequiredGenericSerializers.AddRange(implementationEmittable.GetRequestedGenericTypes());
 			}
@@ -196,17 +196,13 @@ namespace FreecraftCore.Serializer
 			}
 		}
 
-		private void WriteEmittedFile(SyntaxNode formattedNode, ICompilationUnitEmittable emittable, string appendedName)
+		private void WriteEmittedFile(SyntaxNode formattedNode, ICompilationUnitEmittable emittable)
 		{
 			StringBuilder sb = new StringBuilder();
 			using (TextWriter classFileWriter = new StringWriter(sb))
 				formattedNode.WriteTo(classFileWriter);
 
-			if (!String.IsNullOrWhiteSpace(appendedName))
-				SerializationOutputStrategy.Output($"{emittable.UnitName}_{appendedName}", sb.ToString());
-			else
-				SerializationOutputStrategy.Output($"{emittable.UnitName}", sb.ToString());
-
+			SerializationOutputStrategy.Output($"{emittable.UnitName}", sb.ToString());
 			GeneratedTypeNames.Add(emittable.UnitName);
 		}
 
