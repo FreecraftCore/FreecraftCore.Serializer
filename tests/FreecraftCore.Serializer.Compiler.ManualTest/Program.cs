@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using FreecraftCore.Serializer.Tests;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+//using Microsoft.CodeAnalysis.CSharp;
 
 namespace FreecraftCore.Serializer.Compiler.ManualTest
 {
@@ -11,7 +10,8 @@ namespace FreecraftCore.Serializer.Compiler.ManualTest
 	{
 		static void Main(string[] args)
 		{
-			CSharpCompilation compilation = CSharpCompilation.Create("Test", new Microsoft.CodeAnalysis.SyntaxTree[]
+			//TODO: Just doesn't work anymore with new nuget workflow
+			/*CSharpCompilation compilation = CSharpCompilation.Create("Test", new Microsoft.CodeAnalysis.SyntaxTree[]
 			{
 				CSharpSyntaxTree.ParseText(File.ReadAllText(@"C:\Users\Glader\Documents\Github\FreecraftCore\FreecraftCore.Serializer\tests\FreecraftCore.Serializer.Compiler.ManualTest\WoWAuthDTOs.cs"))
 			}, new MetadataReference[]
@@ -23,7 +23,7 @@ namespace FreecraftCore.Serializer.Compiler.ManualTest
 			});
 
 			SerializerSourceEmitter emitter = new SerializerSourceEmitter(compilation.GetAllTypes(), new WriteToFileSerializationSourceOutputStrategy(""), compilation);
-			emitter.Generate();
+			emitter.Generate();*/
 
 			//emitter = new SerializerSourceEmitter(typeof(AuthLogonPacketTests).Assembly, "");
 			//emitter.Generate();
