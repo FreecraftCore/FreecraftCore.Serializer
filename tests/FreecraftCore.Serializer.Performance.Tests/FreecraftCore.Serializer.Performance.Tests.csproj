@@ -11,12 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FreecraftCore.Serializer.Compiler" Version="4.0.55">
+    <PackageReference Include="FreecraftCore.Serializer.Compiler" Version="4.0.56">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="FreecraftCore.Serializer" Version="4.0.55" />
-    <PackageReference Include="FreecraftCore.Serializer.Metadata" Version="4.0.55" />
+    <PackageReference Include="FreecraftCore.Serializer" Version="4.0.56" />
+    <PackageReference Include="FreecraftCore.Serializer.Metadata" Version="4.0.56" />
     <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="3.9.0-2.final">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

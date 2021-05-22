@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 using JetBrains.Annotations;
+using Reinterpret.Net;
 
 namespace FreecraftCore.Serializer
 {
@@ -69,7 +70,7 @@ namespace FreecraftCore.Serializer
 			//then do an Unsafe cast. We cannot realistically have a buffer bigger than 2 billion bytes anyway, no matter how it's
 			//encoded so this is probably safe to do.
 			TLengthType length = GenericTypePrimitiveSerializerStrategy<TLengthType>.Instance.Read(buffer, ref offset);
-			int stringLength = Unsafe.As<TLengthType, int>(ref length);
+			int stringLength = length.Reinterpret<TLengthType, int>();
 			return stringLength;
 		}
 
@@ -79,7 +80,7 @@ namespace FreecraftCore.Serializer
 			//We must write the length prefix first into the buffer
 			int stringLength = CalculateOutgoingStringLength(value);
 			stringLength++; //add terminator character
-			GenericTypePrimitiveSerializerStrategy<TLengthType>.Instance.Write(Unsafe.As<int, TLengthType>(ref stringLength), buffer, ref offset);
+			GenericTypePrimitiveSerializerStrategy<TLengthType>.Instance.Write(stringLength.Reinterpret<int, TLengthType>(), buffer, ref offset);
 
 			int expectedByteLength = value.Length * MaximumCharacterSize;
 			int lastOffset = offset;

@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FreecraftCore.Serializer.Compiler" Version="4.0.55" />
+    <PackageReference Include="FreecraftCore.Serializer.Compiler" Version="4.0.56" />
   </ItemGroup>
 
 </Project>

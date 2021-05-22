@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Reinterpret.Net;
 
 namespace FreecraftCore.Serializer
 {
@@ -39,7 +40,7 @@ namespace FreecraftCore.Serializer
 		public sealed override unsafe T[] Read(Span<byte> buffer, ref int offset)
 		{
 			TSizeType size = GenericTypePrimitiveSerializerStrategy<TSizeType>.Instance.Read(buffer, ref offset);
-			int sizeInt = Unsafe.As<TSizeType, int>(ref size);
+			int sizeInt = size.Reinterpret<TSizeType, int>();
 
 			if(sizeInt == 0)
 				return System.Array.Empty<T>();
@@ -58,7 +59,7 @@ namespace FreecraftCore.Serializer
 		{
 			//Decided to support null as empty/0 size.
 			int size = value != null ? value.Length : 0;
-			GenericTypePrimitiveSerializerStrategy<TSizeType>.Instance.Write(Unsafe.As<int, TSizeType>(ref size), buffer, ref offset);
+			GenericTypePrimitiveSerializerStrategy<TSizeType>.Instance.Write(size.Reinterpret<int, TSizeType>(), buffer, ref offset);
 
 			if(size == 0 || value == null)
 				return;

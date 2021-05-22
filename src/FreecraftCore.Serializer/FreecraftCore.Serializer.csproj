@@ -16,7 +16,7 @@ Can be extended for use outside of World of Warcraft too!</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Product>FreecraftCore.Serializer</Product>
     <DocumentationFile>bin\Release\net46\FreecraftCore.Serializer.xml</DocumentationFile>
-    <VersionPrefix>4.0.55</VersionPrefix>
+    <VersionPrefix>4.0.56</VersionPrefix>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -46,6 +46,7 @@ Can be extended for use outside of World of Warcraft too!</Description>
 
   <ItemGroup>
     <PackageReference Include="DotNetZip" Version="1.14.0" />
+    <PackageReference Include="Reinterpret.Net" Version="3.1.0" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
   </ItemGroup>
 

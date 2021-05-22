@@ -25,6 +25,10 @@ namespace FreecraftCore.Serializer
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public override TType Read(Span<byte> buffer, ref int offset)
 		{
+			//Don't want to read outside the bounds
+			if(buffer.Length - offset < Unsafe.SizeOf<TType>())
+				ThrowBufferTooSmall();
+
 			TType value = Unsafe.ReadUnaligned<TType>(ref buffer[offset]);
 			offset += MarshalSizeOf<TType>.SizeOf;
 			return value;
@@ -34,8 +38,18 @@ namespace FreecraftCore.Serializer
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public override void Write(TType value, Span<byte> buffer, ref int offset)
 		{
+			//Don't want to write outside the bounds
+			if (buffer.Length - offset < Unsafe.SizeOf<TType>())
+				ThrowBufferTooSmall();
+
 			Unsafe.As<byte, TType>(ref buffer[offset]) = value;
 			offset += MarshalSizeOf<TType>.SizeOf;
+		}
+
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		private static void ThrowBufferTooSmall()
+		{
+			throw new InvalidOperationException($"Buffer too small to write Type: {typeof(TType).Name}");
 		}
 	}
 }

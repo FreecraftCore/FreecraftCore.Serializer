@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Reinterpret.Net;
 
 namespace FreecraftCore.Serializer
 {
@@ -13,7 +14,7 @@ namespace FreecraftCore.Serializer
 	/// <typeparam name="TEncodedPrimitiveType">Primitive to encode the enumeration value as.</typeparam>
 	public sealed class GenericPrimitiveEnumTypeSerializerStrategy<TEnumType, TEncodedPrimitiveType> 
 		: BaseEnumTypeSerializerStrategy<GenericPrimitiveEnumTypeSerializerStrategy<TEnumType, TEncodedPrimitiveType>, TEnumType> 
-		where TEnumType : struct, Enum
+		where TEnumType : unmanaged, Enum
 		where TEncodedPrimitiveType : unmanaged
 	{
 		/// <inheritdoc />
@@ -22,7 +23,7 @@ namespace FreecraftCore.Serializer
 		{
 			//Assume that the "decorated" primitive serializer handles offset
 			TEncodedPrimitiveType value = GenericTypePrimitiveSerializerStrategy<TEncodedPrimitiveType>.Instance.Read(buffer, ref offset);
-			return Unsafe.As<TEncodedPrimitiveType, TEnumType>(ref value);
+			return value.Reinterpret<TEncodedPrimitiveType, TEnumType>();
 		}
 
 		/// <inheritdoc />
@@ -30,7 +31,7 @@ namespace FreecraftCore.Serializer
 		public sealed override void Write(TEnumType value, Span<byte> buffer, ref int offset)
 		{
 			//Assume that the "decorated" primitive serializer handles offset
-			TEncodedPrimitiveType primitiveValue = Unsafe.As<TEnumType, TEncodedPrimitiveType>(ref value);
+			TEncodedPrimitiveType primitiveValue = value.Reinterpret<TEnumType, TEncodedPrimitiveType>();
 			GenericTypePrimitiveSerializerStrategy<TEncodedPrimitiveType>.Instance.Write(primitiveValue, buffer, ref offset);
 		}
 	}

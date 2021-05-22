@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Reinterpret.Net;
 
 namespace FreecraftCore.Serializer
 {
@@ -46,7 +47,7 @@ namespace FreecraftCore.Serializer
 			TPolymorphicKeySizeType key = KeySerializer.Read(buffer, offset); //do not use ref here
 
 			//The reason we cast the key is it's just plain easier.
-			T value = CreateType(Unsafe.As<TPolymorphicKeySizeType, int>(ref key));
+			T value = CreateType(key.Reinterpret<TPolymorphicKeySizeType, int>());
 			return value.Read(buffer, ref offset);
 		}
 
