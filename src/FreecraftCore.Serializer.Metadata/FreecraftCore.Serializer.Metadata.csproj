@@ -12,7 +12,7 @@
     <Authors>Andrew Blakely, HelloKitty</Authors>
     <Company />
     <Product>FreecraftCore.Serializer</Product>
-    <VersionPrefix>4.0.55</VersionPrefix>
+    <Version>4.0.48</Version>
   </PropertyGroup>
 
   <PropertyGroup>

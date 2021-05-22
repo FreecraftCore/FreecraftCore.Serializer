@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FreecraftCore.Serializer" Version="4.0.53" />
-    <PackageReference Include="FreecraftCore.Serializer.Metadata" Version="4.0.53" />
+    <PackageReference Include="FreecraftCore.Serializer" Version="4.0.17" />
+    <PackageReference Include="FreecraftCore.Serializer.Metadata" Version="4.0.17" />
   </ItemGroup>
 
   <ItemGroup>

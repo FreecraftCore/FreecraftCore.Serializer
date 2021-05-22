@@ -17,7 +17,7 @@
 		<PackageTags>WorldofWarcraft WoW Blizzard JAM Packet Protocol Serialization Serializer Freecraft FreecraftCore</PackageTags>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<Product>FreecraftCore.Serializer.Compiler</Product>
-		<VersionPrefix>4.0.55</VersionPrefix>
+		<Version>4.0.48</Version>
 	</PropertyGroup>
 
 	<!-- See: https://github.com/dotnet/roslyn-sdk/blob/master/samples/CSharp/SourceGenerators/SourceGeneratorSamples/SourceGeneratorSamples.csproj -->
@@ -38,8 +38,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" GeneratePathProperty="true" />
-		<ProjectReference Include="..\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj" GeneratePathProperty="true" />
+		<ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" PrivateAssets="all" GeneratePathProperty="true" />
+		<ProjectReference Include="..\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj" PrivateAssets="all" GeneratePathProperty="true" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -78,8 +78,8 @@
 			<None Include="$(PkgSystem_Composition_AttributedModel)\lib\netstandard1.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
 			<None Include="$(PkgMicrosoft_Bcl_AsyncInterfaces)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
 
-			<None Include="$(PkgFreecraftCore_Serializer_Metadata)$(BaseOutputPath)$(Configuration)\$(TargetFramework)\FreecraftCore.Serializer.Metadata.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="true" />
-			<None Include="$(PkgFreecraftCore_Serializer)$(BaseOutputPath)$(Configuration)\$(TargetFramework)\FreecraftCore.Serializer.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="true" />
+			<None Include="$(PkgFreecraftCore_Serializer_Metadata)$(BaseOutputPath)$(Configuration)\$(TargetFramework)\FreecraftCore.Serializer.Metadata.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
+			<None Include="$(PkgFreecraftCore_Serializer)$(BaseOutputPath)$(Configuration)\$(TargetFramework)\FreecraftCore.Serializer.dll" Pack="true" PackagePath="analyzers/dotnet/cs" IncludeRuntimeDependency="false" />
 		</ItemGroup>
 	</Target>
 
