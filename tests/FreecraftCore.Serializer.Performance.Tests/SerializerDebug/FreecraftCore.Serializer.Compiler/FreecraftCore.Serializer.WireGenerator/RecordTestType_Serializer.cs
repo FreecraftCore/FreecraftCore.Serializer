@@ -43,7 +43,7 @@ namespace FreecraftCore.Serializer
 		public override RecordTestType Read(Span<byte> buffer, ref int offset)
 		{
 			var local_BaseValue = GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset);
-			FreecraftCore.RecordTestType value = new FreecraftCore.RecordTestType(GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset), TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset))
+			FreecraftCore.RecordTestType value = new FreecraftCore.RecordTestType(GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset), DontTerminateLengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Int32>.Instance.Read(buffer, ref offset))
 			{BaseValue = local_BaseValue};
 			return value;
 		}
@@ -65,7 +65,7 @@ namespace FreecraftCore.Serializer
 			GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.TestField, buffer, ref offset);
 			//Type: RecordTestType Field: 2 Name: TestField2 Type: String
 			;
-			TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.TestField2, buffer, ref offset);
+			DontTerminateLengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Int32>.Instance.Write(value.TestField2, buffer, ref offset);
 		}
 	}
 }

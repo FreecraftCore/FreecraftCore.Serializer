@@ -44,7 +44,7 @@ namespace FreecraftCore.Serializer
 		{
 			var local_OpCode = GenericPrimitiveEnumTypeSerializerStrategy<TestEnumOpcode, Int32>.Instance.Read(buffer, ref offset);
 			var local_BaseValue = GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset);
-			FreecraftCore.RecordEnumBaseTestType value = new FreecraftCore.RecordEnumBaseTestType(GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset), TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset), PrimitiveArrayTypeSerializerStrategy<int>.Instance.Read(buffer, ref offset))
+			FreecraftCore.RecordEnumBaseTestType value = new FreecraftCore.RecordEnumBaseTestType(GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset), DontTerminateLengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Int32>.Instance.Read(buffer, ref offset), SendSizePrimitiveArrayTypeSerializerStrategy<int, Int32>.Instance.Read(buffer, ref offset))
 			{OpCode = local_OpCode, BaseValue = local_BaseValue};
 			return value;
 		}
@@ -69,10 +69,10 @@ namespace FreecraftCore.Serializer
 			GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.TestField, buffer, ref offset);
 			//Type: RecordEnumBaseTestType Field: 2 Name: TestField2 Type: String
 			;
-			TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.TestField2, buffer, ref offset);
+			DontTerminateLengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Int32>.Instance.Write(value.TestField2, buffer, ref offset);
 			//Type: RecordEnumBaseTestType Field: 3 Name: TestArray Type: Int32[]
 			;
-			PrimitiveArrayTypeSerializerStrategy<int>.Instance.Write(value.TestArray, buffer, ref offset);
+			SendSizePrimitiveArrayTypeSerializerStrategy<int, Int32>.Instance.Write(value.TestArray, buffer, ref offset);
 		}
 	}
 }

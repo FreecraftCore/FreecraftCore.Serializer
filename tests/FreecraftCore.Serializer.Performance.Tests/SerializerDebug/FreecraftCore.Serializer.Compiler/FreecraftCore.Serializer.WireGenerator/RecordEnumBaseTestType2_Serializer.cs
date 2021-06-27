@@ -44,7 +44,7 @@ namespace FreecraftCore.Serializer
 		{
 			var local_OpCode = GenericPrimitiveEnumTypeSerializerStrategy<TestEnumOpcode, Int32>.Instance.Read(buffer, ref offset);
 			var local_BaseValue = GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset);
-			FreecraftCore.RecordEnumBaseTestType2 value = new FreecraftCore.RecordEnumBaseTestType2(TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset))
+			FreecraftCore.RecordEnumBaseTestType2 value = new FreecraftCore.RecordEnumBaseTestType2(DontTerminateLengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Int32>.Instance.Read(buffer, ref offset))
 			{OpCode = local_OpCode, BaseValue = local_BaseValue};
 			return value;
 		}
@@ -66,7 +66,7 @@ namespace FreecraftCore.Serializer
 			GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.BaseValue, buffer, ref offset);
 			//Type: RecordEnumBaseTestType2 Field: 1 Name: Derp Type: String
 			;
-			TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.Derp, buffer, ref offset);
+			DontTerminateLengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Int32>.Instance.Write(value.Derp, buffer, ref offset);
 		}
 	}
 }

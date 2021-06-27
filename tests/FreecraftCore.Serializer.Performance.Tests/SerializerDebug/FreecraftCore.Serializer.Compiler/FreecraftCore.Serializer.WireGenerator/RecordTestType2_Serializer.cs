@@ -43,7 +43,7 @@ namespace FreecraftCore.Serializer
 		public override RecordTestType2 Read(Span<byte> buffer, ref int offset)
 		{
 			var local_BaseValue = GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset);
-			FreecraftCore.RecordTestType2 value = new FreecraftCore.RecordTestType2(TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset))
+			FreecraftCore.RecordTestType2 value = new FreecraftCore.RecordTestType2(DontTerminateLengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Int32>.Instance.Read(buffer, ref offset))
 			{BaseValue = local_BaseValue};
 			return value;
 		}
@@ -62,7 +62,7 @@ namespace FreecraftCore.Serializer
 			GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Write(value.BaseValue, buffer, ref offset);
 			//Type: RecordTestType2 Field: 1 Name: Derp Type: String
 			;
-			TerminatedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.Derp, buffer, ref offset);
+			DontTerminateLengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Int32>.Instance.Write(value.Derp, buffer, ref offset);
 		}
 	}
 }
