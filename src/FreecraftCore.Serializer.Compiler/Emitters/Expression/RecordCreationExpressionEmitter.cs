@@ -99,7 +99,7 @@ namespace FreecraftCore.Serializer
 			);
 		}
 
-		private  IEnumerable<SyntaxNodeOrToken> CreateInitializerListSyntaxNodeOrTokens()
+		private IEnumerable<SyntaxNodeOrToken> CreateInitializerListSyntaxNodeOrTokens()
 		{
 			foreach(AssignmentExpressionSyntax statement in BaseStatements
 				.Where(s => s is ExpressionStatementSyntax)
@@ -122,15 +122,6 @@ namespace FreecraftCore.Serializer
 				);
 
 				yield return Token(SyntaxKind.CommaToken);
-				yield return Token
-				(
-					TriviaList(),
-					SyntaxKind.CommaToken,
-					TriviaList
-					(
-						LineFeed
-					)
-				);
 			}
 
 			var last = BaseStatements
@@ -155,16 +146,6 @@ namespace FreecraftCore.Serializer
 				SyntaxKind.SimpleAssignmentExpression,
 				IdentifierName(last.Left.ToFullString().Split('.').Last()),
 				IdentifierName(tempLocalName)
-			);
-
-			yield return Token
-			(
-				TriviaList(),
-				SyntaxKind.CommaToken,
-				TriviaList
-				(
-					LineFeed
-				)
 			);
 		}
 
@@ -211,28 +192,25 @@ namespace FreecraftCore.Serializer
 			if (!DerivedStatements.Any(s => s is ExpressionStatementSyntax))
 				yield break;
 
-			foreach (ExpressionSyntax statement in DerivedStatements
+			foreach (var statement in DerivedStatements
 				.Where(s => s is ExpressionStatementSyntax)
 				.Reverse()
 				.Skip(1)
 				.Reverse()
 				.Cast<ExpressionStatementSyntax>()
-				.Select(es => es.Expression))
+				.Select(es => (AssignmentExpressionSyntax)es.Expression))
 			{
-				if (statement is AssignmentExpressionSyntax aes1)
-					yield return Argument((InvocationExpressionSyntax)aes1.Right);
-
+				yield return Argument(statement.Right);
 				yield return Token(SyntaxKind.CommaToken);
 			}
 
-			ExpressionSyntax last = DerivedStatements
+			var last = DerivedStatements
 				.Where(s => s is ExpressionStatementSyntax)
 				.Cast<ExpressionStatementSyntax>()
-				.Select(es => es.Expression)
+				.Select(es => (AssignmentExpressionSyntax)es.Expression)
 				.Last();
 
-			if(last is AssignmentExpressionSyntax aes2)
-				yield return Argument(aes2.Right);
+			yield return Argument(last.Right);
 		}
 	}
 }

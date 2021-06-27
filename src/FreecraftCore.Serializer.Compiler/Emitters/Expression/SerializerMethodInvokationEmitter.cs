@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using FreecraftCore.Serializer.Internal;
 using JetBrains.Annotations;
@@ -42,6 +43,83 @@ namespace FreecraftCore.Serializer
 					IdentifierName(Mode.ToString())
 				)
 			);
+		}
+
+		public InvocationExpressionSyntax Create(bool withDefaultArgs)
+		{
+			if (!withDefaultArgs)
+				return Create();
+
+			return Create()
+				.WithArgumentList
+				(
+					ArgumentList
+					(
+						SeparatedList<ArgumentSyntax>
+						(
+							Mode == SerializationMode.Write ? ComputeWriteMethodArgs() : ComputeReadMethodArgs()
+						)
+					)
+				);
+		}
+
+		private SyntaxNodeOrToken[] ComputeReadMethodArgs()
+		{
+			return new SyntaxNodeOrToken[]
+			{
+				Argument
+				(
+					IdentifierName(CompilerConstants.BUFFER_NAME)
+				),
+				Token
+				(
+					TriviaList(),
+					SyntaxKind.CommaToken,
+					TriviaList
+					(
+						Space
+					)
+				),
+				Argument
+					(
+						IdentifierName(CompilerConstants.OFFSET_NAME)
+					)
+					.WithRefKindKeyword
+					(
+						Token
+						(
+							TriviaList(),
+							SyntaxKind.RefKeyword,
+							TriviaList
+							(
+								Space
+							)
+						)
+					)
+			};
+		}
+
+		private SyntaxNodeOrToken[] ComputeWriteMethodArgs()
+		{
+			return new SyntaxNodeOrToken[]
+				{
+					Argument
+					(
+						//This is the critical part that accesses the member and passed it for serialization.
+						IdentifierName(CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME)
+					),
+					Token
+					(
+						TriviaList(),
+						SyntaxKind.CommaToken,
+						TriviaList
+						(
+							Space
+						)
+					)
+				}
+				.Concat(ComputeReadMethodArgs())
+				.ToArray();
 		}
 	}
 }

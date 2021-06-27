@@ -182,10 +182,11 @@ namespace FreecraftCore.Serializer
 			try
 			{
 				ICompilationUnitEmittable implementationEmittable = CreateEmittableImplementationSerializerStrategy(typeSymbol);
-				//This cased issues in Analyzer/Generator due to dependency loading
-				SyntaxNode implementationFormattedNode = Formatter.Format(implementationEmittable.CreateUnit(), new AdhocWorkspace());
 
-				WriteEmittedFile(implementationFormattedNode, implementationEmittable);
+				//This cased issues in Analyzer/Generator due to dependency loading
+				//SyntaxNode implementationFormattedNode = Formatter.Format(implementationEmittable.CreateUnit(), new AdhocWorkspace());
+
+				WriteEmittedFile(implementationEmittable.CreateUnit().NormalizeWhitespace("\t", true), implementationEmittable);
 
 				RequiredGenericSerializers.AddRange(implementationEmittable.GetRequestedGenericTypes());
 			}

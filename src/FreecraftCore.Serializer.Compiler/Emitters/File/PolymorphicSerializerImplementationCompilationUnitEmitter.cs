@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using FreecraftCore.Serializer.Internal;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Editing;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace FreecraftCore.Serializer
@@ -856,7 +859,7 @@ namespace FreecraftCore.Serializer
 							ReturnStatement
 								(
 									new SerializerMethodInvokationEmitter(SerializationMode.Read, new GeneratedSerializerNameStringBuilder(this.TypeSymbol).BuildName())
-										.Create()
+										.Create(true)
 								)
 								.WithReturnKeyword
 								(
@@ -1349,7 +1352,7 @@ namespace FreecraftCore.Serializer
 
 		private static ExpressionSyntax CreateSwitchCase(PolymorphicTypeInfo typeInfo)
 		{
-			if (int.TryParse(typeInfo.Index.ToCSharpString(), out int index))
+			if (int.TryParse(typeInfo.Index, out int index))
 			{
 				return LiteralExpression
 				(
@@ -1365,13 +1368,54 @@ namespace FreecraftCore.Serializer
 					(
 						Token(SyntaxKind.IntKeyword)
 					),
-					IdentifierName(typeInfo.Index.ToCSharpString())
+					IdentifierName(typeInfo.Index)
 				);
 			}
 		}
 
 		private IEnumerable<PolymorphicTypeInfo> GetPolymorphicChildTypes()
 		{
+			//Records have special handling optionally with WireDataContractBaseRecordLinkAttribute
+			if (this.TypeSymbol.IsRecord && TypeSymbol.HasAttributeExact<WireDataContractRecordSemanticLinkAttribute>())
+			{
+				//Gets child types with link attribute
+				//and also types that are directly defined as attributed on the base type itself.
+				return CompilationUnit
+					.GetAllTypes()
+					.Where(t => !t.Equals(TypeSymbol, SymbolEqualityComparer.Default) && t.BaseType != null && t.BaseType.Equals(TypeSymbol, SymbolEqualityComparer.Default))
+					.Where(t => t.HasAttributeExact<WireDataContractAttribute>() && t.IsRecord)
+					.Select(t =>
+					{
+						//var collector = new InvocationExpressionCollector();
+						//Compiler will emit Record base ctor in IL as last invokation in ctor
+						var recordSyntax = t.DeclaringSyntaxReferences
+							.First()
+							.GetSyntax()
+							.DescendantNodesAndTokensAndSelf(node => true, false)
+							.Where(n => Test(n))
+							.Select(n => (RecordDeclarationSyntax) n.AsNode())
+							.ToArray()
+							.First();
+
+						if (recordSyntax.BaseList != null)
+						{
+							var primaryBaseCtorFirstArg = recordSyntax.BaseList
+								.DescendantNodesAndSelf(node => true, true)
+								.Where(n => n is PrimaryConstructorBaseTypeSyntax)
+								.First()
+								.DescendantNodesAndSelf(node => true)
+								.OfType<LiteralExpressionSyntax>()
+								.First();
+
+							return new PolymorphicTypeInfo(primaryBaseCtorFirstArg.ToFullString(), t);
+						}
+
+						return null;
+					})
+					.Where(t => t != null)
+					.Distinct();
+			}
+
 			//Gets child types with link attribute
 			//and also types that are directly defined as attributed on the base type itself.
 			return CompilationUnit
@@ -1381,13 +1425,19 @@ namespace FreecraftCore.Serializer
 				.Select(t =>
 				{
 					AttributeData attribute = t.GetAttributeLike<WireDataContractBaseLinkAttribute>();
-					return new PolymorphicTypeInfo(attribute.ConstructorArguments.First(), t);
+					return new PolymorphicTypeInfo(attribute.ConstructorArguments.First().ToCSharpString(), t);
 				})
 				.Concat(TypeSymbol.GetAttributesLike<WireDataContractBaseTypeAttribute>().Select(a =>
 				{
-					return new PolymorphicTypeInfo(a.ConstructorArguments.First(), (ITypeSymbol)a.ConstructorArguments.Last().Value);
+					return new PolymorphicTypeInfo(a.ConstructorArguments.First().ToCSharpString(), (ITypeSymbol)a.ConstructorArguments.Last().Value);
 				}))
 				.Distinct();
+		}
+
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		private static bool Test(SyntaxNodeOrToken n)
+		{
+			return n.IsNode && n.AsNode().Kind() == SyntaxKind.RecordDeclaration;
 		}
 
 		private IdentifierNameSyntax CreateChildTypeIdentifier([NotNull] ITypeSymbol childType)

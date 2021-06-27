@@ -13,14 +13,14 @@ namespace FreecraftCore.Serializer
 	public sealed class PolymorphicTypeInfo
 	{
 		/// <inheritdoc />
-		public TypedConstant Index { get; }
+		public string Index { get; }
 
 		/// <summary>
 		/// The child type.
 		/// </summary>
 		public ITypeSymbol ChildType { get; }
 
-		public PolymorphicTypeInfo(TypedConstant index, [NotNull] ITypeSymbol childType)
+		public PolymorphicTypeInfo(string index, [NotNull] ITypeSymbol childType)
 		{
 			Index = index;
 			ChildType = childType ?? throw new ArgumentNullException(nameof(childType));

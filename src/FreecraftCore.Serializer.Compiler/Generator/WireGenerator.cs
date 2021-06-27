@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -16,7 +17,9 @@ namespace FreecraftCore.Serializer
 	[Generator]
 	public sealed class WireGenerator : ISourceGenerator
 	{
-		public void Initialize(GeneratorInitializationContext context)
+		public static ConcurrentDictionary<string, Assembly> AssemblyLoadedMap { get; } = new ConcurrentDictionary<string, Assembly>();
+
+		static WireGenerator()
 		{
 #if DEBUG
 			if(!Debugger.IsAttached)
@@ -24,6 +27,28 @@ namespace FreecraftCore.Serializer
 				Debugger.Launch();
 			}
 #endif
+
+			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+			AppDomain.CurrentDomain.AssemblyLoad += CurrentDomainOnAssemblyLoad;
+		}
+
+		public static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+		{
+			string simpleName = args.Name.Split(',').First();
+			if (AssemblyLoadedMap.ContainsKey(simpleName))
+				return AssemblyLoadedMap[simpleName];
+
+			return AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name.Split(',').First() == simpleName);
+		}
+
+		private static void CurrentDomainOnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
+		{
+			AssemblyLoadedMap[args.LoadedAssembly.GetName().Name] = args.LoadedAssembly;
+		}
+
+		public void Initialize(GeneratorInitializationContext context)
+		{
+
 		}
 
 		public void Execute(GeneratorExecutionContext context)
