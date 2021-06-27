@@ -21,12 +21,12 @@ namespace FreecraftCore.Serializer
 
 		static WireGenerator()
 		{
-#if DEBUG
+/*#if DEBUG
 			if(!Debugger.IsAttached)
 			{
 				Debugger.Launch();
 			}
-#endif
+#endif*/
 
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 			AppDomain.CurrentDomain.AssemblyLoad += CurrentDomainOnAssemblyLoad;
