@@ -29,7 +29,7 @@ namespace FreecraftCore.Serializer
 			EncodingType encodingType = EncodingType.ASCII;
 
 			//Overriding default behavior.
-			bool hasSaneDefaults = ActualType.HasAttributeExact<WireSaneDefaultsAttribute>(true);
+			bool hasSaneDefaults = Member.ContainingType.HasAttributeExact<WireSaneDefaultsAttribute>(true);
 
 			if (Member.HasAttributeExact<EncodingAttribute>())
 				encodingType = EncodingAttribute.Parse(Member.GetAttributeExact<EncodingAttribute>().ConstructorArguments.First().ToCSharpString());

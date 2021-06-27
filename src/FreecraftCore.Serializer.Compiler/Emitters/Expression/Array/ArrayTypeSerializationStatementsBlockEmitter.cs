@@ -23,7 +23,7 @@ namespace FreecraftCore.Serializer
 		public override InvocationExpressionSyntax Create()
 		{
 			//Overriding default behavior.
-			bool hasSaneDefaults = ActualType.HasAttributeExact<WireSaneDefaultsAttribute>(true);
+			bool hasSaneDefaults = Member.ContainingType.HasAttributeExact<WireSaneDefaultsAttribute>(true);
 
 			//TODO: Support seperated collection sizes
 			//Case where the array will be send with length-prefixed size
