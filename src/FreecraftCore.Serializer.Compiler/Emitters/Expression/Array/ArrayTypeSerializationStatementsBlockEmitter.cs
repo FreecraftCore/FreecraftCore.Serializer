@@ -21,11 +21,24 @@ namespace FreecraftCore.Serializer
 
 		public override InvocationExpressionSyntax Create()
 		{
+			//Overriding default behavior.
+			bool hasSaneDefaults = ActualType.HasAttributeExact<WireSaneDefaultsAttribute>(true);
+
 			//TODO: Support seperated collection sizes
 			//Case where the array will be send with length-prefixed size
-			if (Member.HasAttributeExact<SendSizeAttribute>())
+
+			//Prefer length-prefixing for performance, that is why it's the sane default.
+			if (Member.HasAttributeExact<SendSizeAttribute>() || (hasSaneDefaults && !Member.HasAttributeExact<KnownSizeAttribute>())) //SANE DEFAULT
 			{
-				var generator = new ArraySerializerGenerator(ActualType, Member, Mode, CreateSendSizeExpressionEmitter(Member.GetAttributeExact<SendSizeAttribute>()));
+				IInvokationExpressionEmittable invokable;
+
+				//Only other case is sane defaults are enabled.
+				if (Member.HasAttributeExact<SendSizeAttribute>())
+					invokable = CreateSendSizeExpressionEmitter(Member.GetAttributeExact<SendSizeAttribute>());
+				else
+					invokable = CreateSendSizeExpressionEmitter(PrimitiveSizeType.Int32); //SANE DEFAULT size
+
+				var generator = new ArraySerializerGenerator(ActualType, Member, Mode, invokable);
 				return generator.Create();
 			}
 			else if (Member.HasAttributeExact<KnownSizeAttribute>())
@@ -70,7 +83,12 @@ namespace FreecraftCore.Serializer
 			//TODO: If this ever changes we're fucked.
 			PrimitiveSizeType sizeType = InternalEnumExtensions.ParseFull<PrimitiveSizeType>(sendSizeAttri.ConstructorArguments.First().ToCSharpString(), true);
 
-			if(ActualType.ElementType.IsPrimitive())
+			return CreateSendSizeExpressionEmitter(sizeType);
+		}
+
+		private IInvokationExpressionEmittable CreateSendSizeExpressionEmitter(PrimitiveSizeType sizeType)
+		{
+			if (ActualType.ElementType.IsPrimitive())
 				return new SendSizePrimitiveArrayInvokationExpressionEmitter(ActualType, Member, sizeType, Mode);
 			else
 				return new SendSizeComplexArrayInvokationExpressionEmitter(ActualType, Member, sizeType, Mode);

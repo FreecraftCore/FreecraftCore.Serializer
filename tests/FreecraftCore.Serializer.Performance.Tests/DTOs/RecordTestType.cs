@@ -5,6 +5,7 @@ using FreecraftCore.Serializer;
 
 namespace FreecraftCore
 {
+	[WireSaneDefaults]
 	[WireDataContractRecordSemanticLink]
 	[WireDataContract(PrimitiveSizeType.Int16)]
 	public abstract partial record BaseRecordTestType(int BaseValue);

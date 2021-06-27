@@ -27,10 +27,13 @@ namespace FreecraftCore.Serializer
 			//Default to ASCII if no encoding specified
 			EncodingType encodingType = EncodingType.ASCII;
 
+			//Overriding default behavior.
+			bool hasSaneDefaults = ActualType.HasAttributeExact<WireSaneDefaultsAttribute>(true);
+
 			if (Member.HasAttributeExact<EncodingAttribute>())
 				encodingType = EncodingAttribute.Parse(Member.GetAttributeExact<EncodingAttribute>().ConstructorArguments.First().ToCSharpString());
 
-			if (Member.HasAttributeExact<KnownSizeAttribute>() && Member.HasAttributeExact<SendSizeAttribute>())
+			if (Member.HasAttributeExact<KnownSizeAttribute>() && Member.HasAttributeExact<SendSizeAttribute>() && !hasSaneDefaults)
 				throw new InvalidOperationException($"Emit failed for Member: {ActualType} in Type: {Member.ContainingType.Name}. Cannot use Attributes: {nameof(SendSizeAttribute)} and {nameof(KnownSizeAttribute)} together.");
 			
 			if (IsSendSizeString() && !Member.HasAttributeExact<DontTerminateAttribute>())
@@ -39,10 +42,13 @@ namespace FreecraftCore.Serializer
 				var generator = new RawLengthPrefixedStringTypeSerializationGenerator(ActualType, Member, Mode, encodingType, sendSize);
 				return generator.Create();
 			}
-			else if (IsSendSizeString())
+			else if (IsSendSizeString() || (hasSaneDefaults && !IsKnownSizeString())) //SANE DEFAULT
 			{
 				//Dont Terminate attribute FOUND!
-				PrimitiveSizeType sendSize = SendSizeAttribute.Parse(Member.GetAttributeExact<SendSizeAttribute>().ConstructorArguments.First().ToCSharpString());
+				PrimitiveSizeType sendSize = PrimitiveSizeType.Int32; //SANE DEFAULT size 65,000
+
+				if (Member.HasAttributeExact<SendSizeAttribute>())
+					sendSize = SendSizeAttribute.Parse(Member.GetAttributeExact<SendSizeAttribute>().ConstructorArguments.First().ToCSharpString());
 
 				var generator = new RawDontTerminateLengthPrefixedStringTypeSerializationGenerator(ActualType, Member, Mode, encodingType, sendSize);
 				return generator.Create();

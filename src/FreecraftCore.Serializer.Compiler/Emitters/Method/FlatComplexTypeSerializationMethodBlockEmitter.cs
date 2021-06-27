@@ -71,6 +71,9 @@ namespace FreecraftCore.Serializer
 				if (namedSymbol.IsUnboundGenericType)
 					throw new InvalidOperationException($"Cannot emit member serialization for open generic Type: {namedSymbol.Name}");
 
+			//Overriding default behavior.
+			bool hasSaneDefaults = currentType.HasAttributeExact<WireSaneDefaultsAttribute>(true);
+
 			int memberCount = 1;
 			//Conceptually, we need to find ALL serializable members
 			foreach (ISymbol mi in ComputeOrderedSerializableMembers(currentType)) //order is important, we must emit in order!!
