@@ -33,14 +33,14 @@
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 
-	<PropertyGroup>
-		<GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" GeneratePathProperty="true" />
 		<ProjectReference Include="..\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj" GeneratePathProperty="true" />
 	</ItemGroup>
+
+	<PropertyGroup>
+		<GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.Compilers" Version="3.9.0-2.final" PrivateAssets="all" GeneratePathProperty="true" />
