@@ -858,7 +858,7 @@ namespace FreecraftCore.Serializer
 						(
 							ReturnStatement
 								(
-									new SerializerMethodInvokationEmitter(SerializationMode.Read, new GeneratedSerializerNameStringBuilder(this.TypeSymbol).BuildName())
+									new SerializerMethodInvokationEmitter(SerializationMode.Read, new GeneratedSerializerNameStringBuilder(typeInfo.ChildType).BuildName())
 										.Create(true)
 								)
 								.WithReturnKeyword
