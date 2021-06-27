@@ -1399,13 +1399,23 @@ namespace FreecraftCore.Serializer
 
 						if (recordSyntax.BaseList != null)
 						{
-							var primaryBaseCtorFirstArg = recordSyntax.BaseList
+							ExpressionSyntax primaryBaseCtorFirstArg = recordSyntax.BaseList
 								.DescendantNodesAndSelf(node => true, true)
 								.Where(n => n is PrimaryConstructorBaseTypeSyntax)
 								.First()
 								.DescendantNodesAndSelf(node => true)
 								.OfType<LiteralExpressionSyntax>()
-								.First();
+								.FirstOrDefault();
+
+							//Maybe it's an enum
+							if (primaryBaseCtorFirstArg == null)
+								primaryBaseCtorFirstArg = recordSyntax.BaseList
+									.DescendantNodesAndSelf(node => true, true)
+									.Where(n => n is PrimaryConstructorBaseTypeSyntax)
+									.First()
+									.DescendantNodesAndSelf(node => true)
+									.OfType<MemberAccessExpressionSyntax>()
+									.FirstOrDefault();
 
 							return new PolymorphicTypeInfo(primaryBaseCtorFirstArg.ToFullString(), t);
 						}
