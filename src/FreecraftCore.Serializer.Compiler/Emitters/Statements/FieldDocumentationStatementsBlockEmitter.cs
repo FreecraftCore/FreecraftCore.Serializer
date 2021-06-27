@@ -14,6 +14,8 @@ namespace FreecraftCore.Serializer
 {
 	public sealed class FieldDocumentationStatementsBlockEmitter : BaseSerializationStatementsBlockEmitter
 	{
+		public int? OptionalFieldNumber { get; init; }
+
 		public FieldDocumentationStatementsBlockEmitter([NotNull] ITypeSymbol actualType, [NotNull] ISymbol member)
 			: base(actualType, member, SerializationMode.None)
 		{
@@ -24,7 +26,7 @@ namespace FreecraftCore.Serializer
 		{
 			List<StatementSyntax> statements = new List<StatementSyntax>();
 
-			int fieldId = int.Parse(Member.GetAttributeExact<WireMemberAttribute>().ConstructorArguments.First().ToCSharpString());
+			int fieldId = OptionalFieldNumber ?? int.Parse(Member.GetAttributeExact<WireMemberAttribute>().ConstructorArguments.First().ToCSharpString());
 
 			//Gather all field MetaData to document it.
 

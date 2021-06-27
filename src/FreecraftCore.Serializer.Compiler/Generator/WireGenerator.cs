@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,7 +18,12 @@ namespace FreecraftCore.Serializer
 	{
 		public void Initialize(GeneratorInitializationContext context)
 		{
-
+#if DEBUG
+			if(!Debugger.IsAttached)
+			{
+				Debugger.Launch();
+			}
+#endif
 		}
 
 		public void Execute(GeneratorExecutionContext context)
@@ -50,23 +56,13 @@ namespace FreecraftCore.Serializer
 
 				try
 				{
-					context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("FCC001", "Compiler Failure", $"Error: {e.GetType().Name}. Failed: {e.Message} Stack: {{0}}", "Error", DiagnosticSeverity.Error, true), Location.None, BuildStackTrace(e)));
+					context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("FCC001", "Compiler Failure", $"Error: {e.GetType().Name}. Failed: {e.Message} Stack: {{0}}", "Error", DiagnosticSeverity.Error, true), Location.None, e.StackTrace));
 				}
 				finally
 				{
 					throw e;
 				}
 			}
-		}
-
-		private static string BuildStackTrace(Exception e)
-		{
-			return e.StackTrace
-				.Replace('{', ' ')
-				.Replace('}', ' ')
-				.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-				.Skip(5)
-				.Aggregate((s1, s2) => $"{s1} {s2}");
 		}
 	}
 }

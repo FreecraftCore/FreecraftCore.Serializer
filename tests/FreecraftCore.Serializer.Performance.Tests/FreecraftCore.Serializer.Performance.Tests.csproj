@@ -17,16 +17,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FreecraftCore.Serializer.Compiler" Version="4.0.56" ReferenceOutputAssembly="false" OutputItemType="Analyzer">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="FreecraftCore.Serializer" Version="4.0.56" />
-    <PackageReference Include="FreecraftCore.Serializer.Metadata" Version="4.0.56" />
     <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="3.9.0-2.final">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Compiler\FreecraftCore.Serializer.Compiler.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" />
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="SerializerDebug\FreecraftCore.Serializer.Compiler\" />
   </ItemGroup>
 
 </Project>

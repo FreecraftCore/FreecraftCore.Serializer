@@ -52,9 +52,10 @@ namespace FreecraftCore.Serializer
 				.Reverse()
 				.Where(t => t.HasAttributeExact<WireDataContractAttribute>()))
 			{
-				statements = EmitTypesMemberSerialization(t, statements);
+				statements = EmitTypesMemberSerialization(t, statements, t == Symbol);
 			}
 
+			//TODO: This doesn't work with Records
 			//If they register Serialization Callbacks then on READ we do an After Deserialization call
 			if(isSerializationCallbackRegistered && Mode == SerializationMode.Read)
 				statements = statements.Add(new SerializationCallbackInvokationExpressionEmitter(Mode).Create().ToStatement());
@@ -62,25 +63,17 @@ namespace FreecraftCore.Serializer
 			return SyntaxFactory.Block(statements);
 		}
 
-		private SyntaxList<StatementSyntax> EmitTypesMemberSerialization(ITypeSymbol currentType, SyntaxList<StatementSyntax> statements)
+		private SyntaxList<StatementSyntax> EmitTypesMemberSerialization(ITypeSymbol currentType, SyntaxList<StatementSyntax> totalStatements, bool mostDerivedSymbol)
 		{
+			SyntaxList<StatementSyntax> statements = new SyntaxList<StatementSyntax>();
+
 			if (currentType is INamedTypeSymbol namedSymbol)
 				if (namedSymbol.IsUnboundGenericType)
 					throw new InvalidOperationException($"Cannot emit member serialization for open generic Type: {namedSymbol.Name}");
 
+			int memberCount = 1;
 			//Conceptually, we need to find ALL serializable members
-			foreach (ISymbol mi in currentType
-				.GetMembers()
-				.Where(m => !m.IsStatic)
-				.Where(m => m.HasAttributeExact<WireMemberAttribute>())
-				.OrderBy(m =>
-				{
-					//Seperated lines for debugging purposes.
-					AttributeData attri = m.GetAttributeExact<WireMemberAttribute>();
-					ImmutableArray<TypedConstant> attriArgs = attri.ConstructorArguments;
-					string value = attriArgs.First().ToCSharpString();
-					return WireMemberAttribute.Parse(value);
-				})) //order is important, we must emit in order!!
+			foreach (ISymbol mi in ComputeOrderedSerializableMembers(currentType)) //order is important, we must emit in order!!
 			{
 				//Basically doesn't matter if it's a field or property, we just wanna know the Type
 				//The reason is, setting and getting fields vs members are same syntax
@@ -88,7 +81,12 @@ namespace FreecraftCore.Serializer
 
 				AnalyzeMemberTypeForGenerics(memberType);
 
-				FieldDocumentationStatementsBlockEmitter commentEmitter = new FieldDocumentationStatementsBlockEmitter(memberType, mi);
+				//If record we override doc checking WireMember
+				FieldDocumentationStatementsBlockEmitter commentEmitter = new FieldDocumentationStatementsBlockEmitter(memberType, mi)
+				{
+					OptionalFieldNumber = Symbol.IsRecord ? memberCount : null
+				};
+
 				statements = statements.AddRange(commentEmitter.CreateStatements());
 
 				//The serializer is requesting we DON'T WRITE THIS! So we skip
@@ -186,9 +184,50 @@ namespace FreecraftCore.Serializer
 				//Add 2 line breaks
 				//statements = statements.AddRange(new EmptyLineStatementBlockEmitter().CreateStatements());
 				//statements = statements.AddRange(new EmptyLineStatementBlockEmitter().CreateStatements());
+				memberCount++;
 			}
 
-			return statements;
+			//Only record mode records have special deserialization
+			//We only actually create the constructor for the most derived symbol
+			if (mostDerivedSymbol && Symbol.IsRecord && Mode == SerializationMode.Read)
+			{
+				statements = new SyntaxList<StatementSyntax>(CreateRecordInitializationStatement(statements, totalStatements));
+				statements = statements.Add(SyntaxFactory.ReturnStatement(SyntaxFactory.IdentifierName(CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME)));
+				return statements;
+			}
+
+			return totalStatements.AddRange(statements);
+		}
+
+		private List<StatementSyntax> CreateRecordInitializationStatement(SyntaxList<StatementSyntax> statements, SyntaxList<StatementSyntax> baseStatements)
+		{
+			return new RecordCreationExpressionEmitter(Symbol, Symbol.ToFullName(), statements.ToList(), baseStatements.ToList())
+				.CreateStatements();
+		}
+
+		private static IEnumerable<ISymbol> ComputeOrderedSerializableMembers(ITypeSymbol currentType)
+		{
+			//Special handling for records allow us to NOT use any attributes
+			if (currentType.IsRecord)
+			{
+				//Record types have a virtual Type EqualityContract defined. Just ignore virtuals to make this easier
+				return currentType
+					.GetMembers()
+					.Where(t => t.Kind == SymbolKind.Property && !t.IsStatic && !t.IsVirtual && t.Name != "EqualityContract");
+			}
+
+			return currentType
+				.GetMembers()
+				.Where(m => !m.IsStatic)
+				.Where(m => m.HasAttributeExact<WireMemberAttribute>())
+				.OrderBy(m =>
+				{
+					//Seperated lines for debugging purposes.
+					AttributeData attri = m.GetAttributeExact<WireMemberAttribute>();
+					ImmutableArray<TypedConstant> attriArgs = attri.ConstructorArguments;
+					string value = attriArgs.First().ToCSharpString();
+					return WireMemberAttribute.Parse(value);
+				});
 		}
 
 		private void AnalyzeMemberTypeForGenerics([NotNull] ITypeSymbol memberType)

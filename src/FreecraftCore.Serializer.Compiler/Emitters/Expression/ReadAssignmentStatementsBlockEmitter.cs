@@ -24,20 +24,38 @@ namespace FreecraftCore.Serializer
 		public override List<StatementSyntax> CreateStatements()
 		{
 			List<StatementSyntax> statements = new List<StatementSyntax>();
-			statements.Add(ExpressionStatement
-			(
-				AssignmentExpression
+			
+			if (Member.ContainingType.IsRecord)
+			{
+				//Records have special handling where we assign directly via init
+				//rather than assign to the field
+				statements.Add(ExpressionStatement
 				(
-					SyntaxKind.SimpleAssignmentExpression,
-					MemberAccessExpression
+					AssignmentExpression
 					(
-						SyntaxKind.SimpleMemberAccessExpression,
-						IdentifierName(CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME),
-						IdentifierName(Member.Name)
-					),
-					Expression
-				)
-			));
+						SyntaxKind.SimpleAssignmentExpression,
+						IdentifierName(Member.Name),
+						Expression
+					)
+				));
+			}
+			else
+			{
+				statements.Add(ExpressionStatement
+				(
+					AssignmentExpression
+					(
+						SyntaxKind.SimpleAssignmentExpression,
+						MemberAccessExpression
+						(
+							SyntaxKind.SimpleMemberAccessExpression,
+							IdentifierName(CompilerConstants.SERIALZIABLE_OBJECT_REFERENCE_NAME),
+							IdentifierName(Member.Name)
+						),
+						Expression
+					)
+				));
+			}
 
 			return statements;
 		}
