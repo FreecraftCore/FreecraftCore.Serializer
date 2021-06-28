@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using FreecraftCore.Serializer.Internal;
 using Glader.Essentials;
@@ -211,6 +212,7 @@ namespace FreecraftCore.Serializer
 
 		private static IEnumerable<ISymbol> ComputeOrderedSerializableMembers(ITypeSymbol currentType)
 		{
+			//TODO: Record types are broken if they contain normal get/set properties. We don't treat them as initiable.
 			//Special handling for records allow us to NOT use any attributes
 			if (currentType.IsRecord && !currentType
 				.GetMembers()
@@ -220,7 +222,8 @@ namespace FreecraftCore.Serializer
 				//Record types have a virtual Type EqualityContract defined. Just ignore virtuals to make this easier
 				return currentType
 					.GetMembers()
-					.Where(t => t.Kind == SymbolKind.Property && !t.IsStatic && !t.IsVirtual && t.Name != "EqualityContract");
+					.Where(m => m.Kind == SymbolKind.Property && !m.IsStatic && !m.IsVirtual && m.Name != "EqualityContract")
+					.Where(t => !t.HasAttributeLike<IgnoreDataMemberAttribute>());
 			}
 
 			return currentType
