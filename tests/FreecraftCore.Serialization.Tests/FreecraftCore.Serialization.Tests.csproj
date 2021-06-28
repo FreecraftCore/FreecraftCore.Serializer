@@ -8,12 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FreecraftCore.Serializer.Compiler" Version="4.0.56">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="FreecraftCore.Serializer" Version="4.0.56" />
-    <PackageReference Include="FreecraftCore.Serializer.Metadata" Version="4.0.56" />
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
     <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="3.9.0-2.final">
       <PrivateAssets>all</PrivateAssets>
@@ -36,6 +30,22 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FreecraftCore.Serializer.Compiler.ManualTest\FreecraftCore.Serializer.Compiler.ManualTest.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <RestoreSources>$(RestoreSources);../../src/FreecraftCore.Serializer.Compiler/bin/Release;../../src/FreecraftCore.Serializer/bin/Release;../../src/FreecraftCore.Serializer.Metadata/bin/Release</RestoreSources>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Compiler\FreecraftCore.Serializer.Compiler.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <PackageReference Include="FreecraftCore.Serializer.Compiler" Version="4.1.57" ReferenceOutputAssembly="false" OutputItemType="Analyzer"></PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="SerializerDebug\FreecraftCore.Serializer.Compiler\" />
   </ItemGroup>
 
 </Project>
