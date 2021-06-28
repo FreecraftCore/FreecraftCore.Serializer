@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='Release'">
-    <PackageReference Include="FreecraftCore.Serializer.Compiler" Version="4.1.57" ReferenceOutputAssembly="false" OutputItemType="Analyzer"></PackageReference>
+    <PackageReference Include="FreecraftCore.Serializer.Compiler" Version="4.1.58" ReferenceOutputAssembly="false" OutputItemType="Analyzer"></PackageReference>
   </ItemGroup>
 
   <ItemGroup>
