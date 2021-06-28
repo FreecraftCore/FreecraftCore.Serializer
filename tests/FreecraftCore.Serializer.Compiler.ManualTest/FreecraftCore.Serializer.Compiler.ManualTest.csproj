@@ -10,8 +10,20 @@
     <None Include="SerializerDebug\**" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <RestoreSources>$(RestoreSources);../../src/FreecraftCore.Serializer.Compiler/bin/Release;../../src/FreecraftCore.Serializer/bin/Release;../../src/FreecraftCore.Serializer.Metadata/bin/Release</RestoreSources>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Compiler\FreecraftCore.Serializer.Compiler.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <PackageReference Include="FreecraftCore.Serializer.Compiler" Version="4.1.57" ReferenceOutputAssembly="false" OutputItemType="Analyzer"></PackageReference>
+  </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="FreecraftCore.Serializer.Compiler" Version="4.0.56" />
+    <Folder Include="SerializerDebug\FreecraftCore.Serializer.Compiler\" />
   </ItemGroup>
 
 </Project>
