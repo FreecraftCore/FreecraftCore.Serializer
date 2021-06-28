@@ -212,7 +212,10 @@ namespace FreecraftCore.Serializer
 		private static IEnumerable<ISymbol> ComputeOrderedSerializableMembers(ITypeSymbol currentType)
 		{
 			//Special handling for records allow us to NOT use any attributes
-			if (currentType.IsRecord)
+			if (currentType.IsRecord && !currentType
+				.GetMembers()
+				.Where(m => !m.IsStatic)
+				.Any(m => m.HasAttributeExact<WireMemberAttribute>()))
 			{
 				//Record types have a virtual Type EqualityContract defined. Just ignore virtuals to make this easier
 				return currentType
