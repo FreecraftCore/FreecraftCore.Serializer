@@ -53,7 +53,7 @@ namespace FreecraftCore.Serializer
 				.Reverse()
 				.Where(t => t.HasAttributeExact<WireDataContractAttribute>()))
 			{
-				statements = EmitTypesMemberSerialization(t, statements, t == Symbol);
+				statements = EmitTypesMemberSerialization(t, statements, t.Equals(Symbol, SymbolEqualityComparer.Default));
 			}
 
 			//TODO: This doesn't work with Records
