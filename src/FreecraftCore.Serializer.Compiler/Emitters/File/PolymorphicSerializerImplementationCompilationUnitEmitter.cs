@@ -939,26 +939,8 @@ namespace FreecraftCore.Serializer
 							(
 								ReturnStatement
 									(
-										ObjectCreationExpression
-											(
-												IdentifierName(childTypeSymbol.Name)
-											)
-											.WithNewKeyword
-											(
-												Token
-												(
-													TriviaList(),
-													SyntaxKind.NewKeyword,
-													TriviaList
-													(
-														Space
-													)
-												)
-											)
-											.WithArgumentList
-											(
-												ArgumentList()
-											)
+										new SerializerMethodInvokationEmitter(SerializationMode.Read, new GeneratedSerializerNameStringBuilder(childTypeSymbol).BuildName())
+											.Create(true)
 									)
 									.WithReturnKeyword
 									(

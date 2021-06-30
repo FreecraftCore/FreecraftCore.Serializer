@@ -41,8 +41,10 @@ namespace FreecraftCore.Serializer
 					return RecordTestType_Serializer.Instance.Read(buffer, ref offset);
 				case 2:
 					return RecordTestType2_Serializer.Instance.Read(buffer, ref offset);
+				case 0:
+					return UnknownRecordTestType_Serializer.Instance.Read(buffer, ref offset);
 				default:
-					throw new NotImplementedException($"Encountered unimplemented sub-type for Type: {nameof(BaseRecordTestType)} with Key: {key}");
+					return UnknownRecordTestType_Serializer.Instance.Read(buffer, ref offset);
 			}
 		}
 	}

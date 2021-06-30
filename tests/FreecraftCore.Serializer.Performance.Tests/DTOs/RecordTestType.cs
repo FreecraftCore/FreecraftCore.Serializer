@@ -7,6 +7,7 @@ using FreecraftCore.Serializer;
 namespace FreecraftCore
 {
 	[WireSaneDefaults]
+	[DefaultChild(typeof(UnknownRecordTestType))]
 	[WireDataContractRecordSemanticLink]
 	[WireDataContract(PrimitiveSizeType.Int16)]
 	public abstract partial record BaseRecordTestType(int BaseValue);
@@ -20,4 +21,7 @@ namespace FreecraftCore
 
 	[WireDataContract]
 	public partial record RecordTestType2(string Derp) : BaseRecordTestType(2);
+
+	[WireDataContract]
+	public partial record UnknownRecordTestType(string Derp) : BaseRecordTestType(0);
 }
