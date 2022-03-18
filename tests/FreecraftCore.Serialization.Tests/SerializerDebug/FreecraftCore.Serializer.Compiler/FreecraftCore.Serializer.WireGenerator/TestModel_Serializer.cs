@@ -45,7 +45,7 @@ namespace FreecraftCore.Serializer
 		{
 			//Type: TestModel Field: 1 Name: TestEnumField Type: TestEnum
 			;
-			value.TestEnumField = InternalEnumExtensions.Parse<TestEnum>(FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_4, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Read(buffer, ref offset), true);
+			value.TestEnumField = InternalEnumExtensions.Parse<TestEnum>(FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_4>.Instance.Read(buffer, ref offset), true);
 		}
 
 		/// <summary>
@@ -59,7 +59,7 @@ namespace FreecraftCore.Serializer
 		{
 			//Type: TestModel Field: 1 Name: TestEnumField Type: TestEnum
 			;
-			FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_4, ASCIIStringTerminatorTypeSerializerStrategy>.Instance.Write(value.TestEnumField, buffer, ref offset);
+			FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, StaticTypedNumeric_Int32_4>.Instance.Write(value.TestEnumField, buffer, ref offset);
 		}
 
 		private sealed class StaticTypedNumeric_Int32_4 : StaticTypedNumeric<Int32>

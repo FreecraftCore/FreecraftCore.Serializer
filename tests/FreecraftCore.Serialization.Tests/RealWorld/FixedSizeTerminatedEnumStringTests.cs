@@ -32,6 +32,7 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 	[WireDataContract]
 	public sealed partial class TestModel
 	{
+		[DontTerminate]
 		[Encoding(EncodingType.ASCII)]
 		[EnumString]
 		[KnownSize(4)]
