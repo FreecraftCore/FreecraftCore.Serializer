@@ -1377,15 +1377,13 @@ namespace FreecraftCore.Serializer
 							.DescendantNodesAndTokensAndSelf(node => true, false)
 							.Where(n => Test(n))
 							.Select(n => (RecordDeclarationSyntax) n.AsNode())
-							.ToArray()
 							.First();
 
 						if (recordSyntax.BaseList != null)
 						{
 							ExpressionSyntax primaryBaseCtorFirstArg = recordSyntax.BaseList
 								.DescendantNodesAndSelf(node => true, true)
-								.Where(n => n is PrimaryConstructorBaseTypeSyntax)
-								.First()
+								.First(n => n is PrimaryConstructorBaseTypeSyntax)
 								.DescendantNodesAndSelf(node => true)
 								.OfType<LiteralExpressionSyntax>()
 								.FirstOrDefault();
