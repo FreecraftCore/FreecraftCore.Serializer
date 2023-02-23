@@ -55,13 +55,6 @@ namespace FreecraftCore.Serializer
 		{
 			try
 			{
-				// TODO: WARNING: This is a MEGA HACK to try to get this source generator not to run within the IDE
-				// and ONLY on external builds. It's a disaster for perf in the IDE and I cannot invest time to solve that
-				// Hopefully this is a good enough hacky short-term solution.
-				// The entry assembly in the IDE will be "csc"
-				if (Assembly.GetEntryAssembly()?.GetName().Name.ToLowerInvariant().Contains("csc") == true)
-					return;
-
 				INamedTypeSymbol[] symbols = context
 					.Compilation
 					.Assembly
