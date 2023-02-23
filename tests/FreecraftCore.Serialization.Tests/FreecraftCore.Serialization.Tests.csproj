@@ -33,7 +33,8 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <RestoreSources>$(RestoreSources);../../src/FreecraftCore.Serializer.Compiler/bin/Release;../../src/FreecraftCore.Serializer/bin/Release;../../src/FreecraftCore.Serializer.Metadata/bin/Release</RestoreSources>
+    <RestoreSources>$(RestoreSources);../../src/FreecraftCore.Serializer.Compiler/bin/Release;../../src/FreecraftCore.Serializer/bin/Release;../../src/FreecraftCore.Serializer.Metadata/bin/Release;https://api.nuget.org/v3/index.json;</RestoreSources>
+    <RestoreSources>$(RestoreSources);../../src/FreecraftCore.Serializer.Compiler/bin/Release;../../src/FreecraftCore.Serializer/bin/Release;../../src/FreecraftCore.Serializer.Metadata/bin/Release;https://api.nuget.org/v3/index.json;</RestoreSources>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
