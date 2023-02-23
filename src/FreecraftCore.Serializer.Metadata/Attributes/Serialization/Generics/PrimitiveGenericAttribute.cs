@@ -15,9 +15,24 @@ namespace FreecraftCore.Serializer
 	public sealed class PrimitiveGenericAttribute : BaseGenericListAttribute
 	{
 		/// <summary>
-		/// Roslyn compiler exposed instace of the property.
+		/// Roslyn compiler exposed instance of the property.
 		/// </summary>
 		internal static PrimitiveGenericAttribute Instance { get; } = new PrimitiveGenericAttribute();
+
+		internal static List<Type> CachedTypes { get; } = new()
+		{
+			typeof(sbyte),
+			typeof(byte),
+			typeof(ushort),
+			typeof(short),
+			typeof(uint),
+			typeof(int),
+			typeof(ulong),
+			typeof(long),
+			typeof(float),
+			typeof(bool),
+			typeof(double),
+		};
 
 		//Do not remove.
 		static PrimitiveGenericAttribute()
@@ -29,19 +44,10 @@ namespace FreecraftCore.Serializer
 		{
 		}
 
+		/// <inheritdoc />
 		public override IEnumerator<Type> GetEnumerator()
 		{
-			yield return typeof(sbyte);
-			yield return typeof(byte);
-			yield return typeof(ushort);
-			yield return typeof(short);
-			yield return typeof(uint);
-			yield return typeof(int);
-			yield return typeof(ulong);
-			yield return typeof(long);
-			yield return typeof(float);
-			yield return typeof(bool);
-			yield return typeof(double);
+			return CachedTypes.GetEnumerator();
 		}
 	}
 }
