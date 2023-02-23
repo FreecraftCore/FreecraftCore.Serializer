@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 using FreecraftCore.Serializer.Internal;
 using Glader.Essentials;
 using JetBrains.Annotations;
@@ -41,7 +42,7 @@ namespace FreecraftCore.Serializer
 			CompilationUnit = compilationUnit ?? throw new ArgumentNullException(nameof(compilationUnit));
 		}
 
-		public void Generate()
+		public void Generate(CancellationToken token)
 		{
 			//Find all serializable types that are serializable from/to
 			INamedTypeSymbol[] serializableTypes = TargetAssembly
@@ -50,6 +51,9 @@ namespace FreecraftCore.Serializer
 
 			foreach (INamedTypeSymbol type in serializableTypes)
 			{
+				if (token.IsCancellationRequested)
+					return;
+
 				//THIS SHOULD NEVER HAPPEN!
 				//if (type.IsGenericType && !type.IsUnboundGenericType)
 				//	throw new InvalidOperationException($"Encountered unbound generic Type: {type.Name} in top-level search.");
@@ -63,13 +67,16 @@ namespace FreecraftCore.Serializer
 					{
 						foreach (Type[] gta in PrimitiveGenericAttribute.Instance.GetPermutations(type.Arity))
 						{
+							if (token.IsCancellationRequested)
+								return;
+
 							//Represents an array of type arguments for symbols
 							ITypeSymbol[] genericTypeArgSymbols = gta.Select(t => CompilationUnit.GetTypeByMetadataName(t.FullName))
 								.Cast<ITypeSymbol>()
 								.ToArray();
 
 							INamedTypeSymbol boundGenericType = type.Construct(genericTypeArgSymbols);
-							WriteSerializerStrategyClass(boundGenericType);
+							WriteSerializerStrategyClass(boundGenericType, token);
 						}
 					}
 
@@ -79,6 +86,9 @@ namespace FreecraftCore.Serializer
 					{
 						foreach (AttributeData data in type.GetAttributesExact<KnownGenericAttribute>())
 						{
+							if (token.IsCancellationRequested)
+								return;
+
 							//Skip, this is include attribute. Maybe warn?
 							if (data.ConstructorArguments.IsDefaultOrEmpty)
 								continue;
@@ -86,14 +96,22 @@ namespace FreecraftCore.Serializer
 							//TODO: Does this work? Arrays may work different with API
 							//create types for each tuple of generic attributes
 							INamedTypeSymbol boundGenericType = type.Construct(data.ConstructorArguments.First().Values.Select(v => v.Value).Cast<ITypeSymbol>().ToArray());
-							WriteSerializerStrategyClass(boundGenericType);
+							WriteSerializerStrategyClass(boundGenericType, token);
 						}
 					}
+
+					if (token.IsCancellationRequested)
+						return;
 
 					if (type.HasAttributeExact<ClosedGenericAttribute>())
 					{
 						foreach (AttributeData closedTypeAttri in type.GetAttributesExact<ClosedGenericAttribute>())
-							WriteSerializerStrategyClass((INamedTypeSymbol) closedTypeAttri.ConstructorArguments.First().Value);
+						{
+							if (token.IsCancellationRequested)
+								return;
+
+							WriteSerializerStrategyClass((INamedTypeSymbol)closedTypeAttri.ConstructorArguments.First().Value, token);
+						}
 					}
 
 #warning TODO: Reimplement BaseGenericListAttribute support
@@ -108,7 +126,7 @@ namespace FreecraftCore.Serializer
 					}*/
 				}
 				else
-					WriteSerializerStrategyClass(type);
+					WriteSerializerStrategyClass(type, token);
 			}
 
 			//It's important that we dynamically emit generic serializers
@@ -119,9 +137,12 @@ namespace FreecraftCore.Serializer
 			int genericDepth = 0;
 			do
 			{
+				if (token.IsCancellationRequested)
+					return;
+
 				ITypeSymbol[] genericTypeSymbols = RequiredGenericSerializers.ToArray();
 				RequiredGenericSerializers.Clear();
-				EmitRequestedGenericTypeSerializers(genericTypeSymbols);
+				EmitRequestedGenericTypeSerializers(genericTypeSymbols, token);
 				genericDepth++;
 
 				//This loop is kinda dangerous, but we assume it'll eventually terminate.
@@ -131,10 +152,13 @@ namespace FreecraftCore.Serializer
 				throw new InvalidOperationException($"Automatic generic type serialization depth exceed maximum depth.");
 		}
 
-		private void EmitRequestedGenericTypeSerializers(ITypeSymbol[] genericTypeSymbols)
+		private void EmitRequestedGenericTypeSerializers(ITypeSymbol[] genericTypeSymbols, CancellationToken token)
 		{
 			foreach (ITypeSymbol genericTypeSymbol in genericTypeSymbols)
 			{
+				if (token.IsCancellationRequested)
+					return;
+
 				GeneratedSerializerNameStringBuilder builder = new GeneratedSerializerNameStringBuilder(genericTypeSymbol);
 				string genericSerializerName = builder.BuildName();
 
@@ -152,7 +176,7 @@ namespace FreecraftCore.Serializer
 				//TODO: Calling this may end up having us require MORE generic serializers but this case isn't handled yet.
 				//At this point we don't have a generic serializer defined for the closed generic type
 				//and we should just emit one otherwise compilation will fail.
-				WriteSerializerStrategyClass((INamedTypeSymbol) genericTypeSymbol);
+				WriteSerializerStrategyClass((INamedTypeSymbol) genericTypeSymbol, token);
 			}
 		}
 
@@ -175,16 +199,26 @@ namespace FreecraftCore.Serializer
 				});
 		}
 
-		private void WriteSerializerStrategyClass(INamedTypeSymbol typeSymbol)
+		private void WriteSerializerStrategyClass(INamedTypeSymbol typeSymbol, CancellationToken token)
 		{
 			try
 			{
-				ICompilationUnitEmittable implementationEmittable = CreateEmittableImplementationSerializerStrategy(typeSymbol);
+				if (token.IsCancellationRequested)
+					return;
+
+				ICompilationUnitEmittable implementationEmittable = CreateEmittableImplementationSerializerStrategy(typeSymbol, token);
 
 				//This cased issues in Analyzer/Generator due to dependency loading
 				//SyntaxNode implementationFormattedNode = Formatter.Format(implementationEmittable.CreateUnit(), new AdhocWorkspace());
 
-				WriteEmittedFile(implementationEmittable.CreateUnit().NormalizeWhitespace("\t", true), implementationEmittable);
+				if (token.IsCancellationRequested)
+					return;
+
+				WriteEmittedFile(implementationEmittable.CreateUnit().NormalizeWhitespace("\t", true), implementationEmittable, token);
+
+
+				if (token.IsCancellationRequested)
+					return;
 
 				RequiredGenericSerializers.AddRange(implementationEmittable.GetRequestedGenericTypes());
 			}
@@ -195,26 +229,29 @@ namespace FreecraftCore.Serializer
 			}
 		}
 
-		private void WriteEmittedFile(SyntaxNode formattedNode, ICompilationUnitEmittable emittable)
+		private void WriteEmittedFile(SyntaxNode formattedNode, ICompilationUnitEmittable emittable, CancellationToken token)
 		{
 			StringBuilder sb = new StringBuilder();
 			using (TextWriter classFileWriter = new StringWriter(sb))
 				formattedNode.WriteTo(classFileWriter);
 
+			if (token.IsCancellationRequested)
+				return;
+
 			SerializationOutputStrategy.Output($"{emittable.UnitName}", sb.ToString());
 			GeneratedTypeNames.Add(emittable.UnitName);
 		}
 
-		private ICompilationUnitEmittable CreateEmittableImplementationSerializerStrategy(INamedTypeSymbol type)
+		private ICompilationUnitEmittable CreateEmittableImplementationSerializerStrategy(INamedTypeSymbol type, CancellationToken token)
 		{
 			//Abstract types ALWAYS must be polymorphic
 			if (type.IsAbstract)
 			{
-				return new PolymorphicSerializerImplementationCompilationUnitEmitter(type, CompilationUnit);
+				return new PolymorphicSerializerImplementationCompilationUnitEmitter(type, CompilationUnit, token);
 			}
 			else
 			{
-				return new RegularSerializerImplementationCompilationUnitEmitter(type);
+				return new RegularSerializerImplementationCompilationUnitEmitter(type, token);
 			}
 		}
 	}

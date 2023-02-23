@@ -65,18 +65,32 @@ namespace FreecraftCore.Serializer
 
 				ISerializationSourceOutputStrategy outputStrategy = new ExternalContentCollectorSerializationSourceOutputStrategy();
 				SerializerSourceEmitter emitter = new SerializerSourceEmitter(symbols, outputStrategy, context.Compilation);
-				emitter.Generate();
+				emitter.Generate(context.CancellationToken);
+
+				if (context.CancellationToken.IsCancellationRequested)
+					return;
 
 				foreach (var entry in outputStrategy.Content)
+				{
+					if (context.CancellationToken.IsCancellationRequested)
+						return;
+
 					context.AddSource(entry.Key, entry.Value);
+				}
 			}
 			catch (System.Reflection.ReflectionTypeLoadException e)
 			{
+				if (context.CancellationToken.IsCancellationRequested)
+					return;
+
 				context.AddSource("Error.txt", $"{e}\n\nLoader: {e.LoaderExceptions.Select(ex => ex.ToString()).Aggregate((s1, s2) => $"{s1}\n{s2}")}");
 				throw;
 			}
 			catch (Exception e)
 			{
+				if (context.CancellationToken.IsCancellationRequested)
+					return;
+
 				context.AddSource("Error.txt", e.ToString());
 
 				try

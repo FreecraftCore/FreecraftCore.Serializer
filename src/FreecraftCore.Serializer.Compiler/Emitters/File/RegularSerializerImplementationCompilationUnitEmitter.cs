@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using FreecraftCore.Serializer.Internal;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -13,11 +14,15 @@ namespace FreecraftCore.Serializer
 {
 	public sealed class RegularSerializerImplementationCompilationUnitEmitter : BaseSerializerImplementationCompilationUnitEmitter
 	{
+		private CancellationToken CancelToken { get; }
+
 		public RootSerializationMethodBlockEmitter SerializationMethodEmitter { get; }
 
-		public RegularSerializerImplementationCompilationUnitEmitter([NotNull] INamedTypeSymbol typeSymbol)
+		public RegularSerializerImplementationCompilationUnitEmitter([NotNull] INamedTypeSymbol typeSymbol, 
+			CancellationToken cancelToken)
 			: base(typeSymbol)
 		{
+			CancelToken = cancelToken;
 			SerializationMethodEmitter = new RootSerializationMethodBlockEmitter(typeSymbol);
 		}
 
@@ -1730,6 +1735,10 @@ namespace FreecraftCore.Serializer
 					)
 			})
 			{
+
+				if (CancelToken.IsCancellationRequested)
+					yield break;
+
 				yield return node;
 			}
 		}

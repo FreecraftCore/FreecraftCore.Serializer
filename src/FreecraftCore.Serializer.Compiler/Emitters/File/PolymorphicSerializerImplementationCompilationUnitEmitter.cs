@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using FreecraftCore.Serializer.Internal;
 using Glader.Essentials;
 using JetBrains.Annotations;
@@ -22,10 +23,15 @@ namespace FreecraftCore.Serializer
 
 		private Compilation CompilationUnit { get; }
 
-		public PolymorphicSerializerImplementationCompilationUnitEmitter([NotNull] INamedTypeSymbol typeSymbol, [NotNull] Compilation compilationUnit)
+		private CancellationToken CancelToken { get; }
+
+		public PolymorphicSerializerImplementationCompilationUnitEmitter([NotNull] INamedTypeSymbol typeSymbol, 
+			[NotNull] Compilation compilationUnit, 
+			CancellationToken cancelToken)
 			: base(typeSymbol)
 		{
 			CompilationUnit = compilationUnit ?? throw new ArgumentNullException(nameof(compilationUnit));
+			CancelToken = cancelToken;
 			PolymorphicKeySizeType = InternalEnumExtensions.ParseFull<PrimitiveSizeType>(TypeSymbol.GetAttributeExact<WireDataContractAttribute>().ConstructorArguments.First().ToCSharpString(), true);
 		}
 
@@ -815,6 +821,9 @@ namespace FreecraftCore.Serializer
 			//Every type that is a child type in the same assembly
 			foreach(PolymorphicTypeInfo typeInfo in GetPolymorphicChildTypes())
 			{
+				if (CancelToken.IsCancellationRequested)
+					yield break;
+
 				yield return SwitchSection()
 					.WithLabels
 					(
@@ -986,6 +995,9 @@ namespace FreecraftCore.Serializer
 			//Every type that is a child type in the same assembly
 			foreach (PolymorphicTypeInfo typeInfo in GetPolymorphicChildTypes())
 			{
+				if (CancelToken.IsCancellationRequested)
+					yield break;
+
 				yield return SwitchSection()
 					.WithLabels
 					(
@@ -1081,6 +1093,10 @@ namespace FreecraftCore.Serializer
 						)
 					);
 			}
+
+
+			if (CancelToken.IsCancellationRequested)
+				yield break;
 
 			if (TypeSymbol.HasAttributeExact<DefaultChildAttribute>())
 			{
