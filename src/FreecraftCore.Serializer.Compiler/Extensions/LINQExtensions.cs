@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,20 +23,23 @@ namespace FreecraftCore.Serializer
 		{
 			if(collection == null) throw new ArgumentNullException(nameof(collection));
 
+			// @HelloKitty: This array type check should help avoid pointless allocation.
 			//LINQ warns of multiple enumeration
-			T[] enumerable = collection.ToArray();
+			T[] enumerable = collection is T[] ? (T[])collection : collection.ToArray();
 
 			if (length < 0) throw new ArgumentOutOfRangeException(nameof(length));
 
 			if (length == 0)
 				return Array.Empty<IEnumerable<T>>();
 
-			if(length == 1) 
-				return enumerable.Select(t => new T[] { t });
+			if (length == 1)
+				return enumerable.Select(t => new T[] {t})
+					.ToArray();
 
 			return Permutations(enumerable, length - 1)
 				.SelectMany(t => enumerable,
-					(t1, t2) => t1.Concat(new T[] { t2 }));
+					(t1, t2) => t1.Concat(new T[] { t2 }))
+				.ToArray(); // Probably good to avoid multiple enumerable
 		}
 	}
 }
