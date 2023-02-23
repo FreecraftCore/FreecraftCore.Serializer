@@ -30,7 +30,7 @@ namespace FreecraftCore.Serializer
 
 		public ISerializationSourceOutputStrategy SerializationOutputStrategy { get; }
 
-		private List<string> GeneratedTypeNames { get; } = new List<string>();
+		private HashSet<string> GeneratedTypeNames { get; } = new();
 
 		private List<ITypeSymbol> RequiredGenericSerializers { get; } = new List<ITypeSymbol>();
 
@@ -61,10 +61,7 @@ namespace FreecraftCore.Serializer
 				{
 					if (type.HasAttributeExact<PrimitiveGenericAttribute>())
 					{
-						foreach (Type[] gta in PrimitiveGenericAttribute.Instance
-							.Permutations(type.Arity)
-							.Select(em => em.ToArray())
-							.ToArray())
+						foreach (Type[] gta in PrimitiveGenericAttribute.Instance.GetPermutations(type.Arity))
 						{
 							//Represents an array of type arguments for symbols
 							ITypeSymbol[] genericTypeArgSymbols = gta.Select(t => CompilationUnit.GetTypeByMetadataName(t.FullName))
@@ -143,7 +140,7 @@ namespace FreecraftCore.Serializer
 
 				//If an emitted serializer name matches the expected generic serializer name
 				//then one is going to be emitted so we should not do anything.
-				if (this.GeneratedTypeNames.Any(t => genericSerializerName == t))
+				if (GeneratedTypeNames.Contains(genericSerializerName))
 					continue;
 
 				//TODO: Don't hardcore default namespace!!
