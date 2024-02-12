@@ -154,5 +154,28 @@ namespace FreecraftCore.Serialization.Tests
 			Assert.AreNotEqual(0, length);
 			Assert.AreEqual(value.Length, length);
 		}
+
+		[TestCase("H")]
+		[TestCase("!")]
+		[TestCase("T")]
+		[TestCase("W")]
+		public static void Can_Serializer_Serialize_SingleCharacter_LengthPrefixed_String(string value)
+		{
+			//arrange
+			var serializer = LengthPrefixedStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, ASCIIStringTerminatorTypeSerializerStrategy, Int32>.Instance; ;
+			int offset = 0;
+			Span<byte> buffer = new Span<byte>(new byte[1024]);
+
+			//act
+			serializer.Write(value, buffer, ref offset);
+
+			offset = 0;
+			var output = serializer.Read(buffer, ref offset);
+			var readByteCount = offset;
+
+			//assert
+			offset = 0;
+			Assert.AreEqual(value, output, $"Buffer's encoded Length: {GenericTypePrimitiveSerializerStrategy<Int32>.Instance.Read(buffer, ref offset)} Read Bytes: {readByteCount} FirstChar: {(char)buffer[offset]}");
+		}
 	}
 }
