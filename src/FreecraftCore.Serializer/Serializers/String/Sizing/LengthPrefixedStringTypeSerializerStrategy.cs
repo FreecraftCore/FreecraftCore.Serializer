@@ -41,6 +41,7 @@ namespace FreecraftCore.Serializer
 			
 		}
 
+		/// <inheritdoc />
 		public sealed override string Read(Span<byte> buffer, ref int offset)
 		{
 			int length = CalculateIncomingStringLength(buffer, ref offset);
@@ -74,6 +75,7 @@ namespace FreecraftCore.Serializer
 			return stringLength;
 		}
 
+		/// <inheritdoc />
 		public sealed override void Write(string value, Span<byte> buffer, ref int offset)
 		{
 			//WARNING: Doing use this calculated string length in ANYTHING but writing, it may contain adjusted sizes.
