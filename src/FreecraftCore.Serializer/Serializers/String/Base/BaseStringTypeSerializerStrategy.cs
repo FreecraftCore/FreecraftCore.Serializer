@@ -56,7 +56,8 @@ namespace FreecraftCore.Serializer
 
 			//TODO: Invesitgate expected WoW/TC behavior for strings of length 0. Currently violates contract for return type.
 			//I have decided to support empty strings instead of null
-			if(currentByteCount == 0 || currentByteCount == CharacterSize) //found only null terminator
+			if(currentByteCount == 0 
+			   || currentByteCount == CharacterSize && terminatorFound) //found only null terminator
 			{
 				//Found nothing, so we don't add anything (parsing/rading the terminator is NOT the job of this serializer
 				//So DON'T change the offset on empty nullterminated strings.
