@@ -28,16 +28,19 @@
     <Folder Include="SerializerDebug\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\FreecraftCore.Serializer.Compiler.ManualTest\FreecraftCore.Serializer.Compiler.ManualTest.csproj" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <RestoreSources>$(RestoreSources);../../src/FreecraftCore.Serializer.Compiler/bin/Debug;../../src/FreecraftCore.Serializer/bin/Debug;../../src/FreecraftCore.Serializer.Metadata/bin/Debug;</RestoreSources>
+    <RestoreSources>$(RestoreSources);../../src/FreecraftCore.Serializer.Compiler/bin/Debug;../../src/FreecraftCore.Serializer/bin/Debug;../../src/FreecraftCore.Serializer.Metadata/bin/Debug;</RestoreSources>
+  </PropertyGroup>
 
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <RestoreSources>$(RestoreSources);../../src/FreecraftCore.Serializer.Compiler/bin/Release;../../src/FreecraftCore.Serializer/bin/Release;../../src/FreecraftCore.Serializer.Metadata/bin/Release;https://api.nuget.org/v3/index.json;</RestoreSources>
     <RestoreSources>$(RestoreSources);../../src/FreecraftCore.Serializer.Compiler/bin/Release;../../src/FreecraftCore.Serializer/bin/Release;../../src/FreecraftCore.Serializer.Metadata/bin/Release;https://api.nuget.org/v3/index.json;</RestoreSources>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj" />
+    <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" />
     <ProjectReference Include="..\..\src\FreecraftCore.Serializer.Compiler\FreecraftCore.Serializer.Compiler.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
 
