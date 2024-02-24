@@ -39,22 +39,7 @@ namespace FreecraftCore.Serializer
 		{
 			return NamespaceDeclaration
 				(
-					QualifiedName
-					(
-						IdentifierName("FreecraftCore"),
-						IdentifierName
-						(
-							Identifier
-							(
-								TriviaList(),
-								"Serializer",
-								TriviaList
-								(
-									CarriageReturnLineFeed
-								)
-							)
-						)
-					)
+					IdentifierName(TypeSymbol.ContainingNamespace.FullNamespaceString())
 				)
 				.WithNamespaceKeyword
 				(

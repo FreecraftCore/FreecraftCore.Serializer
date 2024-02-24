@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using FreecraftCore.Serializer.Internal;
+using Glader.Essentials;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis;
@@ -44,22 +45,7 @@ namespace FreecraftCore.Serializer
 		{ 
 			return NamespaceDeclaration
 					(
-						QualifiedName
-						(
-							IdentifierName("FreecraftCore"),
-							IdentifierName
-							(
-								Identifier
-								(
-									TriviaList(),
-									"Serializer",
-									TriviaList
-									(
-										CarriageReturnLineFeed
-									)
-								)
-							)
-						)
+						IdentifierName(TypeSymbol.ContainingNamespace.FullNamespaceString())
 					)
 					.WithNamespaceKeyword
 					(
