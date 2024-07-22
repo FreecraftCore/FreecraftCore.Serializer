@@ -16,6 +16,7 @@ namespace FreecraftCore.Serializer
 		/// </summary>
 		Bit,
 		Byte,
+		SByte,
 		UInt16,
 		Int16,
 		UInt32,
