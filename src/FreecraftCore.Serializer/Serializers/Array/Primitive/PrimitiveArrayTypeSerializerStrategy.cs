@@ -48,11 +48,16 @@ namespace FreecraftCore.Serializer
 			//conceptually this should fit all deserializable elements here.
 			//We then want to PIN the binary chunk in the span and do an unsafe block copy
 			//which we must also unsafely pin
-			T[] elementArray = new T[buffer.Length / elementSize];
+			// Ensure buffer is correctly aligned for element size
+			int arraySize = buffer.Length / elementSize;
+			T[] elementArray = new T[arraySize];
 			fixed (byte* bytes = &buffer.GetPinnableReference())
 			fixed (void* pinnedArray = &elementArray[0]) //This pin is VERY important, otherwise GC could maybe move it.
 			{
-				Unsafe.CopyBlock(pinnedArray, bytes, (uint) buffer.Length);
+				// GPT Code change: (uint)(elementCount * elementSize) or arraySize * elementSize
+				// Unsafe.CopyBlock: The amount of data copied is now (elementCount * elementSize) bytes, which exactly matches the size of the array being populated.
+				// This prevents any excess data from being copied, ensuring that only the relevant portion of the buffer is used.
+				Unsafe.CopyBlock(pinnedArray, bytes, (uint)(arraySize * elementSize));
 			}
 
 			offset += elementSize * elementCount;
