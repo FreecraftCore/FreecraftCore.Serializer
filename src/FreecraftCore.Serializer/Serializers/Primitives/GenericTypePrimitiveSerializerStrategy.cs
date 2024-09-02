@@ -26,7 +26,7 @@ namespace FreecraftCore.Serializer
 		public override TType Read(Span<byte> buffer, ref int offset)
 		{
 			//Don't want to read outside the bounds
-			if(buffer.Length - offset < Unsafe.SizeOf<TType>())
+			if(buffer.Length - offset < MarshalSizeOf<TType>.SizeOf)
 				ThrowBufferTooSmall();
 
 			TType value = Unsafe.ReadUnaligned<TType>(ref buffer[offset]);
@@ -39,10 +39,13 @@ namespace FreecraftCore.Serializer
 		public override void Write(TType value, Span<byte> buffer, ref int offset)
 		{
 			//Don't want to write outside the bounds
-			if (buffer.Length - offset < Unsafe.SizeOf<TType>())
+			if ((buffer.Length - offset) < MarshalSizeOf<TType>.SizeOf)
 				ThrowBufferTooSmall();
 
-			Unsafe.As<byte, TType>(ref buffer[offset]) = value;
+			// GPT code update for portability
+			// On platforms where unaligned access is not allowed, the old Unsafe.As code may have
+			// potentially cause undefined behavior, including crashes.
+			Unsafe.WriteUnaligned(ref buffer[offset], value);
 			offset += MarshalSizeOf<TType>.SizeOf;
 		}
 
