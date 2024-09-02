@@ -34,7 +34,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Glader.Essentials.SourceGenerator" Version="2.2.72" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Glader.Essentials.SourceGenerator" Version="2.7.203" PrivateAssets="all" GeneratePathProperty="true" />
     <ProjectReference Include="..\FreecraftCore.Serializer.Metadata\FreecraftCore.Serializer.Metadata.csproj" GeneratePathProperty="true" />
     <ProjectReference Include="..\FreecraftCore.Serializer\FreecraftCore.Serializer.csproj" GeneratePathProperty="true" />
   </ItemGroup>
