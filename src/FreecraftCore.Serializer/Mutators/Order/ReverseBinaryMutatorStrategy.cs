@@ -25,6 +25,11 @@ namespace FreecraftCore.Serializer
 			source = source.Slice(sourceOffset);
 			destination = destination.Slice(destinationOffset);
 
+			// GPT generated code check
+			// Ensure the destination has enough space to copy the reversed source
+			if (destination.Length < source.Length)
+				throw new ArgumentException("Destination span is not long enough to accommodate the source span.");
+
 			source.Reverse(); //Not LINQ Reverse, this is a efficient span reverse.
 
 			fixed (byte* sourcePtr = &source.GetPinnableReference())
