@@ -33,9 +33,14 @@ namespace FreecraftCore.Serializer
 			buffer = buffer.Slice(offset);
 
 			int elementSize = MarshalSizeOf<T>.SizeOf;
+
+			// Check this first to avoid div by zero
+			if (elementSize == 0)
+				return Array.Empty<T>();
+
 			int elementCount = (buffer.Length) / elementSize;
 
-			if (elementSize == 0 || elementCount == 0)
+			if (elementCount == 0)
 				return Array.Empty<T>();
 
 			//TODO: Can reduce allocations by somehow pooling these things??
