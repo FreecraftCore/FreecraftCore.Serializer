@@ -24,7 +24,7 @@ namespace FreecraftCore.Serialization.Tests.RealWorld
 	}
 }
 
-namespace FreecraftCore.Serializer
+namespace FreecraftCore.Serialization.Tests.RealWorld
 {
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
 	//THIS CODE IS FOR AUTO-GENERATED SERIALIZERS! DO NOT MODIFY UNLESS YOU KNOW WELL!

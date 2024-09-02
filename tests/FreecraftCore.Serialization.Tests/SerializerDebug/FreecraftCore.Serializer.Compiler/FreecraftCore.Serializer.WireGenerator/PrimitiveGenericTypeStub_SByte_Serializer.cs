@@ -5,7 +5,7 @@ using System.Text;
 using FreecraftCore.Serializer;
 using FreecraftCore.Serializer.CustomTypes;
 
-namespace FreecraftCore.Serializer
+namespace FreecraftCore.Serializer.CustomTypes
 {
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
 	//THIS CODE IS FOR AUTO-GENERATED SERIALIZERS! DO NOT MODIFY UNLESS YOU KNOW WELL!
@@ -26,7 +26,7 @@ namespace FreecraftCore.Serializer
 		{
 			//Type: PrimitiveGenericTypeStub Field: 1 Name: Value Type: SByte
 			;
-			value.Value = GenericTypePrimitiveSerializerStrategy<SByte>.Instance.Read(buffer, ref offset);
+			value.Value = SBytePrimitiveSerializerStrategy.Instance.Read(buffer, ref offset);
 		}
 
 		/// <summary>
@@ -40,7 +40,7 @@ namespace FreecraftCore.Serializer
 		{
 			//Type: PrimitiveGenericTypeStub Field: 1 Name: Value Type: SByte
 			;
-			GenericTypePrimitiveSerializerStrategy<SByte>.Instance.Write(value.Value, buffer, ref offset);
+			SBytePrimitiveSerializerStrategy.Instance.Write(value.Value, buffer, ref offset);
 		}
 	}
 }

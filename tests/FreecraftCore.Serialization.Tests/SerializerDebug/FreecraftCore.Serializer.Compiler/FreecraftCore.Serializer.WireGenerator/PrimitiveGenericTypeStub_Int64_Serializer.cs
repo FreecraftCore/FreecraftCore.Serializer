@@ -5,7 +5,7 @@ using System.Text;
 using FreecraftCore.Serializer;
 using FreecraftCore.Serializer.CustomTypes;
 
-namespace FreecraftCore.Serializer
+namespace FreecraftCore.Serializer.CustomTypes
 {
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
 	//THIS CODE IS FOR AUTO-GENERATED SERIALIZERS! DO NOT MODIFY UNLESS YOU KNOW WELL!
