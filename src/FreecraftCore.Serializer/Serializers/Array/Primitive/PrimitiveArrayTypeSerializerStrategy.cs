@@ -57,7 +57,7 @@ namespace FreecraftCore.Serializer
 				// GPT Code change: (uint)(elementCount * elementSize) or arraySize * elementSize
 				// Unsafe.CopyBlock: The amount of data copied is now (elementCount * elementSize) bytes, which exactly matches the size of the array being populated.
 				// This prevents any excess data from being copied, ensuring that only the relevant portion of the buffer is used.
-				Unsafe.CopyBlock(pinnedArray, bytes, (uint)(arraySize * elementSize));
+				Unsafe.CopyBlockUnaligned(pinnedArray, bytes, (uint)(arraySize * elementSize));
 			}
 
 			offset += elementSize * elementCount;
@@ -84,7 +84,7 @@ namespace FreecraftCore.Serializer
 			fixed(byte* bytes = &buffer.GetPinnableReference())
 			fixed(void* pinnedArray = &value[0]) //This pin is VERY important, otherwise GC could maybe move it.
 			{
-				Unsafe.CopyBlock(bytes, pinnedArray, (uint)elementsByteSize);
+				Unsafe.CopyBlockUnaligned(bytes, pinnedArray, (uint)elementsByteSize);
 			}
 
 			offset += elementsByteSize;

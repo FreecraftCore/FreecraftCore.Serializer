@@ -39,7 +39,7 @@ namespace FreecraftCore.Serializer
 				if (sourcePtr == destPtr)
 					return;
 
-				Unsafe.CopyBlock(destPtr, sourcePtr, (uint) source.Length);
+				Unsafe.CopyBlockUnaligned(destPtr, sourcePtr, (uint) source.Length);
 			}
 		}
 
