@@ -51,8 +51,7 @@ namespace FreecraftCore.Serializer
 			}
 
 			//Read until terminator is found, then we skip over terminator in the buffer.
-			//Slice just incase invalid data and terminator isn't there.
-			string value = DecoratedSerializer.Read(buffer.Slice(0, (length - 1) * SizeInfo.MaximumCharacterSize + offset), ref offset);
+			string value = DecoratedSerializer.Read(buffer, ref offset);
 			DecoratedTerminatorStrategy.Read(buffer, ref offset);
 
 			return value;
@@ -78,17 +77,7 @@ namespace FreecraftCore.Serializer
 			stringLength++; //add terminator character
 			GenericTypePrimitiveSerializerStrategy<TLengthType>.Instance.Write(stringLength.Reinterpret<int, TLengthType>(), buffer, ref offset);
 
-			// TODO: What the fuck how can this work with variable encoded length? I don't remember.
-			int expectedByteLength = value.Length * SizeInfo.MaximumCharacterSize;
-			int lastOffset = offset;
-			DecoratedSerializer.Write(value, buffer.Slice(0, expectedByteLength + offset), ref offset);
-
-			//TODO: This is a COMPLETE hack that should be toggleable honestly.
-			//This isn't *really* how we should handle variable length encodings and stuff, but PSOBB does fixed-length UTF16 for fixed/known size
-			//So to compensate for this we adjust the buffer offset to pretend we're fixed-length
-			if (offset != lastOffset + expectedByteLength)
-				while(offset < lastOffset + expectedByteLength)
-					GenericTypePrimitiveSerializerStrategy<byte>.Instance.Write(0, buffer, ref offset);
+			DecoratedSerializer.Write(value, buffer, ref offset);
 
 			//Now we can write terminator
 			DecoratedTerminatorStrategy.Write(value, buffer, ref offset);
