@@ -21,5 +21,11 @@ namespace FreecraftCore.Serializer
 		UTF32 = 2,
 
 		UTF8 = 3,
+
+		/// <summary>
+		/// See: https://en.wikipedia.org/wiki/Code_page_437
+		/// Extended ASCII
+		/// </summary>
+		CodePage437,
 	}
 }
