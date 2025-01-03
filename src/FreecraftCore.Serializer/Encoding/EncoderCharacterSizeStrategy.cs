@@ -16,14 +16,14 @@ namespace FreecraftCore.Serializer
 			//Due to how coreclr/core works we need to support potential child Types of the encoding types
 			//See: https://github.com/dotnet/coreclr/blob/f31097f14560b193e76a7b2e1e61af9870b5356b/src/System.Private.CoreLib/shared/System/Text/ASCIIEncoding.cs#L24
 			//We cannot trust .NET to give us correct sizes
-			if(CheckEncodingIsOfType<ASCIIEncoding>(encoding.GetType()))
+			if(CheckEncodingIsOfType<ASCIIEncoding>(encoding.GetType()) 
+			   || ReferenceEquals(encoding, CustomCharacterEncodingHelpers.CodePage437)) // 437 is extended ASCII.
 				return 1;
 			else if(CheckEncodingIsOfType<UnicodeEncoding>(encoding.GetType()))
 				return 2;
 			else if(CheckEncodingIsOfType<UTF32Encoding>(encoding.GetType()))
 				return 4;
-			else if(CheckEncodingIsOfType<UTF8Encoding>(encoding.GetType()) 
-			        || ReferenceEquals(encoding, CustomCharacterEncodingHelpers.CodePage437)) // 437 is extended ASCII.
+			else if(CheckEncodingIsOfType<UTF8Encoding>(encoding.GetType())) 
 				return 1; //In WoW DBC UTF8 strings are null terminated with a single 0 byte.
 			else
 				throw new InvalidOperationException($"Encounter unknown Encoding: {encoding.GetType().Name}. Due to .NET behavior we cannot trust anything but manual char size.");
