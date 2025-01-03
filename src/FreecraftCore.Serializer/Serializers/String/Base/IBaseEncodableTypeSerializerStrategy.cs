@@ -4,6 +4,31 @@ using System.Text;
 
 namespace FreecraftCore.Serializer
 {
+	public sealed class EncodingCharacterSizeData
+	{
+		/// <summary>
+		/// Minimum character size/width in bytes.
+		/// </summary>
+		public int MinimumCharacterSize { get; }
+
+		/// <summary>
+		/// Maximum character size/width in bytes.
+		/// </summary>
+		public int MaximumCharacterSize { get; }
+
+		/// <summary>
+		/// Terminator character size/width in bytes.
+		/// </summary>
+		public int TerminatorSize { get; }
+
+		public EncodingCharacterSizeData(int minimumCharacterSize, int maximumCharacterSize, int terminatorSize)
+		{
+			MinimumCharacterSize = minimumCharacterSize;
+			MaximumCharacterSize = maximumCharacterSize;
+			TerminatorSize = terminatorSize;
+		}
+	}
+
 	public interface IBaseEncodableTypeSerializerStrategy : ITypeSerializerStrategy<string>
 	{
 		/// <summary>
@@ -12,8 +37,8 @@ namespace FreecraftCore.Serializer
 		Encoding EncodingStrategy { get; }
 
 		/// <summary>
-		/// Size of the individual char encoding.
+		/// The character size information for the encoding/serializer.
 		/// </summary>
-		int CharacterSize { get; }
+		EncodingCharacterSizeData SizeInfo { get; }
 	}
 }

@@ -28,13 +28,6 @@ namespace FreecraftCore.Serializer
 
 		private static TStringTerminatorSerializerStrategy DecoratedTerminatorStrategy { get; } = new TStringTerminatorSerializerStrategy();
 
-		/// <summary>
-		/// The maximum length of a character in byte-size.
-		/// Same as CharacterSize except for the variable length encodings which we *partially* support
-		/// fixed-length sending.
-		/// </summary>
-		private static int MaximumCharacterSize { get; } = DecoratedSerializer.CharacterSize;
-
 		public LengthPrefixedStringTypeSerializerStrategy() 
 			: base(DecoratedSerializer.EncodingStrategy)
 		{
@@ -49,8 +42,9 @@ namespace FreecraftCore.Serializer
 			if(length == 0)
 				return String.Empty;
 
+			// TODO: This will fail for UTF8 because it's 2 and we can sometimes have 1 byte strings
 			//Null terminator is missing??
-			if (length < MaximumCharacterSize)
+			if (length < SizeInfo.MinimumCharacterSize)
 			{
 				DecoratedTerminatorStrategy.Read(buffer, ref offset);
 				return String.Empty;
@@ -58,7 +52,7 @@ namespace FreecraftCore.Serializer
 
 			//Read until terminator is found, then we skip over terminator in the buffer.
 			//Slice just incase invalid data and terminator isn't there.
-			string value = DecoratedSerializer.Read(buffer.Slice(0, (length - 1) * MaximumCharacterSize + offset), ref offset);
+			string value = DecoratedSerializer.Read(buffer.Slice(0, (length - 1) * SizeInfo.MaximumCharacterSize + offset), ref offset);
 			DecoratedTerminatorStrategy.Read(buffer, ref offset);
 
 			return value;
@@ -84,7 +78,8 @@ namespace FreecraftCore.Serializer
 			stringLength++; //add terminator character
 			GenericTypePrimitiveSerializerStrategy<TLengthType>.Instance.Write(stringLength.Reinterpret<int, TLengthType>(), buffer, ref offset);
 
-			int expectedByteLength = value.Length * MaximumCharacterSize;
+			// TODO: What the fuck how can this work with variable encoded length? I don't remember.
+			int expectedByteLength = value.Length * SizeInfo.MaximumCharacterSize;
 			int lastOffset = offset;
 			DecoratedSerializer.Write(value, buffer.Slice(0, expectedByteLength + offset), ref offset);
 

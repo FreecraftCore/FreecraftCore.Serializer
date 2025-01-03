@@ -24,13 +24,6 @@ namespace FreecraftCore.Serializer
 		//Pointless allocation but C# doesn't provide a way to access static members of generic types yet.
 		private static TStringSerializerStrategy DecoratedSerializer { get; } = new TStringSerializerStrategy();
 
-		/// <summary>
-		/// The maximum length of a character in byte-size.
-		/// Same as CharacterSize except for the variable length encodings which we *partially* support
-		/// fixed-length sending.
-		/// </summary>
-		private static int MaximumCharacterSize { get; } = DecoratedSerializer.CharacterSize;
-
 		public DontTerminateLengthPrefixedStringTypeSerializerStrategy()
 			: base(DecoratedSerializer.EncodingStrategy)
 		{
@@ -41,12 +34,12 @@ namespace FreecraftCore.Serializer
 		{
 			int length = CalculateIncomingStringLength(buffer, ref offset);
 
-			if(length == 0 || length < MaximumCharacterSize)
+			if(length == 0 || length < SizeInfo.MinimumCharacterSize)
 				return String.Empty;
 
 			//Read until terminator is found, then we skip over terminator in the buffer.
 			//Slice just incase invalid data and terminator isn't there.
-			string value = DecoratedSerializer.Read(buffer.Slice(0, (length) * MaximumCharacterSize + offset), ref offset);
+			string value = DecoratedSerializer.Read(buffer.Slice(0, (length) * SizeInfo.MaximumCharacterSize + offset), ref offset);
 
 			return value;
 		}
@@ -69,7 +62,8 @@ namespace FreecraftCore.Serializer
 			int stringLength = CalculateOutgoingStringLength(value);
 			GenericTypePrimitiveSerializerStrategy<TLengthType>.Instance.Write(stringLength.Reinterpret<int, TLengthType>(), buffer, ref offset);
 
-			int expectedByteLength = value.Length * MaximumCharacterSize;
+			// TODO: What the fuck?? What is this length even?? For variable length encoding how can it work?
+			int expectedByteLength = value.Length * SizeInfo.MaximumCharacterSize;
 			int lastOffset = offset;
 			DecoratedSerializer.Write(value, buffer.Slice(0, expectedByteLength + offset), ref offset);
 

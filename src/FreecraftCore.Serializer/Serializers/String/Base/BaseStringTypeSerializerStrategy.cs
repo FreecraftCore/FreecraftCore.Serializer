@@ -40,13 +40,13 @@ namespace FreecraftCore.Serializer
 			//Read a byte from the stream; Stop when we find a 0
 			//OR if we exceed the provided string length. MEANING that we found the end of a non-null terminated string.
 			//Or a KNOWN SIZE string.
-			for(int index = 0; index < buffer.Length && !terminatorFound; index += CharacterSize)
+			for(int index = 0; index < buffer.Length && !terminatorFound; index += SizeInfo.MinimumCharacterSize)
 			{
-				currentByteCount += CharacterSize;
+				currentByteCount += SizeInfo.MinimumCharacterSize;
 
 				//If all are 0 (we found null terminator) and terminator will be TRUE and we break out.
 				terminatorFound = true;
-				for (int i = 0; i < CharacterSize && index + i < buffer.Length; i++) //important to make sure we don't go outside the bounds
+				for (int i = 0; i < SizeInfo.TerminatorSize && index + i < buffer.Length; i++) //important to make sure we don't go outside the bounds
 					if (buffer[index + i] != 0)
 					{
 						terminatorFound = false;
@@ -57,7 +57,7 @@ namespace FreecraftCore.Serializer
 			//TODO: Invesitgate expected WoW/TC behavior for strings of length 0. Currently violates contract for return type.
 			//I have decided to support empty strings instead of null
 			if(currentByteCount == 0 
-			   || currentByteCount == CharacterSize && terminatorFound) //found only null terminator
+			   || currentByteCount == SizeInfo.TerminatorSize && terminatorFound) //found only null terminator
 			{
 				//Found nothing, so we don't add anything (parsing/rading the terminator is NOT the job of this serializer
 				//So DON'T change the offset on empty nullterminated strings.
@@ -68,7 +68,7 @@ namespace FreecraftCore.Serializer
 			fixed(byte* bytes = &buffer.GetPinnableReference())
 			{
 				//This serializer DOESN'T discard the null terminator so don't offset by it if found.
-				int trueStringSize = terminatorFound ? currentByteCount - CharacterSize : currentByteCount;
+				int trueStringSize = terminatorFound ? currentByteCount - SizeInfo.TerminatorSize : currentByteCount;
 
 				//Shift forward by offset, otherwise we read wrong data!!
 				offset += trueStringSize;

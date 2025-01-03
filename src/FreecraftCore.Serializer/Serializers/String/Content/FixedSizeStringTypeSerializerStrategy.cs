@@ -88,8 +88,9 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public sealed override string Read(Span<byte> buffer, ref int offset)
 		{
+			// TODO: This doesn't really work for variable size...
 			int lastOffset = offset;
-			int fixedSizeLength = this.CharacterSize * FixedSize.Value;
+			int fixedSizeLength = SizeInfo.MaximumCharacterSize * FixedSize.Value;
 
 			string value = base.Read(buffer.Slice(0, offset + fixedSizeLength), ref offset);
 
@@ -107,7 +108,8 @@ namespace FreecraftCore.Serializer
 		/// <inheritdoc />
 		public sealed override void Write(string value, Span<byte> buffer, ref int offset)
 		{
-			int fixedSizeLength = this.CharacterSize * FixedSize.Value;
+			// TODO: This doesn't really work for variable size.
+			int fixedSizeLength = SizeInfo.MaximumCharacterSize * FixedSize.Value;
 
 			int lastOffset = offset;
 			base.Write(value, buffer.Slice(0, fixedSizeLength + offset), ref offset);

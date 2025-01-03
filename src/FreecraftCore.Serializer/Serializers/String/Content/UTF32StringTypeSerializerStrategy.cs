@@ -12,6 +12,9 @@ namespace FreecraftCore.Serializer
 	[KnownTypeSerializer]
 	public sealed class UTF32StringTypeSerializerStrategy : BaseStringTypeSerializerStrategy<UTF32StringTypeSerializerStrategy>, IFixedLengthCharacterSerializerStrategy
 	{
+		/// <inheritdoc />
+		public int CharacterSize => SizeInfo.MaximumCharacterSize;
+
 		public UTF32StringTypeSerializerStrategy()
 			: base(Encoding.UTF32)
 		{

@@ -13,6 +13,9 @@ namespace FreecraftCore.Serializer
 	public sealed class CodePage437StringTypeSerializerStrategy 
 		: BaseStringTypeSerializerStrategy<CodePage437StringTypeSerializerStrategy>, IFixedLengthCharacterSerializerStrategy
 	{
+		/// <inheritdoc />
+		public int CharacterSize => SizeInfo.MaximumCharacterSize;
+
 		public CodePage437StringTypeSerializerStrategy()
 			: base(CustomCharacterEncodingHelpers.CodePage437)
 		{

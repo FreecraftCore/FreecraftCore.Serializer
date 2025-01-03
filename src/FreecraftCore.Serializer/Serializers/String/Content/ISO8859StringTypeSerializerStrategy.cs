@@ -13,6 +13,9 @@ namespace FreecraftCore.Serializer
 	public sealed class ISO8859StringTypeSerializerStrategy
 		: BaseStringTypeSerializerStrategy<ISO8859StringTypeSerializerStrategy>, IFixedLengthCharacterSerializerStrategy
 	{
+		/// <inheritdoc />
+		public int CharacterSize => SizeInfo.MaximumCharacterSize;
+
 		public ISO8859StringTypeSerializerStrategy()
 			: base(CustomCharacterEncodingHelpers.ISO8859)
 		{

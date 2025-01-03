@@ -17,14 +17,15 @@ namespace FreecraftCore.Serializer
 		public Encoding EncodingStrategy { get; }
 
 		/// <inheritdoc />
-		public int CharacterSize { get; }
+		public EncodingCharacterSizeData SizeInfo { get; }
 
 		protected BaseEncodableTypeSerializerStrategy([NotNull] Encoding encodingStrategy)
 		{
 			if(encodingStrategy == null) throw new ArgumentNullException(nameof(encodingStrategy));
 
+			var sizeStrategy = new EncoderCharacterSizeStrategy();
 			EncodingStrategy = encodingStrategy;
-			CharacterSize = new EncoderCharacterSizeStrategy().Compute(encodingStrategy);
+			SizeInfo = new EncodingCharacterSizeData(sizeStrategy.ComputeMinimum(encodingStrategy), sizeStrategy.ComputeMaximum(encodingStrategy), sizeStrategy.ComputeTerminator(encodingStrategy));
 		}
 	}
 }

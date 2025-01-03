@@ -19,7 +19,7 @@ namespace FreecraftCore.Serializer
 		protected BaseReversedStringTypeSerializerStrategy([NotNull] Encoding encodingStrategy)
 			: base(encodingStrategy)
 		{
-			if (CharacterSize > 1)
+			if (SizeInfo.MaximumCharacterSize > 1)
 				throw new InvalidOperationException($"TODO: Implement multi-byte non-fixed width grapheme support.");
 		}
 

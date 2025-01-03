@@ -24,17 +24,17 @@ namespace FreecraftCore.Serializer
 		public sealed override string Read(Span<byte> buffer, ref int offset)
 		{
 			//We don't really need to read the data, we just need to push ourselves forward
-			offset += CharacterSize;
+			offset += SizeInfo.TerminatorSize;
 			return String.Empty;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public sealed override void Write(string value, Span<byte> buffer, ref int offset)
 		{
-			for (int i = 0; i < CharacterSize; i++)
+			for (int i = 0; i < SizeInfo.TerminatorSize; i++)
 				buffer[offset + i] = 0;
 
-			offset += CharacterSize;
+			offset += SizeInfo.TerminatorSize;
 		}
 	}
 }

@@ -12,6 +12,9 @@ namespace FreecraftCore.Serializer
 	[KnownTypeSerializer]
 	public sealed class ReversedASCIIStringTypeSerializerStrategy : BaseReversedStringTypeSerializerStrategy<ReversedASCIIStringTypeSerializerStrategy>, IFixedLengthCharacterSerializerStrategy
 	{
+		/// <inheritdoc />
+		public int CharacterSize => SizeInfo.MaximumCharacterSize;
+
 		public ReversedASCIIStringTypeSerializerStrategy()
 			: base(Encoding.ASCII)
 		{
