@@ -24,8 +24,14 @@ namespace FreecraftCore.Serializer
 
 		/// <summary>
 		/// See: https://en.wikipedia.org/wiki/Code_page_437
-		/// Extended ASCII
+		/// Old weird IBM Extended ASCII, doesn't match the ASCII values.
 		/// </summary>
 		CodePage437,
+
+		/// <summary>
+		/// See: https://en.wikipedia.org/wiki/ISO/IEC_8859-1
+		/// Standard extended ASCII.
+		/// </summary>
+		ISO8859,
 	}
 }
