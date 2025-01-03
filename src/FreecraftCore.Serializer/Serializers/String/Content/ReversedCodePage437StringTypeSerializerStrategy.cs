@@ -16,9 +16,7 @@ namespace FreecraftCore.Serializer
 		public ReversedCodePage437StringTypeSerializerStrategy()
 			: base(CustomCharacterEncodingHelpers.CodePage437)
 		{
-			//This is the default that WoW uses
-			//however now that the serializer is being used for other projects
-			//we need to have the option to use different ones.
+			// If you REALLY need old CodePage437
 		}
 	}
 }

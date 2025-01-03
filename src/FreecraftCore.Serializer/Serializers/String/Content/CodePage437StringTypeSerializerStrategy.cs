@@ -16,8 +16,7 @@ namespace FreecraftCore.Serializer
 		public CodePage437StringTypeSerializerStrategy()
 			: base(CustomCharacterEncodingHelpers.CodePage437)
 		{
-			// This is useful for when you want to support the extended character set to include characters with accents.
-			// Ex. is chat messages which should be able to contain those.
+			// If you REALLY need old CodePage437
 		}
 	}
 }
