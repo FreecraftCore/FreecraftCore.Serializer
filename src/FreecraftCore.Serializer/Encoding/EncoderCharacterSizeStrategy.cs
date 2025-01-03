@@ -17,7 +17,8 @@ namespace FreecraftCore.Serializer
 			//See: https://github.com/dotnet/coreclr/blob/f31097f14560b193e76a7b2e1e61af9870b5356b/src/System.Private.CoreLib/shared/System/Text/ASCIIEncoding.cs#L24
 			//We cannot trust .NET to give us correct sizes
 			if(CheckEncodingIsOfType<ASCIIEncoding>(encoding.GetType()) 
-			   || ReferenceEquals(encoding, CustomCharacterEncodingHelpers.CodePage437)) // 437 is extended ASCII.
+			   || ReferenceEquals(encoding, CustomCharacterEncodingHelpers.CodePage437)
+			   || ReferenceEquals(encoding, CustomCharacterEncodingHelpers.ISO8859)) // 437 is extended ASCII.
 				return 1;
 			else if(CheckEncodingIsOfType<UnicodeEncoding>(encoding.GetType()))
 				return 2;
