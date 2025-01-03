@@ -22,7 +22,8 @@ namespace FreecraftCore.Serializer
 				return 2;
 			else if(CheckEncodingIsOfType<UTF32Encoding>(encoding.GetType()))
 				return 4;
-			else if(CheckEncodingIsOfType<UTF8Encoding>(encoding.GetType()))
+			else if(CheckEncodingIsOfType<UTF8Encoding>(encoding.GetType()) 
+			        || ReferenceEquals(encoding, CustomCharacterEncodingHelpers.CodePage437)) // 437 is extended ASCII.
 				return 1; //In WoW DBC UTF8 strings are null terminated with a single 0 byte.
 			else
 				throw new InvalidOperationException($"Encounter unknown Encoding: {encoding.GetType().Name}. Due to .NET behavior we cannot trust anything but manual char size.");
