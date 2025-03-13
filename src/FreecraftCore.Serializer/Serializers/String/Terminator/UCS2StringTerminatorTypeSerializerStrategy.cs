@@ -10,8 +10,12 @@ namespace FreecraftCore.Serializer
 	/// UCS-2 null terminator encoding implementation of string serialization.
 	/// </summary>
 	[KnownTypeSerializer]
-	public sealed class UCS2StringTerminatorTypeSerializerStrategy : BaseStringTerminatorSerializerStrategy<UCS2StringTerminatorTypeSerializerStrategy>
+	public sealed class UCS2StringTerminatorTypeSerializerStrategy 
+		: BaseStringTerminatorSerializerStrategy<UCS2StringTerminatorTypeSerializerStrategy>, IFixedLengthCharacterSerializerStrategy
 	{
+		/// <inheritdoc />
+		public int CharacterSize => SizeInfo.MaximumCharacterSize;
+
 		public UCS2StringTerminatorTypeSerializerStrategy()
 			: base(CustomCharacterEncodingHelpers.UCS2)
 		{
