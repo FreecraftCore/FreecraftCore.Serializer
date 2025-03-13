@@ -20,6 +20,8 @@ namespace FreecraftCore.Serializer
 			   || ReferenceEquals(encoding, CustomCharacterEncodingHelpers.CodePage437) // 437 is extended ASCII for old IBM.
 			   || ReferenceEquals(encoding, CustomCharacterEncodingHelpers.ISO8859)) 
 				return 1;
+			else if (CheckEncodingIsOfType<UCS2Encoding>(encoding.GetType()))
+				return 2;
 			else if(CheckEncodingIsOfType<UnicodeEncoding>(encoding.GetType()))
 				return 4;
 			else if(CheckEncodingIsOfType<UTF32Encoding>(encoding.GetType()))
@@ -53,6 +55,8 @@ namespace FreecraftCore.Serializer
 			   || ReferenceEquals(encoding, CustomCharacterEncodingHelpers.CodePage437) // 437 is extended ASCII for old IBM.
 			   || ReferenceEquals(encoding, CustomCharacterEncodingHelpers.ISO8859))
 				return 1;
+			else if(CheckEncodingIsOfType<UCS2Encoding>(encoding.GetType()))
+				return 2;
 			else if(CheckEncodingIsOfType<UnicodeEncoding>(encoding.GetType()))
 				return 2;
 			else if(CheckEncodingIsOfType<UTF32Encoding>(encoding.GetType()))
@@ -69,6 +73,8 @@ namespace FreecraftCore.Serializer
 			   || ReferenceEquals(encoding, CustomCharacterEncodingHelpers.CodePage437) // 437 is extended ASCII for old IBM.
 			   || ReferenceEquals(encoding, CustomCharacterEncodingHelpers.ISO8859))
 				return 1;
+			else if(CheckEncodingIsOfType<UCS2Encoding>(encoding.GetType()))
+				return 2;
 			else if(CheckEncodingIsOfType<UnicodeEncoding>(encoding.GetType()))
 				return 2;
 			else if(CheckEncodingIsOfType<UTF32Encoding>(encoding.GetType()))
