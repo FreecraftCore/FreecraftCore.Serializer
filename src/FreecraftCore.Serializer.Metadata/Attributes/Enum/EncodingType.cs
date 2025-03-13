@@ -33,5 +33,15 @@ namespace FreecraftCore.Serializer
 		/// Standard extended ASCII.
 		/// </summary>
 		ISO8859,
+
+		/// <summary>
+		/// See: https://en.wikipedia.org/wiki/Universal_Coded_Character_Set
+		/// UCS-2 encoding, which is a fixed-width 16-bit character encoding.
+		/// This is essentially a subset of UTF-16, where every character is exactly 2 bytes,
+		/// and it does not support surrogate pairs for characters beyond U+FFFF.
+		/// Useful for legacy applications that assume fixed 2-byte character sizes.
+		/// (Ex. Strings in PSOBB)
+		/// </summary>
+		UCS2,
 	}
 }
