@@ -313,6 +313,66 @@ namespace FreecraftCore.Serialization.Tests
 			//assert
 			Assert.NotNull(result);
 			Assert.AreEqual(value, result);
+		[Test]
+		public static void DontTerminate_UCS2_KnownSize_String_Reads_Embedded_Nulls()
+		{
+			//arrange
+			const string Expected = "A\0B";
+			int offset = 0;
+			Span<byte> buffer = new Span<byte>(new byte[32]);
+			CustomCharacterEncodingHelpers.UCS2.GetBytes(Expected).CopyTo(buffer);
+
+			//act
+			string result = FixedSizeStringTypeSerializerStrategy<UCS2StringTypeSerializerStrategy, Static_Int32_16>
+				.Instance.Read(buffer, ref offset);
+
+			//assert
+			Assert.True(result.StartsWith(Expected));
+			Assert.AreEqual(32, offset);
+		}
+
+		[Test]
+		public static void DontTerminate_ASCII_KnownSize_String_Reads_Data_After_Embedded_Null()
+		{
+			//arrange
+			const string Expected = "PSO\0BB";
+			int offset = 0;
+			Span<byte> buffer = new Span<byte>(new byte[16]);
+			Encoding.ASCII.GetBytes(Expected).CopyTo(buffer);
+
+			//act
+			string result = FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Static_Int32_16>
+				.Instance.Read(buffer, ref offset);
+
+			//assert
+			Assert.True(result.StartsWith(Expected));
+			Assert.AreEqual(16, offset);
+		}
+
+		[Test]
+		public static void DontTerminate_UCS2_KnownSize_String_Roundtrips_Data_After_Embedded_Null()
+		{
+			//arrange
+			const string Expected = "A\0B";
+			int offset = 0;
+			byte[] sourceBytes = new byte[32];
+			CustomCharacterEncodingHelpers.UCS2.GetBytes(Expected).CopyTo(sourceBytes, 0);
+			Span<byte> sourceBuffer = new Span<byte>(sourceBytes);
+
+			//act
+			string result = FixedSizeStringTypeSerializerStrategy<UCS2StringTypeSerializerStrategy, Static_Int32_16>
+				.Instance.Read(sourceBuffer, ref offset);
+
+			offset = 0;
+			byte[] roundtripBytes = new byte[32];
+			Span<byte> roundtripBuffer = new Span<byte>(roundtripBytes);
+			FixedSizeStringTypeSerializerStrategy<UCS2StringTypeSerializerStrategy, Static_Int32_16>
+				.Instance.Write(result, roundtripBuffer, ref offset);
+
+			//assert
+			Assert.AreEqual(32, offset);
+			CollectionAssert.AreEqual(sourceBytes, roundtripBytes);
+			Assert.True(result.StartsWith(Expected));
 		}
 
 		[Test]
@@ -451,6 +511,11 @@ namespace FreecraftCore.Serialization.Tests
 		private sealed class Static_Int32_20 : StaticTypedNumeric<int>
 		{
 			public override int Value { get; } = 20;
+		}
+
+		private sealed class Static_Int32_16 : StaticTypedNumeric<int>
+		{
+			public override int Value { get; } = 16;
 		}
 	}
 }
