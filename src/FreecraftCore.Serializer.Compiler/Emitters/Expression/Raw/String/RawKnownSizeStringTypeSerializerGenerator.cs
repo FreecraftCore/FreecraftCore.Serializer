@@ -46,7 +46,7 @@ namespace FreecraftCore.Serializer
 		private InvocationExpressionSyntax CreateSerializerInvocation()
 		{
 			string serializerTypeName = !ShouldTerminate
-				? $"FixedSizeStringTypeSerializerStrategy<{CalculateBaseSerializerTypeName()}, {new StaticlyTypedNumericNameBuilder<int>(FixedSizeValue).BuildName()}>"
+				? $"DontTerminateFixedSizeStringTypeSerializerStrategy<{CalculateBaseSerializerTypeName()}, {new StaticlyTypedNumericNameBuilder<int>(FixedSizeValue).BuildName()}>"
 				: $"FixedSizeStringTypeSerializerStrategy<{CalculateBaseSerializerTypeName()}, {new StaticlyTypedNumericNameBuilder<int>(FixedSizeValue).BuildName()}, {CalculateBaseSerializerTerminatorTypeName()}>";
 
 			return new SerializerMethodInvokationEmitter(Mode, serializerTypeName)

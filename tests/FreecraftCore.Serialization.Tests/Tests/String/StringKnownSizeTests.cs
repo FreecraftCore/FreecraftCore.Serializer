@@ -160,14 +160,32 @@ namespace FreecraftCore.Serialization.Tests
 				}
 			}
 
-			int characterSize = GetCharacterSize(encoding);
+			int characterSize = GetFixedSizeCharacterSize(encoding);
+			int terminatorSize = GetTerminatorSize(encoding);
 
 			//assert
-			Assert.AreEqual(fixedSize * characterSize + (shouldTerminate ? characterSize : 0), offset);
+			Assert.AreEqual(fixedSize * characterSize + (shouldTerminate ? terminatorSize : 0), offset);
 			Assert.AreNotEqual(0, buffer[0]);
 		}
 
-		private static int GetCharacterSize(EncodingType encoding)
+		private static int GetFixedSizeCharacterSize(EncodingType encoding)
+		{
+			switch (encoding)
+			{
+				case EncodingType.ASCII:
+					return 1;
+				case EncodingType.UTF16:
+					return 4;
+				case EncodingType.UTF32:
+					return 4;
+				case EncodingType.UTF8:
+					return 4;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(encoding), encoding, null);
+			}
+		}
+
+		private static int GetTerminatorSize(EncodingType encoding)
 		{
 			switch (encoding)
 			{
@@ -178,7 +196,7 @@ namespace FreecraftCore.Serialization.Tests
 				case EncodingType.UTF32:
 					return 4;
 				case EncodingType.UTF8:
-					return 1; //In WoW DBC UTF8 strings are null terminated with a single 0 byte.
+					return 1;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(encoding), encoding, null);
 			}
@@ -321,11 +339,11 @@ namespace FreecraftCore.Serialization.Tests
 			//arrange
 			const string Expected = "A\0B";
 			int offset = 0;
-			Span<byte> buffer = new Span<byte>(new byte[32]);
+			Span<byte> buffer = new Span<byte>(new byte[1024]);
 			CustomCharacterEncodingHelpers.UCS2.GetBytes(Expected).CopyTo(buffer);
 
 			//act
-			string result = FixedSizeStringTypeSerializerStrategy<UCS2StringTypeSerializerStrategy, Static_Int32_16>
+			string result = DontTerminateFixedSizeStringTypeSerializerStrategy<UCS2StringTypeSerializerStrategy, Static_Int32_16>
 				.Instance.Read(buffer, ref offset);
 
 			//assert
@@ -339,11 +357,11 @@ namespace FreecraftCore.Serialization.Tests
 			//arrange
 			const string Expected = "PSO\0BB";
 			int offset = 0;
-			Span<byte> buffer = new Span<byte>(new byte[16]);
+			Span<byte> buffer = new Span<byte>(new byte[1024]);
 			Encoding.ASCII.GetBytes(Expected).CopyTo(buffer);
 
 			//act
-			string result = FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Static_Int32_16>
+			string result = DontTerminateFixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Static_Int32_16>
 				.Instance.Read(buffer, ref offset);
 
 			//assert
@@ -357,24 +375,42 @@ namespace FreecraftCore.Serialization.Tests
 			//arrange
 			const string Expected = "A\0B";
 			int offset = 0;
-			byte[] sourceBytes = new byte[32];
+			byte[] sourceBytes = new byte[1024];
 			CustomCharacterEncodingHelpers.UCS2.GetBytes(Expected).CopyTo(sourceBytes, 0);
 			Span<byte> sourceBuffer = new Span<byte>(sourceBytes);
 
 			//act
-			string result = FixedSizeStringTypeSerializerStrategy<UCS2StringTypeSerializerStrategy, Static_Int32_16>
+			string result = DontTerminateFixedSizeStringTypeSerializerStrategy<UCS2StringTypeSerializerStrategy, Static_Int32_16>
 				.Instance.Read(sourceBuffer, ref offset);
 
 			offset = 0;
-			byte[] roundtripBytes = new byte[32];
+			byte[] roundtripBytes = new byte[1024];
 			Span<byte> roundtripBuffer = new Span<byte>(roundtripBytes);
-			FixedSizeStringTypeSerializerStrategy<UCS2StringTypeSerializerStrategy, Static_Int32_16>
+			DontTerminateFixedSizeStringTypeSerializerStrategy<UCS2StringTypeSerializerStrategy, Static_Int32_16>
 				.Instance.Write(result, roundtripBuffer, ref offset);
 
 			//assert
 			Assert.AreEqual(32, offset);
 			CollectionAssert.AreEqual(sourceBytes, roundtripBytes);
 			Assert.True(result.StartsWith(Expected));
+		}
+
+		[Test]
+		public static void Generated_DontTerminate_UCS2_KnownSize_String_Reads_Embedded_Nulls()
+		{
+			//arrange
+			const string Expected = "A\0B";
+			int offset = 0;
+			Span<byte> buffer = new Span<byte>(new byte[1024]);
+			CustomCharacterEncodingHelpers.UCS2.GetBytes(Expected).CopyTo(buffer);
+
+			//act
+			DontTerminateKnownSizeUcs2Model result = new SerializerService()
+				.Read<DontTerminateKnownSizeUcs2Model>(buffer, ref offset);
+
+			//assert
+			Assert.True(result.Value.StartsWith(Expected));
+			Assert.AreEqual(32, offset);
 		}
 
 		[Test]
@@ -504,10 +540,11 @@ namespace FreecraftCore.Serialization.Tests
 			}
 
 			//assert
-			int characterSize = GetCharacterSize(encoding);
+			int characterSize = GetFixedSizeCharacterSize(encoding);
+			int terminatorSize = GetTerminatorSize(encoding);
 
 			//This checks that we READ to the offset we expected when fixed length reading.
-			Assert.AreEqual(fixedSize * characterSize + (shouldTerminate ? characterSize : 0), offset);
+			Assert.AreEqual(fixedSize * characterSize + (shouldTerminate ? terminatorSize : 0), offset);
 		}
 
 		private sealed class Static_Int32_20 : StaticTypedNumeric<int>
@@ -518,6 +555,28 @@ namespace FreecraftCore.Serialization.Tests
 		private sealed class Static_Int32_16 : StaticTypedNumeric<int>
 		{
 			public override int Value { get; } = 16;
+		}
+	}
+
+	[WireMessageType]
+	[WireDataContract]
+	public sealed partial class DontTerminateKnownSizeUcs2Model
+	{
+		[Encoding(EncodingType.UCS2)]
+		[DontTerminate]
+		[KnownSize(16)]
+		[WireMember(1)]
+		public string Value { get; internal set; }
+
+		public DontTerminateKnownSizeUcs2Model(string value)
+			: this()
+		{
+			Value = value;
+		}
+
+		public DontTerminateKnownSizeUcs2Model()
+		{
+
 		}
 	}
 }
