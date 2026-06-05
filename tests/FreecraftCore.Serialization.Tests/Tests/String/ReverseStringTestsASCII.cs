@@ -16,7 +16,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_String_Serializer_Serializes()
 		{
 			//arrange
-			Span<byte> buffer = new Span<byte>(new byte[1024 * Serializer.CharacterSize]);
+			Span<byte> buffer = new Span<byte>(new byte[1024 * Serializer.SizeInfo.MaximumCharacterSize]);
 			int offset = 0;
 
 			//act
@@ -33,7 +33,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_String_Serializer_Can_Serialize_Empty_String()
 		{
 			//arrange
-			Span<byte> buffer = new Span<byte>(new byte[1024 * Serializer.CharacterSize]);
+			Span<byte> buffer = new Span<byte>(new byte[1024 * Serializer.SizeInfo.MaximumCharacterSize]);
 			int offset = 0;
 
 			//act
@@ -54,7 +54,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Fixed_String_Can_Write()
 		{
 			//arrange
-			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.SizeInfo.MaximumCharacterSize]);
 			int offset = 0;
 
 			//act
@@ -65,7 +65,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Fixed_String_Can_Write_Proper_Length()
 		{
 			//arrange
-			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.SizeInfo.MaximumCharacterSize]);
 			int offset = 0;
 
 			//act
@@ -73,14 +73,14 @@ namespace FreecraftCore.Serializer.Tests
 
 			//WARNING: Old test assumed serializer wrote null terminator by default. That's done at source generation time now!!
 			//assert
-			Assert.AreEqual(5 * Serializer.CharacterSize, offset);
+			Assert.AreEqual(5 * Serializer.SizeInfo.MaximumCharacterSize, offset);
 		}
 
 		[Test]
 		public static void Test_Fixed_String_Can_Read()
 		{
 			//arrange
-			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.SizeInfo.MaximumCharacterSize]);
 			int offset = 0;
 
 			//act
@@ -103,7 +103,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Deserialization_Matches_With_Helper(string value)
 		{
 			//arrange
-			Span<byte> buffer = new Span<byte>(new byte[value.Length * Serializer.CharacterSize + 100]);
+			Span<byte> buffer = new Span<byte>(new byte[value.Length * Serializer.SizeInfo.MaximumCharacterSize + 100]);
 			int offset = 0;
 
 			//act
@@ -124,7 +124,7 @@ namespace FreecraftCore.Serializer.Tests
 		public static void Test_Serialization_Matches_ReversedString(string value)
 		{
 			//arrange
-			Span<byte> buffer = new Span<byte>(new byte[value.Length * Serializer.CharacterSize + 100]);
+			Span<byte> buffer = new Span<byte>(new byte[value.Length * Serializer.SizeInfo.MaximumCharacterSize + 100]);
 			int offset = 0;
 
 			//act
@@ -143,7 +143,7 @@ namespace FreecraftCore.Serializer.Tests
 			int offset = 0;
 
 			//act
-			string value = Serializer.Read(new Span<byte>(new byte[Serializer.CharacterSize]), ref offset);
+			string value = Serializer.Read(new Span<byte>(new byte[Serializer.SizeInfo.MaximumCharacterSize]), ref offset);
 
 			//assert
 			Assert.NotNull(value, "String was null.");
@@ -155,7 +155,7 @@ namespace FreecraftCore.Serializer.Tests
 		{
 			//arrange
 			var serializer = Serializer;
-			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.CharacterSize]);
+			Span<byte> buffer = new Span<byte>(new byte[5 * Serializer.SizeInfo.MaximumCharacterSize]);
 			int offset = 0;
 
 			//act
