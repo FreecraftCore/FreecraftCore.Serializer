@@ -234,7 +234,7 @@ namespace FreecraftCore.Serialization.Tests
 			}
 			else
 			{
-				switch(encoding)
+				switch (encoding)
 				{
 					case EncodingType.ASCII:
 						FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Static_Int32_20>
@@ -261,9 +261,9 @@ namespace FreecraftCore.Serialization.Tests
 			string result = null;
 
 			//act
-			if(shouldTerminate)
+			if (shouldTerminate)
 			{
-				switch(encoding)
+				switch (encoding)
 				{
 					case EncodingType.ASCII:
 						result = FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Static_Int32_20, ASCIIStringTerminatorTypeSerializerStrategy>
@@ -287,7 +287,7 @@ namespace FreecraftCore.Serialization.Tests
 			}
 			else
 			{
-				switch(encoding)
+				switch (encoding)
 				{
 					case EncodingType.ASCII:
 						result = FixedSizeStringTypeSerializerStrategy<ASCIIStringTypeSerializerStrategy, Static_Int32_20>
@@ -313,6 +313,8 @@ namespace FreecraftCore.Serialization.Tests
 			//assert
 			Assert.NotNull(result);
 			Assert.AreEqual(value, result);
+		}
+
 		[Test]
 		public static void DontTerminate_UCS2_KnownSize_String_Reads_Embedded_Nulls()
 		{
