@@ -40,14 +40,39 @@ namespace FreecraftCore.Serializer
 		{
 			int fixedSizeLength = SizeInfo.MinimumCharacterSize * FixedSize.Value;
 
-			if(fixedSizeLength == 0)
-				return String.Empty;
+			if (fixedSizeLength == 0)
+				return string.Empty;
 
 			Span<byte> fixedSizeBuffer = buffer.Slice(offset, fixedSizeLength);
 			offset += fixedSizeLength;
 
+			int charSize = SizeInfo.MinimumCharacterSize;
+			int effectiveLength = fixedSizeLength;
+
+			for (; effectiveLength >= charSize; effectiveLength -= charSize)
+			{
+				int charStart = effectiveLength - charSize;
+
+				bool isNullChar = true;
+
+				for (int i = 0; i < charSize; i++)
+				{
+					if (fixedSizeBuffer[charStart + i] != 0)
+					{
+						isNullChar = false;
+						break;
+					}
+				}
+
+				if (!isNullChar)
+					break;
+			}
+
+			if (effectiveLength == 0)
+				return string.Empty;
+
 			fixed (byte* bytes = &fixedSizeBuffer.GetPinnableReference())
-				return ReadEncodedString(bytes, fixedSizeLength);//.TrimEnd('\0');
+				return ReadEncodedString(bytes, effectiveLength);
 		}
 
 		/// <inheritdoc />

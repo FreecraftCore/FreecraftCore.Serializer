@@ -349,6 +349,7 @@ namespace FreecraftCore.Serialization.Tests
 			//assert
 			Assert.True(result.StartsWith(Expected));
 			Assert.AreEqual(32, offset);
+			Assert.False(result.EndsWith('\0')); // We assert this to ensure that we aren't shoving nulls into the end of the string like "Meow\0\0\0\0"
 		}
 
 		[Test]
